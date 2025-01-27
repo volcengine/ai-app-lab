@@ -253,34 +253,40 @@ class BaseChatLanguageModel(BaseLanguageModel):
             **parameters,
         )
 
-        usage_chunks, cumulated = [], []
+        usage_chunks = []
         while True:
             completion = await self._arun(
                 request, extra_headers, extra_query, extra_body
             )
             # default: one iter
             is_more_request = False
+            final_tool_calls = {}
+            cumulated = []
             async for resp in completion:  # type: ChatCompletionChunk
                 if resp.usage:
                     usage_chunks.append(resp)
+                    continue
+                if not resp.choices:
+                    continue
+                # cumulated chunks is used for caculator/fc inner cot output
+                cumulated.append(resp)
+                if resp.choices[0].delta.tool_calls:
+                    for tool_call in resp.choices[0].delta.tool_calls:
+                        index = tool_call.index
+                        if index not in final_tool_calls:
+                            final_tool_calls[index] = tool_call
+                        else:
+                            final_tool_calls[index].function.arguments += tool_call.function.arguments
                 else:
-                    # cumulated chunks is used for caculator/fc inner cot output
-                    cumulated.append(resp)
-                    yield ArkChatCompletionChunk(**resp.__dict__)
-
-                if resp.choices and resp.choices[0].finish_reason:
-                    ark_resp = ArkChatCompletionChunk(**resp.__dict__).merge(cumulated)
-                    # clear after used
-                    cumulated = []
-
+                    # hide tool_calls info from response
+                    if resp.choices[0].finish_reason != "tool_calls":
+                        yield ArkChatCompletionChunk(**resp.__dict__)
+                if resp.choices[0].finish_reason == "tool_calls":
+                    ark_resp = ArkChatCompletionChunk.merge(cumulated)
+                    ark_resp.choices[0].delta.tool_calls = list(final_tool_calls.values())
                     is_more_request = await handle_function_call(
                         request, ark_resp, functions, function_call_mode
                     )
-                    if (
-                        request.stream_options
-                        and request.stream_options.get("include_usage") is True
-                    ):
-                        usage_chunks.append(ark_resp)
 
             if not is_more_request:
                 break
