@@ -273,6 +273,5 @@ if __name__ == "__main__":
         port=int(port) if port else 8888,
         health_check_path="/v1/ping",
         endpoint_path="/api/v3/bots/chat/completions",
-        trace_on=False,
         clients={},
     )

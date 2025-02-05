@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "deepdoubao"
+version = "0.1.0"
+description = ""
+authors = ["LiYuxuan <liyuxuan.89@bytedance.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<3.12.0"
+arkitect = "^0.0.1"
+volcengine-python-sdk = ">=1.0.123"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
