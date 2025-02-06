@@ -54,8 +54,7 @@ class CallableFunction(Protocol):
         Any,
         Any,
         Union[Union[str, BaseModel], Union[str, BaseModel]],
-    ]:
-        ...
+    ]: ...
 
 
 class FunctionCallMode(str, Enum):
@@ -331,6 +330,147 @@ class ArkChatRequest(Request):
         return v
 
 
+class ToolOutputType(str, Enum):
+    TOOL = "tool"
+    EXCEPTION = "exception"
+
+
+class ExceptionInfo(BaseModel):
+    type: Optional[str] = None
+    message: Optional[str] = None
+
+
+class ToolOutput(BaseModel):
+    type: ToolOutputType
+    data: Optional[Union[Any, ExceptionInfo]] = None
+
+
+class ActionUsage(BaseModel):
+    action_name: Optional[str] = None
+    """
+    action name 
+    """
+    count: Optional[int] = None
+    """
+    count for calling the action
+    """
+
+    def __iadd__(
+        self, others: Union[ActionUsage, List[ActionUsage]]
+    ) -> List[ActionUsage]:
+        if not isinstance(others, list):
+            return [self, others]
+        else:
+            others.append(self)
+            return others
+
+    def __add__(
+        self, others: Union[ActionUsage, List[ActionUsage]]
+    ) -> List[ActionUsage]:
+        if not isinstance(others, list):
+            return [self, others]
+        else:
+            others.append(self)
+            return others
+
+
+class ActionDetail(BaseModel):
+    name: str
+    """
+    action name, e.g. "CodeSandbox"
+    """
+    count: int = 0
+    """
+    count for calling the action, e.g. 1
+    """
+    tool_details: List[ToolDetail] = Field(default_factory=list)
+    """
+    details about calling the tool
+    """
+
+
+class ToolDetail(BaseModel):
+    name: str
+    """
+    tool name, e.g. "Search"
+    """
+    input: Any
+    """
+    input for calling the tool
+    """
+    output: Union[Any, ToolOutput]
+    """
+    output for calling the tool
+    """
+    created_at: Optional[int] = None
+    """
+    created time in milliseconds since the Epoch.
+    """
+    completed_at: Optional[int] = None
+    """
+    completed time in milliseconds since the Epoch.
+    """
+
+
+class BotUsage(BaseModel):
+    model_usage: Optional[List[CompletionUsage]] = Field(default_factory=list)
+    action_usage: Optional[List[ActionUsage]] = Field(default_factory=list)
+    action_details: Optional[List[ActionDetail]] = Field(default_factory=list)
+
+    def __iadd__(self, others: Union[BotUsage, List[BotUsage]]) -> BotUsage:
+        if not isinstance(others, list):
+            others = [others]
+
+        for usage in others:
+            if self.model_usage and usage.model_usage:
+                self.model_usage.extend(usage.model_usage)
+            elif usage.model_usage:
+                self.model_usage = usage.model_usage
+
+            if self.action_usage and usage.action_usage:
+                self.action_usage.extend(usage.action_usage)
+            elif usage.action_usage:
+                self.action_usage = usage.action_usage
+
+            if self.action_details and usage.action_details:
+                self.action_details.extend(usage.action_details)
+            elif usage.action_details:
+                self.action_details = usage.action_details
+
+        return self
+
+    def __add__(self, others: Union[BotUsage, List[BotUsage]]) -> BotUsage:
+        if not isinstance(others, list):
+            others = [others]
+
+        total_usage = BotUsage(
+            model_usage=self.model_usage or [],
+            action_usage=self.action_usage or [],
+            action_details=self.action_details or [],
+        )
+        for usage in others:
+            if (
+                usage.action_usage
+                and total_usage.action_usage
+                and len(usage.action_usage) > 0
+            ):
+                total_usage.action_usage.extend(usage.action_usage)
+            if (
+                usage.model_usage
+                and total_usage.model_usage
+                and len(usage.model_usage) > 0
+            ):
+                total_usage.model_usage.extend(usage.model_usage)
+            if (
+                usage.action_details
+                and total_usage.action_details
+                and len(usage.action_details) > 0
+            ):
+                total_usage.action_details.extend(usage.action_details)
+
+        return total_usage
+
+
 class ArkChatResponse(Response):
     id: str
     """A unique identifier for the chat completion."""
@@ -352,6 +492,8 @@ class ArkChatResponse(Response):
 
     usage: Optional[CompletionUsage] = None
     """Usage statistics for the completion request."""
+
+    bot_usage: Optional[BotUsage] = None
 
     metadata: Optional[Dict[str, Any]] = None
 
@@ -438,6 +580,8 @@ class ArkChatCompletionChunk(Response):
     contains a null value except for the last chunk which contains the token usage
     statistics for the entire request.
     """
+
+    bot_usage: Optional[BotUsage] = None
 
     metadata: Optional[Dict[str, Any]] = None
 
