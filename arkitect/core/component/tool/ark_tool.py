@@ -23,6 +23,7 @@ from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
 from arkitect.core.client import default_ark_client
 from arkitect.core.component.llm.model import ChatCompletionTool, FunctionDefinition
+from arkitect.core.component.tool.base_tool import BaseTool
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.trace import task
 
@@ -83,9 +84,10 @@ class ToolParameter(BaseModel):
         return pm
 
 
-class ToolManifest(BaseModel):
+class ArkTool(BaseTool):
     """
-    Represents a manifest for a tool.
+    ArkTool represents a manifest for a tool hosted on Ark Platform
+    ARK_API_KEY or ak&sk are required
 
     Attributes:
         action_name : The name of the action associated with the tool.
@@ -106,7 +108,7 @@ class ToolManifest(BaseModel):
 
     class Config:
         """
-        Configuration class for the ToolManifest model.
+        Configuration class for the ArkTool model.
         """
 
         arbitrary_types_allowed = True
@@ -128,25 +130,24 @@ class ToolManifest(BaseModel):
         )
 
     @classmethod
-    def from_manifest(cls, manifest: Dict[str, Any]) -> "ToolManifest":
+    def from_manifest(cls, manifest: Dict[str, Any]) -> "ArkTool":
         """
-        Creates a ToolManifest instance from a dictionary.
-        This method parses the provided dictionary to create a ToolManifest instance.
+        Creates a ArkTool instance from a dictionary.
+        This method parses the provided dictionary to create a ArkTool instance.
         """
         # parse parameters from manifest
         if not manifest:
             raise InvalidParameter("Invalid manifest: empty")
 
-        tm = ToolManifest(
+        tm = ArkTool(
             action_name="", tool_name="", description=manifest.get("description", "")
         )
         if manifest.get("name", "").find("/") > -1:
             parts = manifest.get("name", "").split("/")
             tm.action_name = parts[0]
             tm.tool_name = parts[1]
-
         else:
-            raise InvalidParameter("Invalid manifest: invalid name")
+            raise InvalidParameter("Invalid ArkTool manifest: invalid name")
 
         properties: Dict[str, Any] = manifest.get("parameters", {}).get(
             "properties", {}
@@ -183,7 +184,7 @@ class ToolManifest(BaseModel):
         return self.manifest_field
 
     @task()
-    async def executor(
+    async def execute(
         self, parameters: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> Union[ArkToolResponse, ChatCompletionMessageParam]:
         parameter = ArkToolRequest(

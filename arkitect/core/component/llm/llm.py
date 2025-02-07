@@ -23,7 +23,7 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.tool import ToolManifest
+from arkitect.core.component.tool import BaseTool
 from arkitect.telemetry.trace import task
 from arkitect.utils.context import get_extra_headers
 
@@ -184,7 +184,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: Optional[Dict[str, ToolManifest]] = None,
+        functions: Optional[Dict[str, BaseTool]] = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
@@ -234,7 +234,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: Optional[Dict[str, ToolManifest]] = None,
+        functions: Optional[Dict[str, BaseTool]] = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,

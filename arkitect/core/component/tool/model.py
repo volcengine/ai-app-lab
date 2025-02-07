@@ -17,17 +17,30 @@ from typing import Any, Dict, Optional
 from pydantic import BaseModel
 
 
-class ArkToolRequest(BaseModel):
+class BaseToolRequest(BaseModel):
     """ """
 
-    action_name: str
     tool_name: str
 
-    dry_run: Optional[bool] = False
-    timeout: Optional[int] = 60
     parameters: Optional[Dict[str, Any]] = None
 
 
-class ArkToolResponse(BaseModel):
-    status_code: Optional[int] = None
+class BaseToolResponse(BaseModel):
     data: Optional[Any] = None
+
+
+class ArkToolRequest(BaseToolRequest):
+    """ """
+
+    action_name: str
+
+    dry_run: Optional[bool] = False
+    timeout: Optional[int] = 60
+
+
+class ArkToolResponse(BaseToolResponse):
+    status_code: Optional[int] = None
+
+
+class CustomToolResponse(BaseToolResponse):
+    pass

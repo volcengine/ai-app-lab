@@ -23,14 +23,14 @@ from volcenginesdkarkruntime.types.chat import (
 
 from arkitect.core.component.context.hooks import ToolHook
 from arkitect.core.component.context.model import State
-from arkitect.core.component.llm.model import ChatCompletionTool, FunctionDefinition
-from arkitect.core.component.tool import ArkToolResponse, ToolManifest
+from arkitect.core.component.llm.model import ChatCompletionTool
+from arkitect.core.component.tool import BaseTool, BaseToolResponse
 
 
 class _AsyncTool(BaseModel):
     state: State
     hooks: List[ToolHook] = Field(default_factory=list)
-    tool: ToolManifest
+    tool: BaseTool
 
     async def execute(
         self, parameter: ChatCompletionAssistantMessageParam, **kwargs: Any
@@ -38,10 +38,10 @@ class _AsyncTool(BaseModel):
         for hook in self.hooks:
             parameter = await hook(self.state, parameter)
         arguments = parameter.get("function", {}).get("arguments", "{}")
-        resp = await self.tool.executor(json.loads(arguments), **kwargs)
+        resp = await self.tool.execute(json.loads(arguments), **kwargs)
         if isinstance(resp, ChatCompletionMessageParam):
             self.state.messages.append(resp)
-        elif isinstance(resp, ArkToolResponse):
+        elif isinstance(resp, BaseToolResponse):
             self.state.messages.append(
                 {
                     "role": "tool",
@@ -55,6 +55,4 @@ class _AsyncTool(BaseModel):
         """
         Returns the schema of the tool.
         """
-        return ChatCompletionTool(
-            type="function", function=FunctionDefinition(**self.tool.manifest())
-        )
+        return self.tool.tool_schema()

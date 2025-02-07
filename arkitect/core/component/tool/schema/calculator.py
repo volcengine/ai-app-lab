@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..manifest import ParameterTypeEnum, ToolManifest, ToolParameter
+from ..ark_tool import ArkTool, ParameterTypeEnum, ToolParameter
 
 
-class Calculator(ToolManifest):
+class Calculator(ArkTool):
     def __init__(self) -> None:
         super().__init__(
             action_name="Calculator",
