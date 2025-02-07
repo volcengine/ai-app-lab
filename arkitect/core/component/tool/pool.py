@@ -14,7 +14,7 @@
 
 from typing import Dict, List, Optional
 
-from .manifest import ToolManifest
+from arkitect.core.component.tool.manifest import ToolManifest
 
 
 def tool_key(action_name: str, tool_name: str) -> str:

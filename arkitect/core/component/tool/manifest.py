@@ -84,7 +84,8 @@ class ToolParameter(BaseModel):
 
 class ToolManifest(BaseModel):
     """
-    Represents a manifest for a tool.
+    ToolManifest represents a manifest for a tool hosted on Ark Platform
+    ARK_API_KEY or ak&sk are required
 
     Attributes:
         action_name : The name of the action associated with the tool.

@@ -55,7 +55,7 @@ class CustomPromptTemplate(BaseChatPromptTemplate):
     chat_history_keep_human: bool = False
     chat_history_keep_ai: bool = False
     chat_history_len_limit: int = 0
- 
+
     @classmethod
     @validator("template", pre=True)
     def validate_template(cls, v: Union[str, Template]) -> Template:

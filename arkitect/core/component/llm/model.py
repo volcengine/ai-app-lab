@@ -19,6 +19,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import (
     Any,
+    Callable,
     Coroutine,
     Dict,
     List,
@@ -36,6 +37,7 @@ from volcenginesdkarkruntime.types.chat.chat_completion_stream_options_param imp
 )
 from volcenginesdkarkruntime.types.completion_usage import CompletionUsage
 
+from arkitect.core.component.llm.converter import schema_for_function
 from arkitect.core.errors import InvalidParameter, MissingParameter
 from arkitect.core.runtime import Request, Response
 
@@ -105,6 +107,36 @@ class ChatCompletionTool(BaseModel):
     type: Literal["function"]
     """The type of the tool. Currently, only `function` is supported."""
 
+    @staticmethod
+    def from_function(
+        f: Callable[..., Any], param_descriptions: dict[str, str] | None = None
+    ) -> ChatCompletionTool:
+        """Builds a `ChatCompletionTool` from a python function.
+
+        The implementation references: https://github.com/google-gemini/generative-ai-python/blob/main/google/generativeai/types/content_types.py#L584
+
+        The function should have type annotations.
+
+        This method is able to generate the schema for arguments annotated with types:
+
+        `AllowedTypes = float | int | str | list[AllowedTypes] | dict`
+
+        This method does not yet build a schema for `TypedDict`
+
+        contents. But you can build these manually.
+        """
+
+        if param_descriptions is None:
+            param_descriptions = {}
+
+        schema = schema_for_function(f, param_descriptions=param_descriptions)
+
+        tool = ChatCompletionTool(
+            type="function",
+            function=FunctionDefinition(**schema),
+        )
+        return tool
+
 
 class ArkChatParameters(BaseModel):
     frequency_penalty: Optional[float] = None
@@ -123,7 +155,7 @@ class ArkChatParameters(BaseModel):
     stop: Optional[Union[Optional[str], List[str]]] = None
     stream_options: Optional[ChatCompletionStreamOptionsParam] = None
     temperature: Optional[float] = None
-    tools: Optional[List[ChatCompletionTool]] = None
+    tools: Optional[List[Union[ChatCompletionTool, Callable]]] = None
     top_logprobs: Optional[int] = None
     top_p: Optional[float] = None
 
@@ -267,7 +299,7 @@ class ArkChatRequest(Request):
     stream: bool = False
     stream_options: Optional[ChatCompletionStreamOptionsParam] = None
     temperature: Optional[float] = None
-    tools: Optional[List[ChatCompletionTool]] = None
+    tools: Optional[List[Union[ChatCompletionTool, Callable]]] = None
     top_logprobs: Optional[int] = None
     top_p: Optional[float] = None
     user: Optional[str] = None
@@ -300,9 +332,19 @@ class ArkChatRequest(Request):
         else:
             return intention_signal == "true"
 
+    def _convert_tools(self):
+        new_tool_list = []
+        for t in self.tools:
+            if isinstance(t, Callable):
+                new_tool_list.append(ChatCompletionTool.from_function(t))
+            else:
+                new_tool_list.append(t)
+        self.tools = new_tool_list
+
     def get_chat_request(
         self, extra_body: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
+        self._convert_tools()
         dumped_dict = self.model_dump(exclude_unset=True, exclude_none=True)
 
         extra_body = extra_body or {}

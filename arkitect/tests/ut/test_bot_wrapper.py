@@ -76,19 +76,20 @@ class TestBotWrapper(unittest.TestCase):
     def test_bot_wrapper_entry(self) -> None:
         clients = {"client": self.mock_client()}
         with (
-            patch("ark.launcher.vefaas.wrapper.initialize") as mock_initialize,
+            patch("arkitect.launcher.vefaas.wrapper.initialize") as mock_initialize,
             patch(
-                "ark.launcher.vefaas.wrapper.get_runner", side_effect=self.mock_runner
+                "arkitect.launcher.vefaas.wrapper.get_runner",
+                side_effect=self.mock_runner,
             ) as mock_get_runner,
             patch(
-                "ark.launcher.vefaas.wrapper.get_endpoint_config"
+                "arkitect.launcher.vefaas.wrapper.get_endpoint_config"
             ) as mock_get_endpoint_config,
             patch(
-                "ark.launcher.vefaas.wrapper.parse_request",
+                "arkitect.launcher.vefaas.wrapper.parse_request",
                 side_effect=self.mock_parse_request,
             ) as mock_parse_request,
             patch(
-                "ark.launcher.vefaas.wrapper.parse_response",
+                "arkitect.launcher.vefaas.wrapper.parse_response",
                 side_effect=self.mock_parse_response,
             ) as mock_parse_response,
         ):
