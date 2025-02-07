@@ -36,6 +36,9 @@ from arkitect.types.llm.model import (
     ChatCompletionMessageToolCallParam,
     Function,
 )
+from arkitect.core.errors import InvalidParameter
+from arkitect.telemetry.trace import task
+from arkitect.utils import dump_json_str
 
 
 def _convert_message_role_to_ark_role(  # type: ignore
