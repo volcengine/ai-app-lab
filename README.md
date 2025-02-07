@@ -216,12 +216,14 @@ def adder(a: int, b: int):
     return a + b
 
 
+# you can also use predefined tools on Ark such as link reader and calculator
+ToolPool.register(LinkReader())
+
 @task()
 async def default_model_calling(
     request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     parameters = ArkChatParameters(**request.__dict__)
-    ToolPool.register(LinkReader())
 
     llm = BaseChatLanguageModel(
         endpoint_id=endpoint_id,
