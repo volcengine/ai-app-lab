@@ -196,7 +196,7 @@ import os
 from typing import AsyncIterable, Union
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-
+from arkitect.core.component.tool import LinkReader, ToolPool
 from arkitect.core.component.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
@@ -207,9 +207,10 @@ from arkitect.core.component.llm.model import (
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
 
-endpoint_id = "YOUR ENDPOINT ID"
+endpoint_id = "<YOUR ENDPOINT ID>"
 
 
+# you can define your own methods here and let LLM use as tools
 def adder(a: int, b: int):
     print("calling adder")
     return a + b
@@ -220,19 +221,20 @@ async def default_model_calling(
     request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     parameters = ArkChatParameters(**request.__dict__)
-
-    parameters.tools = [adder]
+    ToolPool.register(LinkReader())
 
     llm = BaseChatLanguageModel(
         endpoint_id=endpoint_id,
         messages=request.messages,
         parameters=parameters,
     )
+    all_tools = ToolPool.all()
+    all_tools["adder"] = adder
     if request.stream:
-        async for resp in llm.astream(functions={"adder": adder}):
+        async for resp in llm.astream(functions=all_tools):
             yield resp
     else:
-        yield await llm.arun(functions={"adder": adder})
+        yield await llm.arun(functions=all_tools)
 
 
 @task()
