@@ -19,6 +19,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import (
     Any,
+    Callable,
     Coroutine,
     Dict,
     List,
@@ -51,6 +52,7 @@ from volcenginesdkarkruntime.types.context.context_create_params import (
 
 from arkitect.core.errors import InvalidParameter, MissingParameter
 from arkitect.core.runtime import Request, Response
+from arkitect.utils.func_convert import schema_for_function
 
 
 class UserInfoExtra(BaseModel):
@@ -117,6 +119,33 @@ class ChatCompletionTool(BaseModel):
 
     type: Literal["function"]
     """The type of the tool. Currently, only `function` is supported."""
+
+    @staticmethod
+    def from_function(
+        f: Callable[..., Any], param_descriptions: Dict[str, str] = {}
+    ) -> ChatCompletionTool:
+        """Builds a `ChatCompletionTool` from a python function.
+
+        The implementation references: https://github.com/google-gemini/generative-ai-python/blob/main/google/generativeai/types/content_types.py#L584
+
+        The function should have type annotations.
+
+        This method is able to generate the schema for arguments annotated with types:
+
+        `AllowedTypes = float | int | str | List[AllowedTypes] | Dict`
+
+        This method does not yet build a schema for `TypedDict`
+
+        contents. But you can build these manually.
+        """
+
+        schema = schema_for_function(f, param_descriptions=param_descriptions)
+
+        tool = ChatCompletionTool(
+            type="function",
+            function=FunctionDefinition(**schema),
+        )
+        return tool
 
 
 class ArkChatParameters(BaseModel):

@@ -22,7 +22,7 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.tool import ArkToolResponse, ToolManifest
+from arkitect.core.component.tool import BaseTool, BaseToolResponse
 from arkitect.telemetry.trace import task
 from arkitect.utils import dump_json_str
 
@@ -42,7 +42,7 @@ async def handle_function_call(
     response: Union[
         ChatCompletionChunk, ChatCompletion, ArkChatCompletionChunk, ArkChatResponse
     ],
-    functions: Optional[Dict[str, ToolManifest]] = None,
+    functions: Optional[Dict[str, BaseTool]] = None,
     function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
     **kwargs: Any,
 ) -> bool:
@@ -82,23 +82,25 @@ async def handle_function_call(
         tool_name = tool_call.function.name
 
         tool = functions.get(tool_name)
-        tool_response: ArkToolResponse = ArkToolResponse()
-        if tool:
+        resp = None
+        if tool is None:
+            logging.error(f"Function {tool_name} not found")
+            resp = ""
+        else:
+            tool_response: BaseToolResponse = BaseToolResponse()
             parameters = json.loads(tool_call.function.arguments)
-            tool_response = await tool.executor(parameters=parameters, **kwargs)
-
+            tool_response = await tool.execute(parameters=parameters, **kwargs)
             logging.info(
                 f"Function {tool_name} called with parameters:"
                 + dump_json_str(parameters)
                 + f" and response: {dump_json_str(tool_response)}"
             )
-        else:
-            logging.error(f"Function {tool_name} not found")
+            resp = tool_response.data
 
         request.messages.append(
             ArkMessage(
                 role="tool",
-                content=transform_response(tool_response.data),
+                content=transform_response(resp),
                 tool_call_id=tool_call.id,
             )
         )
