@@ -72,7 +72,7 @@ if __name__ == "__main__":
         package_path="index",
         port=int(port) if port else 8888,
         health_check_path="/v1/ping",
-        endpoint_path="/api/v3/bots/chat/completions",
+        endpoint_path="/api/v3/chat/completions",
         trace_on=False,
         clients={},
     )

@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 """
-搜索结果定义
+search result definition
 """
 
 
@@ -12,7 +12,7 @@ class SearchResult(BaseModel):
 
 
 """
-搜索引擎抽象
+search engine interface
 """
 
 
