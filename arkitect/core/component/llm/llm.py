@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from langchain.prompts.chat import BaseChatPromptTemplate
 from langchain.schema.output_parser import BaseTransformOutputParser
@@ -23,7 +23,7 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.tool import ToolManifest
+from arkitect.core.component.tool.manifest import ToolManifest
 from arkitect.telemetry.trace import task
 from arkitect.utils.context import get_extra_headers
 
@@ -184,7 +184,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: Optional[Dict[str, ToolManifest]] = None,
+        functions: Optional[Dict[str, Union[ToolManifest, Callable]]] = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
@@ -192,10 +192,17 @@ class BaseChatLanguageModel(BaseLanguageModel):
         """
         Asynchronously runs a chat request and returns the response.
         """
-        parameters: Dict[str, Any] = self.parameters.model_dump(exclude_none=True, exclude_unset=True) if self.parameters else {}
+        parameters: Dict[str, Any] = (
+            self.parameters.model_dump(exclude_none=True, exclude_unset=True)
+            if self.parameters
+            else {}
+        )
 
         if functions:
-            parameters["tools"] = [function.schema() for function in functions.values() or []]
+            parameters["tools"] = [
+                f.schema() if isinstance(f, ToolManifest) else f
+                for f in functions.values()
+            ]
 
         request = ArkChatRequest(
             stream=False,
@@ -228,7 +235,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: Optional[Dict[str, ToolManifest]] = None,
+        functions: Optional[Dict[str, Union[ToolManifest, Callable]]] = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
@@ -237,11 +244,18 @@ class BaseChatLanguageModel(BaseLanguageModel):
         Asynchronously streams chat completions from the language model.
         """
 
-        parameters: Dict[str, Any] = self.parameters.model_dump(exclude_none=True, exclude_unset=True) if self.parameters else {}
+        parameters: Dict[str, Any] = (
+            self.parameters.model_dump(exclude_none=True, exclude_unset=True)
+            if self.parameters
+            else {}
+        )
 
         if functions:
-            parameters["tools"] = [function.schema() for function in functions.values() or []]
-        
+            parameters["tools"] = [
+                f.schema() if isinstance(f, ToolManifest) else f
+                for f in functions.values()
+            ]
+
         request = ArkChatRequest(
             stream=True,
             messages=self.generate_prompts(
@@ -276,14 +290,18 @@ class BaseChatLanguageModel(BaseLanguageModel):
                         if index not in final_tool_calls:
                             final_tool_calls[index] = tool_call
                         else:
-                            final_tool_calls[index].function.arguments += tool_call.function.arguments
+                            final_tool_calls[
+                                index
+                            ].function.arguments += tool_call.function.arguments
                 else:
                     # hide tool_calls info from response
                     if resp.choices[0].finish_reason != "tool_calls":
                         yield ArkChatCompletionChunk(**resp.__dict__)
                 if resp.choices[0].finish_reason == "tool_calls":
                     ark_resp = ArkChatCompletionChunk.merge(cumulated)
-                    ark_resp.choices[0].delta.tool_calls = list(final_tool_calls.values())
+                    ark_resp.choices[0].delta.tool_calls = list(
+                        final_tool_calls.values()
+                    )
                     is_more_request = await handle_function_call(
                         request, ark_resp, functions, function_call_mode
                     )

@@ -15,7 +15,7 @@
 import copy
 import json
 import logging
-from typing import Any, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletion,
@@ -42,7 +42,7 @@ async def handle_function_call(
     response: Union[
         ChatCompletionChunk, ChatCompletion, ArkChatCompletionChunk, ArkChatResponse
     ],
-    functions: Optional[Dict[str, ToolManifest]] = None,
+    functions: Optional[Dict[str, Union[ToolManifest, Callable]]] = None,
     function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
     **kwargs: Any,
 ) -> bool:
@@ -82,23 +82,32 @@ async def handle_function_call(
         tool_name = tool_call.function.name
 
         tool = functions.get(tool_name)
-        tool_response: ArkToolResponse = ArkToolResponse()
-        if tool:
+        if tool is None:
+            logging.error(f"Function {tool_name} not found")
+            resp = ""
+        elif isinstance(tool, ToolManifest):
+            tool_response: ArkToolResponse = ArkToolResponse()
             parameters = json.loads(tool_call.function.arguments)
             tool_response = await tool.executor(parameters=parameters, **kwargs)
-
             logging.info(
                 f"Function {tool_name} called with parameters:"
                 + dump_json_str(parameters)
                 + f" and response: {dump_json_str(tool_response)}"
             )
-        else:
-            logging.error(f"Function {tool_name} not found")
+            resp = tool_response.data
+        elif isinstance(tool, Callable):
+            parameters = json.loads(tool_call.function.arguments)
+            resp = tool(**parameters)
+            logging.info(
+                f"Function {tool_name} called with parameters:"
+                + dump_json_str(parameters)
+                + f" and response: {dump_json_str(resp)}"
+            )
 
         request.messages.append(
             ArkMessage(
                 role="tool",
-                content=transform_response(tool_response.data),
+                content=transform_response(resp),
                 tool_call_id=tool_call.id,
             )
         )
