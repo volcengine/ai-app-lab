@@ -29,8 +29,10 @@
 - [Node.js](https://nodejs.org/) (版本 16.2.0 或更高，推荐 Node.js 18 的 LTS 版本)
 - 已获取火山方舟 API Key [参考文档](https://www.volcengine.com/docs/82379/1298459#api-key-%E7%AD%BE%E5%90%8D%E9%89%B4%E6%9D%83)
 - 火山语音技术相关准备工作，**仅对企业客户开放，您可以先完成企业实名认证后接入使用**
-  - 已开通并创建**语音合成大模型**和**流式语音识别大模型**两个服务 [参照文档](https://www.volcengine.com/docs/6561/163043)
-  - 已获取上述两个服务的 appid 和 token [参考文档](https://www.volcengine.com/docs/6561/1329505)
+  - 已创建一个**语音服务**的应用 [创建链接](https://console.volcengine.com/speech/app) 
+  - 对该应用已开通**语音合成大模型**和**流式语音识别大模型**两个服务 [参照文档](https://www.volcengine.com/docs/6561/163043)
+    - 注意：**语音合成大模型**从开通到可以使用有大概5-10分钟延迟
+  - 已获取上述两个服务的 APP ID 和 Access Token [参考文档](https://www.volcengine.com/docs/6561/1329505)
 - 已创建 Doubao-Vision-Pro 32K 的 endpoint  [参考文档](https://www.volcengine.com/docs/82379/1099522#594199f1)
 - 已创建 Doubao-Pro 32K 的endpoint [参考文档](https://www.volcengine.com/docs/82379/1099522#594199f1)
 
@@ -46,22 +48,22 @@
    ```
 2. 修改配置
 
-   - 修改`backend/code/config.py` 中配置，填入刚刚获取的API keys， endpoint id 和**语音合成大模型** 的appid和token
-
+   - 修改`backend/code/config.py` 中配置，填入刚刚获取的API keys， endpoint id 和 APP ID和 Access Token 
 
      | 配置变量名   | 说明                              |
      | ------------ | --------------------------------- |
      | VLM_ENDPOINT | doubao-vision-pro 32k endpoint id |
      | LLM_ENDPOINT | doubao-pro 32k endpoint id        |
-     | access_key   | **语音合成大模型** appid          |
-     | app_key      | **语音合成大模型** token          |
-   - 修改 `frontend/run.sh` 中配置，填入刚刚获取的**流式语音识别大模型**appid 和 token
+     | access_key   | **语音服务**应用 APP ID          |
+     | app_key      | **语音服务**应用 Access Token           |
+
+   - 修改 `frontend/run.sh` 中配置，填入刚刚获取的APP ID和 Access Token
 
 
      | 配置变量名       | 说明                          |
      | ---------------- | ----------------------------- |
-     | APP_ID           | **流式语音识别大模型** APP_ID |
-     | APP_ACCESS_TOKEN | **流式语音识别大模型** token  |
+     | APP_ID           | **语音服务**应用 APP_ID |
+     | APP_ACCESS_TOKEN | **语音服务**应用 token  |
    - 修改 `backend/run.sh` 中配置，填入刚刚获取的API key
 
 
