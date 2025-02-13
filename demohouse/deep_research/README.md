@@ -11,12 +11,12 @@ TODO: by PM
 ## 环境准备
 
 - Poetry 1.6.1 版本
-- Python 版本要求大于等于 3.8.1，小于 3.12
+- Python 版本要求大于等于 3.9.0，小于 3.12
 - 火山方舟 API
   KEY [参考文档](https://www.volcengine.com/docs/82379/1298459#api-key-%E7%AD%BE%E5%90%8D%E9%89%B4%E6%9D%83)
 - 火山引擎 AK SK [参考文档](https://www.volcengine.com/docs/6291/65568)
 - 创建 DeepSeek-R1 的endpoint [参考文档](https://www.volcengine.com/docs/82379/1099522)
-- （可选）创建火山方舟零代码联网应用 [参考文档](https://www.volcengine.com/docs/82379/1267885)
+- （可选，推荐）创建火山方舟零代码联网应用 [参考文档](https://www.volcengine.com/docs/82379/1267885)
 - （可选）开源搜索引擎Tavily APIKEY [参考文档](https://docs.tavily.com/guides/quickstart)
 
 *如果选择使用火山方舟零代码联网应用作为搜索引擎实现，您可参考附录中的推荐配置创建对应的零代码联网应用*
@@ -34,7 +34,7 @@ TODO: by PM
 
 2. 修改配置
 
-- 修改`index.py`
+- 修改`server.py`
 
     ```python
     # 方舟APIKEY 
@@ -43,7 +43,7 @@ TODO: by PM
     REASONING_EP_ID = "{YOUR_ENDPOINT_ID}"
     # （可选）如果使用tavily作为搜索引擎，填写tavily APIKEY
     TAVILY_API_KEY = "{YOUR_TAVILY_API_KEY}"
-    # （可选）如果使用火山方舟零代码联网应用作为搜索引擎，填写对应的botId
+    # （可选，推荐）如果使用火山方舟零代码联网应用作为搜索引擎，填写对应的botId
     SEARCH_BOT_ID = "{YOUR_BOT_ID}"
     ```
 
@@ -63,10 +63,10 @@ TODO: by PM
     pip install poetry==1.6.1
 
     poetry install
-    poetry run python -m index
+    poetry run python -m server
     ```
 
-4. 使用火山方舟官方SDK调用服务端，可参考`client_example.py`
+4. 使用火山方舟官方SDK调用服务端，可参考`run_client.py`
 
     ```python
     from volcenginesdkarkruntime import Ark
@@ -77,7 +77,7 @@ TODO: by PM
     def main():
         # stream run
         stream_resp = client.chat.completions.create(
-            model="ep-test",  # useless, only for validation
+            model="ep-1234",  # useless, only for validation
             messages=[
                 {
                     "role": "user",
@@ -105,10 +105,23 @@ TODO: by PM
     if __name__ == "__main__":
         main()
     ```
+5. 如果仅需要在本地运行调试/验证效果，则无需执行步骤2~4，直接运行`run_local.py`即可：
+    
+    - 修改`run_local.py`中的配置项
+
+    ```
+    BOT_ID = "{YOUR_BOT_ID}"
+    ARK_API_KEY = "{YOUR_ARK_API_KEY}"
+    REASONING_EP_ID = "{YOUR_REASONING_EP}"
+    TAVILY_API_KEY = "{YOUR_TAVILY_API_KEY}"
+    QUERY = "找到2023年中国GDP超过万亿的城市，详细分析其中排名后十位的城市的增长率和GDP构成，并结合各城市规划预测5年后这些城市的GDP排名可能会如何变化"
+    ```
+   - 运行 `poetry run run_local.py`
+    
 
 ## 技术实现
 
-![img.png](img.png)
+![img.png](docs/img.png)
 
 本项目会结合“深度思考”大模型和联网搜索能力，并向上封装成标准的Chat Completion API Server。
 
@@ -130,8 +143,9 @@ TODO: by PM
 .
 ├── README.md
 ├── __init__.py
-├── client_example.py # 客户端调用示范
-├── deep_research.py # 深度搜索核型实现
+├── run_client.py # 客户端调用示范
+├── run_local.py # 本地测试运行示范
+├── deep_research.py # 核心实现
 ├── img.png
 ├── index.py # 服务端启动入口
 ├── poetry.lock
@@ -151,9 +165,9 @@ TODO: by PM
 
 ### 创建推荐配置的零代码联网应用
 
-![img_1.png](img_1.png)
+![img_1.png](docs/img_1.png)
 
-![img_2.png](img_2.png)
+![img_2.png](docs/img_2.png)
 
 自定义回复推荐配置：
 

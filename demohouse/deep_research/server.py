@@ -23,7 +23,7 @@ from arkitect.launcher.vefaas import bot_wrapper
 from arkitect.telemetry.trace import task
 from search_engine.tavily import TavilySearchEngine
 from search_engine.volc_bot import VolcBotSearchEngine
-from deep_research import DeepResearch
+from deep_research import DeepResearch, ExtraConfig
 
 from utils import get_last_message
 
@@ -33,9 +33,11 @@ logging.basicConfig(
 LOGGER = logging.getLogger(__name__)
 
 ARK_API_KEY = "{YOUR_ARK_API_KEY}"
-PLANNING_EP_ID = "{PLANNING_ENDPOINT_ID}"
-SUMMARY_EP_ID = "{SUMMARY_ENDPOINT_ID}"
+# recommend to use DeepSeek-R1 model
+REASONING_EP_ID = "{YOUR_ENDPOINT_ID}"
+# optional, if you select tavily as search engine, please configure this
 TAVILY_API_KEY = "{YOUR_TAVILY_API_KEY}"
+# optional, if you select volc bot as search engine, please configure this
 SEARCH_BOT_ID = "{YOUR_BOT_ID}"
 
 
@@ -46,10 +48,15 @@ async def main(
     # using last_user_message as query
     last_user_message = get_last_message(request.messages, "user")
     deep_research = DeepResearch(
-        search_engine=VolcBotSearchEngine(bot_id=SEARCH_BOT_ID, api_key=ARK_API_KEY),  # using volc bot as search engine
+        # (recommended) using volc bot as search engine
+        search_engine=VolcBotSearchEngine(bot_id=SEARCH_BOT_ID, api_key=ARK_API_KEY),
         # search_engine=TavilySearchEngine(api_key=TAVILY_API_KEY), # using tavily as search engine
-        planning_endpoint_id=PLANNING_EP_ID,
-        summary_endpoint_id=SUMMARY_EP_ID,
+        planning_endpoint_id=REASONING_EP_ID,
+        summary_endpoint_id=REASONING_EP_ID,
+        extra_config=ExtraConfig(
+            max_search_words=5,  # optional, the max search words for each planning rounds
+            max_planning_rounds=5,  # optional, the max rounds to run planning
+        )
     )
 
     if request.stream:

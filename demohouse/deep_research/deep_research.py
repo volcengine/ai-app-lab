@@ -9,8 +9,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import asyncio
-import logging
 from typing import Dict, List, AsyncIterable
 
 from jinja2 import Template
@@ -58,16 +56,10 @@ class ResultsSummary(BaseModel):
 
 
 class ExtraConfig(BaseModel):
-    # if using independent intention model in planning
-    using_intention: bool = False
-    # the intention model endpoint_id
-    intention_endpoint_id: Optional[str] = None
     # max_planning_rounds
     max_planning_rounds: int = 5
     # max_search_words
     max_search_words: int = 5
-    # intention_template (will be activated if using_intention is True)
-    intention_template: Optional[Template] = None
     # planning_template (prompt)
     planning_template: Template = DEFAULT_PLANNING_PROMPT
     # summary_template (prompt)
@@ -165,12 +157,6 @@ class DeepResearch(BaseModel):
         while planned_rounds < self.extra_config.max_planning_rounds:
             planned_rounds += 1
 
-            if self.extra_config.using_intention:
-                # if using independent intention model, run intention check to determine continue or not
-                if not await self._intention_check(request=request, question=question, references=references):
-                    INFO("no need to search")
-                    break
-
             llm = BaseChatLanguageModel(
                 endpoint_id=self.planning_endpoint_id,
                 template=CustomPromptTemplate(template=self.extra_config.planning_template or DEFAULT_PLANNING_PROMPT),
@@ -206,23 +192,6 @@ class DeepResearch(BaseModel):
                 INFO(f"search result: {search_results}")
                 for search_result in search_results:
                     references.add_result(query=search_result.query, results=[search_result])
-
-    async def _intention_check(self, request: ArkChatRequest, question: str, references: ResultsSummary) -> bool:
-        llm = BaseChatLanguageModel(
-            endpoint_id=self.extra_config.intention_endpoint_id,
-            template=CustomPromptTemplate(template=self.extra_config.intention_template),
-            messages=request.messages,
-        )
-
-        intention_response = await llm.arun(
-            reference=references.to_plaintext(),  # pass the search result to prompt template
-            question=question,
-            meta_info=f"当前时间：{get_current_date()}",
-        )
-
-        INFO(f"intention response: {intention_response}")
-
-        return '否' not in intention_response.choices[0].message.content
 
     async def arun_summary(self, request: ArkChatRequest, question: str, references: ResultsSummary) -> ArkChatResponse:
         llm = BaseChatLanguageModel(
@@ -261,53 +230,4 @@ class DeepResearch(BaseModel):
     def check_query(cls, output: str) -> Optional[List[str]]:
         if '无需' in output:
             return None
-        return [o.strip() for o in output.split(' ')]
-
-
-logging.basicConfig(
-    level=logging.INFO, format="[%(asctime)s][%(levelname)s] %(message)s"
-)
-LOGGER = logging.getLogger(__name__)
-
-
-async def main():
-    dr = DeepResearch(
-        search_engine=VolcBotSearchEngine(
-            bot_id="{}",
-            api_key="{}"
-        ),
-        planning_endpoint_id="{}",
-        summary_endpoint_id="{}",
-        extra_config=ExtraConfig(
-            max_planning_rounds=10,
-            max_search_words=10,
-        )
-        # extra_config=ExtraConfig(
-        #     using_intention=True,
-        #     intention_endpoint_id="{INTENTION_EP_ID}",
-        #     intention_template=INTENTION_PROMPT,
-        #     planning_template=INTENTION_QUERY_PROMPT,
-        # )
-    )
-
-    thinking = False
-    async for chunk in dr.astream_deep_research(
-            request=ArkChatRequest(model="test",
-                                   messages=[ArkMessage(role="user",
-                                                        content="找到2023年中国GDP超过万亿的城市，详细分析其中排名15～20位的城市的增长率和GDP构成，并结合各城市规划预测5年后这些城市的GDP排名可能会如何变化")]),
-            question="找到2023年中国GDP超过万亿的城市，详细分析其中排名15～20的城市的增长率和GDP构成，并结合各城市规划预测5年后这些城市的GDP排名可能会如何变化"
-    ):
-        if chunk.choices[0].delta.reasoning_content:
-            if not thinking:
-                print("\n----思考过程----\n")
-                thinking = True
-            print(chunk.choices[0].delta.reasoning_content, end="")
-        elif chunk.choices[0].delta.content:
-            if thinking:
-                print("\n----输出回答----\n")
-                thinking = False
-            print(chunk.choices[0].delta.content, end="")
-
-
-if __name__ == '__main__':
-    asyncio.run(main())
+        return [o.strip() for o in output.split(';')]

@@ -10,7 +10,7 @@
 # limitations under the License.
 
 from abc import ABC
-from typing import Literal, Optional
+from typing import Literal, Optional, List
 
 from tavily import TavilyClient
 
@@ -40,7 +40,20 @@ class TavilySearchEngine(SearchEngine, ABC):
         self._include_domains = include_domains
         self._exclude_domains = exclude_domains
 
-    def search(self, query: str) -> SearchResult:
+    def search(self, queries: List[str]) -> List[SearchResult]:
+        return asyncio.run(self.asearch(queries=queries))
+
+    async def asearch(self, queries: List[str]) -> List[SearchResult]:
+        tasks = [self._arun_search_single(query) for query in queries]
+        task_results = await asyncio.gather(*tasks)
+        return [
+            r for r in task_results
+        ]
+
+    async def _arun_search_single(self, query: str) -> SearchResult:
+        return await asyncio.to_thread(self._search_single, query)
+
+    def _search_single(self, query: str) -> SearchResult:
         response = self._tavily_client.search(
             query=query,
             search_depth=self._search_depth,
@@ -51,26 +64,12 @@ class TavilySearchEngine(SearchEngine, ABC):
             exclude_domains=self._exclude_domains,
         )
         return SearchResult(
-            raw_content=self._format_result(response)
-        )
-
-    async def asearch(self, query: str) -> SearchResult:
-        loop = asyncio.get_running_loop()
-        response = await loop.run_in_executor(None, lambda: self._tavily_client.search(
             query=query,
-            search_depth=self._search_depth,
-            topic=self._topic,
-            days=self._days,
-            max_results=self._max_results,
-            include_domains=self._include_domains,
-            exclude_domains=self._exclude_domains
-        ))
-        return SearchResult(
-            raw_content=self._format_result(response)
+            summary_content=self._format_result(response),
         )
 
     @classmethod
-    def _format_result(self, tavily_result: dict) -> str:
+    def _format_result(cls, tavily_result: dict) -> str:
         results = tavily_result.get("results", [])
         formatted: str = ""
         for (i, result) in enumerate(results):
