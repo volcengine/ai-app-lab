@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 from volcenginesdkarkruntime import AsyncArk
@@ -26,6 +26,9 @@ from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.trace import task
 
 from .model import ArkToolRequest, ArkToolResponse
+
+PreToolCallHook = Callable[[ArkToolRequest], Awaitable[ArkToolRequest]]
+PostToolCallHook = Callable[[ArkToolResponse], Awaitable[ArkToolResponse]]
 
 
 class ParameterTypeEnum(str, Enum):
@@ -102,6 +105,8 @@ class ToolManifest(BaseModel):
 
     manifest_field: Dict[str, Any] = Field(default_factory=dict)
     client: AsyncArk = Field(default_factory=default_ark_client)
+    pre_tool_call_hook: List[PreToolCallHook] = Field(default_factory=list)
+    post_tool_call_hook: List[PostToolCallHook] = Field(default_factory=list)
 
     class Config:
         """
@@ -190,11 +195,15 @@ class ToolManifest(BaseModel):
             tool_name=self.tool_name,
             parameters=parameters or {},
         )
+        for pre_hook in self.pre_tool_call_hook:
+            parameter = await pre_hook(parameter)
         response = await self.client.post(
             path="/tools/execute",
             body=parameter.model_dump(),
             cast_to=ArkToolResponse,
         )
+        for post_hook in self.post_tool_call_hook:
+            response = await post_hook(response)
         return ArkToolResponse(**response)
 
     @property
