@@ -185,11 +185,11 @@ class ArkContextParameters(BaseModel):
     """
     The initial messages for the context.
     """
-    ttl: Optional[TTLTypes] | None = None
+    ttl: Optional[TTLTypes] = None
     """
     The TTL of the context.
     """
-    truncation_strategy: Optional[TruncationStrategy] | None = None
+    truncation_strategy: Optional[TruncationStrategy] = None
     """
     The truncation strategy of the context.
     """
