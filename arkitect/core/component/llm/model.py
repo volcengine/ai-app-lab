@@ -31,10 +31,23 @@ import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_ch
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing_extensions import Annotated, Literal
 from volcenginesdkarkruntime.types.chat.chat_completion import ChatCompletion, Choice
+from volcenginesdkarkruntime.types.chat.chat_completion_message_param import (
+    ChatCompletionMessageParam,
+)
 from volcenginesdkarkruntime.types.chat.chat_completion_stream_options_param import (
     ChatCompletionStreamOptionsParam,
 )
 from volcenginesdkarkruntime.types.completion_usage import CompletionUsage
+from volcenginesdkarkruntime.types.context.context_chat_completion import (
+    ContextChatCompletion,
+)
+from volcenginesdkarkruntime.types.context.context_chat_completion_chunk import (
+    ContextChatCompletionChunk,
+)
+from volcenginesdkarkruntime.types.context.context_create_params import (
+    TruncationStrategy,
+    TTLTypes,
+)
 
 from arkitect.core.errors import InvalidParameter, MissingParameter
 from arkitect.core.runtime import Request, Response
@@ -161,6 +174,25 @@ class ArkChatParameters(BaseModel):
                 merged_dict[key] = value
 
         return self.__class__(**merged_dict)
+
+
+class ArkContextParameters(BaseModel):
+    mode: Literal["session", "common_prefix"] = "session"
+    """
+    The mode of the context.
+    """
+    messages: List[ChatCompletionMessageParam]
+    """
+    The initial messages for the context.
+    """
+    ttl: Optional[TTLTypes] = None
+    """
+    The TTL of the context.
+    """
+    truncation_strategy: Optional[TruncationStrategy] = None
+    """
+    The truncation strategy of the context.
+    """
 
 
 class Function(BaseModel):
@@ -500,7 +532,7 @@ class ArkChatResponse(Response):
 
     @staticmethod
     def merge(
-        responses: List[Union[ArkChatResponse, ChatCompletion]],
+        responses: List[Union[ArkChatResponse, ChatCompletion, ContextChatCompletion]],
     ) -> ArkChatResponse:
         assert len(responses) > 0, "empty responses"
 
@@ -589,7 +621,11 @@ class ArkChatCompletionChunk(Response):
     @staticmethod
     def merge(
         responses: List[
-            Union[ArkChatCompletionChunk, completion_chunk.ChatCompletionChunk]
+            Union[
+                ArkChatCompletionChunk,
+                completion_chunk.ChatCompletionChunk,
+                ContextChatCompletionChunk,
+            ]
         ],
     ) -> Optional[ArkChatCompletionChunk]:
         if len(responses) == 0:

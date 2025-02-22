@@ -27,10 +27,8 @@ from langchain_core.messages import (
 from langchain_core.messages.tool import ToolCall
 from pydantic import BaseModel
 from typing_extensions import Literal
-from volcenginesdkarkruntime.types.chat import (
-    ChatCompletion,
-    ChatCompletionChunk,
-)
+from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
+from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.trace import task
@@ -221,7 +219,7 @@ def transform_response(response: Any) -> str:
 
 
 def convert_response_message(
-    response_message: Union[ChatCompletionChunk, ChatCompletion],
+    response_message: Union[ChatCompletionMessage, ChoiceDelta],
 ) -> ArkMessage:
     return ArkMessage(
         role=response_message.role,
