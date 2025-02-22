@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, AsyncIterable, Dict, List, Optional
+from typing import Any, AsyncIterable, Dict, List, Optional, Union
 
 from volcenginesdkarkruntime.types.context import CreateContextResponse
 
@@ -49,7 +49,7 @@ class _AsyncCompletions:
 
     async def create(
         self, messages: List[ArkMessage], stream: bool = True, **kwargs: Dict[str, Any]
-    ) -> ArkChatResponse | AsyncIterable[ArkChatCompletionChunk]:
+    ) -> Union[ArkChatResponse, AsyncIterable[ArkChatCompletionChunk]]:
         if not stream:
             while True:
                 resp = (

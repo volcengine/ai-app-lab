@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, AsyncIterable, Dict, List, Optional
+from typing import Any, AsyncIterable, Dict, List, Optional, Union
 
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.resources.chat import AsyncChat
@@ -48,7 +48,7 @@ class _AsyncCompletions(AsyncCompletions):
         stream: bool = True,
         tools: Optional[Dict[str, ToolType]] = None,
         **kwargs: Dict[str, Any],
-    ) -> ArkChatResponse | AsyncIterable[ArkChatCompletionChunk]:
+    ) -> Union[ArkChatResponse, AsyncIterable[ArkChatCompletionChunk]]:
         parameters = (
             self._state.parameters.__dict__
             if self._state.parameters is not None
