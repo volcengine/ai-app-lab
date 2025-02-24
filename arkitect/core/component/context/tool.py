@@ -15,32 +15,46 @@
 import json
 from typing import Any, List
 
-from pydantic import Field
+from pydantic import BaseModel, Field
+from volcenginesdkarkruntime.types.chat import (
+    ChatCompletionAssistantMessageParam,
+    ChatCompletionMessageParam,
+)
 
 from arkitect.core.component.context.hooks import ToolHook
 from arkitect.core.component.context.model import State
-from arkitect.core.component.llm.model import (
-    ArkMessage,
-    ChatCompletionMessageToolCallParam,
-)
+from arkitect.core.component.llm.model import ChatCompletionTool, FunctionDefinition
 from arkitect.core.component.tool import ArkToolResponse, ToolManifest
 
 
-class _AsyncTool(ToolManifest):
+class _AsyncTool(BaseModel):
     state: State
     hooks: List[ToolHook] = Field(default_factory=list)
+    tool: ToolManifest
 
     async def execute(
-        self, parameter: ChatCompletionMessageToolCallParam, **kwargs: Any
-    ) -> ArkToolResponse:
+        self, parameter: ChatCompletionAssistantMessageParam, **kwargs: Any
+    ) -> ChatCompletionMessageParam:
         for hook in self.hooks:
             parameter = await hook(self.state, parameter)
-        resp = await super().executor(
-            json.loads(parameter.function.arguments), **kwargs
-        )
-        self.state.messages.append(
-            ArkMessage(
-                role="tool", tool_call_id=parameter.id, content=resp.model_dump_json()
+        arguments = parameter.get("function", {}).get("arguments", "{}")
+        resp = await self.tool.executor(json.loads(arguments), **kwargs)
+        if isinstance(resp, ChatCompletionMessageParam):
+            self.state.messages.append(resp)
+        elif isinstance(resp, ArkToolResponse):
+            self.state.messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": parameter.get("id", ""),
+                    "content": resp.model_dump_json(),
+                }
             )
+        return self.state.messages[-1]
+
+    def tool_schema(self) -> ChatCompletionTool:
+        """
+        Returns the schema of the tool.
+        """
+        return ChatCompletionTool(
+            type="function", function=FunctionDefinition(**self.tool.manifest())
         )
-        return resp

@@ -12,22 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, AsyncIterable, Dict, List, Union
+from typing import Any, AsyncIterable, Dict, List, Literal, Optional, Union
 
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.resources.context import AsyncContext
 from volcenginesdkarkruntime.resources.context.completions import AsyncCompletions
+from volcenginesdkarkruntime.types.chat import (
+    ChatCompletionMessageParam,
+)
 from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
-
-from arkitect.core.component.llm.model import (
-    ArkChatCompletionChunk,
-    ArkChatRequest,
-    ArkChatResponse,
-    ArkMessage,
+from volcenginesdkarkruntime.types.context import (
+    ContextChatCompletion,
+    ContextChatCompletionChunk,
 )
-from arkitect.core.component.llm.utils import convert_response_message
 
 from .hooks import ChatHook, default_chat_hook, default_context_chat_hook
 from .model import State
@@ -47,40 +46,36 @@ class _AsyncCompletions(AsyncCompletions):
 
     async def create(
         self,
-        messages: List[ArkMessage],
-        stream: bool = True,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[False, True]] = True,
         **kwargs: Dict[str, Any],
-    ) -> Union[ArkChatResponse, AsyncIterable[ArkChatCompletionChunk]]:
+    ) -> Union[ContextChatCompletion, AsyncIterable[ContextChatCompletionChunk]]:
         parameters = (
             self._state.parameters.__dict__
             if self._state.parameters is not None
             else {}
         )
-        request = ArkChatRequest(
+        for hook in self.hooks:
+            messages = await hook(self._state, messages)
+        resp = await super().create(
             model=self._state.model,
+            context_id=self._state.context_id,
             messages=messages,
             stream=stream,
             **parameters,
+            **kwargs,
         )
-        for hook in self.hooks:
-            request = await hook(self._state, request)
-        chat_request = request.get_chat_request()
-        chat_request["context_id"] = self._state.context_id
-        resp = await super().create(**chat_request)
         if not stream:
-            ark_resp = ArkChatResponse.merge([resp])
             if resp.choices:
-                self._state.messages.append(
-                    convert_response_message(resp.choices[0].message)
-                )
-            return ark_resp
+                self._state.messages.append(resp.choices[0].message.__dict__)
+            return resp
         else:
 
-            async def iterator() -> AsyncIterable[ArkChatCompletionChunk]:
+            async def iterator() -> AsyncIterable[ContextChatCompletionChunk]:
                 chat_completion_messages = ChatCompletionMessage(
                     role="assistant",
                     content="",
-                    tool_calls=[],
+                    tool_calls=None,
                 )
                 async for chunk in resp:
                     if len(chunk.choices) > 0:
@@ -88,10 +83,8 @@ class _AsyncCompletions(AsyncCompletions):
                             chat_completion_messages.content += chunk.choices[
                                 0
                             ].delta.content
-                    yield ArkChatCompletionChunk(**chunk.__dict__)
-                self._state.messages.append(
-                    convert_response_message(chat_completion_messages)
-                )
+                    yield chunk
+                self._state.messages.append(chat_completion_messages.__dict__)
 
             return iterator()
 

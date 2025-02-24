@@ -12,33 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, List
+
+from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
 from arkitect.core.component.llm.model import (
-    ArkChatRequest,
     ChatCompletionMessageToolCallParam,
 )
 
 from .model import State
 
-ChatHook = Callable[[State, ArkChatRequest], Awaitable[ArkChatRequest]]
+ChatHook = Callable[
+    [State, List[ChatCompletionMessageParam]],
+    Awaitable[List[ChatCompletionMessageParam]],
+]
 ToolHook = Callable[
     [State, ChatCompletionMessageToolCallParam],
     Awaitable[ChatCompletionMessageToolCallParam],
 ]
 
 
-async def default_chat_hook(state: State, request: ArkChatRequest) -> ArkChatRequest:
-    state.messages.extend(request.messages)
-    request.messages = state.messages
-    return request
+async def default_chat_hook(
+    state: State, messages: List[ChatCompletionMessageParam]
+) -> List[ChatCompletionMessageParam]:
+    state.messages.extend(messages)
+    messages = state.messages
+    return messages
 
 
 async def default_context_chat_hook(
-    state: State, request: ArkChatRequest
-) -> ArkChatRequest:
-    state.messages.extend(request.messages)
-    return request
+    state: State, messages: List[ChatCompletionMessageParam]
+) -> List[ChatCompletionMessageParam]:
+    state.messages.extend(messages)
+    return messages
 
 
 async def approval_tool_hook(

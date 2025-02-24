@@ -12,17 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, AsyncIterable, Dict, List, Optional, Union
+from typing import Any, AsyncIterable, Dict, List, Literal, Optional, Union
 
+from volcenginesdkarkruntime.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+)
 from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
 from arkitect.core.component.llm.model import (
-    ArkChatCompletionChunk,
     ArkChatParameters,
-    ArkChatResponse,
     ArkContextParameters,
-    ArkMessage,
 )
 from arkitect.core.component.tool.pool import ToolManifest
 
@@ -38,18 +40,21 @@ class _AsyncCompletions:
 
     async def handle_tool_call(self) -> bool:
         last_message = self._ctx.get_latest_message()
-        if last_message is None or not last_message.tool_calls:
+        if last_message is None or not last_message.get("tool_calls"):
             return True
-        for tool_call in last_message.tool_calls:
-            tool = self._ctx.tools.get(tool_call.function.name)
+        for tool_call in last_message.get("tool_calls"):
+            tool = self._ctx.tools.get(tool_call.get("function", {}).get("name"))
             if tool is None:
                 continue
             await tool.execute(parameter=tool_call)
         return False
 
     async def create(
-        self, messages: List[ArkMessage], stream: bool = True, **kwargs: Dict[str, Any]
-    ) -> Union[ArkChatResponse, AsyncIterable[ArkChatCompletionChunk]]:
+        self,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[True, False]] = True,
+        **kwargs: Dict[str, Any],
+    ) -> Union[ChatCompletion, AsyncIterable[ChatCompletionChunk]]:
         if not stream:
             while True:
                 resp = (
@@ -63,7 +68,6 @@ class _AsyncCompletions:
                     else await self._ctx.context.completions.create(
                         messages=messages,
                         stream=stream,
-                        tools=self._ctx.tools,
                         **kwargs,
                     )
                 )
@@ -74,8 +78,8 @@ class _AsyncCompletions:
         else:
 
             async def iterator(
-                messages: List[ArkMessage],
-            ) -> AsyncIterable[ArkChatCompletionChunk]:
+                messages: List[ChatCompletionMessageParam],
+            ) -> AsyncIterable[ChatCompletionChunk]:
                 while True:
                     resp = (
                         await self._ctx.chat.completions.create(
@@ -88,7 +92,6 @@ class _AsyncCompletions:
                         else await self._ctx.context.completions.create(
                             messages=messages,
                             stream=stream,
-                            tools=self._ctx.tools,
                             **kwargs,
                         )
                     )
@@ -125,10 +128,7 @@ class Context:
         self.tools = {
             tool_name: _AsyncTool(
                 state=self.state,
-                action_name=tool.action_name,
-                tool_name=tool.tool_name,
-                description=tool.description,
-                parameters=tool.parameters,
+                tool=tool,
             )
             for tool_name, tool in tools.items()
         }
@@ -155,7 +155,7 @@ class Context:
         # do not need explicit deletion
         pass
 
-    def get_latest_message(self) -> Optional[ArkMessage]:
+    def get_latest_message(self) -> Optional[ChatCompletionMessageParam]:
         if len(self.state.messages) == 0:
             return None
         return self.state.messages[-1]

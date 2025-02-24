@@ -12,22 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, AsyncIterable, Dict, List, Optional, Union
+from typing import Any, AsyncIterable, Dict, List, Literal, Mapping, Optional, Union
 
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.resources.chat import AsyncChat
 from volcenginesdkarkruntime.resources.chat.completions import AsyncCompletions
+from volcenginesdkarkruntime.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+)
 from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
-
-from arkitect.core.component.llm.model import (
-    ArkChatCompletionChunk,
-    ArkChatRequest,
-    ArkChatResponse,
-    ArkMessage,
-)
-from arkitect.core.component.llm.utils import convert_response_message
 
 from .hooks import ChatHook, default_chat_hook
 from .model import State, ToolType
@@ -44,37 +41,36 @@ class _AsyncCompletions(AsyncCompletions):
 
     async def create(
         self,
-        messages: List[ArkMessage],
-        stream: bool = True,
-        tools: Optional[Dict[str, ToolType]] = None,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[True, False]] = True,
+        tools: Optional[Mapping[str, ToolType]] = None,
         **kwargs: Dict[str, Any],
-    ) -> Union[ArkChatResponse, AsyncIterable[ArkChatCompletionChunk]]:
+    ) -> Union[ChatCompletion, AsyncIterable[ChatCompletionChunk]]:
         parameters = (
             self._state.parameters.__dict__
             if self._state.parameters is not None
             else {}
         )
         if tools is not None:
-            parameters["tools"] = [tool.tool_schema() for tool in tools.values() or []]
-        request = ArkChatRequest(
+            parameters["tools"] = [
+                tool.tool_schema().model_dump() for tool in tools.values() or []
+            ]
+        for hook in self.hooks:
+            messages = await hook(self._state, messages)
+        resp = await super().create(
             model=self._state.model,
             messages=messages,
             stream=stream,
             **parameters,
+            **kwargs,
         )
-        for hook in self.hooks:
-            request = await hook(self._state, request)
-        resp = await super().create(**request.get_chat_request())
         if not stream:
-            ark_resp = ArkChatResponse.merge([resp])
             if resp.choices:
-                self._state.messages.append(
-                    convert_response_message(resp.choices[0].message)
-                )
-            return ark_resp
+                self._state.messages.append(resp.choices[0].message.model_dump())
+            return resp
         else:
 
-            async def iterator() -> AsyncIterable[ArkChatCompletionChunk]:
+            async def iterator() -> AsyncIterable[ChatCompletionChunk]:
                 final_tool_calls = {}
                 chat_completion_messages = ChatCompletionMessage(
                     role="assistant",
@@ -96,11 +92,11 @@ class _AsyncCompletions(AsyncCompletions):
                                     final_tool_calls[
                                         index
                                     ].function.arguments += tool_call.function.arguments
-                    yield ArkChatCompletionChunk(**chunk.__dict__)
-                chat_completion_messages.tool_calls = list(final_tool_calls.values())
-                self._state.messages.append(
-                    convert_response_message(chat_completion_messages)
-                )
+                    yield chunk
+                chat_completion_messages.tool_calls = [
+                    v.model_dump() for v in final_tool_calls.values()
+                ]
+                self._state.messages.append(chat_completion_messages.__dict__)
 
             return iterator()
 

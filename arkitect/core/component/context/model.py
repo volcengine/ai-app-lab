@@ -12,23 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Optional, TypeVar
+from typing import List, Optional, Protocol
 
 from pydantic import BaseModel, Field
+from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
 from arkitect.core.component.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
-    ArkMessage,
+    ChatCompletionTool,
 )
-from arkitect.core.component.tool import ToolManifest
 
-ToolType = TypeVar("ToolType", bound=ToolManifest)
+
+class ToolType(Protocol):
+    def tool_schema(self) -> ChatCompletionTool:
+        ...
 
 
 class State(BaseModel):
     model: str
     context_id: Optional[str] = Field(default=None)
-    messages: List[ArkMessage] = Field(default_factory=list)
+    messages: List[ChatCompletionMessageParam] = Field(default_factory=list)
     parameters: Optional[ArkChatParameters] = Field(default=None)
     context_parameters: Optional[ArkContextParameters] = Field(default=None)

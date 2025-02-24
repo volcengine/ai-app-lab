@@ -34,7 +34,10 @@ async def main():
             if question == "exit":
                 break
             completion = await ctx.completions.create([
-                ArkMessage(role="user", content=question)
+                {
+                    "role": "user",
+                    "content": question
+                }
             ], stream=True)
             async for chunk in completion:
                 if chunk.choices:
@@ -42,7 +45,7 @@ async def main():
             print()
 
     # context api example
-    async with Context(model="<MODEL_NAME>", context_parameters=ArkContextParameters(
+    async with Context(model="<MODEL-NAME>", context_parameters=ArkContextParameters(
             messages=[
                 {
                     "role": "system",
@@ -58,8 +61,11 @@ async def main():
             if question == "exit":
                 break
             completion = await ctx.completions.create([
-                ArkMessage(role="user", content=question)
-            ])
+                {
+                    "role": "user",
+                    "content": question
+                },
+            ], stream=True)
             async for chunk in completion:
                 if chunk.choices:
                     print(chunk.choices[0].delta.content, end="")
