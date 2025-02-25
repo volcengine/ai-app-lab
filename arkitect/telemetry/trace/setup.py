@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import logging
 import os
 import sys
 from datetime import datetime
+from os import linesep
 from typing import IO, Optional
 
 from opentelemetry import trace
@@ -80,7 +82,13 @@ def setup_tracing(
         return
 
     out = _get_trace_log_file(log_dir) if log_dir else sys.stdout
-    exporter: SpanExporter = ConsoleSpanExporter(out=out)
+    exporter: SpanExporter = ConsoleSpanExporter(
+        out=out,
+        formatter=lambda span: json.dumps(
+            json.loads(span.to_json()), ensure_ascii=False, indent=4
+        )
+        + linesep,
+    )
     resource: Resource = Resource.create(
         {
             ResourceAttributes.SERVICE_NAME: "bot",
