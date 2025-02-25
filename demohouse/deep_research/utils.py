@@ -8,15 +8,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import time
 from datetime import datetime
 from typing import List
+
+import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 
 from arkitect.core.component.llm.model import ArkMessage, ArkChatCompletionChunk
 
 
 def cast_content_to_reasoning_content(
-    chunk: ArkChatCompletionChunk,
+        chunk: ArkChatCompletionChunk,
 ) -> ArkChatCompletionChunk:
     new_chunk = ArkChatCompletionChunk(**chunk.__dict__)
     new_chunk.choices[0].delta.reasoning_content = chunk.choices[0].delta.content
@@ -49,3 +51,20 @@ def get_last_message(messages: List[ArkMessage], role: str):
 
 def get_current_date() -> str:
     return datetime.now().strftime("%Y年%m月%d日")
+
+
+def gen_metadata_chunk(metadata: dict) -> ArkChatCompletionChunk:
+    return ArkChatCompletionChunk(
+        id='',
+        created=int(time.time()),
+        model='',
+        object='chat.completion.chunk',
+        choices=[completion_chunk.Choice(
+            index=0,
+            delta=completion_chunk.ChoiceDelta(
+                content="",
+                reasoning_content=""
+            ),
+        )],
+        metadata=metadata,
+    )
