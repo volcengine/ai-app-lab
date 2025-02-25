@@ -33,7 +33,7 @@ def launch_serve(
     clients: Optional[Dict[str, Tuple[Type[Client], Any]]] = None,
     trace_config: Optional[TraceConfig] = None,
     trace_on: bool = True,
-    trace_log_dir: Optional[str] = None,
+    trace_log_dir: Optional[str] = "./",
     **kwargs: Any,
 ) -> None:
     set_resource_type(os.getenv("RESOURCE_TYPE") or "")
