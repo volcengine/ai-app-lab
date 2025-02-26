@@ -56,8 +56,8 @@ class TraceConfig(BaseModel):
         export_timeout_millis: Optional[float] = None,
     ):
         super().__init__(
-            ak=ak or os.getenv("VOLC_ACCESS_KEY", ""),
-            sk=sk or os.getenv("VOLC_SECRET_KEY", ""),
+            ak=ak or os.getenv("VOLC_ACCESSKEY", os.getenv("VOLC_ACCESS_KEY", "")),
+            sk=sk or os.getenv("VOLC_SECRETKEY", os.getenv("VOLC_SECRET_KEY", "")),
             topic=topic or os.getenv("TRACE_TOPIC", ""),
             region=region or os.getenv("REGION", "cn-beijing"),
             max_queue_size=max_queue_size,
