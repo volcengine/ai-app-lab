@@ -64,8 +64,8 @@
    | TTS_APP_KEY         | 语音技术 App Key                          |
    | TTS_API_RESOURCE_ID | 语音技术 API Resource ID                  |
    | ARK_API_KEY         | 火山方舟 API Key，用于方舟模型接入点推理时做鉴权          |
-   | VOLC_ACCESS_KEY     | 火山引擎账号 Access Key，用于访问 TOS API，上载模型产物 |
-   | VOLC_SECRET_KEY     | 火山引擎账号 Secret Key，用于访问 TOS API，上载模型产物 |
+   | VOLC_ACCESSKEY     | 火山引擎账号 Access Key，用于访问 TOS API，上载模型产物 |
+   | VOLC_SECRETKEY     | 火山引擎账号 Secret Key，用于访问 TOS API，上载模型产物 |
    | TOS_BUCKET          | 指定生视频模型和配音模型产物的 TOS 储存桶名              |
    | LLM_ENDPOINT_ID     | 脚本创作，分镜，角色和视频描述，调用的大模型接入点 ID          |
    | VLM_ENDPOINT_ID     | 最终视频影片交互，调用的视觉理解大模型接入点 ID             |

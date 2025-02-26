@@ -56,8 +56,8 @@ class TraceConfig(BaseModel):
         export_timeout_millis: Optional[float] = None,
     ):
         super().__init__(
-            ak=ak or os.getenv("VOLC_ACCESS_KEY", ""),
-            sk=sk or os.getenv("VOLC_SECRET_KEY", ""),
+            ak=ak or os.getenv("VOLC_ACCESSKEY", os.getenv("VOLC_ACCESS_KEY", "")),
+            sk=sk or os.getenv("VOLC_SECRETKEY", os.getenv("VOLC_SECRET_KEY", "")),
             topic=topic or os.getenv("TRACE_TOPIC", ""),
             region=region or os.getenv("REGION", "cn-beijing"),
             max_queue_size=max_queue_size,
@@ -108,8 +108,10 @@ def setup_tracing(
     if endpoint:
         headers = {
             "x-tls-otel-tracetopic": trace_config.topic or os.getenv("TRACE_TOPIC", ""),
-            "x-tls-otel-ak": trace_config.ak or os.getenv("VOLC_ACCESS_KEY", ""),
-            "x-tls-otel-sk": trace_config.sk or os.getenv("VOLC_SECRET_KEY", ""),
+            "x-tls-otel-ak": trace_config.ak
+            or os.getenv("VOLC_ACCESSKEY", os.getenv("VOLC_ACCESS_KEY", "")),
+            "x-tls-otel-sk": trace_config.sk
+            or os.getenv("VOLC_SECRETKEY", os.getenv("VOLC_SECRET_KEY", "")),
             "x-tls-otel-region": trace_config.region
             or os.getenv("REGION", "cn-beijing"),
         }
