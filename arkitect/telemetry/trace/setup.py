@@ -81,9 +81,8 @@ def setup_tracing(
     if provider is not None:
         return
 
-    out = _get_trace_log_file(log_dir) if log_dir else sys.stdout
     exporter: SpanExporter = ConsoleSpanExporter(
-        out=out,
+        out=_get_trace_log_file(log_dir),
         formatter=lambda span: json.dumps(
             json.loads(span.to_json()), ensure_ascii=False, indent=4
         )
@@ -140,16 +139,18 @@ def _get_host_name() -> str:
     return host_name
 
 
-def _get_trace_log_file(log_dir: str = "./") -> IO:
-    # 生成时间戳
+def _get_trace_log_file(log_dir: Optional[str] = None) -> IO:
+    if not log_dir:
+        return sys.stdout
+
     timestr = datetime.now().strftime("%Y%m%d%H%M%S")
 
-    # 拼接完整文件名
     filename = f"trace_{timestr}.log"
     filepath = os.path.join(log_dir, filename)
 
-    # 确保目录存在
-    os.makedirs(log_dir, exist_ok=True)
-
-    # 返回打开的文件对象（读写模式，UTF-8编码）
-    return open(filepath, "w+", encoding="utf-8")
+    try:
+        os.makedirs(log_dir, exist_ok=True)
+        return open(filepath, "w+", encoding="utf-8")
+    except Exception as e:
+        print(f"cannot create trace log file {filepath} due to {e}")
+        return sys.stdout
