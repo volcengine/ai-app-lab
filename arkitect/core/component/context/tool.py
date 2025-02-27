@@ -39,8 +39,15 @@ class _AsyncTool(BaseModel):
             parameter = await hook(self.state, parameter)
         arguments = parameter.get("function", {}).get("arguments", "{}")
         resp = await self.tool.executor(json.loads(arguments), **kwargs)
-        if isinstance(resp, ChatCompletionMessageParam):
-            self.state.messages.append(resp)
+        if isinstance(resp, list) and len(resp) > 0:
+            # tool message only support pure text at the moment
+            self.state.messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": parameter.get("id", ""),
+                    "content": resp[0].get("text", ""),
+                }
+            )
         elif isinstance(resp, ArkToolResponse):
             self.state.messages.append(
                 {
