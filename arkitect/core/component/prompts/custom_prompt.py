@@ -75,7 +75,7 @@ class CustomPromptTemplate(BaseChatPromptTemplate):
                         "星期六",
                         "星期日",
                     ]  # `tm_wday` 0~6, 6 means Sunday
-                    return f'{t.strftime("%Y年%m月%d日%H时")}{weekdays[t.weekday()]}'
+                    return f"{t.strftime('%Y年%m月%d日%H时')}{weekdays[t.weekday()]}"
 
                 if isinstance(value, str):
                     value = datetime.fromisoformat(value)
