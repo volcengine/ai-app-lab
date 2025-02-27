@@ -95,6 +95,7 @@ class FilmInteractionGenerator(Generator):
             app_key=TTS_APP_KEY,
             connection_params=ConnectionParams(
                 audio_params=AudioParams(format="mp3", sample_rate=24000),
+                speaker="zh_male_shaonianzixin_moon_bigtts",
             ),
         )
         self.request = request

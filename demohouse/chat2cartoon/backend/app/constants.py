@@ -16,9 +16,9 @@ from dotenv import load_dotenv
 load_dotenv("../.env")
 
 REGION = "cn-beijing"
-ARK_SERVICE_NAME = os.getenv("ARK_SERVICE_NAME", "")
-ARK_ACCESS_KEY = os.getenv("VOLC_ACCESS_KEY")
-ARK_SECRET_KEY = os.getenv("VOLC_SECRET_KEY")
+ARK_SERVICE_NAME = os.getenv("ARK_SERVICE_NAME", "ARK")
+ARK_ACCESS_KEY = os.getenv("VOLC_ACCESSKEY")
+ARK_SECRET_KEY = os.getenv("VOLC_SECRETKEY")
 ARK_API_KEY = os.getenv("ARK_API_KEY")
 
 ARTIFACT_TOS_BUCKET = os.getenv("TOS_BUCKET", "")

@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import logging
 import os
-from typing import Optional
+import sys
+from datetime import datetime
+from os import linesep
+from typing import IO, Optional
 
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
@@ -52,8 +56,8 @@ class TraceConfig(BaseModel):
         export_timeout_millis: Optional[float] = None,
     ):
         super().__init__(
-            ak=ak or os.getenv("VOLC_ACCESS_KEY", ""),
-            sk=sk or os.getenv("VOLC_SECRET_KEY", ""),
+            ak=ak or os.getenv("VOLC_ACCESSKEY", os.getenv("VOLC_ACCESS_KEY", "")),
+            sk=sk or os.getenv("VOLC_SECRETKEY", os.getenv("VOLC_SECRET_KEY", "")),
             topic=topic or os.getenv("TRACE_TOPIC", ""),
             region=region or os.getenv("REGION", "cn-beijing"),
             max_queue_size=max_queue_size,
@@ -67,6 +71,7 @@ def setup_tracing(
     endpoint: Optional[str] = None,
     trace_on: bool = True,
     trace_config: Optional[TraceConfig] = None,
+    log_dir: Optional[str] = None,
 ) -> None:
     if not trace_on:
         return
@@ -76,7 +81,13 @@ def setup_tracing(
     if provider is not None:
         return
 
-    exporter: SpanExporter = ConsoleSpanExporter()
+    exporter: SpanExporter = ConsoleSpanExporter(
+        out=_get_trace_log_file(log_dir),
+        formatter=lambda span: json.dumps(
+            json.loads(span.to_json()), ensure_ascii=False, indent=4
+        )
+        + linesep,
+    )
     resource: Resource = Resource.create(
         {
             ResourceAttributes.SERVICE_NAME: "bot",
@@ -96,8 +107,10 @@ def setup_tracing(
     if endpoint:
         headers = {
             "x-tls-otel-tracetopic": trace_config.topic or os.getenv("TRACE_TOPIC", ""),
-            "x-tls-otel-ak": trace_config.ak or os.getenv("VOLC_ACCESS_KEY", ""),
-            "x-tls-otel-sk": trace_config.sk or os.getenv("VOLC_SECRET_KEY", ""),
+            "x-tls-otel-ak": trace_config.ak
+            or os.getenv("VOLC_ACCESSKEY", os.getenv("VOLC_ACCESS_KEY", "")),
+            "x-tls-otel-sk": trace_config.sk
+            or os.getenv("VOLC_SECRETKEY", os.getenv("VOLC_SECRET_KEY", "")),
             "x-tls-otel-region": trace_config.region
             or os.getenv("REGION", "cn-beijing"),
         }
@@ -124,3 +137,20 @@ def _get_host_name() -> str:
         # faas env key
         host_name = os.getenv("_BYTEFAAS_POD_NAME", "")
     return host_name
+
+
+def _get_trace_log_file(log_dir: Optional[str] = None) -> IO:
+    if not log_dir:
+        return sys.stdout
+
+    timestr = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    filename = f"trace_{timestr}.log"
+    filepath = os.path.join(log_dir, filename)
+
+    try:
+        os.makedirs(log_dir, exist_ok=True)
+        return open(filepath, "w+", encoding="utf-8")
+    except Exception as e:
+        print(f"cannot create trace log file {filepath} due to {e}")
+        return sys.stdout

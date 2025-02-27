@@ -9,14 +9,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License. 
 
+import time
 from typing import AsyncIterable
+
+from volcenginesdkarkruntime.types.chat.chat_completion_chunk import Choice, ChoiceDelta
 
 from app.clients.llm import LLMClient
 from app.constants import LLM_ENDPOINT_ID, MAX_STORY_BOARD_NUMBER
 from app.generators.base import Generator
 from app.generators.phase import Phase, PhaseFinder
 from app.mode import Mode
-from arkitect.core.component.llm.model import ArkChatRequest, ArkChatResponse, ArkMessage
+from arkitect.core.component.llm.model import (
+    ArkChatCompletionChunk,
+    ArkChatRequest,
+    ArkChatResponse,
+    ArkMessage,
+)
+from arkitect.utils.context import get_reqid, get_resource_id
 
 STORY_BOARD_SYSTEM_PROMPT = ArkMessage(
     role="system",
@@ -27,7 +36,7 @@ STORY_BOARD_SYSTEM_PROMPT = ArkMessage(
 - 如果同一个分镜中出现了多个相同角色，需要分别输出他们的名字，不要合并。
 - 台词需要生成中文版和英文版。
 - 每个分镜必须都有台词。
-- 返回结果必须增加"phase=StoryBoard"前缀。
+- 不需要为返回结果添加phase=xxx的前缀
 
 # 相关限制
 - 不要出现过于复杂或恐怖的情节。
@@ -55,7 +64,6 @@ STORY_BOARD_SYSTEM_PROMPT = ArkMessage(
 角色3：小鸟，五彩羽毛，尖嘴圆眼。服饰：白色小马甲（大树枝上）
 
 ## 输出按照以下格式回答（角色、画面、中文台词、英文台词分别各占一行）：
-phase=StoryBoard
 分镜1：
 角色：小熊贝贝
 画面：森林里，一只毛茸茸、耳朵小小的、眼睛黑亮黑亮的小熊戴着蓝色小帽子，穿着带有黄色星星图案的棕色背心，欢快地走向一棵大树。
@@ -93,6 +101,22 @@ class StoryBoardGenerator(Generator):
     async def generate(self) -> AsyncIterable[ArkChatResponse]:
         # extract script from the user request
         _, script_message = self.phase_finder.get_phase_message(Phase.SCRIPT)
+
+        # send first stream
+        yield ArkChatCompletionChunk(
+            id=get_reqid(),
+            choices=[
+                Choice(
+                    index=0,
+                    delta=ChoiceDelta(
+                        content=f"phase={Phase.STORY_BOARD.value}\n\n",
+                    ),
+                ),
+            ],
+            created=int(time.time()),
+            model=get_resource_id(),
+            object="chat.completion.chunk",
+        )
 
         # attach system prompt at the start of the LLM request
         # attach script as a context for the storyboard generation

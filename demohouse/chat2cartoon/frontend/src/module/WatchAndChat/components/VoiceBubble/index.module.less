@@ -1,0 +1,74 @@
+.bubble-light {
+  width: 104px;
+  height: 72px;
+  border-radius: 36px;
+  border: 1px solid rgba(153, 182, 255, 0.12);
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.25);
+}
+
+.bubble-borderless {
+  width: 64px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.answer-bubble-content {
+  height: 32px;
+  // width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bubble-bar {
+  width: 10px;
+  border-radius: 120px;
+  margin-left: 5px;
+  background-color: #fff;
+  transition: height 0.2s ease-out;
+}
+
+.bubble-bar:first-child {
+  margin-left: 0;
+}
+
+.bubble-bar-small {
+  width: 8px;
+  border-radius: 99px;
+  margin-left: 4px;
+}
+
+.bubble-bar-small:first-child {
+  margin-left: 0;
+}
+
+
+.bubble-animation {
+  animation-name: scaleAndFade;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0.34, 0.69, 0.1, 1);
+  animation-iteration-count: infinite;
+}
+
+@keyframes scaleAndFade {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

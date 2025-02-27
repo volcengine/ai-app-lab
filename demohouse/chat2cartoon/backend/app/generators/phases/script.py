@@ -9,13 +9,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License. 
 
+import time
 from typing import AsyncIterable
+
+from volcenginesdkarkruntime.types.chat.chat_completion_chunk import Choice, ChoiceDelta
 
 from app.clients.llm import LLMClient
 from app.constants import LLM_ENDPOINT_ID
 from app.generators.base import Generator
+from app.generators.phase import Phase
 from app.mode import Mode
-from arkitect.core.component.llm.model import ArkChatRequest, ArkChatResponse, ArkMessage
+from arkitect.core.component.llm.model import (
+    ArkChatCompletionChunk,
+    ArkChatRequest,
+    ArkChatResponse,
+    ArkMessage,
+)
+from arkitect.utils.context import get_reqid, get_resource_id
 
 SCRIPT_SYSTEM_PROMPT = ArkMessage(
     role="system",
@@ -26,7 +36,6 @@ SCRIPT_SYSTEM_PROMPT = ArkMessage(
 - 语言表达要生动形象，适合小朋友的理解水平。
 - 故事中可以适当加入一些重复的情节或语句，以增强小朋友的记忆。
 - 故事描述后面需要将出场角色列举出来
-- [重要] 如果用户提示词内容没问题，在正常返回结果前加上"phase=Script"的前缀并空一行。
 
 # 参考的故事示例
 示例 1：
@@ -45,9 +54,9 @@ SCRIPT_SYSTEM_PROMPT = ArkMessage(
 - 不能出现少儿不宜、擦边、违禁、色情的词汇。
 - 不能回复与小朋友有接触的语句。
 - 不能询问家庭住址等敏感信息。
+- 不需要为返回结果添加phase=xxx的前缀
 
 ## 示例输出：
-phase=Script
 《小熊的冒险之旅》
 
 在森林深处有一只可爱的小熊，它全身毛茸茸的，耳朵小小的，眼睛黑亮黑亮的。一天，小熊戴着它的蓝色小帽子，穿着带有黄色星星图案的棕色背心出发去寻找蜂蜜。它走过了长满蘑菇的草地，来到了一棵巨大的树下，那树上有个大大的蜂窝。小熊兴奋地搓搓手，准备享受美味的蜂蜜。
@@ -80,6 +89,22 @@ class ScriptGenerator(Generator):
         # attach system prompt at the start of the LLM request
         messages = [SCRIPT_SYSTEM_PROMPT]
         messages.extend(self.request.messages)
+
+        # send first stream
+        yield ArkChatCompletionChunk(
+            id=get_reqid(),
+            choices=[
+                Choice(
+                    index=0,
+                    delta=ChoiceDelta(
+                        content=f"phase={Phase.SCRIPT.value}\n\n",
+                    ),
+                ),
+            ],
+            created=int(time.time()),
+            model=get_resource_id(),
+            object="chat.completion.chunk",
+        )
 
         # call specified llm endpoint
         async for resp in self.llm_client.chat_generation(messages):

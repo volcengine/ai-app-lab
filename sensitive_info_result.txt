@@ -1,5 +1,0 @@
-./opensource_git_commit.log, line, 49516 have some sensitive information: anvasRenderingContex
-./scripts/detection_tool.py, line, 84 have some sensitive information: ", r".{0,15}\.?byted.org.{0,20}",r".{0,15}\.
-./scripts/detection_tool.py, line, 84 have some sensitive information: }",r".{0,15}\.?bytedance.net.{0,20}",r".{0,20}.b
-./demohouse/video_analyser/frontend/code/src/hooks/useVideoAnnotation.ts, line, 18 have some sensitive information: anvasRenderingContex
-./.venv/lib/python3.9/site-packages/h11-0.14.0.dist-info/RECORD, line, 14 have some sensitive information: a3tMPTRxuaKCmretok9s

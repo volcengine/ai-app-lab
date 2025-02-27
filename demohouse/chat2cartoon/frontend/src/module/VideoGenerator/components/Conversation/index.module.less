@@ -1,0 +1,58 @@
+.conversation-wrapper {
+  position: relative;
+  flex: 1;
+  overflow: scroll;
+}
+
+.conversation-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.conversation-chat-area-container {
+  flex: 1;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.conversation-input-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 0 32px;
+}
+
+.display-bar {
+  overflow: hidden;
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 20px;
+  margin: 0 30px;
+  z-index: 99;
+  width: calc(100% - 60px);
+}
+
+.reset-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+
+  :global {
+    .arco-btn-secondary:not(.arco-btn-disabled):not(.arco-btn-loading):hover {
+      border-color: rgb(121, 114, 255);
+    }
+  }
+
+  .reset-btn {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+  }
+}

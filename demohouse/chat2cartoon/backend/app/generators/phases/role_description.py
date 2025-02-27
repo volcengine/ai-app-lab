@@ -9,14 +9,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License. 
 
+import time
 from typing import AsyncIterable
+
+from volcenginesdkarkruntime.types.chat.chat_completion_chunk import Choice, ChoiceDelta
 
 from app.clients.llm import LLMClient
 from app.constants import LLM_ENDPOINT_ID
 from app.generators.base import Generator
 from app.generators.phase import Phase, PhaseFinder
 from app.mode import Mode
-from arkitect.core.component.llm.model import ArkChatRequest, ArkChatResponse, ArkMessage
+from arkitect.core.component.llm.model import (
+    ArkChatCompletionChunk,
+    ArkChatRequest,
+    ArkChatResponse,
+    ArkMessage,
+)
+from arkitect.utils.context import get_reqid, get_resource_id
 
 ROLE_DESCRIPTION_SYSTEM_PROMPT = ArkMessage(
     role="system",
@@ -38,7 +47,6 @@ ROLE_DESCRIPTION_SYSTEM_PROMPT = ArkMessage(
 - 不需要为返回结果添加phase=xxx的前缀
 
 # 输出按照以下格式回答（角色数量介于1-4之间，如果只有1个角色，只需要写角色1即可。）：
-phase=RoleDescription
 角色1：
 角色：小熊
 角色描述：小熊，圆头圆脑，小黑鼻。服饰：蓝色小帽与黄色星图棕背心（森林）
@@ -69,6 +77,22 @@ class RoleDescriptionGenerator(Generator):
         # extract script and storyboard text from the user request
         _, script_message = self.phase_finder.get_phase_message(Phase.SCRIPT)
         _, storyboard_message = self.phase_finder.get_phase_message(Phase.STORY_BOARD)
+
+        # send first stream
+        yield ArkChatCompletionChunk(
+            id=get_reqid(),
+            choices=[
+                Choice(
+                    index=0,
+                    delta=ChoiceDelta(
+                        content=f"phase={Phase.ROLE_DESCRIPTION.value}\n\n",
+                    ),
+                ),
+            ],
+            created=int(time.time()),
+            model=get_resource_id(),
+            object="chat.completion.chunk",
+        )
 
         # attach system prompt at the start of the LLM request
         # attach script and storyboard as the context for the role description generation
