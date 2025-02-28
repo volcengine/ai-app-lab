@@ -27,19 +27,17 @@ from deep_research import DeepResearch, ExtraConfig
 
 from utils import get_last_message
 
+from config import (
+    REASONING_EP_ID,
+    SEARCH_ENGINE,
+    TAVILY_API_KEY,
+    SEARCH_BOT_ID,
+)
+
 logging.basicConfig(
     level=logging.INFO, format="[%(asctime)s][%(levelname)s] %(message)s"
 )
 LOGGER = logging.getLogger(__name__)
-
-# recommend to use DeepSeek-R1 model
-REASONING_EP_ID = "{YOUR_ENDPOINT_ID}"
-# default set to volc bot, if using tavily, change it into "tavily"
-SEARCH_ENGINE = "volc_bot"
-# optional, if you select tavily as search engine, please configure this
-TAVILY_API_KEY = "{YOUR_TAVILY_API_KEY}"
-# optional, if you select volc bot as search engine, please configure this
-SEARCH_BOT_ID = "{YOUR_BOT_ID}"
 
 
 @task()
