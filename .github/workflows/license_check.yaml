@@ -30,4 +30,4 @@ jobs:
         with:
           author_name: License Bot
           author_email: license_bot@github.com
-          message: 'Automatic application of license header'
+          message: 'license: automatic application of license header'
