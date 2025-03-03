@@ -23,9 +23,9 @@ const Configuration: UserConfig = {
                 'license',
             ],
         ],
-        'scope-case': [2, 'always', 'lower-case'],
-        'scope-empty': [2, 'never'],
-        'subject-max-length': [2, 'always', 100],
+        'scope-case': [RuleConfigSeverity.Error, 'always', 'lower-case'],
+        'subject-max-length': [RuleConfigSeverity.Error, 'always', 100],
+        'validate-scope': [RuleConfigSeverity.Error, 'always'],
     },
     plugins: [
         {
@@ -42,8 +42,8 @@ const Configuration: UserConfig = {
                 },
             }
         }
-    ]
-    // ...
+    ],
+    helpUrl: 'https://github.com/volcengine/ai-app-lab/docs/commitlint.md',
 };
 
 export default Configuration;
