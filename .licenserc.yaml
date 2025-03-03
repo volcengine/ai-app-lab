@@ -29,6 +29,7 @@ header:
       - 'demohouse/**/*.sh'
       - 'demohouse/**/*.ts'
       - 'demohouse/**/*.tsx'
+      - 'demohouse/**/*.js'
 
     language:
       TSX:

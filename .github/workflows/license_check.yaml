@@ -2,8 +2,7 @@ name: License Header Check
 
 on:   
   push:
-    branches:
-      - main
+    branches-ignore: ['main']
   pull_request:
 
   workflow_dispatch:
@@ -11,6 +10,8 @@ on:
 jobs:
   License-Check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -28,4 +29,4 @@ jobs:
         with:
           author_name: License Bot
           author_email: license_bot@github.com
-          message: 'Automatic application of license header'
+          message: 'license: automatic application of license header'

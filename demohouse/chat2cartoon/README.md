@@ -9,7 +9,7 @@
 [视频地址](https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_252b008a6db53cc49c9d6cd8c1b74a2a.mp4)
 
 ### 直接体验
-[控制台体验](https://console.volcengine.com/ark/region:ark+cn-beijing/assistant/detail?id=bot-20241211162948-5l2kk-procode-preset)
+[控制台体验](https://console.volcengine.com/ark/region:ark+cn-beijing/application/detail?id=bot-20241211162948-5l2kk-procode-preset)
 
 ### 优势
 - 便捷高效的长视频生成：具备一键生成分钟级视频的强大功能，操作流程极简，用户无需复杂设置，仅需输入需求轻松一点，即可快速获得满足需求的长视频作品，极大提升创作效率。
@@ -64,8 +64,8 @@
    | TTS_APP_KEY         | 语音技术 App Key                          |
    | TTS_API_RESOURCE_ID | 语音技术 API Resource ID                  |
    | ARK_API_KEY         | 火山方舟 API Key，用于方舟模型接入点推理时做鉴权          |
-   | VOLC_ACCESS_KEY     | 火山引擎账号 Access Key，用于访问 TOS API，上载模型产物 |
-   | VOLC_SECRET_KEY     | 火山引擎账号 Secret Key，用于访问 TOS API，上载模型产物 |
+   | VOLC_ACCESSKEY     | 火山引擎账号 Access Key，用于访问 TOS API，上载模型产物 |
+   | VOLC_SECRETKEY     | 火山引擎账号 Secret Key，用于访问 TOS API，上载模型产物 |
    | TOS_BUCKET          | 指定生视频模型和配音模型产物的 TOS 储存桶名              |
    | LLM_ENDPOINT_ID     | 脚本创作，分镜，角色和视频描述，调用的大模型接入点 ID          |
    | VLM_ENDPOINT_ID     | 最终视频影片交互，调用的视觉理解大模型接入点 ID             |
@@ -91,26 +91,7 @@
    poetry run python index.py
    ```
 
-5. 后端服务启动后，尝试执行 `test_full_process.py` 脚本，生成视频。
-
-   1. 打开一个新的命令终端窗口
-
-   2. 下载测试依赖包
-
-      ```bash
-      cd demohouse/chat2cartoon/backend
-      source .venv/bin/activate
-
-      poetry install --with test
-      ```
-
-   3. 执行测试脚本
-
-      ```bash
-      poetry run pytest -s tests/e2e_tests
-      ```
-
-6. 启动前端服务
+5. 启动前端服务
    ```bash
    cd demohouse/chat2cartoon/frontend
    npm install -g pnpm@8

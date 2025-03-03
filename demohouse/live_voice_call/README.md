@@ -11,7 +11,7 @@
 
 ### 直接体验
 
-[控制台体验](https://console.volcengine.com/ark/region:ark+cn-beijing/assistant/detail?id=bot-20240805115108-nx28f-nocode-preset&isVoiceBot=true&phoneVisible=true)
+[控制台体验](https://console.volcengine.com/ark/region:ark+cn-beijing/application/detail?id=bot-20240805115108-nx28f-nocode-preset)
 
 ### 优势
 
