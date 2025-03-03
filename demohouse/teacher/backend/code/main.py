@@ -17,6 +17,12 @@ import logging
 import os
 from typing import AsyncIterable, Union
 
+from volcenginesdkarkruntime.types.completion_usage import (
+    CompletionUsage,
+    PromptTokensDetails,
+    CompletionTokensDetails,
+)
+
 from arkitect.core.component.llm import BaseChatLanguageModel
 from arkitect.core.component.llm.model import (
     ArkChatCompletionChunk,
@@ -29,12 +35,13 @@ from arkitect.core.component.llm.model import (
 )
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
-from volcenginesdkarkruntime.types.completion_usage import (
-    CompletionUsage,
-    PromptTokensDetails,
-    CompletionTokensDetails,
+from prompts import (
+    VLM_PROMPT_SOLVE,
+    DEEPSEEK_R1_PROMPT_SOLVE,
+    VLM_PROMPT_CORRECT,
+    DEEPSEEK_R1_PROMPT_CORRECT,
+    DEEPSEEK_R1_PROMPT_CHAT,
 )
-from prompts import VLM_PROMPT_SOLVE, DEEPSEEK_R1_PROMPT_SOLVE, VLM_PROMPT_CORRECT, DEEPSEEK_R1_PROMPT_CORRECT
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +75,22 @@ async def default_model_calling(
     request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     parameters = ArkChatParameters(**request.__dict__)
-    if request.metadata and request.metadata.get("mode") == "correct":
+    if request.metadata and request.metadata.get("mode") == "chat":
+        deepseek = BaseChatLanguageModel(
+            endpoint_id=DEEPSEEK_R1_ENDPOINT,
+            messages=[
+                ArkMessage(
+                    role="user",
+                    content=DEEPSEEK_R1_PROMPT_CHAT,
+                ),
+            ]
+            + request.messages,
+            parameters=parameters,
+        )
+        async for chunk in deepseek.astream():
+            yield chunk
+        return
+    elif request.metadata and request.metadata.get("mode") == "correct":
         vlm_prompt, r1_prompt = VLM_PROMPT_CORRECT, DEEPSEEK_R1_PROMPT_CORRECT
     else:
         vlm_prompt, r1_prompt = VLM_PROMPT_SOLVE, DEEPSEEK_R1_PROMPT_SOLVE
