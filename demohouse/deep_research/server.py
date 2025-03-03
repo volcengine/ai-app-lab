@@ -27,19 +27,17 @@ from deep_research import DeepResearch, ExtraConfig
 
 from utils import get_last_message
 
+from config import (
+    REASONING_EP_ID,
+    SEARCH_ENGINE,
+    TAVILY_API_KEY,
+    SEARCH_BOT_ID,
+)
+
 logging.basicConfig(
     level=logging.INFO, format="[%(asctime)s][%(levelname)s] %(message)s"
 )
 LOGGER = logging.getLogger(__name__)
-
-# recommend to use DeepSeek-R1 model
-REASONING_EP_ID = "{YOUR_ENDPOINT_ID}"
-# default set to volc bot, if using tavily, change it into "tavily"
-SEARCH_ENGINE = "volc_bot"
-# optional, if you select tavily as search engine, please configure this
-TAVILY_API_KEY = "{YOUR_TAVILY_API_KEY}"
-# optional, if you select volc bot as search engine, please configure this
-SEARCH_BOT_ID = "{YOUR_BOT_ID}"
 
 
 @task()
@@ -53,13 +51,20 @@ async def main(
     if "tavily" == SEARCH_ENGINE:
         search_engine = TavilySearchEngine(api_key=TAVILY_API_KEY)
 
+    # settings from request
+    metadata = request.metadata or {}
+    max_search_words = metadata.get('max_search_words', 5)
+    max_planning_rounds = metadata.get('max_planning_rounds', 5)
+
     deep_research = DeepResearch(
         search_engine=search_engine,
         planning_endpoint_id=REASONING_EP_ID,
         summary_endpoint_id=REASONING_EP_ID,
         extra_config=ExtraConfig(
-            max_search_words=5,  # optional, the max search words for each planning rounds
-            max_planning_rounds=5,  # optional, the max rounds to run planning
+            # optional, the max search words for each planning rounds
+            max_search_words=max_search_words,
+            # optional, the max rounds to run planning
+            max_planning_rounds=max_planning_rounds,
         )
     )
 

@@ -15,6 +15,7 @@ from jinja2 import Template
 from pydantic import BaseModel, Field
 from typing_extensions import Optional
 
+import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 from arkitect.core.component.llm import BaseChatLanguageModel
 from arkitect.core.component.llm.model import ArkMessage, ArkChatRequest, ArkChatResponse, ArkChatCompletionChunk
 from arkitect.core.component.prompts import CustomPromptTemplate
@@ -23,7 +24,7 @@ from arkitect.telemetry.logger import INFO
 from search_engine import SearchEngine, SearchResult
 from search_engine.volc_bot import VolcBotSearchEngine
 from prompt import DEFAULT_PLANNING_PROMPT, DEFAULT_SUMMARY_PROMPT
-from utils import get_current_date, cast_content_to_reasoning_content
+from utils import get_current_date, cast_content_to_reasoning_content, gen_metadata_chunk
 
 """
 ResultsSummary is using to store the result searched so far
@@ -110,7 +111,8 @@ class DeepResearch(BaseModel):
             references=references
         )
         # append the reasoning buffer
-        resp.choices[0].message.reasoning_content = (buffered_reasoning_content + resp.choices[0].message.reasoning_content)
+        resp.choices[0].message.reasoning_content = (
+                buffered_reasoning_content + resp.choices[0].message.reasoning_content)
         return resp
 
     async def astream_deep_research(self, request: ArkChatRequest, question: str) \
@@ -153,8 +155,8 @@ class DeepResearch(BaseModel):
             references: ResultsSummary
     ) -> AsyncIterable[ArkChatCompletionChunk]:
 
-        planned_rounds = 0
-        while planned_rounds < self.extra_config.max_planning_rounds:
+        planned_rounds = 1
+        while planned_rounds <= self.extra_config.max_planning_rounds:
             planned_rounds += 1
 
             llm = BaseChatLanguageModel(
@@ -184,12 +186,35 @@ class DeepResearch(BaseModel):
 
             new_queries = self.check_query(planning_result)
             if not new_queries:
+                # YIELD state with metadata
+                yield gen_metadata_chunk(
+                    metadata={
+                        'search_state': 'finished'
+                    }
+                )
                 INFO("planning finished")
                 break
             else:
                 INFO(f"searching: {new_queries}")
+                # YIELD state with metadata
+                yield gen_metadata_chunk(
+                    metadata={
+                        'search_rounds': planned_rounds,
+                        'search_state': 'searching',
+                        'search_keywords': new_queries
+                    }
+                )
                 search_results = await self.search_engine.asearch(new_queries)
                 INFO(f"search result: {search_results}")
+                # YIELD state with metadata
+                yield gen_metadata_chunk(
+                    metadata={
+                        'search_rounds': planned_rounds,
+                        'search_state': 'searched',
+                        'search_keywords': new_queries,
+                        'search_results': search_results
+                    }
+                )
                 for search_result in search_results:
                     references.add_result(query=search_result.query, results=[search_result])
 
