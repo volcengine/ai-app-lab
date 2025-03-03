@@ -43,7 +43,7 @@ const Configuration: UserConfig = {
             }
         }
     ],
-    helpUrl: 'https://github.com/volcengine/ai-app-lab/docs/commitlint.md',
+    helpUrl: 'https://github.com/volcengine/ai-app-lab/blob/main/docs/commitlint.md',
 };
 
 export default Configuration;
