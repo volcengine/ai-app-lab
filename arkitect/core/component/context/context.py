@@ -26,7 +26,7 @@ from arkitect.core.component.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
 )
-from arkitect.core.component.tool.pool import ToolManifest
+from arkitect.core.component.tool.pool import BaseTool
 
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext
@@ -110,7 +110,7 @@ class Context:
         self,
         *,
         model: str,
-        tools: Dict[str, ToolManifest] = {},
+        tools: Dict[str, BaseTool] = {},
         parameters: Optional[ArkChatParameters] = None,
         context_parameters: Optional[ArkContextParameters] = None,
     ):

@@ -30,15 +30,14 @@ from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
-from arkitect.core.errors import InvalidParameter
-from arkitect.telemetry.trace import task
-from arkitect.utils import dump_json_str
-
-from .model import (
+from arkitect.core.component.llm.model import (
     ArkMessage,
     ChatCompletionMessageToolCallParam,
     Function,
 )
+from arkitect.core.errors import InvalidParameter
+from arkitect.telemetry.trace import task
+from arkitect.utils import dump_json_str
 
 
 def _convert_message_role_to_ark_role(  # type: ignore
@@ -224,14 +223,16 @@ def convert_response_message(
     return ArkMessage(
         role=response_message.role,
         content=response_message.content,
-        tool_calls=[
-            ChatCompletionMessageToolCallParam(
-                id=tool_call.id,
-                type=tool_call.type,
-                function=Function(**tool_call.function.__dict__),
-            )
-            for tool_call in response_message.tool_calls
-        ]
-        if response_message.tool_calls
-        else None,
+        tool_calls=(
+            [
+                ChatCompletionMessageToolCallParam(
+                    id=tool_call.id,
+                    type=tool_call.type,
+                    function=Function(**tool_call.function.__dict__),
+                )
+                for tool_call in response_message.tool_calls
+            ]
+            if response_message.tool_calls
+            else None
+        ),
     )

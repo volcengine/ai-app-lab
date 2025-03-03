@@ -12,27 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
-from .manifest import ToolManifest
-
-
-def tool_key(action_name: str, tool_name: str) -> str:
-    return action_name + "/" + tool_name
+from arkitect.core.component.tool.base_tool import BaseTool
+from arkitect.core.component.tool.custom_tool import CustomTool
 
 
 class ToolPool:
-    _tools: Dict[str, ToolManifest] = {}
+    _tools: Dict[str, BaseTool] = {}
 
     @classmethod
-    def register(cls, tm: ToolManifest) -> None:
+    def register(cls, tm: BaseTool) -> None:
         if not tm:
             return
 
-        cls._tools[tool_key(tm.action_name, tm.tool_name)] = tm
+        cls._tools[tm.name] = tm
 
     @classmethod
-    def all(cls, tool_names: Optional[List[str]] = None) -> Dict[str, ToolManifest]:
+    def all(cls, tool_names: Optional[List[str]] = None) -> Dict[str, BaseTool]:
         """ """
         if not tool_names:
             return cls._tools
@@ -40,6 +37,15 @@ class ToolPool:
         return {name: tm for name, tm in cls._tools.items() if name in tool_names}
 
     @classmethod
-    def get(cls, action_name: str, tool_name: str) -> Optional[ToolManifest]:
+    def get(cls, tool_name: str) -> Optional[BaseTool]:
         """ """
-        return cls._tools.get(tool_key(action_name, tool_name))
+        return cls._tools.get(tool_name)
+
+
+def tool(func: Callable) -> CustomTool:
+    # Create an instance of the Tool class
+    tool_instance = CustomTool(func=func)
+
+    ToolPool.register(tool_instance)
+
+    return tool_instance
