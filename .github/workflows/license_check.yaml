@@ -2,8 +2,7 @@ name: License Header Check
 
 on:   
   push:
-    branches:
-      - main
+    branches-ignore: ['main']
   pull_request:
 
   workflow_dispatch:
