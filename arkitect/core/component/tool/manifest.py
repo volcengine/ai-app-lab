@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 from volcenginesdkarkruntime import AsyncArk
-from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
+from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
 
 from arkitect.core.client import default_ark_client
 from arkitect.core.component.llm.model import ChatCompletionTool, FunctionDefinition
@@ -185,7 +185,7 @@ class ToolManifest(BaseModel):
     @task()
     async def executor(
         self, parameters: Optional[Dict[str, Any]] = None, **kwargs: Any
-    ) -> Union[ArkToolResponse, ChatCompletionMessageParam]:
+    ) -> Union[ArkToolResponse, List[ChatCompletionContentPartParam]]:
         parameter = ArkToolRequest(
             action_name=self.action_name,
             tool_name=self.tool_name,
