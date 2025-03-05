@@ -36,6 +36,7 @@ def set_trace_attributes(
     account_id: str = "",
     input: Any = None,
     output: Any = None,
+    merge_output: Optional[bool] = None,
     custom_attributes: Optional[Dict[str, Any]] = None,
 ) -> None:
     span.set_attribute(
@@ -49,6 +50,7 @@ def set_trace_attributes(
     span.set_attribute("resource_type", resource_type)
     span.set_attribute("resource_id", resource_id)
     span.set_attribute("account_id", account_id)
+    span.set_attribute("merge_output", merge_output or False)
     span.set_status(trace.Status(status_code, ""))
 
     if custom_attributes is None:
