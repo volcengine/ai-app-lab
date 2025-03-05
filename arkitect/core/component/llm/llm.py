@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from langchain.prompts.chat import BaseChatPromptTemplate
 from langchain.schema.output_parser import BaseTransformOutputParser
+from mcp.server.fastmcp import FastMCP
 from volcenginesdkarkruntime import Ark, AsyncArk
 from volcenginesdkarkruntime._streaming import AsyncStream
 from volcenginesdkarkruntime.types.chat import (
@@ -23,6 +24,7 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
+from arkitect.core.component.mcp.mcp_client import MCPClient
 from arkitect.core.component.tool import BaseTool
 from arkitect.telemetry.trace import task
 from arkitect.utils.context import get_extra_headers
@@ -184,7 +186,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: Optional[Dict[str, BaseTool]] = None,
+        functions: list[MCPClient | callable] | None = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
@@ -234,7 +236,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: Optional[Dict[str, BaseTool]] = None,
+        functions: list[MCPClient | callable] | None = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
