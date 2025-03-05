@@ -15,12 +15,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 
 from arkitect.core.component.llm.model import ChatCompletionTool
-from arkitect.telemetry.trace import task
 
 from .model import BaseToolResponse
 
@@ -43,9 +42,10 @@ class BaseTool(BaseModel, ABC):
             **kwargs,
         )
 
-    @task()
     @abstractmethod
-    async def execute(self, **kwargs: Any) -> BaseToolResponse:
+    async def execute(
+        self, parameters: Optional[Dict[str, Any]] = None, **kwargs: Any
+    ) -> BaseToolResponse:
         """
         Executes the tool with the given parameters.
         """
