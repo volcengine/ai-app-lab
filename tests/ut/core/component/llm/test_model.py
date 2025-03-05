@@ -58,7 +58,6 @@ def test_cast_basic_function():
         Returns:
             str: combined string
         """
-        c[0]
         return f"{a}, {b}"
 
     tool = ChatCompletionTool.from_function(test_basic)
