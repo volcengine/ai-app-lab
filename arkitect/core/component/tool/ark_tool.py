@@ -12,184 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
-
-from enum import Enum
-from typing import Any, Dict, List, Optional, Union
-
 from pydantic import BaseModel, Field
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
-from arkitect.core.client import default_ark_client
-from arkitect.core.component.llm.model import ChatCompletionTool, FunctionDefinition
-from arkitect.core.component.tool.base_tool import BaseTool
-from arkitect.core.errors import InvalidParameter
-from arkitect.telemetry.trace import task
-
-from .model import ArkToolRequest, ArkToolResponse
+from arkitect.core.client.http import default_ark_client
 
 
-class ParameterTypeEnum(str, Enum):
-    STRING = "string"
-    INT = "integer"
-    FLOAT = "float"
-    BOOL = "boolean"
-    ARRAY = "array"
-    OBJECT = "object"
-
-
-class ToolParameter(BaseModel):
-    """
-    Represents a parameter for a tool.
-
-    Attributes:
-        name : The name of the parameter.
-        description : A description of the parameter.
-        param_type : The type of the parameter.
-        required : Whether the parameter is required. Defaults to False.
-    """
-
-    param_type: ParameterTypeEnum
-    name: str = ""
-    description: str = ""
-    required: bool = False
-    items: List[ToolParameter] = Field(default_factory=list)
-    enum: Optional[List[Union[int, bool, str]]] = None
-
-    def validator(self) -> None:
-        """
-        Validates the parameter.
-        """
-        pass
-
-    def manifest(self) -> Dict[str, Any]:
-        """
-        Generates a manifest dictionary for the parameter.
-        """
-        pm: Dict[str, Any] = {
-            "description": self.description,
-            "type": self.param_type.value,
-        }
-
-        if self.enum:
-            pm["enum"] = self.enum
-
-        if len(self.items) > 0 and self.param_type == ParameterTypeEnum.ARRAY:
-            pm["items"] = self.items[0].manifest()
-
-        if len(self.items) > 0 and self.param_type == ParameterTypeEnum.OBJECT:
-            pm["properties"] = {item.name: item.manifest() for item in self.items}
-
-        return pm
-
-
-class ArkTool(BaseTool):
-    """
-    ArkTool represents a manifest for a tool hosted on Ark Platform
-    ARK_API_KEY or ak&sk are required
-
-    Attributes:
-        action_name : The name of the action associated with the tool.
-        tool_name : The name of the tool.
-        description : A description of the tool. Defaults to None.
-        parameters : A list of parameters for the tool.
-        manifest_field : A dictionary representing the manifest field.
-        client : An instance of the AsyncArk client. Defaults to the default Ark client.
-    """
+class ArkToolRequest(BaseModel):
+    """ """
 
     action_name: str
     tool_name: str
-    description: Optional[str] = None
-    parameters: List[ToolParameter]
 
-    manifest_field: Dict[str, Any] = Field(default_factory=dict)
+    parameters: dict[str, any] | None = None
+    dry_run: bool | None = False
+    timeout: int | None = 60
+
+
+class ArkToolResponse(BaseModel):
+    status_code: int | None = None
+
+    data: any | None = None
+
+
+class ArkToolExecutor(BaseModel):
     client: AsyncArk = Field(default_factory=default_ark_client)
 
-    class Config:
-        """
-        Configuration class for the ArkTool model.
-        """
-
-        arbitrary_types_allowed = True
-
-    def __init__(
+    async def execute(
         self,
-        action_name: str,
-        tool_name: str,
-        description: Optional[str],
-        parameters: List[ToolParameter] = [],
-        **kwargs: Any,
-    ) -> None:
-        super().__init__(
+        action_name,
+        tool_name,
+        parameters: dict[str, any] | None = None,
+        **kwargs: any
+    ) -> ArkToolResponse | ChatCompletionMessageParam:
+        parameter = ArkToolRequest(
             action_name=action_name,
             tool_name=tool_name,
-            description=description,
-            parameters=parameters,
-            **kwargs,
-        )
-
-    @classmethod
-    def from_manifest(cls, manifest: Dict[str, Any]) -> "ArkTool":
-        """
-        Creates a ArkTool instance from a dictionary.
-        This method parses the provided dictionary to create a ArkTool instance.
-        """
-        # parse parameters from manifest
-        if not manifest:
-            raise InvalidParameter("Invalid manifest: empty")
-
-        tm = ArkTool(
-            action_name="", tool_name="", description=manifest.get("description", "")
-        )
-        if manifest.get("name", "").find("/") > -1:
-            parts = manifest.get("name", "").split("/")
-            tm.action_name = parts[0]
-            tm.tool_name = parts[1]
-        else:
-            raise InvalidParameter("Invalid ArkTool manifest: invalid name")
-
-        properties: Dict[str, Any] = manifest.get("parameters", {}).get(
-            "properties", {}
-        )
-        required: List[str] = manifest.get("parameters", {}).get("required", [])
-        for name, prop in properties.items():
-            param = ToolParameter(**prop)
-            param.required = name in required
-            tm.parameters.append(param)
-
-        return tm
-
-    def manifest(self) -> Dict[str, Any]:
-        """
-        Generates a manifest dictionary for the tool.
-        """
-        if not self.manifest_field:
-            self.manifest_field = {
-                "name": self.action_name + "/" + self.tool_name,
-                "description": self.description or "",
-                "parameters": {
-                    "properties": {
-                        parameter.name: parameter.manifest()
-                        for parameter in self.parameters
-                    },
-                    "required": [
-                        parameter.name
-                        for parameter in self.parameters
-                        if parameter.required
-                    ],
-                    "type": "object",
-                },
-            }
-        return self.manifest_field
-
-    @task()
-    async def execute(
-        self, parameters: Optional[Dict[str, Any]] = None, **kwargs: Any
-    ) -> Union[ArkToolResponse, ChatCompletionMessageParam]:
-        parameter = ArkToolRequest(
-            action_name=self.action_name,
-            tool_name=self.tool_name,
             parameters=parameters or {},
         )
         response = await self.client.post(
@@ -199,17 +58,33 @@ class ArkTool(BaseTool):
         )
         return ArkToolResponse(**response)
 
-    @property
-    def name(self) -> str:
-        """
-        Returns the full name of the tool.
-        """
-        return self.action_name + "/" + self.tool_name
 
-    def tool_schema(self) -> ChatCompletionTool:
-        """
-        Returns the schema of the tool.
-        """
-        return ChatCompletionTool(
-            type="function", function=FunctionDefinition(**self.manifest())
-        )
+async def calculator(input: str) -> str:
+    """Evaluate a given mathematical expression
+
+    Args:
+        input (str): The mathematical expression in Wolfram Language InputForm
+
+    Returns:
+        str: computed value
+    """
+    ark_executor = ArkToolExecutor()
+    return await ark_executor.execute(
+        action_name="Calculator", tool_name="Calculator", parameters={"input": input}
+    )
+
+
+async def link_reader(url_list: list[str]):
+    """当你需要获取网页、pdf、抖音视频内容时，使用此工具。可以获取url链接下的标题和内容。
+
+    examples: {"url_list":["abc.com", "xyz.com"]}
+
+    Args:
+        url_list (list[str]): 需要解析网页链接,最多3个,以列表返回
+    """
+    ark_executor = ArkToolExecutor()
+    return await ark_executor.execute(
+        action_name="LinkReader",
+        tool_name="LinkReader",
+        parameters={"url_list": url_list},
+    )
