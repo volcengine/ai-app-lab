@@ -24,13 +24,13 @@ logging.basicConfig(
 LOGGER = logging.getLogger(__name__)
 
 # recommend to use DeepSeek-R1 model
-REASONING_EP_ID = "{YOUR_ENDPOINT_ID}"
+REASONING_EP_ID = "YOUR_ENDPOINT_ID"
 # default set to volc bot, if using tavily, change it into "tavily"
 SEARCH_ENGINE = "volc_bot"
 # optional, if you select tavily as search engine, please configure this
-TAVILY_API_KEY = "{YOUR_TAVILY_API_KEY}"
+TAVILY_API_KEY = "YOUR_TAVILY_API_KEY"
 # optional, if you select volc bot as search engine, please configure this
-SEARCH_BOT_ID = "{YOUR_BOT_ID}"
+SEARCH_BOT_ID = "YOUR_BOT_ID"
 QUERY = "找到2023年中国GDP超过万亿的城市，详细分析其中排名后十位的城市的增长率和GDP构成，并结合各城市规划预测5年后这些城市的GDP排名可能会如何变化"
 
 
@@ -47,15 +47,15 @@ async def main():
         extra_config=ExtraConfig(
             max_planning_rounds=5,  # max rounds to planning and search
             max_search_words=5,  # max search words for each planning round.
-        )
+        ),
     )
 
     thinking = False
     async for chunk in deep_research.astream_deep_research(
-            request=ArkChatRequest(model="test",
-                                   messages=[ArkMessage(role="user",
-                                                        content=QUERY)]),
-            question=QUERY
+        request=ArkChatRequest(
+            model="test", messages=[ArkMessage(role="user", content=QUERY)]
+        ),
+        question=QUERY,
     ):
         if chunk.choices[0].delta.reasoning_content:
             if not thinking:
@@ -69,5 +69,5 @@ async def main():
             print(chunk.choices[0].delta.content, end="")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

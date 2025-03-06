@@ -42,7 +42,7 @@ LOGGER = logging.getLogger(__name__)
 
 @task()
 async def main(
-        request: ArkChatRequest,
+    request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     # using last_user_message as query
     last_user_message = get_last_message(request.messages, "user")
@@ -69,17 +69,21 @@ async def main(
     )
 
     if request.stream:
-        async for c in deep_research.astream_deep_research(request=request, question=last_user_message.content):
+        async for c in deep_research.astream_deep_research(
+            request=request, question=last_user_message.content
+        ):
             yield c
     else:
-        rsp = await deep_research.arun_deep_research(request=request, question=last_user_message.content)
+        rsp = await deep_research.arun_deep_research(
+            request=request, question=last_user_message.content
+        )
         yield rsp
 
 
 @bot_wrapper()
 @task(custom_attributes={"input": None, "output": None})
 async def handler(
-        request: ArkChatRequest,
+    request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     async for resp in main(request):
         yield resp
