@@ -138,6 +138,7 @@ def task(
                             request_id=get_reqid(),
                             client_request_id=get_client_reqid(),
                             account_id=get_account_id(),
+                            merge_output=True,
                             custom_attributes=custom_attributes,
                         )
                         span.end(end_time=time.time_ns())
@@ -174,6 +175,7 @@ def task(
                             request_id=get_reqid(),
                             client_request_id=get_client_reqid(),
                             account_id=get_account_id(),
+                            merge_output=True,
                             custom_attributes=custom_attributes,
                         )
                         span.end(end_time=time.time_ns())

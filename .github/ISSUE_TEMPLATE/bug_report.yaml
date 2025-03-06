@@ -1,0 +1,51 @@
+name: "\U0001F41B Bug Report"
+description: Report a bug in ai-app-lab. To report a security issue, please instead use the security option below. For questions, please use the GitHub Discussions.
+labels: [bug]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Which kind of bug are you reporting?
+      options:
+        - arkitect
+        - demohouse
+      default: 0
+    validations:
+      required: true
+  
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: |
+        Please provide as much info as possible. Not doing so may result in your bug not being addressed in a timely manner.
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Please provide the log.
+      description: |
+        Helper: https://github.com/volcengine/ai-app-lab/blob/main/docs/troubleshooting.md.
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: false
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How can we reproduce it (as minimally and precisely as possible)?
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Anything else we need to know?
