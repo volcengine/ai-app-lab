@@ -54,8 +54,8 @@
      | ------------ | --------------------------------- |
      | VLM_ENDPOINT | doubao-vision-pro 32k endpoint id |
      | LLM_ENDPOINT | doubao-pro 32k endpoint id        |
-     | access_key   | **语音服务**应用 APP ID          |
-     | app_key      | **语音服务**应用 Access Token           |
+     | access_key   | **语音服务**应用 Access Token       |
+     | app_key      | **语音服务**应用 APP ID        |
 
    - 修改 `frontend/run.sh` 中配置，填入刚刚获取的APP ID和 Access Token
 
