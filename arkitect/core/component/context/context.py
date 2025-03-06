@@ -22,7 +22,7 @@ from volcenginesdkarkruntime.types.chat import (
 from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
 )

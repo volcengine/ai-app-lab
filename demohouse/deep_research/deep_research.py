@@ -17,7 +17,7 @@ from typing_extensions import Optional
 
 import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.llm.model import ArkMessage, ArkChatRequest, ArkChatResponse, ArkChatCompletionChunk
+from arkitect.types.llm.model import ArkMessage, ArkChatRequest, ArkChatResponse, ArkChatCompletionChunk
 from arkitect.core.component.prompts import CustomPromptTemplate
 from arkitect.telemetry.logger import INFO
 

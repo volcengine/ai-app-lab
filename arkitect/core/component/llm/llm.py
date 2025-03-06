@@ -24,14 +24,15 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.mcp.mcp_client import MCPClient
-from arkitect.core.component.tool import BaseTool
+from arkitect.core.component.tool.mcp_tool_pool import MCPClient
+
+# from arkitect.core.component.tool import BaseTool
 from arkitect.telemetry.trace import task
 from arkitect.utils.context import get_extra_headers
 
 from .base import BaseLanguageModel
 from .function_call import handle_function_call
-from .model import (
+from ....types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
     ArkChatRequest,

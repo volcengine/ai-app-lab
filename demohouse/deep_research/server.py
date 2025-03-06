@@ -13,7 +13,7 @@ import logging
 import os
 from typing import AsyncIterable, Union
 
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

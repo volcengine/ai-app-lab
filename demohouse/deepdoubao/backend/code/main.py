@@ -18,7 +18,7 @@ import os
 from typing import AsyncIterable, Union
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
     ArkChatRequest,

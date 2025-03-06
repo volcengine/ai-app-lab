@@ -35,7 +35,7 @@ from app.message_utils import extract_and_parse_dict_from_message
 from app.mode import Mode
 from app.models.audio import Audio
 from app.output_parsers import OutputParser
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

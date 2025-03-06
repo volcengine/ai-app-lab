@@ -27,7 +27,7 @@ from app.mode import Mode
 from app.models.role_description import RoleDescription
 from app.models.role_image import RoleImage
 from app.output_parsers import OutputParser, parse_role_description
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

@@ -28,7 +28,7 @@ from app.mode import Mode
 from app.models.first_frame_description import FirstFrameDescription
 from app.models.first_frame_image import FirstFrameImage
 from app.output_parsers import OutputParser
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

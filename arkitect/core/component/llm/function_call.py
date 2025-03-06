@@ -22,11 +22,11 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.tool import BaseTool, BaseToolResponse
+# from arkitect.core.component.tool import BaseTool, BaseToolResponse
 from arkitect.telemetry.trace import task
 from arkitect.utils import dump_json_str
 
-from .model import (
+from ....types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,
@@ -42,7 +42,7 @@ async def handle_function_call(
     response: Union[
         ChatCompletionChunk, ChatCompletion, ArkChatCompletionChunk, ArkChatResponse
     ],
-    functions: Optional[Dict[str, BaseTool]] = None,
+    functions: Optional[Dict[str, Any]] = None,
     function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
     **kwargs: Any,
 ) -> bool:
@@ -87,7 +87,7 @@ async def handle_function_call(
             logging.error(f"Function {tool_name} not found")
             resp = ""
         else:
-            tool_response: BaseToolResponse = BaseToolResponse()
+            tool_response = None
             parameters = json.loads(tool_call.function.arguments)
             tool_response = await tool.execute(parameters=parameters, **kwargs)
             logging.info(

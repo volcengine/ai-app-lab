@@ -12,7 +12,7 @@
 from typing import AsyncIterable, Union
 
 from app.mode import Mode
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

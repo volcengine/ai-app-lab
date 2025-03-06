@@ -19,7 +19,7 @@ from app.generators.phases.role_description import RoleDescriptionGenerator
 from app.generators.phases.script import ScriptGenerator
 from app.generators.phases.storyboard import StoryBoardGenerator
 from app.mode import Mode
-from arkitect.core.component.llm.model import ArkChatRequest, ArkChatResponse, ArkMessage
+from arkitect.types.llm.model import ArkChatRequest, ArkChatResponse, ArkMessage
 from arkitect.core.errors import InternalServiceError
 from arkitect.telemetry.logger import ERROR, INFO
 

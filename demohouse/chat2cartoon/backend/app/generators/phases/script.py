@@ -19,7 +19,7 @@ from app.constants import LLM_ENDPOINT_ID
 from app.generators.base import Generator
 from app.generators.phase import Phase
 from app.mode import Mode
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

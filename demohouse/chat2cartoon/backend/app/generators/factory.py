@@ -22,7 +22,7 @@ from app.generators.phases.tone import ToneGenerator
 from app.generators.phases.video import VideoGenerator
 from app.generators.phases.video_description import VideoDescriptionGenerator
 from app.mode import Mode
-from arkitect.core.component.llm.model import ArkChatRequest
+from arkitect.types.llm.model import ArkChatRequest
 
 generator_map = {
     # The first 3 steps are InitiationGenerator because the users may keep asking the llm to regenerate

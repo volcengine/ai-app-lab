@@ -32,7 +32,7 @@ from app.models.first_frame_image import FirstFrameImage
 from app.models.video import Video
 from app.models.video_description import VideoDescription
 from app.output_parsers import OutputParser
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

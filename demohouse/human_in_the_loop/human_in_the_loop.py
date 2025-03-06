@@ -15,7 +15,7 @@ from volcenginesdkarkruntime.types.context import TruncationStrategy
 
 from arkitect.core.component.context.context import Context
 from arkitect.core.component.context.hooks import approval_tool_hook
-from arkitect.core.component.llm.model import ArkMessage, ArkContextParameters
+from arkitect.types.llm.model import ArkMessage, ArkContextParameters
 from arkitect.core.component.tool.pool import tool_key
 from arkitect.core.component.tool.schema.linkreader import LinkReader
 

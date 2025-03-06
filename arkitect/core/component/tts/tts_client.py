@@ -18,7 +18,7 @@ from typing import Any, AsyncIterable, Optional, Union
 
 import websockets
 
-from arkitect.core.component.llm.model import ArkChatCompletionChunk, ArkChatResponse
+from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatResponse
 from arkitect.core.component.tts.base import AsyncBaseTTSClient, TTSResponseChunk
 from arkitect.core.component.tts.constants import (
     NAMESPACE,
