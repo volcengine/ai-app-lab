@@ -1,0 +1,75 @@
+.button {
+  border: 2px solid transparent;
+  border-radius: 22px;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  height: 44px;
+  color: var(--text-color-text-1, #0c0d0e);
+  text-align: center;
+  font-family: 'PingFang SC';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0.042px;
+  padding: 10px 21px;
+  letter-spacing: 0.039px;
+  background-image: linear-gradient(to right, #fff, #fff), linear-gradient(90deg, #DDE2E9, #DDE2E9);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-primary {
+  background-image: linear-gradient(to right, #fff, #fff), linear-gradient(90deg, #387bff, #387bff);
+}
+
+.button-active:not(.button-disabled) {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(90deg, #578aef, #8f41e9);
+    // animation-duration: 3s;
+    // animation-name: color-change;
+    // animation-iteration-count: infinite;
+}
+
+@keyframes color-change {
+  // 炫彩
+  // 100% {
+  //   filter: hue-rotate(-360deg);
+  // }
+  0% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(90deg, #578aef, #8f41e9);
+  }
+  12.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(135deg, #578aef, #8f41e9);
+  }
+  25% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(180deg, #578aef, #8f41e9);
+  }
+  37.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(225deg, #578aef, #8f41e9);
+  }
+  50% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(270deg, #578aef, #8f41e9);
+  }
+  62.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(315deg, #578aef, #8f41e9);
+  }
+  75% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(360deg, #578aef, #8f41e9);
+  }
+  87.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(45deg, #578aef, #8f41e9);
+  }
+}
+
+.button-disabled {
+  border: 2px solid transparent;
+  border-radius: 22px;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  height: 44px;
+  cursor: not-allowed;
+  background-image: linear-gradient(to right, #fff, #fff), linear-gradient(90deg, #ADD1FF, #8ABCFF,#E0BBFF);
+  color: var(--text-color-text-4, var(--text-color-text-4, #C7CCD6));
+}

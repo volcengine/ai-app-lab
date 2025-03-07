@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "longterm-memory"
+version = "0.1.0"
+description = "Set up the mem0 project based on the Apache 2.0 License"
+authors = ["heaoxiang@bytedance.com"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12.0"
+arkitect = "^0.0.1"
+mem0ai = { path = "mem0ai-0.1.48.2-py3-none-any.whl" }
+volcengine = "1.0.164"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

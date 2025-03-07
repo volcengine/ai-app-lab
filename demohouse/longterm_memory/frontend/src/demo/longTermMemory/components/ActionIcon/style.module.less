@@ -1,0 +1,28 @@
+.action-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+
+    border-radius: 4px;
+
+    color: rgba(115, 122, 135, 1);
+    font-size: 14px;
+    line-height: 24px;
+    text-align: center;
+
+    transition: all 0.5s;
+    cursor: pointer;
+
+
+    &.active-icon {
+        color: rgb(var(--primary-6));
+    }
+
+    &.disabled-icon {
+        color: rgba(199, 204, 214, 1);
+        cursor: not-allowed;
+    }
+}
+

@@ -1,0 +1,202 @@
+.user-msg {
+  flex-shrink: 0;
+  background: transparent;
+  margin-bottom: 23px;
+  display: flex;
+  padding-right: 24px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+
+  color: var(--text-color-text-1, #0C0D0E);
+  font-family: "PingFang SC";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 26px; /* 162.5% */
+  letter-spacing: 0.048px;
+}
+.divider {
+  margin: 16px 0 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+}
+
+.bot-msg {
+  margin-bottom: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 12px;
+  background: #FFF;
+}
+.operation {
+  border-radius: 6px;
+  background: #F2F6FB;
+  display: flex;
+  padding: 4px 8px;
+  align-items: center;
+  gap: 4px;
+}
+.recall {
+  width: fit-content;
+  display: flex;
+  padding: 12px 20px;
+  align-items: center;
+  gap: 3px;
+  border-radius: 12px;
+  border: 1px solid var(--line-color-border-2, #EAEDF1);
+  background: #FFF;
+  .img {
+    width: 24px;
+    height: 24px;
+    border-radius: 3.5px;
+  }
+  .name {
+    color: var(--text-color-text-1, var(--text-color-text-1, #0C0D0E));
+    text-align: center;
+
+    /* EN or Digital/body-3 regular */
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px; /* 157.143% */
+    letter-spacing: 0.042px;
+  }
+  .color {
+    font-family: "PingFang SC";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%; /* 22.4px */
+    letter-spacing: 0.042px;
+
+    background: linear-gradient(90deg, #508AFF -7.84%, #50FFF6 55.25%, #CF8DFF 99.92%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+
+.footWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .operation {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .button {
+      border-radius: var(--border-radius-small, 4px);
+      border: 1px solid var(--line-color-border-2, #eaedf1);
+      background: var(--background-color-bg-1, #fff);
+      box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.08);
+      display: flex;
+      padding: 5px;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+  .info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    .request-id {
+      display: flex;
+      padding: 5px 10px;
+      align-items: center;
+      gap: 4px;
+      border-radius: 4px;
+      background: var(--background-color-bg-4, #f6f8fa);
+      color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+      font-family: Roboto;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 22px; /* 169.231% */
+      letter-spacing: 0.039px;
+
+      .iconPart {
+        cursor: pointer;
+      }
+    }
+
+    .model {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 4px;
+      background: var(--background-color-bg-4, #f6f8fa);
+      padding: 4px 6px;
+
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 3.5px;
+      }
+
+      .name {
+        color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+        text-align: center;
+        font-family: 'PingFang SC';
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 22px;
+        letter-spacing: 0.039px;
+      }
+    }
+  }
+}
+
+.text {
+  color: var(--text-color-text-3, var(--text-color-text-3, #737A87));
+  text-align: center;
+
+  /* Body/body-2 regular */
+  font-family: "PingFang SC";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 169.231% */
+  letter-spacing: 0.039px;
+}
+
+.mdbox {
+  :global{
+  strong {
+    font-weight: 400 !important;
+    position: relative;
+    display: inline;
+
+    z-index: 1;
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 10%;
+      height: 40%;
+      z-index: -1;
+      border-radius: 2px;
+      opacity: 0.6;
+      transform: skew(-5deg);
+      background-color: #ffeb3b;
+    }
+  }
+  }
+}
+
+.popup {
+  background: linear-gradient(180deg, #F3F3FF 0%, rgba(243, 243, 255, 0.00) 100%), #FFF;
+
+}
