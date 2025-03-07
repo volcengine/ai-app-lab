@@ -1,8 +1,15 @@
-from typing import Any, Callable
+from typing import Any, Callable,Iterable, Dict
 from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
 from mcp.server.fastmcp import FastMCP
-from typing import Dict
 from mcp import Tool
+
+from mcp.types import CallToolResult
+from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
+from arkitect.core.component.tool.utils import (
+    mcp_to_chat_completion_tool,
+    convert_to_chat_completion_content_part_param,
+)
+from arkitect.types.llm.model import ChatCompletionTool
 
 
 class CustomToolPool(MCPToolPool):
@@ -41,4 +48,35 @@ class CustomToolPool(MCPToolPool):
         sse_read_timeout: float = 60 * 5,
     ):
         """Nothing to do"""
-        return
+        tools = await self.session.list_tools()
+        self.tools = {t.name: t for t in tools}
+        self._chat_completion_tools = {
+            t.name: mcp_to_chat_completion_tool(t) for t in tools
+        }
+
+    async def list_mcp_tools(self, use_cache: bool = True) -> list[Tool]:
+        if not use_cache:
+            tools = await self.session.list_tools()
+            self.tools = {t.name: t for t in tools}
+        return list(self.tools.values())
+
+    async def list_tools(self, use_cache: bool = True) -> list[ChatCompletionTool]:
+        if not use_cache:
+            tools = await self.session.list_tools()
+            self.tools = {t.name: t for t in tools}
+            self._chat_completion_tools = {
+                t.name: mcp_to_chat_completion_tool(t) for t in tools
+            }
+        return list(self._chat_completion_tools.values())
+
+    async def execute_tool(
+        self,
+        tool_name: str,
+        parameters: dict[str, any],
+    ) -> str | Iterable[ChatCompletionContentPartParam]:
+        result = await self.session.call_tool(tool_name, parameters)
+        
+        return convert_to_chat_completion_content_part_param(CallToolResult(
+            content=result,
+            isError=False
+        ))

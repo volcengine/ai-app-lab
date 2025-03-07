@@ -7,7 +7,6 @@ from mcp import ClientSession, StdioServerParameters, stdio_client, Tool
 from mcp.client.sse import sse_client
 from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
 
-# from arkitect.core.component.llm.model import ChatCompletionTool
 from arkitect.core.component.tool.utils import (
     mcp_to_chat_completion_tool,
     convert_to_chat_completion_content_part_param,
