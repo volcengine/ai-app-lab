@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Iterable
+from typing import Any
 
 from mcp import Tool
 from mcp.types import CallToolResult, TextContent
@@ -23,7 +23,7 @@ from arkitect.types.llm.model import ChatCompletionTool, FunctionDefinition
 
 def convert_to_chat_completion_content_part_param(
     result: CallToolResult,
-) -> str | Iterable[ChatCompletionContentPartParam]:
+) -> str | list[ChatCompletionContentPartParam]:
     if len(result.content) == 1 and isinstance(result.content[0], TextContent):
         return result.content[0].text
     message_parts = []
@@ -36,8 +36,8 @@ def convert_to_chat_completion_content_part_param(
 
 
 def convert_schema(
-    input_shema: dict[str, any], param_descriptions: dict[str, str] = {}
-) -> dict[str, any]:
+    input_shema: dict[str, Any], param_descriptions: dict[str, str] = {}
+) -> dict[str, Any]:
     properties = input_shema["properties"]
     for key, val in properties.items():
         if "description" not in val:
@@ -53,7 +53,7 @@ def mcp_to_chat_completion_tool(
         type="function",
         function=FunctionDefinition(
             name=mcp_tool.name,
-            description=mcp_tool.description,
+            description=mcp_tool.description if mcp_tool.description else "",
             parameters=convert_schema(mcp_tool.inputSchema, param_descriptions),
         ),
     )

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Callable, Dict, Iterable
+from typing import Any, Callable, Dict
 
 from mcp import Tool
 from mcp.server.fastmcp import FastMCP
@@ -30,7 +30,7 @@ from arkitect.types.llm.model import ChatCompletionTool
 class CustomToolPool(MCPToolPool):
     def __init__(self, name: str | None = None):
         self._name = name if name else "CustomToolPool"
-        self.session = FastMCP()
+        self.session: FastMCP = FastMCP()
         self.tools: Dict[str, Tool] = {}
         self._chat_completion_tools = {}
 
@@ -44,9 +44,7 @@ class CustomToolPool(MCPToolPool):
         name: str | None = None,
         description: str | None = None,
     ) -> None:
-        self.session.add_tool(
-            func=fn, name=name, description=description, param_description={}
-        )
+        self.session.add_tool(fn=fn, name=name, description=description)
 
     def tool(
         self, name: str | None = None, description: str | None = None
@@ -61,7 +59,7 @@ class CustomToolPool(MCPToolPool):
         headers: dict[str, str] | None = None,
         timeout: float = 5,
         sse_read_timeout: float = 60 * 5,
-    ):
+    ) -> None:
         """Nothing to do"""
         tools = await self.session.list_tools()
         self.tools = {t.name: t for t in tools}
@@ -87,10 +85,10 @@ class CustomToolPool(MCPToolPool):
     async def execute_tool(
         self,
         tool_name: str,
-        parameters: dict[str, any],
-    ) -> str | Iterable[ChatCompletionContentPartParam]:
+        parameters: dict[str, Any],
+    ) -> str | list[ChatCompletionContentPartParam]:
         result = await self.session.call_tool(tool_name, parameters)
 
         return convert_to_chat_completion_content_part_param(
-            CallToolResult(content=result, isError=False)
+            CallToolResult(content=list(result), isError=False)
         )

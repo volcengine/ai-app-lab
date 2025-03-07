@@ -32,6 +32,9 @@ import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_ch
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat.chat_completion import ChatCompletion, Choice
+from volcenginesdkarkruntime.types.chat.chat_completion_content_part_param import (
+    ChatCompletionContentPartParam,
+)
 from volcenginesdkarkruntime.types.chat.chat_completion_message_param import (
     ChatCompletionMessageParam,
 )
@@ -41,9 +44,6 @@ from volcenginesdkarkruntime.types.chat.chat_completion_stream_options_param imp
 from volcenginesdkarkruntime.types.completion_usage import CompletionUsage
 from volcenginesdkarkruntime.types.context.context_chat_completion import (
     ContextChatCompletion,
-)
-from volcenginesdkarkruntime.types.chat.chat_completion_content_part_param import (
-    ChatCompletionContentPartParam,
 )
 from volcenginesdkarkruntime.types.context.context_chat_completion_chunk import (
     ContextChatCompletionChunk,

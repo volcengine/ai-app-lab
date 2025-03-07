@@ -20,9 +20,9 @@ from typing import Any, List, Optional, Union
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
+    ChatCompletionContentPartParam,
 )
 
-# from arkitect.core.component.tool import BaseTool, BaseToolResponse
 from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
 from arkitect.telemetry.trace import task
 from arkitect.utils import dump_json_str
@@ -88,13 +88,14 @@ async def handle_function_call(
             if tool_pool.get_tool(tool_name):
                 tool_executor = tool_pool
                 break
-        resp = None
+        resp: str | list[ChatCompletionContentPartParam] = ""
         if tool_executor is None:
             logging.error(f"Function {tool_name} not found")
-            resp = ""
         else:
             parameters = json.loads(tool_call.function.arguments)
-            resp = await tool_executor.execute_tool(tool_name=tool_name, parameters=parameters)
+            resp = await tool_executor.execute_tool(
+                tool_name=tool_name, parameters=parameters
+            )
             logging.info(
                 f"Function {tool_name} called with parameters:"
                 + dump_json_str(parameters)

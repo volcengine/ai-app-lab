@@ -39,7 +39,7 @@ from ....types.llm.model import (
 )
 from .base import BaseLanguageModel
 from .function_call import handle_function_call
-from .utils import build_tool_pool, format_ark_prompts, build_tool_parameters
+from .utils import build_tool_parameters, build_tool_pool, format_ark_prompts
 
 
 class BaseChatLanguageModel(BaseLanguageModel):
@@ -200,8 +200,9 @@ class BaseChatLanguageModel(BaseLanguageModel):
             else {}
         )
 
+        tool_pools = build_tool_pool(functions)
         if functions:
-            parameters["tools"] = build_tool_parameters(functions)
+            parameters["tools"] = await build_tool_parameters(tool_pools)
 
         request = ArkChatRequest(
             stream=False,
@@ -222,7 +223,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
 
             if completion.choices and completion.choices[0].finish_reason:
                 if not await handle_function_call(
-                    request, completion, functions, function_call_mode
+                    request, completion, tool_pools, function_call_mode
                 ):
                     break
 
@@ -250,7 +251,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         )
         tool_pools = build_tool_pool(functions)
         if functions:
-            parameters["tools"] = build_tool_parameters(tool_pools)
+            parameters["tools"] = await build_tool_parameters(tool_pools)
 
         request = ArkChatRequest(
             stream=True,

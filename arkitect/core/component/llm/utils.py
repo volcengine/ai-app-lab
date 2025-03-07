@@ -29,15 +29,15 @@ from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
 from arkitect.core.component.tool.custom_tool_pool import CustomToolPool
+from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import (
     ArkMessage,
     ChatCompletionMessageToolCallParam,
+    ChatCompletionTool,
     Function,
-    ChatCompletionTool
 )
 
 
@@ -206,6 +206,7 @@ def format_ark_prompts(
 
     return prompts
 
+
 def convert_response_message(
     response_message: Union[ChatCompletionMessage, ChoiceDelta],
 ) -> ArkMessage:
@@ -227,14 +228,18 @@ def convert_response_message(
     )
 
 
-def build_tool_parameters(functions:  list[MCPToolPool]) -> list[ChatCompletionTool]:
+async def build_tool_parameters(
+    functions: list[MCPToolPool],
+) -> list[ChatCompletionTool]:
     chat_completion_tools = []
     for tool_pool in functions:
-        chat_completion_tools.extend(tool_pool.list_tools())
+        chat_completion_tools.extend(await tool_pool.list_tools())
     return chat_completion_tools
 
 
-def build_tool_pool(functions:  list[MCPToolPool | Callable] | None) -> list[MCPToolPool]:
+def build_tool_pool(
+    functions: list[MCPToolPool | Callable] | None,
+) -> list[MCPToolPool]:
     if functions is None:
         return []
     tool_pools = []
@@ -243,7 +248,7 @@ def build_tool_pool(functions:  list[MCPToolPool | Callable] | None) -> list[MCP
         if isinstance(tool_pool_or_callable, MCPToolPool):
             tool_pools.append(tool_pool_or_callable)
         else:
-            if tool_pools is None:
+            if custom_tool_pool is None:
                 custom_tool_pool = CustomToolPool()
             custom_tool_pool.add_tool(tool_pool_or_callable)
     if custom_tool_pool is not None:

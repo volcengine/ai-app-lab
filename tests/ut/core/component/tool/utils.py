@@ -24,7 +24,7 @@ async def check_server_working(client: MCPToolPool, use_cache=False):
     result = await client.execute_tool("adder", {"a": 1, "b": 2})
     assert result[0] == "3"
     result = await client.execute_tool("greeting", {"name": "John"})
-    assert result[0] == "Hello, John!"
+    assert result == "Hello, John!"
     return True
 
 

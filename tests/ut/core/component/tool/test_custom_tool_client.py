@@ -28,7 +28,6 @@ async def test_connect_to_stdio_client():
         Returns:
             int: sum result
         """
-        print("calling adder")
         return a + b
 
     @pool.tool()
