@@ -172,4 +172,4 @@ if __name__ == "__main__":
                 gr.Markdown("> **searched content will by displayed here**")
                 references.render()
 
-    demo.launch()
+    demo.launch(server_name="0.0.0.0")
