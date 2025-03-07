@@ -18,7 +18,7 @@ from app.generators.phase import PhaseFinder, get_phase_from_message
 from app.message_utils import get_last_message
 from app.mode import Mode
 
-from arkitect.types.llm.model import (
+from arkitect.core.component.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

@@ -12,7 +12,7 @@
 from typing import AsyncIterable, List
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.types.llm.model import (
+from arkitect.core.component.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
     ArkMessage,

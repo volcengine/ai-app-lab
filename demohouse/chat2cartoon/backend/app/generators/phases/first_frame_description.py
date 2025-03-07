@@ -20,7 +20,7 @@ from app.generators.base import Generator
 from app.generators.phase import Phase
 from app.mode import Mode
 from app.output_parsers import OutputParser, parse_first_frame_description
-from arkitect.types.llm.model import (
+from arkitect.core.component.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

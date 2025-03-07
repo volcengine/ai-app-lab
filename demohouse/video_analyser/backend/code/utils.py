@@ -14,7 +14,7 @@ import time
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-from arkitect.types.llm.model import ArkMessage
+from arkitect.core.component.llm.model import ArkMessage
 from arkitect.utils.common import Singleton
 
 STATE_IDLE = 0

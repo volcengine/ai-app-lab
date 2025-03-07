@@ -23,7 +23,7 @@ from app.models.story_board import StoryBoard
 from app.models.tone import Tone
 from app.models.video import Video
 from app.models.video_description import VideoDescription
-from arkitect.types.llm.model import ArkChatRequest, ArkMessage
+from arkitect.core.component.llm.model import ArkChatRequest, ArkMessage
 
 
 def parse_storyboards(completions: str) -> List[StoryBoard]:

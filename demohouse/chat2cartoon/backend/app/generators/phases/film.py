@@ -37,7 +37,7 @@ from app.models.film import Film
 from app.models.tone import Tone
 from app.models.video import Video
 from app.output_parsers import OutputParser
-from arkitect.types.llm.model import (
+from arkitect.core.component.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,

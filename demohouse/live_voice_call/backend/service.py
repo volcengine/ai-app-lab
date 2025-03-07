@@ -13,7 +13,7 @@ from typing import AsyncIterable, List, Union
 
 from arkitect.core.component.asr import ASRFullServerResponse, AsyncASRClient
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.types.llm.model import ArkMessage
+from arkitect.core.component.llm.model import ArkMessage
 from arkitect.core.component.tts import AsyncTTSClient, AudioParams, ConnectionParams
 from arkitect.core.component.tts.constants import (
     EventSessionFinished,
