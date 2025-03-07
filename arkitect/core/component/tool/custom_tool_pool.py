@@ -12,16 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Callable,Iterable, Dict
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
-from mcp.server.fastmcp import FastMCP
-from mcp import Tool
+from typing import Any, Callable, Dict, Iterable
 
+from mcp import Tool
+from mcp.server.fastmcp import FastMCP
 from mcp.types import CallToolResult
 from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
+
+from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
 from arkitect.core.component.tool.utils import (
-    mcp_to_chat_completion_tool,
     convert_to_chat_completion_content_part_param,
+    mcp_to_chat_completion_tool,
 )
 from arkitect.types.llm.model import ChatCompletionTool
 
@@ -89,8 +90,7 @@ class CustomToolPool(MCPToolPool):
         parameters: dict[str, any],
     ) -> str | Iterable[ChatCompletionContentPartParam]:
         result = await self.session.call_tool(tool_name, parameters)
-        
-        return convert_to_chat_completion_content_part_param(CallToolResult(
-            content=result,
-            isError=False
-        ))
+
+        return convert_to_chat_completion_content_part_param(
+            CallToolResult(content=result, isError=False)
+        )

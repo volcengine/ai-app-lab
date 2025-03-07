@@ -16,7 +16,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from langchain.prompts.chat import BaseChatPromptTemplate
 from langchain.schema.output_parser import BaseTransformOutputParser
-from mcp.server.fastmcp import FastMCP
 from volcenginesdkarkruntime import Ark, AsyncArk
 from volcenginesdkarkruntime._streaming import AsyncStream
 from volcenginesdkarkruntime.types.chat import (
@@ -24,14 +23,12 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.tool.mcp_tool_pool import MCPClient
+from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
 
 # from arkitect.core.component.tool import BaseTool
 from arkitect.telemetry.trace import task
 from arkitect.utils.context import get_extra_headers
 
-from .base import BaseLanguageModel
-from .function_call import handle_function_call
 from ....types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
@@ -40,7 +37,9 @@ from ....types.llm.model import (
     ArkMessage,
     FunctionCallMode,
 )
-from .utils import format_ark_prompts
+from .base import BaseLanguageModel
+from .function_call import handle_function_call
+from .utils import format_ark_prompts, _build_tool_parameters
 
 
 class BaseChatLanguageModel(BaseLanguageModel):
@@ -187,7 +186,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: list[MCPClient | callable] | None = None,
+        functions: list[MCPToolPool | callable] | None = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
@@ -202,9 +201,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         )
 
         if functions:
-            parameters["tools"] = [
-                function.tool_schema() for function in functions.values() or []
-            ]
+            parameters["tools"] = _build_tool_parameters(functions)
 
         request = ArkChatRequest(
             stream=False,

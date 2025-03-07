@@ -69,8 +69,7 @@ class CallableFunction(Protocol):
         Any,
         Any,
         Union[Union[str, BaseModel], Union[str, BaseModel]],
-    ]:
-        ...
+    ]: ...
 
 
 class FunctionCallMode(str, Enum):

@@ -30,13 +30,15 @@ from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
+from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.errors import InvalidParameter
+from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import (
     ArkMessage,
     ChatCompletionMessageToolCallParam,
     Function,
+    ChatCompletionTool
 )
-from arkitect.core.errors import InvalidParameter
-from arkitect.telemetry.trace import task
 from arkitect.utils import dump_json_str
 
 
@@ -236,3 +238,7 @@ def convert_response_message(
             else None
         ),
     )
+
+
+def _build_tool_parameters(functions:  list[MCPToolPool | callable]) -> list[ChatCompletionTool]:
+    

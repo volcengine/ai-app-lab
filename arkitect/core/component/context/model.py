@@ -25,8 +25,7 @@ from arkitect.types.llm.model import (
 
 
 class ToolType(Protocol):
-    def tool_schema(self) -> ChatCompletionTool:
-        ...
+    def tool_schema(self) -> ChatCompletionTool: ...
 
 
 class State(BaseModel):

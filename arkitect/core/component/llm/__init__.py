@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .llm import BaseChatLanguageModel
 from ....types.llm.model import ArkChatCompletionChunk, ArkChatRequest, ArkChatResponse
+from .llm import BaseChatLanguageModel
 
 __all__ = [
     "BaseChatLanguageModel",

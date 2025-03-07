@@ -33,5 +33,4 @@ class AsyncBaseTTSClient(ABC):
         source: AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse, str]],
         stream: bool = True,
         **kwargs: Any,
-    ) -> AsyncIterable[TTSResponseChunk]:
-        ...
+    ) -> AsyncIterable[TTSResponseChunk]: ...
