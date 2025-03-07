@@ -66,30 +66,30 @@ class TestTask(unittest.TestCase):
 
         args = ["1", "2"]
         kwargs = {"a": "3", "b": "4"}
-        inpt = _update_kwargs(args, kwargs, func)
-        self.assertEqual(inpt.get("request"), "1")
-        self.assertEqual(inpt.get("config"), "2")
-        self.assertEqual(inpt.get("a"), "3")
-        self.assertEqual(inpt.get("b"), "4")
+        input = _update_kwargs(args, kwargs, func)
+        self.assertEqual(input.get("request"), "1")
+        self.assertEqual(input.get("config"), "2")
+        self.assertEqual(input.get("a"), "3")
+        self.assertEqual(input.get("b"), "4")
         self.assertEqual(kwargs.get("request"), None)
         self.assertEqual(kwargs.get("config"), None)
 
         args = ["1", "2"]
         kwargs = None
-        inpt = _update_kwargs(args, kwargs, func)
-        self.assertEqual(inpt.get("request"), "1")
-        self.assertEqual(inpt.get("config"), "2")
+        input = _update_kwargs(args, kwargs, func)
+        self.assertEqual(input.get("request"), "1")
+        self.assertEqual(input.get("config"), "2")
 
         args = None
         kwargs = {"a": "3", "b": "4"}
-        inpt = _update_kwargs(args, kwargs, func)
-        self.assertEqual(inpt.get("a"), "3")
-        self.assertEqual(inpt.get("b"), "4")
+        input = _update_kwargs(args, kwargs, func)
+        self.assertEqual(input.get("a"), "3")
+        self.assertEqual(input.get("b"), "4")
 
         args = None
         kwargs = None
-        inpt = _update_kwargs(args, kwargs, func)
-        self.assertEqual(inpt, {})
+        input = _update_kwargs(args, kwargs, func)
+        self.assertEqual(input, {})
 
     def test_sync_nested(self):
         test_sync()

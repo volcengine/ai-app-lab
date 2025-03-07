@@ -15,7 +15,7 @@
 import datetime
 import logging
 from contextlib import AsyncExitStack
-from typing import Dict, Iterable, Optional
+from typing import Any, Dict
 
 from mcp import ClientSession, StdioServerParameters, Tool, stdio_client
 from mcp.client.sse import sse_client
@@ -30,14 +30,14 @@ from arkitect.types.llm.model import ChatCompletionTool
 logger = logging.getLogger(__name__)
 
 
-class MCPToolPool:
-    def __init__(self):
+class MCPClient:
+    def __init__(self) -> None:
         # Initialize session and client objects
-        self.session: Optional[ClientSession] = None
+        self.session: ClientSession = None  # type: ignore
         self.exit_stack = AsyncExitStack()
         self.tools: Dict[str, Tool] = {}
-        self._mcp_server_name = None
-        self._chat_completion_tools = {}
+        self._mcp_server_name: str | None = None
+        self._chat_completion_tools: dict[str, ChatCompletionTool] = {}
 
     async def connect_to_server(
         self,
@@ -47,26 +47,25 @@ class MCPToolPool:
         headers: dict[str, str] | None = None,
         timeout: float = 5,
         sse_read_timeout: float = 60 * 5,
-    ) -> ClientSession:
+    ) -> None:
         """Connect to an MCP server running with SSE or STDIO transport"""
         # Store the context managers so they stay alive
         if server_url is not None and server_script_path is not None:
-            raise ValueError("You should set either erver_url or server_script_path")
-        if server_url is None and server_script_path is None:
             raise ValueError("You should set either erver_url or server_script_path")
         if server_url is not None:
             await self._connect_to_sse_server(
                 server_url, headers, timeout, sse_read_timeout
             )
-        else:
+        elif server_script_path is not None:
             await self._connect_to_stdio_server(
                 server_script_path=server_script_path, env=env
             )
-        return self.session
+        else:
+            raise ValueError("You should set either erver_url or server_script_path")
 
     async def _connect_to_stdio_server(
-        self, server_script_path: str, env: dict[str, str] = None
-    ):
+        self, server_script_path: str, env: dict[str, str] | None = None
+    ) -> None:
         """Connect to an MCP server
         Args:
             server_script_path: Path to the server script (.py or .js)
@@ -100,16 +99,16 @@ class MCPToolPool:
         self,
         server_url: str,
         headers: dict[str, str] | None = None,
-        timemout: float = 5,
+        timeout: float = 5,
         sse_read_timeout: float = 60 * 5,
-    ):
+    ) -> None:
         """Connect to an MCP server running with SSE transport"""
         # Store the context managers so they stay alive
         streams = await self.exit_stack.enter_async_context(
             sse_client(
                 url=server_url,
                 headers=headers,
-                timeout=timemout,
+                timeout=timeout,
                 sse_read_timeout=sse_read_timeout,
             )
         )
@@ -121,7 +120,7 @@ class MCPToolPool:
         # Initialize
         await self._init()
 
-    async def _init(self):
+    async def _init(self) -> None:
         # Initialize
         logger.info("Initialized mcp client...")
         init_result = await self.session.initialize()
@@ -138,7 +137,7 @@ class MCPToolPool:
         )
         self._mcp_server_name = init_result.serverInfo.name
 
-    async def _cleanup(self):
+    async def cleanup(self) -> None:
         """Clean up resources"""
         await self.exit_stack.aclose()
 
@@ -158,22 +157,20 @@ class MCPToolPool:
         return list(self._chat_completion_tools.values())
 
     @property
-    def name(self) -> str | None:
+    def name(self) -> str:
+        if self._mcp_server_name is None:
+            raise ValueError("MCP client is not connected to server yet")
         return self._mcp_server_name
 
     async def execute_tool(
         self,
         tool_name: str,
-        parameters: dict[str, any],
-    ) -> str | Iterable[ChatCompletionContentPartParam]:
+        parameters: dict[str, Any],
+    ) -> str | list[ChatCompletionContentPartParam]:
         result = await self.session.call_tool(tool_name, parameters)
         return convert_to_chat_completion_content_part_param(result)
 
-    async def get_tool(
-        self,
-        tool_name: str,
-        use_cache: bool = True
-    ) -> Tool | None:
+    async def get_tool(self, tool_name: str, use_cache: bool = True) -> Tool | None:
         if not use_cache:
             response = await self.session.list_tools()
             self.tools = {t.name: t for t in response.tools}

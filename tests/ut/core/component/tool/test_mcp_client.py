@@ -12,21 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.component.tool.mcp_client import MCPClient
 
 import multiprocessing
 import time
 from utils import check_server_working, _start_server
 
+
 async def test_connect_to_stdio_client():
-    client = MCPToolPool()
+    client = MCPClient()
     await client.connect_to_server(
         server_script_path="tests/ut/core/component/tool/dummy_mcp_server.py"
     )
-    assert await check_server_working(client=client)
-    assert await check_server_working(client=client, use_cache=True)
-    client._cleanup()
-
+    assert await check_server_working(
+        client=client,
+        expected_tools={
+            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
+            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
+        },
+    )
+    assert await check_server_working(
+        client=client,
+        use_cache=True,
+        expected_tools={
+            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
+            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
+        },
+    )
+    client.cleanup()
 
 
 async def test_connect_to_sse_client():
@@ -35,13 +48,26 @@ async def test_connect_to_sse_client():
     server_process.start()
 
     # Wait a bit to ensure server starts
-    time.sleep(5)
+    time.sleep(3)
 
-    client = MCPToolPool()
+    client = MCPClient()
     await client.connect_to_server(server_url="http://localhost:8000/sse")
-    assert await check_server_working(client=client)
-    assert await check_server_working(client=client, use_cache=True)
-    client._cleanup()
+    assert await check_server_working(
+        client=client,
+        expected_tools={
+            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
+            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
+        },
+    )
+    assert await check_server_working(
+        client=client,
+        use_cache=True,
+        expected_tools={
+            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
+            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
+        },
+    )
+    client.cleanup()
     server_process.kill()
 
 

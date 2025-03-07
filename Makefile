@@ -3,27 +3,27 @@
 # Default target executed when no arguments are given to make.
 all: help
 
-POETRY_VERSION=1.6.1
-# poetry command will be installed in ``${HOME}/.local/bin/`` directory.
+UV_VERSION=0.6.5
+# uv command will be installed in ``${HOME}/.local/bin/`` directory.
 PATH = ${HOME}/.local/bin/:$(shell printenv PATH)
-poetry_install:
-		@if ! command -v poetry >/dev/null; then \
-		        echo "Install Poetry"; \
-		        pip install poetry==$(POETRY_VERSION); \
+uv_install:
+		@if ! command -v uv >/dev/null; then \
+		        echo "Install uv"; \
+		        pip install uv==$(UV_VERSION); \
 		else \
-		        echo "Poetry has been installed"; \
+		        echo "Uv has been installed"; \
 		fi
 
-		@echo "Poetry version: $(shell poetry --version)"
+		@echo "Uv version: $(shell uv --version)"
 
 install:
-		poetry install
+		uv sync
 
 install_ci:
-		poetry install --with lint,typing,test
+		uv sync --system --group lint --group typing --group test
 
 build:
-		poetry build
+		uv build
 
 clean:
 		rm -rf dist
@@ -32,8 +32,7 @@ clean:
 TEST_FILE ?= tests/ut/
 
 test:
-		export PYTHONPATH=$(pwd)
-		poetry run pytest $(TEST_FILE)
+		uv run pytest $(TEST_FILE)
 
 ######################
 # LINTING AND FORMATTING
@@ -50,18 +49,18 @@ lint_tests: PYTHON_FILES=tests
 lint_tests: MYPY_CACHE=.mypy_cache_test
 
 lint lint_diff lint_package lint_tests:
-		[ "$(PYTHON_FILES)" = "" ] || poetry run ruff $(PYTHON_FILES) --fix
-		[ "$(PYTHON_FILES)" = "" ] || poetry run ruff format $(PYTHON_FILES) --diff
-		[ "$(PYTHON_FILES)" = "" ] || poetry run ruff --select I $(PYTHON_FILES)
-		[ "$(PYTHON_FILES)" = "" ] || poetry run mypy $(PYTHON_FILES) --install-types --non-interactive
-		[ "$(PYTHON_FILES)" = "" ] || poetry run mypy $(PYTHON_FILES)
+		[ "$(PYTHON_FILES)" = "" ] || uv run ruff check --fix $(PYTHON_FILES)
+		[ "$(PYTHON_FILES)" = "" ] || uv run ruff format $(PYTHON_FILES) --diff
+		[ "$(PYTHON_FILES)" = "" ] || uv run ruff check --select I $(PYTHON_FILES)
+		[ "$(PYTHON_FILES)" = "" ] || uv run mypy $(PYTHON_FILES) --install-types --non-interactive
+		[ "$(PYTHON_FILES)" = "" ] || uv run mypy $(PYTHON_FILES)
 
 format format_diff:
-		poetry run ruff format $(PYTHON_FILES)
-		poetry run ruff --select I --fix $(PYTHON_FILES)
+		uv run ruff format $(PYTHON_FILES)
+		uv run ruff check --select I --fix $(PYTHON_FILES)
 
 spell_check:
-		poetry run codespell --toml pyproject.toml
+		uv run codespell --toml pyproject.toml
 
 spell_fix:
-		poetry run codespell --toml pyproject.toml -w
+		uv run codespell --toml pyproject.toml -w

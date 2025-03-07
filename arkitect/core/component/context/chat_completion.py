@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, AsyncIterable, Dict, List, Literal, Mapping, Optional, Union
+from typing import Any, AsyncIterable, Dict, List, Literal, Optional, Union
 
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.resources.chat import AsyncChat
@@ -26,8 +26,10 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
 
+from arkitect.core.component.tool.tool_pool import ToolPool
+
 from .hooks import ChatHook, default_chat_hook
-from .model import State, ToolType
+from .model import State
 
 
 class _AsyncCompletions(AsyncCompletions):
@@ -43,7 +45,7 @@ class _AsyncCompletions(AsyncCompletions):
         self,
         messages: List[ChatCompletionMessageParam],
         stream: Optional[Literal[True, False]] = True,
-        tools: Optional[Mapping[str, ToolType]] = None,
+        tool_pool: ToolPool | None = None,
         **kwargs: Dict[str, Any],
     ) -> Union[ChatCompletion, AsyncIterable[ChatCompletionChunk]]:
         parameters = (
@@ -51,10 +53,9 @@ class _AsyncCompletions(AsyncCompletions):
             if self._state.parameters is not None
             else {}
         )
-        if tools is not None:
-            parameters["tools"] = [
-                tool.tool_schema().model_dump() for tool in tools.values() or []
-            ]
+        if tool_pool:
+            tools = await tool_pool.list_tools()
+            parameters["tools"] = [t.model_dump() for t in tools]
         for hook in self.hooks:
             messages = await hook(self._state, messages)
         resp = await super().create(

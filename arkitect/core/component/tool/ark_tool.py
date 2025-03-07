@@ -16,7 +16,6 @@ from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 from volcenginesdkarkruntime import AsyncArk
-from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
 from arkitect.core.client.http import default_ark_client
 
@@ -39,8 +38,11 @@ class ArkToolResponse(BaseModel):
 
 
 async def execute(
-    action_name, tool_name, parameters: dict[str, Any] | None = None, **kwargs: Any
-) -> ArkToolResponse | ChatCompletionMessageParam:
+    action_name: str,
+    tool_name: str,
+    parameters: dict[str, Any] | None = None,
+    **kwargs: Any,
+) -> Any:
     parameter = ArkToolRequest(
         action_name=action_name,
         tool_name=tool_name,
@@ -69,7 +71,7 @@ async def calculator(input: str) -> str:
     )
 
 
-async def link_reader(url_list: list[str]):
+async def link_reader(url_list: list[str]) -> Any:
     """当你需要获取网页、pdf、抖音视频内容时，使用此工具。可以获取url链接下的标题和内容。
 
     examples: {"url_list":["abc.com", "xyz.com"]}

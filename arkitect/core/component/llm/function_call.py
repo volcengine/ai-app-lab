@@ -14,16 +14,15 @@
 
 import copy
 import json
-import logging
-from typing import Any, List, Optional, Union
+from typing import Any, Optional, Union
 
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
 )
 
-# from arkitect.core.component.tool import BaseTool, BaseToolResponse
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.component.tool.tool_pool import ToolPool
+from arkitect.telemetry.logger import INFO, WARN
 from arkitect.telemetry.trace import task
 from arkitect.utils import dump_json_str
 
@@ -43,7 +42,7 @@ async def handle_function_call(
     response: Union[
         ChatCompletionChunk, ChatCompletion, ArkChatCompletionChunk, ArkChatResponse
     ],
-    tool_pools: Optional[List[MCPToolPool]] = None,
+    tool_pool: Optional[ToolPool] = None,
     function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
     **kwargs: Any,
 ) -> bool:
@@ -70,7 +69,7 @@ async def handle_function_call(
     )
     tool_calls = response_message.tool_calls
 
-    if not tool_calls or not tool_pools or len(tool_pools) == 0:
+    if not tool_calls or not tool_pool:
         return False
 
     if function_call_mode and function_call_mode != FunctionCallMode.SEQUENTIAL:
@@ -81,31 +80,24 @@ async def handle_function_call(
     function_calls = copy.deepcopy(tool_calls)
     for tool_call in function_calls:
         tool_name = tool_call.function.name
-
-        tool_executor = None
-        for tool_pool in tool_pools:
-            # TODO: tool_name may not be unique across tool pools
-            if tool_pool.get_tool(tool_name):
-                tool_executor = tool_pool
-                break
-        resp = None
-        if tool_executor is None:
-            logging.error(f"Function {tool_name} not found")
-            resp = ""
+        parameters = json.loads(tool_call.function.arguments)
+        if not tool_pool.contain(tool_name=tool_name):
+            WARN(f"Function {tool_name} not found")
         else:
-            parameters = json.loads(tool_call.function.arguments)
-            resp = await tool_executor.execute_tool(tool_name=tool_name, parameters=parameters)
-            logging.info(
+            resp = await tool_pool.execute_tool(
+                tool_name=tool_name,
+                parameters=parameters,
+            )
+            INFO(
                 f"Function {tool_name} called with parameters:"
                 + dump_json_str(parameters)
                 + f" and response: {resp}"
             )
-
-        request.messages.append(
-            ArkMessage(
-                role="tool",
-                content=resp,
-                tool_call_id=tool_call.id,
+            request.messages.append(
+                ArkMessage(
+                    role="tool",
+                    content=resp,
+                    tool_call_id=tool_call.id,
+                )
             )
-        )
     return True
