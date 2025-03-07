@@ -168,3 +168,13 @@ class MCPToolPool:
     ) -> str | Iterable[ChatCompletionContentPartParam]:
         result = await self.session.call_tool(tool_name, parameters)
         return convert_to_chat_completion_content_part_param(result)
+
+    async def get_tool(
+        self,
+        tool_name: str,
+        use_cache: bool = True
+    ) -> Tool | None:
+        if not use_cache:
+            response = await self.session.list_tools()
+            self.tools = {t.name: t for t in response.tools}
+        return self.tools.get(tool_name, None)

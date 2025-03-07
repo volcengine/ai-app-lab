@@ -24,6 +24,8 @@ from arkitect.types.llm.model import ChatCompletionTool, FunctionDefinition
 def convert_to_chat_completion_content_part_param(
     result: CallToolResult,
 ) -> str | Iterable[ChatCompletionContentPartParam]:
+    if len(result.content) == 1 and isinstance(result.content[0], TextContent):
+        return result.content[0].text
     message_parts = []
     for part in result.content:
         if isinstance(part, TextContent):
