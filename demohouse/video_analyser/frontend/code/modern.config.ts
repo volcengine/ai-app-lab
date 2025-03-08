@@ -45,12 +45,6 @@ export default defineConfig({
         '/api': {
           changeOrigin: true,
           target: argObj.FAAS_URL,
-          onProxyRes: (proxyRes, req, res) => {
-            const target =
-              'https://scssbl15u19f8v2ksh2ig.apigateway-cn-beijing.volceapi.com';
-            proxyRes.headers['x-real-url'] = target + req.url;
-            console.log('devServer proxy', proxyRes.headers, res);
-          },
         },
       },
     },
