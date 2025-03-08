@@ -14,7 +14,7 @@ import { useRef } from 'react';
 import type { ASRResponseData } from './LabASR';
 import { encodeAudioOnlyRequest, encodeFullClientRequest, parseResponse } from './LabASR/utils';
 
-const url = `wss://openspeech.bytedance.com/api/v3/sauc/bigmodel?api_access_key=iXGLq7xBbRypJ9xTuHtKGq8zJYhp2r9k&api_app_key=6294607933&api_resource_id=volc.bigasr.sauc.duration`;
+const url = `wss://openspeech.bytedance.com/api/v3/sauc/bigmodel?api_access_key=${process.env.TTS_ACCESS_TOKEN}&api_app_key=${process.env.TTS_APP_ID}&api_resource_id=volc.bigasr.sauc.duration`;
 
 export const useAsrWs = ({ onAsrResp }: { onAsrResp: (res_json: any) => void }) => {
   const wsRef = useRef<WebSocket>();
