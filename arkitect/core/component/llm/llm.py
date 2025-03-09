@@ -23,7 +23,8 @@ from volcenginesdkarkruntime.types.chat import (
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.component.tool.mcp_client import MCPClient
+from arkitect.core.component.tool.tool_pool import ToolPool
 
 # from arkitect.core.component.tool import BaseTool
 from arkitect.telemetry.trace import task
@@ -39,7 +40,7 @@ from ....types.llm.model import (
 )
 from .base import BaseLanguageModel
 from .function_call import handle_function_call
-from .utils import build_tool_parameters, build_tool_pool, format_ark_prompts
+from .utils import build_tool_pool, format_ark_prompts
 
 
 class BaseChatLanguageModel(BaseLanguageModel):
@@ -186,7 +187,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: list[MCPToolPool | Callable] | None = None,
+        functions: list[MCPClient | Callable] | ToolPool | None = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
@@ -200,9 +201,13 @@ class BaseChatLanguageModel(BaseLanguageModel):
             else {}
         )
 
-        tool_pools = build_tool_pool(functions)
-        if functions:
-            parameters["tools"] = await build_tool_parameters(tool_pools)
+        tool_pool: ToolPool | None = None
+        if isinstance(functions, list) and len(functions) > 0:
+            tool_pool = build_tool_pool(functions)
+        elif isinstance(functions, ToolPool):
+            tool_pool = functions
+        if tool_pool:
+            parameters["tools"] = tool_pool.list_tools()
 
         request = ArkChatRequest(
             stream=False,
@@ -223,7 +228,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
 
             if completion.choices and completion.choices[0].finish_reason:
                 if not await handle_function_call(
-                    request, completion, tool_pools, function_call_mode
+                    request, completion, tool_pool, function_call_mode
                 ):
                     break
 
@@ -235,7 +240,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         extra_query: Optional[Dict[str, Any]] = None,
         extra_body: Optional[Dict[str, Any]] = None,
         *,
-        functions: list[MCPToolPool | Callable] | None = None,
+        functions: list[MCPClient | Callable] | ToolPool | None = None,
         function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
         additional_system_prompts: Optional[List[str]] = None,
         **kwargs: Any,
@@ -249,9 +254,13 @@ class BaseChatLanguageModel(BaseLanguageModel):
             if self.parameters
             else {}
         )
-        tool_pools = build_tool_pool(functions)
-        if functions:
-            parameters["tools"] = await build_tool_parameters(tool_pools)
+        tool_pool: ToolPool | None = None
+        if isinstance(functions, list) and len(functions) > 0:
+            tool_pool = build_tool_pool(functions)
+        elif isinstance(functions, ToolPool):
+            tool_pool = functions
+        if tool_pool:
+            parameters["tools"] = tool_pool.list_tools()
 
         request = ArkChatRequest(
             stream=True,
@@ -300,7 +309,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
                         final_tool_calls.values()
                     )
                     is_more_request = await handle_function_call(
-                        request, ark_resp, tool_pools, function_call_mode
+                        request, ark_resp, tool_pool, function_call_mode
                     )
 
             if not is_more_request:

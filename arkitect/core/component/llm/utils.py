@@ -29,14 +29,13 @@ from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
-from arkitect.core.component.tool.custom_tool_pool import CustomToolPool
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.component.tool.mcp_client import MCPClient
+from arkitect.core.component.tool.tool_pool import ToolPool
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import (
     ArkMessage,
     ChatCompletionMessageToolCallParam,
-    ChatCompletionTool,
     Function,
 )
 
@@ -228,29 +227,13 @@ def convert_response_message(
     )
 
 
-async def build_tool_parameters(
-    functions: list[MCPToolPool],
-) -> list[ChatCompletionTool]:
-    chat_completion_tools = []
-    for tool_pool in functions:
-        chat_completion_tools.extend(await tool_pool.list_tools())
-    return chat_completion_tools
-
-
 def build_tool_pool(
-    functions: list[MCPToolPool | Callable] | None,
-) -> list[MCPToolPool]:
-    if functions is None:
-        return []
-    tool_pools = []
-    custom_tool_pool = None
-    for tool_pool_or_callable in functions:
-        if isinstance(tool_pool_or_callable, MCPToolPool):
-            tool_pools.append(tool_pool_or_callable)
+    functions: list[MCPClient | Callable],
+) -> ToolPool:
+    tool_pool = ToolPool()
+    for client_or_callable in functions:
+        if isinstance(client_or_callable, MCPClient):
+            tool_pool.add_mcp_client(client_or_callable)
         else:
-            if custom_tool_pool is None:
-                custom_tool_pool = CustomToolPool()
-            custom_tool_pool.add_tool(tool_pool_or_callable)
-    if custom_tool_pool is not None:
-        tool_pools.append(custom_tool_pool)
-    return tool_pools
+            tool_pool.add_tool(client_or_callable)
+    return tool_pool

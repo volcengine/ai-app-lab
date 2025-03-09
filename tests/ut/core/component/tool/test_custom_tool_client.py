@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.core.component.tool.custom_tool_pool import CustomToolPool
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.component.tool.tool_pool import ToolPool
 from utils import check_server_working
 
+
 async def test_connect_to_stdio_client():
-    pool = CustomToolPool()
+    pool = ToolPool()
 
     @pool.tool()
     async def adder(a: int, b: int) -> int:
@@ -40,11 +40,12 @@ async def test_connect_to_stdio_client():
         """
         return f"Hello, {name}!"
 
-    await pool.connect_to_server()
+    await pool.initialize()
     await check_server_working(client=pool)
     await check_server_working(client=pool, use_cache=True)
 
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(test_connect_to_stdio_client())

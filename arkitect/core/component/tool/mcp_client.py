@@ -30,10 +30,10 @@ from arkitect.types.llm.model import ChatCompletionTool
 logger = logging.getLogger(__name__)
 
 
-class MCPToolPool:
+class MCPClient:
     def __init__(self) -> None:
         # Initialize session and client objects
-        self.session: Any = None
+        self.session: ClientSession = None  # type: ignore
         self.exit_stack = AsyncExitStack()
         self.tools: Dict[str, Tool] = {}
         self._mcp_server_name: str | None = None
@@ -137,7 +137,7 @@ class MCPToolPool:
         )
         self._mcp_server_name = init_result.serverInfo.name
 
-    async def _cleanup(self) -> None:
+    async def cleanup(self) -> None:
         """Clean up resources"""
         await self.exit_stack.aclose()
 
@@ -157,7 +157,9 @@ class MCPToolPool:
         return list(self._chat_completion_tools.values())
 
     @property
-    def name(self) -> str | None:
+    def name(self) -> str:
+        if self._mcp_server_name is None:
+            raise ValueError("MCP client is not connected to server yet")
         return self._mcp_server_name
 
     async def execute_tool(

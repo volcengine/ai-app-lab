@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.component.tool.mcp_client import MCPClient
 from dummy_mcp_server import server
 
 
-async def check_server_working(client: MCPToolPool, use_cache=False):
+async def check_server_working(client: MCPClient, use_cache=False):
     assert client.session is not None
     tools = await client.list_tools(use_cache=use_cache)
     assert len(tools) == 2

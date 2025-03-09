@@ -58,3 +58,16 @@ def mcp_to_chat_completion_tool(
         ),
     )
     return t
+
+
+def find_duplicate_tools(
+    tools: list[ChatCompletionTool],
+) -> list[str]:
+    seen = set()
+    duplicates = []
+    for tool in tools:
+        if tool.function.name in seen:
+            duplicates.append(tool.function.name)
+        else:
+            seen.add(tool.function.name)
+    return duplicates
