@@ -21,10 +21,10 @@ from arkitect.types.llm.model import ArkContextParameters
 
 async def main():
     # human in the loop example
-    async with (Context(model="<MODEL_NAME>", tools=[link_reader]) as ctx):
+    async with (Context(model="doubao-1.5-pro-32k-250115", tools=[link_reader]) as ctx):
         ctx.add_tool_hook(link_reader.__name__, approval_tool_hook)
         while True:
-            question = input()
+            question = input("用户输入：")
             if question == "exit":
                 break
             completion = await ctx.completions.create([
@@ -39,7 +39,7 @@ async def main():
             print()
 
     # context api example
-    async with Context(model="<MODEL-NAME>", context_parameters=ArkContextParameters(
+    async with Context(model="doubao-1.5-pro-32k-250115", context_parameters=ArkContextParameters(
             messages=[
                 {
                     "role": "system",
@@ -51,7 +51,7 @@ async def main():
             )
     )) as ctx:
         while True:
-            question = input()
+            question = input("用户输入：")
             if question == "exit":
                 break
             completion = await ctx.completions.create([
