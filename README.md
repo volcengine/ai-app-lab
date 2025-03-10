@@ -196,7 +196,7 @@ import os
 from typing import AsyncIterable, Union
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-
+from arkitect.core.component.tool import LinkReader, ToolPool, tool
 from arkitect.core.component.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
@@ -204,29 +204,48 @@ from arkitect.core.component.llm.model import (
     ArkChatResponse,
     Response,
 )
-from arkitect.core.component.tool import Calculator, ToolPool
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
 
 endpoint_id = "<YOUR ENDPOINT ID>"
+
+
+# you can define your own methods here and let LLM use as tools
+@tool
+def adder(a: int, b: int) -> int:
+    """Add two integer numbers
+
+    Args:
+        a (int): first number
+        b (int): second number
+
+    Returns:
+        int: sum result
+    """
+    print("calling adder")
+    return a + b
+
+
+# you can also use predefined tools on Ark such as link reader and calculator
+ToolPool.register(LinkReader())
 
 @task()
 async def default_model_calling(
     request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     parameters = ArkChatParameters(**request.__dict__)
-    ToolPool.register(Calculator())
 
     llm = BaseChatLanguageModel(
         endpoint_id=endpoint_id,
         messages=request.messages,
         parameters=parameters,
     )
+    all_tools = ToolPool.all()
     if request.stream:
-        async for resp in llm.astream(functions=ToolPool.all()):
+        async for resp in llm.astream(functions=all_tools):
             yield resp
     else:
-        yield await llm.arun(functions=ToolPool.all())
+        yield await llm.arun(functions=all_tools)
 
 
 @task()
@@ -264,7 +283,7 @@ curl --location 'http://localhost:8080/api/v3/bots/chat/completions' \
     "messages": [
         {
             "role": "user",
-            "content": "老王要养马,他有这样一池水:如果养马30匹,8天可可以把水喝光;如果养马25匹,12天把水喝光。老王要养马23匹,那么几天后他要为马找水喝?"
+            "content": "帮我计算2341234 -13241234"
         }
     ]
 }'
@@ -283,16 +302,17 @@ curl --location 'http://localhost:8080/api/v3/bots/chat/completions' \
             "index": 0,
             "logprobs": null,
             "message": {
-                "content": "\n首先计算出每天新增的水量，再算出池中原有的水量，最后根据养马数量计算水可以喝的天数，调用 `Calculator/Calculator` 工具进行计算。\n\n假设每匹马每天的饮水量为\\(1\\)份，我们先来求出每天新增的水量。\n\n\n\n假设每匹马每天的饮水量为1份。30匹马8天的饮水量为$30\\times8=240$份，25匹马12天的饮水量为$25\\times12=300$份。那么12天的总饮水量比8天的总饮水量多了$300-240=60$份，这60份水是$12-8=4$天新增加的水量，所以每天新增加的水量为$60\\div4=15$份。则水池原有的水量为$30\\times8-15\\times8=120$份。如果养23匹马，每天实际消耗原水池的水量为$23-15=8$份，所以喝完水池里的水需要$120\\div8=15$天\n15天后他要为马找水喝。",
+                "content": "用户需要计算2341234 - 13241234，调用`adder`函数实现减法，即`adder(2341234, -13241234)`。2341234 - 13241234的结果是 -10900000。",
                 "role": "assistant",
                 "function_call": null,
                 "tool_calls": null,
-                "audio": null
+                "audio": null,
+                "reasoning_content": null
             }
         }
     ],
     "created": 1737022804,
-    "model": "doubao-pro-32k-241215",
+    "model": "doubao-1-5-pro-32k-250115",
     "object": "chat.completion",
     "usage": {
         "completion_tokens": 558,

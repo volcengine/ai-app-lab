@@ -25,16 +25,13 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain_core.messages.tool import ToolCall
-from pydantic import BaseModel
 from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.trace import task
-from arkitect.utils import dump_json_str
-
-from .model import (
+from arkitect.types.llm.model import (
     ArkMessage,
     ChatCompletionMessageToolCallParam,
     Function,
@@ -207,31 +204,22 @@ def format_ark_prompts(
     return prompts
 
 
-def transform_response(response: Any) -> str:
-    if isinstance(response, str):
-        return response
-    elif isinstance(response, dict):
-        return json.dumps(response)
-    elif isinstance(response, BaseModel):
-        return response.model_dump_json(exclude_none=True, exclude_unset=True)
-    else:
-        return dump_json_str(response)
-
-
 def convert_response_message(
     response_message: Union[ChatCompletionMessage, ChoiceDelta],
 ) -> ArkMessage:
     return ArkMessage(
         role=response_message.role,
         content=response_message.content,
-        tool_calls=[
-            ChatCompletionMessageToolCallParam(
-                id=tool_call.id,
-                type=tool_call.type,
-                function=Function(**tool_call.function.__dict__),
-            )
-            for tool_call in response_message.tool_calls
-        ]
-        if response_message.tool_calls
-        else None,
+        tool_calls=(
+            [
+                ChatCompletionMessageToolCallParam(
+                    id=tool_call.id,
+                    type=tool_call.type,
+                    function=Function(**tool_call.function.__dict__),
+                )
+                for tool_call in response_message.tool_calls
+            ]
+            if response_message.tool_calls
+            else None
+        ),
     )

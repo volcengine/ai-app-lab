@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ...types.runtime.model import Context, Request, RequestType, Response, ResponseType
 from .asyncio import AsyncRunner, ChatAsyncRunner, CustomAsyncRunner
-from .model import Context, Request, RequestType, Response, ResponseType
 from .runner import load_function
 from .sync import SyncRunner
 

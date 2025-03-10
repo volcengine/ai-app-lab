@@ -15,17 +15,14 @@ from volcenginesdkarkruntime.types.context import TruncationStrategy
 
 from arkitect.core.component.context.context import Context
 from arkitect.core.component.context.hooks import approval_tool_hook
-from arkitect.core.component.llm.model import ArkMessage, ArkContextParameters
-from arkitect.core.component.tool.pool import tool_key
-from arkitect.core.component.tool.schema.linkreader import LinkReader
+from arkitect.core.component.tool.ark_tool import link_reader
+from arkitect.types.llm.model import ArkContextParameters
 
 
 async def main():
-    link_reader = LinkReader()
-    link_reader_key = tool_key(link_reader.action_name, link_reader.tool_name)
     # human in the loop example
-    async with (Context(model="<MODEL_NAME>", tools={link_reader_key: link_reader}) as ctx):
-        ctx.tools.get(link_reader_key).hooks.append(approval_tool_hook)
+    async with (Context(model="<MODEL_NAME>", tools=[link_reader]) as ctx):
+        ctx.add_tool_hook(link_reader.__name__, approval_tool_hook)
         while True:
             question = input()
             if question == "exit":

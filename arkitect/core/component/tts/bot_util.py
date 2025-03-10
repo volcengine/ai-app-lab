@@ -23,7 +23,7 @@ from volcenginesdkarkruntime.types.chat.chat_completion import (
 )
 from volcenginesdkarkruntime.types.chat.chat_completion_audio import ChatCompletionAudio
 
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,
