@@ -1,0 +1,37 @@
+{
+  "name": "teacher-demo",
+  "private": true,
+  "scripts": {
+    "dev": "applet dev",
+    "build": "applet build",
+    "lint": "eslint --ext .ts,.tsx src",
+    "deploy": "applet deploy -o"
+  },
+  "dependencies": {
+    "@ai-app/agent": "latest",
+    "@ai-app/agent-builtin-components": "0.0.1",
+    "@ai-app/bridge-api": "latest",
+    "@ai-app/framework": "latest",
+    "@ai-app/multimodal-api": "latest",
+    "@ai-app/storage": "latest",
+    "@ai-app/bridge-base": "latest",
+    "@flow-web/md-box": "latest",
+    "@fortawesome/fontawesome-svg-core": "6.6.0",
+    "@fortawesome/free-solid-svg-icons": "6.6.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-rnd": "10.4.14",
+    "@fortawesome/react-fontawesome": "0.2.2",
+    "framer-motion": "^12.4.7",
+    "antd-mobile": "5.38.1"
+  },
+  "devDependencies": {
+    "@ai-app/kit": "latest",
+    "@byted/eslint-config-eden": "^5.0.21",
+    "@edenx/tsconfig": "1.49.3",
+    "@types/react": "18.2.45",
+    "@types/react-dom": "18.2.7",
+    "eslint-plugin-prettier": "~4.2.1",
+    "tailwindcss": "^3.4.17"
+  }
+}

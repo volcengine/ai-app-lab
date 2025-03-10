@@ -1,0 +1,107 @@
+.asr-tip{
+  position: absolute;
+  top: -34px;
+  font-size: 12px;
+}
+.answer-card{
+  padding: 24px 16px;
+  padding-bottom: 104px;
+  margin-bottom: auto;
+  svg{
+    max-width: 100%;
+    display: inline-block;
+  }
+
+}
+.asr-input-wrapper{
+  position: absolute;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
+  left:0;
+  right:0;
+  bottom:0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.asr-input{
+  position: relative;
+  margin: 16px 16px 16px 20px;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  flex:1;
+  :global(.adm-input-element){
+    font-size:14px;
+  }
+}
+.reasoning-card{
+  border-radius: 16px;
+  background: #EEF9F1;
+  padding: 12px 20px;
+}
+.reasoning-card-line{
+  border-left:1px solid #DDF0E7;;
+  padding-left:13px;
+  margin-top:12px;
+}
+.abort-llm{
+  border-radius: 33px;
+  background: #FFF;
+  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.15), 0px -1px 9.8px 0px rgba(197, 216, 254, 0.20);
+  margin-right:20px;
+  padding:4px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-content{
+  border-radius: 16px 16px 0px 16px;
+  background: #0AB76A;
+  max-width: 90%;
+  display: inline-block;
+  padding: 12px 16px;
+  color: #FFF;
+  font-family: "PingFang SC";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+}
+.thinking{
+  position: relative ;
+  top:1px;
+  background: linear-gradient(74deg, #292C30 15.49%, #727985 27.64%, #1C1E21 39.25%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 184.615% */
+  letter-spacing: 0.039px;
+}
+.think-text{
+  position: relative;
+  top:1px;
+  color: var(--text-color-text-1, var(--text-color-text-1, #0C0D0E));
+  font-family: "PingFang SC";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px; /* 171.429% */
+  letter-spacing: 0.042px;
+}
+
+.feedback-tip{
+  :global(.adm-toast-main){
+    background: #fff;
+    color:black;
+    word-break: keep-all;
+    max-width: 300px;
+  }
+}
