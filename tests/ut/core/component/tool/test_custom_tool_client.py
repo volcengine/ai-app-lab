@@ -16,7 +16,7 @@ from arkitect.core.component.tool.tool_pool import ToolPool
 from utils import check_server_working
 
 
-async def test_connect_to_stdio_client():
+async def test_custom_tool():
     pool = ToolPool()
 
     @pool.tool()
@@ -48,4 +48,4 @@ async def test_connect_to_stdio_client():
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(test_connect_to_stdio_client())
+    asyncio.run(test_custom_tool())

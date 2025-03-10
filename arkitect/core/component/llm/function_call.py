@@ -81,10 +81,13 @@ async def handle_function_call(
     for tool_call in function_calls:
         tool_name = tool_call.function.name
         parameters = json.loads(tool_call.function.arguments)
-        resp = await tool_pool.execute_tool(tool_name=tool_name, parameters=parameters)
-        if resp is None:
+        if not tool_pool.contain(tool_name=tool_name):
             WARN(f"Function {tool_name} not found")
         else:
+            resp = await tool_pool.execute_tool(
+                tool_name=tool_name,
+                parameters=parameters,
+            )
             INFO(
                 f"Function {tool_name} called with parameters:"
                 + dump_json_str(parameters)

@@ -14,7 +14,7 @@
 
 import json
 import logging
-from typing import Any, Callable, Dict, List, Set, Union
+from typing import Any, Dict, List, Set, Union
 
 from langchain.prompts.chat import BaseChatPromptTemplate
 from langchain_core.messages import (
@@ -29,8 +29,6 @@ from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
-from arkitect.core.component.tool.mcp_client import MCPClient
-from arkitect.core.component.tool.tool_pool import ToolPool
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import (
@@ -225,15 +223,3 @@ def convert_response_message(
             else None
         ),
     )
-
-
-def build_tool_pool(
-    functions: list[MCPClient | Callable],
-) -> ToolPool:
-    tool_pool = ToolPool()
-    for client_or_callable in functions:
-        if isinstance(client_or_callable, MCPClient):
-            tool_pool.add_mcp_client(client_or_callable)
-        else:
-            tool_pool.add_tool(client_or_callable)
-    return tool_pool

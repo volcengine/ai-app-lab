@@ -24,7 +24,7 @@ from volcenginesdkarkruntime.types.chat import (
 )
 
 from arkitect.core.component.tool.mcp_client import MCPClient
-from arkitect.core.component.tool.tool_pool import ToolPool
+from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
 
 # from arkitect.core.component.tool import BaseTool
 from arkitect.telemetry.trace import task
@@ -40,7 +40,7 @@ from ....types.llm.model import (
 )
 from .base import BaseLanguageModel
 from .function_call import handle_function_call
-from .utils import build_tool_pool, format_ark_prompts
+from .utils import format_ark_prompts
 
 
 class BaseChatLanguageModel(BaseLanguageModel):
@@ -201,11 +201,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
             else {}
         )
 
-        tool_pool: ToolPool | None = None
-        if isinstance(functions, list) and len(functions) > 0:
-            tool_pool = build_tool_pool(functions)
-        elif isinstance(functions, ToolPool):
-            tool_pool = functions
+        tool_pool: ToolPool | None = build_tool_pool(functions)
         if tool_pool:
             parameters["tools"] = tool_pool.list_tools()
 
@@ -254,11 +250,8 @@ class BaseChatLanguageModel(BaseLanguageModel):
             if self.parameters
             else {}
         )
-        tool_pool: ToolPool | None = None
-        if isinstance(functions, list) and len(functions) > 0:
-            tool_pool = build_tool_pool(functions)
-        elif isinstance(functions, ToolPool):
-            tool_pool = functions
+
+        tool_pool: ToolPool | None = build_tool_pool(functions)
         if tool_pool:
             parameters["tools"] = tool_pool.list_tools()
 
