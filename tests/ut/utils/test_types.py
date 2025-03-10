@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatRequest,
     ArkMessage,
-    ChatCompletionMessageImageUrlPart,
-    ChatCompletionMessageImageUrlPartImageUrl,
+)
+from volcenginesdkarkruntime.types.chat.chat_completion_content_part_image_param import (
+    ChatCompletionContentPartImageParam,
+    ImageURL,
 )
 from arkitect.utils import dump_json_truncate
 
@@ -27,9 +29,9 @@ def test_dump_json():
             ArkMessage(
                 role="user",
                 content=[
-                    ChatCompletionMessageImageUrlPart(
+                    ChatCompletionContentPartImageParam(
                         type="image_url",
-                        image_url=ChatCompletionMessageImageUrlPartImageUrl(
+                        image_url=ImageURL(
                             url="fake-b64-url",
                         ),
                     )

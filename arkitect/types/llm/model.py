@@ -19,6 +19,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import (
     Any,
+    Callable,
     Coroutine,
     Dict,
     List,
@@ -29,8 +30,11 @@ from typing import (
 
 import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing_extensions import Annotated, Literal
+from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat.chat_completion import ChatCompletion, Choice
+from volcenginesdkarkruntime.types.chat.chat_completion_content_part_param import (
+    ChatCompletionContentPartParam,
+)
 from volcenginesdkarkruntime.types.chat.chat_completion_message_param import (
     ChatCompletionMessageParam,
 )
@@ -51,6 +55,7 @@ from volcenginesdkarkruntime.types.context.context_create_params import (
 
 from arkitect.core.errors import InvalidParameter, MissingParameter
 from arkitect.core.runtime import Request, Response
+from arkitect.utils.func_convert import schema_for_function
 
 
 class UserInfoExtra(BaseModel):
@@ -67,8 +72,7 @@ class CallableFunction(Protocol):
         Any,
         Any,
         Union[Union[str, BaseModel], Union[str, BaseModel]],
-    ]:
-        ...
+    ]: ...
 
 
 class FunctionCallMode(str, Enum):
@@ -117,6 +121,33 @@ class ChatCompletionTool(BaseModel):
 
     type: Literal["function"]
     """The type of the tool. Currently, only `function` is supported."""
+
+    @staticmethod
+    def from_function(
+        f: Callable[..., Any], param_descriptions: Dict[str, str] = {}
+    ) -> ChatCompletionTool:
+        """Builds a `ChatCompletionTool` from a python function.
+
+        The implementation references: https://github.com/google-gemini/generative-ai-python/blob/main/google/generativeai/types/content_types.py#L584
+
+        The function should have type annotations.
+
+        This method is able to generate the schema for arguments annotated with types:
+
+        `AllowedTypes = float | int | str | List[AllowedTypes] | Dict`
+
+        This method does not yet build a schema for `TypedDict`
+
+        contents. But you can build these manually.
+        """
+
+        schema = schema_for_function(f, param_descriptions=param_descriptions)
+
+        tool = ChatCompletionTool(
+            type="function",
+            function=FunctionDefinition(**schema),
+        )
+        return tool
 
 
 class ArkChatParameters(BaseModel):
@@ -219,30 +250,9 @@ class ChatCompletionMessageToolCallParam(BaseModel):
     """The type of the tool. Currently, only `function` is supported."""
 
 
-class ChatCompletionMessageImageUrlPartImageUrl(BaseModel):
-    url: str
-    detail: Optional[str] = None
-
-
-class ChatCompletionMessageImageUrlPart(BaseModel):
-    type: Literal["image_url"]
-    image_url: ChatCompletionMessageImageUrlPartImageUrl
-
-
-class ChatCompletionMessageTextPart(BaseModel):
-    type: Literal["text"]
-    text: str
-
-
-ChatCompletionMessagePart = Annotated[
-    Union[ChatCompletionMessageImageUrlPart, ChatCompletionMessageTextPart],
-    Field(discriminator="type"),
-]
-
-
 class ArkMessage(BaseModel):
     role: Literal["user", "system", "assistant", "tool"]
-    content: Union[str, List[ChatCompletionMessagePart]]
+    content: Union[str, List[ChatCompletionContentPartParam]]
     name: Optional[str] = None
     tool_call_id: Optional[str] = None
     tool_calls: Optional[List[ChatCompletionMessageToolCallParam]] = None

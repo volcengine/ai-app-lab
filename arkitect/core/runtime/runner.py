@@ -15,7 +15,7 @@
 import importlib
 from typing import AsyncIterable, Callable
 
-from .model import RequestType, ResponseType
+from ...types.runtime.model import RequestType, ResponseType
 
 
 def load_function(
