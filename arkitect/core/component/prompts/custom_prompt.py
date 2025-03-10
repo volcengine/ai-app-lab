@@ -31,7 +31,7 @@ from langchain.schema.messages import (
 )
 from pydantic.v1 import validator
 
-from arkitect.core.component.llm.model import ArkChatRequest
+from arkitect.types.llm.model import ArkChatRequest
 
 
 class CustomPromptTemplate(BaseChatPromptTemplate):

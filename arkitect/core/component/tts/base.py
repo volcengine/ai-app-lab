@@ -17,7 +17,7 @@ from typing import Any, AsyncIterable, Optional, Union
 
 from pydantic import BaseModel
 
-from arkitect.core.component.llm.model import ArkChatCompletionChunk, ArkChatResponse
+from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatResponse
 
 
 class TTSResponseChunk(BaseModel):
@@ -33,5 +33,4 @@ class AsyncBaseTTSClient(ABC):
         source: AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse, str]],
         stream: bool = True,
         **kwargs: Any,
-    ) -> AsyncIterable[TTSResponseChunk]:
-        ...
+    ) -> AsyncIterable[TTSResponseChunk]: ...

@@ -15,7 +15,7 @@
 import os
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.llm.model import ArkMessage
+from arkitect.types.llm.model import ArkMessage
 
 os.environ["ARK_API_KEY"] = "-"
 
