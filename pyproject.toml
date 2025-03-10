@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "arkitect"
 packages = [{ include = "arkitect" }]
-version = "0.1.5"
+version = "0.2.0"
 description = ""
 authors = ["wangsen.0914 <wangsen.0914@bytedance.com>"]
 readme = "README.md"
@@ -92,7 +92,7 @@ omit = [
 #
 # https://github.com/tophat/syrupy
 # --snapshot-warn-unused    Prints a warning on unused snapshots rather than fail the test suite.
-addopts = "--snapshot-warn-unused --strict-markers --strict-config --durations=5"
+addopts = "--strict-markers --strict-config --durations=5"
 # Registering custom markers.
 # https://docs.pytest.org/en/7.1.x/example/markers.html#registering-markers
 markers = [

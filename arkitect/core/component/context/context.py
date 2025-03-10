@@ -22,11 +22,11 @@ from volcenginesdkarkruntime.types.chat import (
 from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
-from arkitect.core.component.llm.model import (
+from arkitect.core.component.tool.pool import BaseTool
+from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
 )
-from arkitect.core.component.tool.pool import BaseTool
 
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext

@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pydantic import BaseModel, Field
+from typing import Any, Dict, Optional
+
+from pydantic import BaseModel
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
@@ -25,38 +27,32 @@ class ArkToolRequest(BaseModel):
     action_name: str
     tool_name: str
 
-    parameters: dict[str, any] | None = None
-    dry_run: bool | None = False
-    timeout: int | None = 60
+    parameters: Optional[Dict[str, Any]] = None
+    dry_run: Optional[bool] = False
+    timeout: Optional[int] = 60
 
 
 class ArkToolResponse(BaseModel):
-    status_code: int | None = None
+    status_code: Optional[int] = None
 
-    data: any | None = None
+    data: Optional[Any] = None
 
 
-class ArkToolExecutor(BaseModel):
-    client: AsyncArk = Field(default_factory=default_ark_client)
-
-    async def execute(
-        self,
-        action_name,
-        tool_name,
-        parameters: dict[str, any] | None = None,
-        **kwargs: any
-    ) -> ArkToolResponse | ChatCompletionMessageParam:
-        parameter = ArkToolRequest(
-            action_name=action_name,
-            tool_name=tool_name,
-            parameters=parameters or {},
-        )
-        response = await self.client.post(
-            path="/tools/execute",
-            body=parameter.model_dump(),
-            cast_to=ArkToolResponse,
-        )
-        return ArkToolResponse(**response)
+async def execute(
+    action_name, tool_name, parameters: dict[str, Any] | None = None, **kwargs: Any
+) -> ArkToolResponse | ChatCompletionMessageParam:
+    parameter = ArkToolRequest(
+        action_name=action_name,
+        tool_name=tool_name,
+        parameters=parameters or {},
+    )
+    client: AsyncArk = default_ark_client()
+    response = await client.post(
+        path="/tools/execute",
+        body=parameter.model_dump(),
+        cast_to=ArkToolResponse,
+    )
+    return ArkToolResponse(**response)
 
 
 async def calculator(input: str) -> str:
@@ -68,8 +64,7 @@ async def calculator(input: str) -> str:
     Returns:
         str: computed value
     """
-    ark_executor = ArkToolExecutor()
-    return await ark_executor.execute(
+    return await execute(
         action_name="Calculator", tool_name="Calculator", parameters={"input": input}
     )
 
@@ -82,8 +77,7 @@ async def link_reader(url_list: list[str]):
     Args:
         url_list (list[str]): 需要解析网页链接,最多3个,以列表返回
     """
-    ark_executor = ArkToolExecutor()
-    return await ark_executor.execute(
+    return await execute(
         action_name="LinkReader",
         tool_name="LinkReader",
         parameters={"url_list": url_list},

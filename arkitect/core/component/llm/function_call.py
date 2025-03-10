@@ -15,25 +15,26 @@
 import copy
 import json
 import logging
-from typing import Any, Dict, Optional, Union
+from typing import Any, List, Optional, Union
 
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
 )
 
-from arkitect.core.component.tool import BaseTool, BaseToolResponse
+# from arkitect.core.component.tool import BaseTool, BaseToolResponse
+from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
 from arkitect.telemetry.trace import task
 from arkitect.utils import dump_json_str
 
-from .model import (
+from ....types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatRequest,
     ArkChatResponse,
     ArkMessage,
     FunctionCallMode,
 )
-from .utils import convert_response_message, transform_response
+from .utils import convert_response_message
 
 
 @task()
@@ -42,7 +43,7 @@ async def handle_function_call(
     response: Union[
         ChatCompletionChunk, ChatCompletion, ArkChatCompletionChunk, ArkChatResponse
     ],
-    functions: Optional[Dict[str, BaseTool]] = None,
+    tool_pools: Optional[List[MCPToolPool]] = None,
     function_call_mode: Optional[FunctionCallMode] = FunctionCallMode.SEQUENTIAL,
     **kwargs: Any,
 ) -> bool:
@@ -69,7 +70,7 @@ async def handle_function_call(
     )
     tool_calls = response_message.tool_calls
 
-    if not tool_calls or not functions:
+    if not tool_calls or not tool_pools or len(tool_pools) == 0:
         return False
 
     if function_call_mode and function_call_mode != FunctionCallMode.SEQUENTIAL:
@@ -81,26 +82,29 @@ async def handle_function_call(
     for tool_call in function_calls:
         tool_name = tool_call.function.name
 
-        tool = functions.get(tool_name)
+        tool_executor = None
+        for tool_pool in tool_pools:
+            # TODO: tool_name may not be unique across tool pools
+            if tool_pool.get_tool(tool_name):
+                tool_executor = tool_pool
+                break
         resp = None
-        if tool is None:
+        if tool_executor is None:
             logging.error(f"Function {tool_name} not found")
             resp = ""
         else:
-            tool_response: BaseToolResponse = BaseToolResponse()
             parameters = json.loads(tool_call.function.arguments)
-            tool_response = await tool.execute(parameters=parameters, **kwargs)
+            resp = await tool_executor.execute_tool(tool_name=tool_name, parameters=parameters)
             logging.info(
                 f"Function {tool_name} called with parameters:"
                 + dump_json_str(parameters)
-                + f" and response: {dump_json_str(tool_response)}"
+                + f" and response: {resp}"
             )
-            resp = tool_response.data
 
         request.messages.append(
             ArkMessage(
                 role="tool",
-                content=transform_response(resp),
+                content=resp,
                 tool_call_id=tool_call.id,
             )
         )

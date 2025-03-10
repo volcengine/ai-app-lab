@@ -16,7 +16,7 @@ from typing import Awaitable, Callable, List
 
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ChatCompletionMessageToolCallParam,
 )
 

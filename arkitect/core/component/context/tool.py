@@ -23,8 +23,8 @@ from volcenginesdkarkruntime.types.chat import (
 
 from arkitect.core.component.context.hooks import ToolHook
 from arkitect.core.component.context.model import State
-from arkitect.core.component.llm.model import ChatCompletionTool
 from arkitect.core.component.tool import BaseTool, BaseToolResponse
+from arkitect.types.llm.model import ChatCompletionTool
 
 
 class _AsyncTool(BaseModel):

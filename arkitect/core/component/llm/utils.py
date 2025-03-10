@@ -14,7 +14,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Set, Union
+from typing import Any, Callable, Dict, List, Set, Union
 
 from langchain.prompts.chat import BaseChatPromptTemplate
 from langchain_core.messages import (
@@ -25,19 +25,20 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain_core.messages.tool import ToolCall
-from pydantic import BaseModel
 from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
-from arkitect.core.component.llm.model import (
+from arkitect.core.component.tool.mcp_tool_pool import MCPToolPool
+from arkitect.core.component.tool.custom_tool_pool import CustomToolPool
+from arkitect.core.errors import InvalidParameter
+from arkitect.telemetry.trace import task
+from arkitect.types.llm.model import (
     ArkMessage,
     ChatCompletionMessageToolCallParam,
     Function,
+    ChatCompletionTool
 )
-from arkitect.core.errors import InvalidParameter
-from arkitect.telemetry.trace import task
-from arkitect.utils import dump_json_str
 
 
 def _convert_message_role_to_ark_role(  # type: ignore
@@ -205,18 +206,6 @@ def format_ark_prompts(
 
     return prompts
 
-
-def transform_response(response: Any) -> str:
-    if isinstance(response, str):
-        return response
-    elif isinstance(response, dict):
-        return json.dumps(response)
-    elif isinstance(response, BaseModel):
-        return response.model_dump_json(exclude_none=True, exclude_unset=True)
-    else:
-        return dump_json_str(response)
-
-
 def convert_response_message(
     response_message: Union[ChatCompletionMessage, ChoiceDelta],
 ) -> ArkMessage:
@@ -236,3 +225,27 @@ def convert_response_message(
             else None
         ),
     )
+
+
+def build_tool_parameters(functions:  list[MCPToolPool]) -> list[ChatCompletionTool]:
+    chat_completion_tools = []
+    for tool_pool in functions:
+        chat_completion_tools.extend(tool_pool.list_tools())
+    return chat_completion_tools
+
+
+def build_tool_pool(functions:  list[MCPToolPool | Callable] | None) -> list[MCPToolPool]:
+    if functions is None:
+        return []
+    tool_pools = []
+    custom_tool_pool = None
+    for tool_pool_or_callable in functions:
+        if isinstance(tool_pool_or_callable, MCPToolPool):
+            tool_pools.append(tool_pool_or_callable)
+        else:
+            if tool_pools is None:
+                custom_tool_pool = CustomToolPool()
+            custom_tool_pool.add_tool(tool_pool_or_callable)
+    if custom_tool_pool is not None:
+        tool_pools.append(custom_tool_pool)
+    return tool_pools

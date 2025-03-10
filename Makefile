@@ -32,6 +32,7 @@ clean:
 TEST_FILE ?= tests/ut/
 
 test:
+		export PYTHONPATH=$(pwd)
 		poetry run pytest $(TEST_FILE)
 
 ######################

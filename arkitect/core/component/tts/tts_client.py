@@ -18,7 +18,6 @@ from typing import Any, AsyncIterable, Optional, Union
 
 import websockets
 
-from arkitect.core.component.llm.model import ArkChatCompletionChunk, ArkChatResponse
 from arkitect.core.component.tts.base import AsyncBaseTTSClient, TTSResponseChunk
 from arkitect.core.component.tts.constants import (
     NAMESPACE,
@@ -39,6 +38,7 @@ from arkitect.core.component.tts.utils import parse_response
 from arkitect.core.errors import InvalidParameter
 from arkitect.telemetry.logger import ERROR, INFO
 from arkitect.telemetry.trace import task
+from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatResponse
 
 __all__ = ["AsyncTTSClient"]
 

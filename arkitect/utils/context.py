@@ -96,9 +96,9 @@ def get_account_id(default_val: str = "") -> str:
     return _account_id.get(default_val)
 
 
-_custom_attributes: contextvars.ContextVar[
-    Optional[Dict[str, Any]]
-] = contextvars.ContextVar("_custom_attributes")
+_custom_attributes: contextvars.ContextVar[Optional[Dict[str, Any]]] = (
+    contextvars.ContextVar("_custom_attributes")
+)
 
 
 def set_custom_attributes(val: Dict[str, Any]) -> None:

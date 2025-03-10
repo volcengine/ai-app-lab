@@ -30,7 +30,7 @@ from typing import (
 
 import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing_extensions import Annotated, Literal
+from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat.chat_completion import ChatCompletion, Choice
 from volcenginesdkarkruntime.types.chat.chat_completion_message_param import (
     ChatCompletionMessageParam,
@@ -41,6 +41,9 @@ from volcenginesdkarkruntime.types.chat.chat_completion_stream_options_param imp
 from volcenginesdkarkruntime.types.completion_usage import CompletionUsage
 from volcenginesdkarkruntime.types.context.context_chat_completion import (
     ContextChatCompletion,
+)
+from volcenginesdkarkruntime.types.chat.chat_completion_content_part_param import (
+    ChatCompletionContentPartParam,
 )
 from volcenginesdkarkruntime.types.context.context_chat_completion_chunk import (
     ContextChatCompletionChunk,
@@ -69,8 +72,7 @@ class CallableFunction(Protocol):
         Any,
         Any,
         Union[Union[str, BaseModel], Union[str, BaseModel]],
-    ]:
-        ...
+    ]: ...
 
 
 class FunctionCallMode(str, Enum):
@@ -248,30 +250,9 @@ class ChatCompletionMessageToolCallParam(BaseModel):
     """The type of the tool. Currently, only `function` is supported."""
 
 
-class ChatCompletionMessageImageUrlPartImageUrl(BaseModel):
-    url: str
-    detail: Optional[str] = None
-
-
-class ChatCompletionMessageImageUrlPart(BaseModel):
-    type: Literal["image_url"]
-    image_url: ChatCompletionMessageImageUrlPartImageUrl
-
-
-class ChatCompletionMessageTextPart(BaseModel):
-    type: Literal["text"]
-    text: str
-
-
-ChatCompletionMessagePart = Annotated[
-    Union[ChatCompletionMessageImageUrlPart, ChatCompletionMessageTextPart],
-    Field(discriminator="type"),
-]
-
-
 class ArkMessage(BaseModel):
     role: Literal["user", "system", "assistant", "tool"]
-    content: Union[str, List[ChatCompletionMessagePart]]
+    content: Union[str, List[ChatCompletionContentPartParam]]
     name: Optional[str] = None
     tool_call_id: Optional[str] = None
     tool_calls: Optional[List[ChatCompletionMessageToolCallParam]] = None

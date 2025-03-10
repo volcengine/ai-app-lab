@@ -17,7 +17,7 @@ from typing import Any, Callable, Iterable
 
 from pydantic import BaseModel
 
-from .model import RequestType, Response, ResponseType
+from ...types.runtime.model import RequestType, Response, ResponseType
 
 
 class SyncRunner(BaseModel):

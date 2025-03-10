@@ -17,7 +17,7 @@ from typing import List, Optional, Protocol
 from pydantic import BaseModel, Field
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
     ChatCompletionTool,
@@ -25,8 +25,7 @@ from arkitect.core.component.llm.model import (
 
 
 class ToolType(Protocol):
-    def tool_schema(self) -> ChatCompletionTool:
-        ...
+    def tool_schema(self) -> ChatCompletionTool: ...
 
 
 class State(BaseModel):

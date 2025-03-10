@@ -36,7 +36,7 @@ from arkitect.core.errors import (
     parse_pydantic_error,
 )
 
-from .model import RequestType, Response, ResponseType
+from ...types.runtime.model import RequestType, Response, ResponseType
 
 
 class AsyncRunner(BaseModel, Generic[RequestType, ResponseType]):

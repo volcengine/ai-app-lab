@@ -14,7 +14,7 @@
 
 from typing import Any, Dict, List
 
-from arkitect.core.component.llm.model import ChatCompletionTool
+from arkitect.types.llm.model import ChatCompletionTool
 
 
 def compare_dict(dict1, dict2):
