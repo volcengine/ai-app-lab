@@ -35,12 +35,25 @@ async def test_connect_to_sse_client():
     server_process.start()
 
     # Wait a bit to ensure server starts
-    time.sleep(5)
+    time.sleep(3)
 
     client = MCPClient()
     await client.connect_to_server(server_url="http://localhost:8000/sse")
-    assert await check_server_working(client=client)
-    assert await check_server_working(client=client, use_cache=True)
+    assert await check_server_working(
+        client=client,
+        expected_tools={
+            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
+            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
+        },
+    )
+    assert await check_server_working(
+        client=client,
+        use_cache=True,
+        expected_tools={
+            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
+            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
+        },
+    )
     client.cleanup()
     server_process.kill()
 

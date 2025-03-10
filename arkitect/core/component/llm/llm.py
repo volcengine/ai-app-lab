@@ -202,8 +202,9 @@ class BaseChatLanguageModel(BaseLanguageModel):
         )
 
         tool_pool: ToolPool | None = build_tool_pool(functions)
+        await tool_pool.initialize()
         if tool_pool:
-            parameters["tools"] = tool_pool.list_tools()
+            parameters["tools"] = await tool_pool.list_tools()
 
         request = ArkChatRequest(
             stream=False,
@@ -252,8 +253,9 @@ class BaseChatLanguageModel(BaseLanguageModel):
         )
 
         tool_pool: ToolPool | None = build_tool_pool(functions)
+        await tool_pool.initialize()
         if tool_pool:
-            parameters["tools"] = tool_pool.list_tools()
+            parameters["tools"] = await tool_pool.list_tools()
 
         request = ArkChatRequest(
             stream=True,

@@ -54,7 +54,7 @@ class _AsyncCompletions(AsyncCompletions):
             else {}
         )
         if tool_pool:
-            parameters["tools"] = tool_pool.list_tools()
+            parameters["tools"] = await tool_pool.list_tools()
         for hook in self.hooks:
             messages = await hook(self._state, messages)
         resp = await super().create(

@@ -69,7 +69,7 @@ from typing import AsyncIterable, Union
 
 from arkitect.core.component.llm import BaseChatLanguageModel
 
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
     ArkChatRequest,
@@ -196,8 +196,8 @@ import os
 from typing import AsyncIterable, Union
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.tool import LinkReader, ToolPool, tool
-from arkitect.core.component.llm.model import (
+from arkitect.core.component.tool.ark_tool import link_reader
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
     ArkChatRequest,
@@ -211,7 +211,6 @@ endpoint_id = "<YOUR ENDPOINT ID>"
 
 
 # you can define your own methods here and let LLM use as tools
-@tool
 def adder(a: int, b: int) -> int:
     """Add two integer numbers
 
@@ -226,9 +225,6 @@ def adder(a: int, b: int) -> int:
     return a + b
 
 
-# you can also use predefined tools on Ark such as link reader and calculator
-ToolPool.register(LinkReader())
-
 @task()
 async def default_model_calling(
     request: ArkChatRequest,
@@ -240,12 +236,11 @@ async def default_model_calling(
         messages=request.messages,
         parameters=parameters,
     )
-    all_tools = ToolPool.all()
     if request.stream:
-        async for resp in llm.astream(functions=all_tools):
+        async for resp in llm.astream(functions=[adder, link_reader]):
             yield resp
     else:
-        yield await llm.arun(functions=all_tools)
+        yield await llm.arun(functions=[adder, link_reader])
 
 
 @task()

@@ -157,6 +157,7 @@ class Context:
                 truncation_strategy=self.state.context_parameters.truncation_strategy,
             )
             self.state.context_id = resp.id
+        await self.tool_pool.refresh_tool_list()
         return self
 
     async def __aexit__(

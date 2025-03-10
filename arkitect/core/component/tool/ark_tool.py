@@ -54,7 +54,7 @@ async def execute(
         body=parameter.model_dump(),
         cast_to=ArkToolResponse,
     )
-    return response.data
+    return ArkToolResponse(**response)
 
 
 async def calculator(input: str) -> str:
