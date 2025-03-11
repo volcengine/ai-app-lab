@@ -87,7 +87,7 @@ class MockAsyncCompletions(AsyncCompletions):
 
 
 class MockAsyncChat(resources.AsyncChat):
-    completions = MockAsyncCompletions(message=[], client=AsyncArk())
+    completions = MockAsyncCompletions(message=[], client=AsyncArk(api_key="test"))
 
     def __init__(self, message, client):
         self.completions = MockAsyncCompletions(message, client)
