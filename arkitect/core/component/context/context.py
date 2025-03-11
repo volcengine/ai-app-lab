@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import copy
+import json
 from typing import Any, AsyncIterable, Callable, Dict, List, Literal, Optional, Union
 
 from volcenginesdkarkruntime.types.chat import (
@@ -50,14 +51,14 @@ class _AsyncCompletions:
             tool_name = tool_call.get("function", {}).get("name")
             tool_call_param = copy.deepcopy(tool_call)
 
-            if self._ctx.tool_pool.contain(tool_name):
+            if await self._ctx.tool_pool.contain(tool_name):
                 hooks = self._ctx.tool_hooks.get(tool_name, [])
                 for hook in hooks:
                     tool_call_param = await hook(self._ctx.state, tool_call_param)
 
                 parameters = tool_call_param.get("function", {}).get("arguments", "{}")
                 resp = await self._ctx.tool_pool.execute_tool(
-                    tool_name=tool_name, parameters=parameters
+                    tool_name=tool_name, parameters=json.loads(parameters)
                 )
                 self._ctx.state.messages.append(
                     {

@@ -252,7 +252,7 @@ class ChatCompletionMessageToolCallParam(BaseModel):
 
 class ArkMessage(BaseModel):
     role: Literal["user", "system", "assistant", "tool"]
-    content: Union[str, List[ChatCompletionContentPartParam]]
+    content: Optional[Union[str, List[ChatCompletionContentPartParam]]] = None
     name: Optional[str] = None
     tool_call_id: Optional[str] = None
     tool_calls: Optional[List[ChatCompletionMessageToolCallParam]] = None
@@ -260,13 +260,7 @@ class ArkMessage(BaseModel):
     @classmethod
     @model_validator(mode="before")
     def validate_content(cls, v: Dict[str, Any]) -> Dict[str, Any]:
-        role, content = v.get("role"), v.get("content")
-        if not isinstance(content, str) and role != "user":
-            raise InvalidParameter(
-                parameter="content",
-                cause=f"content must be type of str when role is {role}",
-            )
-
+        role = v.get("role")
         tool_call_id = v.get("tool_call_id")
         if tool_call_id is not None and role != "tool":
             raise InvalidParameter(
@@ -561,6 +555,8 @@ class ArkChatResponse(Response):
                     j.message.content, list
                 ):
                     i.message.content = j.message.content + i.message.content
+                elif j.message.content is None:
+                    continue
                 else:
                     raise TypeError("no supported merge type")
 

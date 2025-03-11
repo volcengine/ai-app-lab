@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.core.component.tool.mcp_client import MCPClient
-from arkitect.core.component.tool.tool_pool import ToolPool
+from arkitect.core.component.tool import MCPClient
+from arkitect.core.component.tool import ToolPool
 from utils import check_server_working
 
 
