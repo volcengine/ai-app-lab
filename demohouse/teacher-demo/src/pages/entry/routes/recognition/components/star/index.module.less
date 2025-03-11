@@ -1,0 +1,26 @@
+.stars {
+}
+
+.star {
+  position: absolute;
+  opacity: 0;
+  animation: twinkle 2s infinite, zoom 1.5s infinite;
+}
+
+@keyframes zoom {
+  0%, 100% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
