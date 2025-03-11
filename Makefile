@@ -17,6 +17,7 @@ uv_install:
 		@echo "Uv version: $(shell uv --version)"
 
 install:
+		export UV_SYSTEM_PYTHON=1
 		uv sync
 
 install_ci:
