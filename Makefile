@@ -20,7 +20,8 @@ install:
 		uv sync
 
 install_ci:
-		uv sync --system --group lint --group typing --group test
+		export UV_SYSTEM_PYTHON=1
+		uv sync --group lint --group typing --group test
 
 build:
 		uv build
