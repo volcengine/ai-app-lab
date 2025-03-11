@@ -71,10 +71,14 @@ def _convert_ark_messages(chat_messages: List[ArkMessage]) -> List[BaseMessage]:
             else:
                 messages.append(
                     HumanMessage(
-                        content=[
-                            part.model_dump(exclude_none=True, exclude_unset=True)
-                            for part in message.content
-                        ]
+                        content=(
+                            [
+                                part.model_dump(exclude_none=True, exclude_unset=True)
+                                for part in message.content
+                            ]
+                            if message.content
+                            else []
+                        ),
                     )
                 )
 
