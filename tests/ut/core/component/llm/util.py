@@ -54,6 +54,7 @@ def get_tool_call_reply():
             ],
             created=0,
             model="test_model",
+            service_tier="default",
             object="chat.completion",
         ),
         ChatCompletion(
@@ -69,6 +70,7 @@ def get_tool_call_reply():
             ],
             created=0,
             model="test_model",
+            service_tier="default",
             object="chat.completion",
         ),
     ]
