@@ -1,16 +1,17 @@
-# 应用介绍
+# 教师分身  Teacher Avatar
+## 应用介绍
 
 基于豆包视觉理解与DeepSeek深度推理双引擎驱动的教育解决方案，创新性实现多模态教学场景覆盖。通过视觉理解技术，精准提取题目文本与公式图形，结合DeepSeek进行逻辑推演，提供「即拍即解-批量批改-实时互动」三维一体的智能辅导体验。支持单题深度解析、多题智能批阅及视频流实时解题，突破传统教育工具时空限制，为教师减负增效，打造24小时在线的个性化学习伙伴。
 
-# 效果预览
+### 效果预览
 
 
-[视频地址](https://lf3-static.bytednsdoc.com/obj/eden-cn/lm_sth/ljhwZthlaukjlkulzlp/ark/assistant/videos/30.mp4)
-## 直接体验
+[视频地址](https://lf3-static.bytednsdoc.com/obj/eden-cn/lm_sth/ljhwZthlaukjlkulzlp/ark/assistant/videos/20250311-163309.mp4)
+### 直接体验
 
 ![](0.png)
 
-## 流程架构
+### 流程架构
 
 
 ![](1.png)
@@ -308,7 +309,3 @@ export default definePage({
 ├── tailwind.config.js                   # tailwind 配置
 └── tsconfig.json
 ```
-
-<br>
-
-<br>
