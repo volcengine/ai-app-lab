@@ -76,7 +76,7 @@ class BaseChatLanguageModel(BaseLanguageModel):
         return format_ark_prompts(self.template, messages, **kwargs)
 
     def get_request_model(self, **kwargs: Any) -> str:
-        return self.endpoint_id
+        return self.model
 
     @task()
     def parse_output(self, text: str) -> Any:

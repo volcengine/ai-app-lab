@@ -28,7 +28,7 @@ def test_generate_prompts_with_additional_prompts() -> None:
     ]
     additional_prompts = ["Welcome to the chat!", "How can I help you today?"]
 
-    mock_chat_model = BaseChatLanguageModel(endpoint_id="123", messages=messages)
+    mock_chat_model = BaseChatLanguageModel(model="123", messages=messages)
     # Act
     result = mock_chat_model.generate_prompts(
         messages, additional_system_prompts=additional_prompts
@@ -46,7 +46,7 @@ def test_generate_prompts_without_template():
         ArkMessage(role="user", content="Hello"),
         ArkMessage(role="assistant", content="Hi there!"),
     ]
-    mock_chat_model = BaseChatLanguageModel(endpoint_id="123", messages=messages)
+    mock_chat_model = BaseChatLanguageModel(model="123", messages=messages)
     mock_chat_model.template = None
 
     # Act
@@ -63,7 +63,7 @@ def test_generate_prompts_with_formatting() -> None:
         ArkMessage(role="user", content="Hello"),
         ArkMessage(role="assistant", content="Hi there!"),
     ]
-    mock_chat_model = BaseChatLanguageModel(endpoint_id="123", messages=messages)
+    mock_chat_model = BaseChatLanguageModel(model="123", messages=messages)
     additional_prompts = ["Welcome to the chat!", "How can I help you today?"]
 
     # Act
@@ -82,7 +82,7 @@ async def test_base_chat_llm_with_unseen_tools() -> None:
     llm = BaseChatLanguageModel(
         client=MockAsyncArk(message=get_tool_call_reply()),
         messages=[ArkMessage(role="user", content="hi")],
-        endpoint_id="abc",
+        model="abc",
     )
     resp = await llm.arun()
     assert isinstance(resp, ArkChatResponse)
@@ -103,7 +103,7 @@ async def test_base_chat_llm_with_registered_tools() -> None:
     llm = BaseChatLanguageModel(
         client=MockAsyncArk(message=get_tool_call_reply()),
         messages=[ArkMessage(role="user", content="hi")],
-        endpoint_id="abc",
+        model="abc",
     )
     resp = await llm.arun(functions=[adder])
     assert isinstance(resp, ArkChatResponse)

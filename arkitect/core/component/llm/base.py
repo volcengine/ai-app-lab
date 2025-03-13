@@ -26,7 +26,7 @@ T = TypeVar("T")
 
 
 class BaseLanguageModel(BaseModel):
-    endpoint_id: str
+    model: str
     client: AsyncArk = Field(default_factory=default_ark_client)
     template: Optional[BasePromptTemplate] = None
     output_parser: Optional[BaseOutputParser] = None
