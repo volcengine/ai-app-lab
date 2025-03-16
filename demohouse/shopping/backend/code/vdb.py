@@ -48,7 +48,9 @@ async def vector_search(text: str, image_url: str) -> str:
         image_url: 固定填写为<image_url>
     """
     client = AsyncArk(timeout=Timeout(connect=1.0, timeout=60.0))
-    embedding_input = [MultimodalEmbeddingContentPartTextParam(type="text", text=text)]
+    embedding_input = []
+    if text != "":
+        embedding_input = [MultimodalEmbeddingContentPartTextParam(type="text", text=text)]
     if image_url != "":
         embedding_input.append(
             MultimodalEmbeddingContentPartImageParam(
@@ -74,7 +76,7 @@ async def vector_search(text: str, image_url: str) -> str:
             "子类别": item.get("sub_category", ""),
             "价格": item.get("price", "99"),
             "销量": item.get("sales", "999"),
-            "商品链接": tos_client.pre_signed_url(
+            "图片链接": tos_client.pre_signed_url(
                 http_method=HttpMethodType.Http_Method_Get,
                 bucket="shopping",
                 key=item.get("key", ""),
