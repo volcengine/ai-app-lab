@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "deep-research"
+version = "0.1.0"
+description = "deep research using agent system"
+authors = ["liuminghao <liuminghao.lm@bytedance.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12.0"
+arkitect = { path="../../../../ai-app-lab" , develop=true }
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
