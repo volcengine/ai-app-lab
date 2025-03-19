@@ -10,6 +10,8 @@
 # limitations under the License.
 
 from arkitect.core.component.tool.builder import build_mcp_clients_from_config
+from arkitect.core.component.llm import BaseChatLanguageModel
+from arkitect.types.llm.model import ArkMessage
 
 
 async def main():
@@ -23,8 +25,17 @@ async def main():
     for client in clients:
         print(await client.list_tools())
 
-    # for client in clients:
-    #     await client.cleanup()
+    llm = BaseChatLanguageModel(
+        messages=[
+            ArkMessage(
+                role="user",
+                content="https://raw.githubusercontent.com/modelcontextprotocol/servers/refs/heads/main/src/everart/Dockerfile 这里有什么",
+            )
+        ],
+        model="doubao-1.5-pro-32k-250115",
+    )
+    resp = await llm.arun(functions=clients)
+    print(resp)
 
 
 if __name__ == "__main__":
