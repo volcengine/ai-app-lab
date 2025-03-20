@@ -24,7 +24,7 @@ from volcenginesdkarkruntime.types.chat import (
 from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
-from arkitect.core.component.context.hooks import ToolHook
+from arkitect.core.component.context.hooks import Hook
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
 from arkitect.types.llm.model import (
@@ -42,6 +42,9 @@ class _AsyncCompletions:
         self._ctx = ctx
 
     async def handle_tool_call(self) -> bool:
+        pre_hooks = self._ctx.pre_tool_call_hooks
+        for hook in pre_hooks:
+            self._ctx.state = await hook(self._ctx.state)
         last_message = self._ctx.get_latest_message()
         if last_message is None or not last_message.get("tool_calls"):
             return True
@@ -52,10 +55,6 @@ class _AsyncCompletions:
             tool_call_param = copy.deepcopy(tool_call)
 
             if await self._ctx.tool_pool.contain(tool_name):
-                hooks = self._ctx.tool_hooks.get(tool_name, [])
-                for hook in hooks:
-                    tool_call_param = await hook(self._ctx.state, tool_call_param)
-
                 parameters = tool_call_param.get("function", {}).get("arguments", "{}")
                 resp = await self._ctx.tool_pool.execute_tool(
                     tool_name=tool_name, parameters=json.loads(parameters)
@@ -67,6 +66,9 @@ class _AsyncCompletions:
                         "content": resp,
                     }
                 )
+        post_hooks = self._ctx.post_tool_call_hooks
+        for hook in post_hooks:
+            self._ctx.state = await hook(self._ctx.state)
         return False
 
     async def create(
@@ -75,18 +77,21 @@ class _AsyncCompletions:
         stream: Optional[Literal[True, False]] = True,
         **kwargs: Dict[str, Any],
     ) -> Union[ChatCompletion, AsyncIterable[ChatCompletionChunk]]:
+        self._ctx.state.messages.extend(messages)
+        for hook in self._ctx.pre_llm_call_hooks:
+            self._ctx.state = await hook(self._ctx.state)
         if not stream:
             while True:
                 resp = (
                     await self._ctx.chat.completions.create(
-                        messages=messages,
+                        messages=self._ctx.state.messages,
                         stream=stream,
                         tool_pool=self._ctx.tool_pool,
                         **kwargs,
                     )
                     if not self._ctx.state.context_id
                     else await self._ctx.context.completions.create(
-                        messages=messages,
+                        messages=self._ctx.state.messages,
                         stream=stream,
                         **kwargs,
                     )
@@ -103,14 +108,14 @@ class _AsyncCompletions:
                 while True:
                     resp = (
                         await self._ctx.chat.completions.create(
-                            messages=messages,
+                            messages=self._ctx.state.messages,
                             stream=stream,
                             tool_pool=self._ctx.tool_pool,
                             **kwargs,
                         )
                         if not self._ctx.state.context_id
                         else await self._ctx.context.completions.create(
-                            messages=messages,
+                            messages=self._ctx.state.messages,
                             stream=stream,
                             **kwargs,
                         )
@@ -130,23 +135,30 @@ class Context:
         self,
         *,
         model: str,
+        state: State | None = None,
         tools: list[MCPClient | Callable] | ToolPool | None = None,
         parameters: Optional[ArkChatParameters] = None,
         context_parameters: Optional[ArkContextParameters] = None,
     ):
         self.client = default_ark_client()
-        self.state = State(
-            model=model,
-            context_id="",
-            messages=[],
-            parameters=parameters,
-            context_parameters=context_parameters,
+        self.state = (
+            state
+            if state
+            else State(
+                model=model,
+                context_id="",
+                messages=[],
+                parameters=parameters,
+                context_parameters=context_parameters,
+            )
         )
         self.chat = _AsyncChat(client=self.client, state=self.state)
         if context_parameters is not None:
             self.context = _AsyncContext(client=self.client, state=self.state)
         self.tool_pool = build_tool_pool(tools)
-        self.tool_hooks: dict[str, list[ToolHook]] = {}
+        self.pre_tool_call_hooks: list[Hook] = []
+        self.post_tool_call_hooks: list[Hook] = []
+        self.pre_llm_call_hooks: list[Hook] = []
 
     async def __aenter__(self) -> "Context":
         if self.state.context_parameters is not None:
@@ -181,7 +193,11 @@ class Context:
     def completions(self) -> _AsyncCompletions:
         return _AsyncCompletions(self)
 
-    def add_tool_hook(self, tool_name: str, hook: ToolHook) -> None:
-        if tool_name not in self.tool_hooks:
-            self.tool_hooks[tool_name] = []
-        self.tool_hooks[tool_name].append(hook)
+    def add_pre_tool_call_hook(self, hook: Hook) -> None:
+        self.pre_tool_call_hooks.append(hook)
+
+    def add_post_tool_call_hook(self, hook: Hook) -> None:
+        self.post_tool_call_hooks.append(hook)
+
+    def add_pre_llm_call_hook(self, hook: Hook) -> None:
+        self.pre_llm_call_hooks.append(hook)

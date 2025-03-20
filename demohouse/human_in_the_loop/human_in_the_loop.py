@@ -52,7 +52,7 @@ async def link_reader(url_list: list[str]):
 async def main():
     # human in the loop example
     async with Context(model="doubao-1.5-pro-32k-250115", tools=[link_reader]) as ctx:
-        ctx.add_tool_hook(link_reader.__name__, approval_tool_hook)
+        ctx.add_pre_tool_call_hook(approval_tool_hook)
         while True:
             question = input("用户输入：")
             if question == "exit":

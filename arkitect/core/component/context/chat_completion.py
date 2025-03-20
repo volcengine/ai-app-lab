@@ -28,17 +28,12 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
 
 from arkitect.core.component.tool.tool_pool import ToolPool
 
-from .hooks import ChatHook, default_chat_hook
 from .model import State
 
 
 class _AsyncCompletions(AsyncCompletions):
-    def __init__(self, client: AsyncArk, state: State, hooks: List[ChatHook]):
+    def __init__(self, client: AsyncArk, state: State):
         self._state = state
-        if len(hooks) > 0:
-            self.hooks = hooks
-        else:
-            self.hooks = [default_chat_hook]
         super().__init__(client)
 
     async def create(
@@ -56,8 +51,6 @@ class _AsyncCompletions(AsyncCompletions):
         if tool_pool:
             tools = await tool_pool.list_tools()
             parameters["tools"] = [t.model_dump() for t in tools]
-        for hook in self.hooks:
-            messages = await hook(self._state, messages)
         resp = await super().create(
             model=self._state.model,
             messages=messages,
@@ -103,11 +96,10 @@ class _AsyncCompletions(AsyncCompletions):
 
 
 class _AsyncChat(AsyncChat):
-    def __init__(self, client: AsyncArk, state: State, hooks: List[ChatHook] = []):
+    def __init__(self, client: AsyncArk, state: State):
         self._state = state
-        self.hooks = hooks
         super().__init__(client)
 
     @property
     def completions(self) -> _AsyncCompletions:
-        return _AsyncCompletions(self._client, self._state, self.hooks)
+        return _AsyncCompletions(self._client, self._state)

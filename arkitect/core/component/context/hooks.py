@@ -22,37 +22,30 @@ from arkitect.types.llm.model import (
 
 from .model import State
 
-ChatHook = Callable[
-    [State, List[ChatCompletionMessageParam]],
-    Awaitable[List[ChatCompletionMessageParam]],
-]
-ToolHook = Callable[
-    [State, ChatCompletionMessageToolCallParam],
-    Awaitable[ChatCompletionMessageToolCallParam],
+Hook = Callable[
+    [State],
+    Awaitable[State],
 ]
 
 
-async def default_chat_hook(
-    state: State, messages: List[ChatCompletionMessageParam]
-) -> List[ChatCompletionMessageParam]:
-    state.messages.extend(messages)
-    messages = state.messages
-    return messages
+async def approval_tool_hook(state: State) -> State:
+    if len(state.messages) == 0:
+        return state
+    last_message = state.messages[-1]
+    if not last_message.get("tool_calls"):
+        return state
 
-
-async def default_context_chat_hook(
-    state: State, messages: List[ChatCompletionMessageParam]
-) -> List[ChatCompletionMessageParam]:
-    state.messages.extend(messages)
-    return messages
-
-
-async def approval_tool_hook(
-    state: State, parameter: ChatCompletionMessageToolCallParam
-) -> ChatCompletionMessageToolCallParam:
-    print(parameter)
+    formated_output = []
+    for tool_call in last_message.get("tool_calls"):
+        tool_name = tool_call.get("function", {}).get("name")
+        tool_call_param = tool_call.get("function", {}).get("arguments", "{}")
+        formated_output.append(
+            f"tool_name: {tool_name}\ntool_call_param: {tool_call_param}\n"
+        )
+    print("tool call parameters:")
+    print("".join(formated_output))
     y_or_n = input("input Y to approve\n")
     if y_or_n == "Y":
-        return parameter
+        return state
     else:
         raise ValueError("tool call parameters not approved")

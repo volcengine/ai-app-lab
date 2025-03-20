@@ -28,20 +28,12 @@ from volcenginesdkarkruntime.types.context import (
     ContextChatCompletionChunk,
 )
 
-from .hooks import ChatHook, default_chat_hook, default_context_chat_hook
 from .model import State
 
 
 class _AsyncCompletions(AsyncCompletions):
-    def __init__(self, client: AsyncArk, state: State, hooks: List[ChatHook]):
+    def __init__(self, client: AsyncArk, state: State):
         self._state = state
-        if len(hooks) > 0:
-            self.hooks = hooks
-        elif state.context_parameters and state.context_parameters.mode == "session":
-            self.hooks = [default_context_chat_hook]
-        else:
-            # for prefix cache
-            self.hooks = [default_chat_hook]
         super().__init__(client)
 
     async def create(
@@ -55,8 +47,6 @@ class _AsyncCompletions(AsyncCompletions):
             if self._state.parameters is not None
             else {}
         )
-        for hook in self.hooks:
-            messages = await hook(self._state, messages)
         resp = await super().create(
             model=self._state.model,
             context_id=self._state.context_id,
@@ -90,11 +80,10 @@ class _AsyncCompletions(AsyncCompletions):
 
 
 class _AsyncContext(AsyncContext):
-    def __init__(self, client: AsyncArk, state: State, hooks: List[ChatHook] = []):
+    def __init__(self, client: AsyncArk, state: State):
         self._state = state
-        self.hooks = hooks
         super().__init__(client)
 
     @property
     def completions(self) -> _AsyncCompletions:
-        return _AsyncCompletions(self._client, self._state, self.hooks)
+        return _AsyncCompletions(self._client, self._state)
