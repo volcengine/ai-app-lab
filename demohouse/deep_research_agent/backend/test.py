@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,10 +19,10 @@ async def main():
         "/Users/bytedance/Documents/deepresearch/ai-app-lab/demohouse/deep_research_agent/backend/mcp_config.json"
     )
 
-    for client in clients:
+    for client in clients.values():
         await client.connect_to_server()
 
-    for client in clients:
+    for client in clients.values():
         print(await client.list_tools())
 
     llm = BaseChatLanguageModel(
@@ -34,7 +34,7 @@ async def main():
         ],
         model="doubao-1.5-pro-32k-250115",
     )
-    resp = await llm.arun(functions=clients)
+    resp = await llm.arun(functions=list(clients.values()))
     print(resp)
 
 
