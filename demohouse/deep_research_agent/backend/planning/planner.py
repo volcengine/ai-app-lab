@@ -18,8 +18,10 @@ from arkitect.core.component.llm import BaseChatLanguageModel
 from arkitect.core.component.prompts import CustomPromptTemplate
 from arkitect.telemetry.logger import INFO
 from arkitect.types.llm.model import ArkMessage
+from models.messages import MessageChunk, ReasoningChunk, OutputTextChunk
 
-from planning.planning import Planner, Planning, PlanningItem
+from models.planning import Planner, Planning, PlanningItem
+from models.tool_events import PlanningMakeToolCallEvent, PlanningMakeToolCompletedEvent
 from prompt.planning import DEFAULT_PLANNER_PROMPT
 
 
@@ -33,7 +35,7 @@ class ReasoningLLMPlanner(BaseModel, Planner):
             model=self.llm_model,
             template=CustomPromptTemplate(template=Template(self.prompt)),
             messages=[
-                ArkMessage(role="user", content="请运行")
+                ArkMessage(role="user", content="run")
             ],
         )
 
@@ -46,8 +48,35 @@ class ReasoningLLMPlanner(BaseModel, Planner):
 
         return self.planning
 
-    async def astream_make_planning(self, task: str) -> AsyncIterable[Union[str, Planning]]:
-        pass
+    async def astream_make_planning(self, task: str) -> AsyncIterable[
+        Union[MessageChunk, PlanningMakeToolCallEvent, PlanningMakeToolCompletedEvent]
+    ]:
+        llm = BaseChatLanguageModel(
+            model=self.llm_model,
+            template=CustomPromptTemplate(template=Template(self.prompt)),
+            messages=[
+                ArkMessage(role="user", content="run this task")
+            ],
+        )
+
+        rsp_stream = llm.astream(
+            task=task,
+            functions=[self.save_planning],
+        )
+
+        async for chunk in rsp_stream:
+            if chunk.choices[0].delta.reasoning_content:
+                yield ReasoningChunk(
+                    delta=chunk.choices[0].delta.reasoning_content
+                )
+            elif chunk.choices[0].delta.content:
+                yield OutputTextChunk(
+                    delta=chunk.choices[0].delta.content
+                )
+
+        # currently we manually generate the tool call stream events here.
+        yield PlanningMakeToolCallEvent(task=task)
+        yield PlanningMakeToolCompletedEvent(planning=self.planning)
 
     def save_planning(self, task_list: List[str]) -> str:
         """当你完成任务计划拆解时，调用此函数将拆解好的计划保存
@@ -74,8 +103,15 @@ class ReasoningLLMPlanner(BaseModel, Planner):
 if __name__ == "__main__":
     async def main():
         planner = ReasoningLLMPlanner()
-        pl = await planner.make_planning("分析一下英伟达过去20个月的股票表现，分别给出长短期的投资建议")
-        print(pl)
+        async for chunk in planner.astream_make_planning(
+                task="分析英伟达过去20个月的股票表现，给出中短期的投资建议"
+        ):
+            if isinstance(chunk, MessageChunk):
+                print(chunk.delta, end="")
+            if isinstance(chunk, PlanningMakeToolCallEvent):
+                print("making planning...")
+            if isinstance(chunk, PlanningMakeToolCompletedEvent):
+                print(f"completed planning..., {chunk.planning}")
 
 
     import asyncio

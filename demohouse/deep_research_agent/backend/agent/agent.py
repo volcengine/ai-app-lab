@@ -10,12 +10,12 @@
 # limitations under the License.
 
 import abc
-from typing import AsyncIterable, Union, List, Literal
+from typing import AsyncIterable, Union, List
 
 from openai import BaseModel
 
 from arkitect.types.llm.model import ArkMessage
-from demohouse.deep_research_agent.backend.planning.planning import PlanningItem
+from models.planning import PlanningItem
 
 """
 AgentStepOutputResponse is the non-stream response for agent run
@@ -60,15 +60,3 @@ class Agent(abc.ABC):
     @abc.abstractmethod
     def finished(self) -> bool:
         pass
-
-
-class SearchAgent(Agent, BaseModel):
-    mcp_server: List['remote.yaml']
-
-    def __init__(self):
-        self.mcp_clients = init_mcp_client(self.mcp_server)
-
-    def _step(self):
-        llm.astream(
-            functions=self.mcp_clients,
-        )

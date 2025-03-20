@@ -10,10 +10,11 @@
 # limitations under the License.
 
 from typing import Literal, Optional, Union
+from typing import Literal, Optional
 
 from pydantic import BaseModel
 
-from demohouse.deep_research_agent.backend.planning.planning import Planning
+from models.planning import Planning
 
 
 class WorkFlowResponse(BaseModel):

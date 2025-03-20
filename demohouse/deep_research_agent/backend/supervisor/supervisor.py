@@ -10,13 +10,13 @@
 # limitations under the License.
 
 import abc
-from typing import List, AsyncIterable, Dict, Type
+from typing import Dict, Type
 
 from openai import BaseModel
 from pydantic import Field
 
 from demohouse.deep_research_agent.backend.agent.agent import Agent
-from demohouse.deep_research_agent.backend.planning.planning import Planning, PlanningItem
+from models.planning import Planning, PlanningItem
 
 
 class Supervisor(abc.ABC, BaseModel):
