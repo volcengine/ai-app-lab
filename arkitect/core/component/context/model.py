@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 from pydantic import BaseModel, Field
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
@@ -26,3 +26,15 @@ class State(BaseModel):
     messages: List[ChatCompletionMessageParam] = Field(default_factory=list)
     parameters: Optional[ArkChatParameters] = Field(default=None)
     context_parameters: Optional[ArkContextParameters] = Field(default=None)
+
+
+class ContextInterruptException(Exception):
+    def __init__(
+            self,
+            life_cycle: Literal["pre_tool_call", "post_tool_call", "pre_llm_call", "post_llm_call"],
+            reason: str = "",
+            state: Optional[State] = None,
+    ):
+        self.life_cycle = life_cycle
+        self.reason = reason
+        self.state = state

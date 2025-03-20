@@ -34,7 +34,7 @@ from arkitect.types.llm.model import (
 
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext
-from .model import State
+from .model import State, ContextInterruptException
 
 
 class _AsyncCompletions:

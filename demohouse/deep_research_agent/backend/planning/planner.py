@@ -111,7 +111,8 @@ if __name__ == "__main__":
             if isinstance(chunk, PlanningMakeToolCallEvent):
                 print("making planning...")
             if isinstance(chunk, PlanningMakeToolCompletedEvent):
-                print(f"completed planning..., {chunk.planning}")
+                print(f"completed planning...")
+                print(planner.planning.to_markdown_str(include_progress=False))
 
 
     import asyncio

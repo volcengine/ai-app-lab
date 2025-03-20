@@ -39,6 +39,7 @@ Planning is the model for agent planning_use
 
 
 class Planning(BaseModel):
+    root_task: str = ""
     items: Dict[str, PlanningItem] = {}
 
     # return all items
@@ -63,9 +64,40 @@ class Planning(BaseModel):
     def save_to_file(self, path: str):
         pass
 
-    # format output, for llm using
-    def to_formatted_text(self) -> str:
-        pass
+    # format output, for llm prompt using
+    def to_markdown_str(
+            self,
+            level: int = 1,
+            with_wrapper: bool = True,
+            include_progress: bool = True
+    ) -> str:
+        md = []
+        if with_wrapper:
+            md.append("```markdown")
+
+        md += [f"{'#' * level} 任务计划"]
+
+        for item_id, item in self.items.items():
+            # 状态图标 + 标题
+            status_text = "已完成" if item.done else "未完成"
+            md.append(f"\n{'#' * (level + 1)} [任务id: {item_id}][状态: {status_text}] {item.description}\n")
+
+            if include_progress:
+                # 处理记录（带缩进）
+                if item.process_records:
+                    md.append(f"{'#' * (level + 2)} 处理记录")
+                    md.extend([f"  - {record}" for record in item.process_records])
+                else:
+                    md.append(f"{'#' * (level + 2)} 处理记录 \n\n 暂无")
+
+            # 结果总结
+            result = item.result_summary or "暂无"
+            md.append(f"{'#' * (level + 2)} 执行结果 \n\n {result}")
+
+        if with_wrapper:
+            md.append("```")
+
+        return "\n".join(md)
 
 
 """

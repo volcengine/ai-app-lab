@@ -10,53 +10,36 @@
 # limitations under the License.
 
 import abc
-from typing import AsyncIterable, Union, List
+from typing import AsyncIterable, Union, List, Callable
 
-from openai import BaseModel
+from pydantic import BaseModel
 
-from arkitect.types.llm.model import ArkMessage
+from arkitect.core.component.tool import MCPClient
+from models.messages import MessageChunk
 from models.planning import PlanningItem
+from models.tool_events import ToolCompletedEvent, ToolCallEvent
 
-"""
-AgentStepOutputResponse is the non-stream response for agent run
-"""
-
-
-class AgentStepOutputResponse(BaseModel):
-    pass
-
-
-"""
-AgentStepOutputChunk is the stream chunk for agent run
-"""
-
-
-class AgentStepOutputChunk(BaseModel):
-    pass
-
+AgentStepChunk = MessageChunk | ToolCallEvent | ToolCompletedEvent
 
 """
 Agent is the core interface for all runnable agents
 """
 
 
-class Agent(abc.ABC):
-    def __init__(self,
-                 instruction: Union[str, List[ArkMessage]],
-                 task: Union[str, PlanningItem]) -> None:
-        pass
+class Agent(abc.ABC, BaseModel):
+    llm_model: str = ""
+    instruction: str = ""
+    tools: List[Union[MCPClient | Callable]] = []
 
-    # non-stream run step
-    @abc.abstractmethod
-    async def arun_step(self, **kwargs) -> AgentStepOutputResponse:
-        pass
+    class Config:
+        """Configuration for this pydantic object."""
+
+        arbitrary_types_allowed = True
 
     # stream run step
     @abc.abstractmethod
-    async def astream_step(self, **kwargs) -> AsyncIterable[AgentStepOutputChunk]:
-        pass
-
-    # returns if the agent task finished
-    @abc.abstractmethod
-    def finished(self) -> bool:
+    async def astream_step(
+            self,
+            **kwargs
+    ) -> AsyncIterable[AgentStepChunk]:
         pass
