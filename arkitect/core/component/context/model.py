@@ -28,13 +28,7 @@ class State(BaseModel):
     context_parameters: Optional[ArkContextParameters] = Field(default=None)
 
 
-class ContextInterruptException(Exception):
-    def __init__(
-            self,
-            life_cycle: Literal["pre_tool_call", "post_tool_call", "pre_llm_call", "post_llm_call"],
-            reason: str = "",
-            state: Optional[State] = None,
-    ):
-        self.life_cycle = life_cycle
-        self.reason = reason
-        self.state = state
+class ContextInterruption(BaseModel):
+    life_cycle: Literal["tool_call", "llm_call"]
+    reason: str = ""
+    state: Optional[State] = None

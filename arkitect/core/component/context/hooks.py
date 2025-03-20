@@ -11,20 +11,59 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from typing import Awaitable, Callable, List
-
-from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
-
-from arkitect.types.llm.model import (
-    ChatCompletionMessageToolCallParam,
-)
+import abc
+from typing import Any, Optional, Union
 
 from .model import State
 
-Hook = Callable[
-    [State],
-    Awaitable[State],
+
+class HookInterruptException(Exception):
+    def __init__(
+            self,
+            reason: str,
+            state: Optional[State] = None,
+    ):
+        self.reason = reason
+        self.state = state
+
+
+class PreToolCallHook(abc.ABC):
+    @abc.abstractmethod
+    async def pre_tool_call(
+            self,
+            name: str,
+            arguments: str,
+            state: State,
+    ) -> State:
+        pass
+
+
+class PostToolCallHook(abc.ABC):
+    @abc.abstractmethod
+    async def post_tool_call(
+            self,
+            name: str,
+            arguments: str,
+            response: Any,
+            exception: Optional[Exception],
+            state: State,
+    ) -> State:
+        pass
+
+
+class PreLLMCallHook(abc.ABC):
+    @abc.abstractmethod
+    async def pre_llm_call(
+            self,
+            state: State,
+    ) -> State:
+        pass
+
+
+Hook = Union[
+    PreToolCallHook,
+    PostToolCallHook,
+    PreLLMCallHook,
 ]
 
 
