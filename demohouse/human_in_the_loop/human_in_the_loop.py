@@ -51,22 +51,23 @@ async def link_reader(url_list: list[str]):
 
 async def main():
     # human in the loop example
-    async with Context(model="doubao-1.5-pro-32k-250115", tools=[link_reader]) as ctx:
-        ctx.add_pre_tool_call_hook(approval_tool_hook)
-        while True:
-            question = input("用户输入：")
-            if question == "exit":
-                break
-            completion = await ctx.completions.create(
-                [{"role": "user", "content": question}], stream=True
-            )
-            async for chunk in completion:
-                if chunk.choices:
-                    print(chunk.choices[0].delta.content, end="")
-            print()
+    ctx = Context(model="doubao-1.5-pro-32k-250115", tools=[link_reader])
+    await ctx.init()
+    ctx.add_pre_tool_call_hook(approval_tool_hook)
+    while True:
+        question = input("用户输入：")
+        if question == "exit":
+            break
+        completion = await ctx.completions.create(
+            [{"role": "user", "content": question}], stream=True
+        )
+        async for chunk in completion:
+            if chunk.choices:
+                print(chunk.choices[0].delta.content, end="")
+        print()
 
     # context api example
-    async with Context(
+    ctx2 = Context(
         model="doubao-1.5-pro-32k-250115",
         context_parameters=ArkContextParameters(
             messages=[{"role": "system", "content": "You are an ai assistant."}],
@@ -74,21 +75,23 @@ async def main():
                 type="last_history_tokens",
             ),
         ),
-    ) as ctx:
-        while True:
-            question = input("用户输入：")
-            if question == "exit":
-                break
-            completion = await ctx.completions.create(
-                [
-                    {"role": "user", "content": question},
-                ],
-                stream=True,
-            )
-            async for chunk in completion:
-                if chunk.choices:
-                    print(chunk.choices[0].delta.content, end="")
-            print()
+    )
+    await ctx2.init()
+
+    while True:
+        question = input("用户输入：")
+        if question == "exit":
+            break
+        completion = await ctx2.completions.create(
+            [
+                {"role": "user", "content": question},
+            ],
+            stream=True,
+        )
+        async for chunk in completion:
+            if chunk.choices:
+                print(chunk.choices[0].delta.content, end="")
+        print()
 
 
 if __name__ == "__main__":

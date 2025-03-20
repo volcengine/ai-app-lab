@@ -91,12 +91,11 @@ class _AsyncCompletions:
                     )
                     if not self._ctx.state.context_id
                     else await self._ctx.context.completions.create(
-                        messages=self._ctx.state.messages,
+                        messages=messages,
                         stream=stream,
                         **kwargs,
                     )
                 )
-                messages = []
                 if await self.handle_tool_call():
                     break
             return resp
@@ -115,7 +114,7 @@ class _AsyncCompletions:
                         )
                         if not self._ctx.state.context_id
                         else await self._ctx.context.completions.create(
-                            messages=self._ctx.state.messages,
+                            messages=messages,
                             stream=stream,
                             **kwargs,
                         )
@@ -123,7 +122,6 @@ class _AsyncCompletions:
                     assert isinstance(resp, AsyncIterable)
                     async for chunk in resp:
                         yield chunk
-                    messages = []
                     if await self.handle_tool_call():
                         break
 
@@ -160,7 +158,7 @@ class Context:
         self.post_tool_call_hooks: list[Hook] = []
         self.pre_llm_call_hooks: list[Hook] = []
 
-    async def __aenter__(self) -> "Context":
+    async def init(self) -> None:
         if self.state.context_parameters is not None:
             resp: CreateContextResponse = await self.context.create(
                 model=self.state.model,
@@ -172,17 +170,7 @@ class Context:
             self.state.context_id = resp.id
         if self.tool_pool:
             await self.tool_pool.refresh_tool_list()
-        return self
-
-    async def __aexit__(
-        self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        exc_tb: object,
-    ) -> None:
-        # context is currently removed when expire
-        # do not need explicit deletion
-        pass
+        return
 
     def get_latest_message(self) -> Optional[ChatCompletionMessageParam]:
         if len(self.state.messages) == 0:
