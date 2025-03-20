@@ -27,6 +27,7 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
 )
 
 from arkitect.core.component.tool.tool_pool import ToolPool
+from arkitect.telemetry.trace.wrapper import task
 
 from .hooks import ChatHook, default_chat_hook
 from .model import State
@@ -41,6 +42,7 @@ class _AsyncCompletions(AsyncCompletions):
             self.hooks = [default_chat_hook]
         super().__init__(client)
 
+    @task()
     async def create(
         self,
         messages: List[ChatCompletionMessageParam],

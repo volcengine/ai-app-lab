@@ -19,6 +19,7 @@ from volcenginesdkarkruntime.types.context import TruncationStrategy
 from arkitect.core.client.http import default_ark_client
 from arkitect.core.component.context.context import Context
 from arkitect.core.component.context.hooks import approval_tool_hook
+from arkitect.telemetry.trace.setup import setup_tracing
 from arkitect.types.llm.model import ArkContextParameters
 
 
@@ -92,4 +93,5 @@ async def main():
 
 
 if __name__ == "__main__":
+    setup_tracing(log_dir="./")
     asyncio.run(main())
