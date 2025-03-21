@@ -114,6 +114,7 @@ class _AsyncCompletions:
                             life_cycle="llm_call",
                             reason=he.reason,
                             state=self._ctx.state,
+                            details=he.details,
                         )
                 resp = (
                     await self._ctx.chat.completions.create(
@@ -137,6 +138,7 @@ class _AsyncCompletions:
                         life_cycle="tool_call",
                         reason=he.reason,
                         state=self._ctx.state,
+                        details=he.details,
                     )
             return resp
         else:
