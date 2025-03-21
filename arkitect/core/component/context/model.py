@@ -21,7 +21,6 @@ from arkitect.types.llm.model import ArkChatParameters, ArkContextParameters
 
 
 class State(BaseModel):
-    model: str
     context_id: Optional[str] = Field(default=None)
     messages: List[ChatCompletionMessageParam] = Field(default_factory=list)
     parameters: Optional[ArkChatParameters] = Field(default=None)

@@ -38,6 +38,7 @@ class _AsyncCompletions(AsyncCompletions):
 
     async def create(
         self,
+        model: str,
         messages: List[ChatCompletionMessageParam],
         stream: Optional[Literal[False, True]] = True,
         **kwargs: Dict[str, Any],
@@ -48,7 +49,7 @@ class _AsyncCompletions(AsyncCompletions):
             else {}
         )
         resp = await super().create(
-            model=self._state.model,
+            model=model,
             context_id=self._state.context_id,
             messages=messages,
             stream=stream,

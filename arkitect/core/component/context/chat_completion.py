@@ -38,6 +38,7 @@ class _AsyncCompletions(AsyncCompletions):
 
     async def create(
         self,
+        model: str,
         messages: List[ChatCompletionMessageParam],
         stream: Optional[Literal[True, False]] = True,
         tool_pool: ToolPool | None = None,
@@ -52,7 +53,7 @@ class _AsyncCompletions(AsyncCompletions):
             tools = await tool_pool.list_tools()
             parameters["tools"] = [t.model_dump() for t in tools]
         resp = await super().create(
-            model=self._state.model,
+            model=model,
             messages=messages,
             stream=stream,
             **parameters,

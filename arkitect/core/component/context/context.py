@@ -45,6 +45,7 @@ from .model import State, ContextInterruption
 class _AsyncCompletions:
     def __init__(self, ctx: "Context"):
         self._ctx = ctx
+        self.model = ctx.model
 
     async def handle_tool_call(self) -> bool:
         last_message = self._ctx.get_latest_message()
@@ -118,6 +119,7 @@ class _AsyncCompletions:
                         )
                 resp = (
                     await self._ctx.chat.completions.create(
+                        model=self.model,
                         messages=self._ctx.state.messages,
                         stream=stream,
                         tool_pool=self._ctx.tool_pool,
@@ -125,6 +127,7 @@ class _AsyncCompletions:
                     )
                     if not self._ctx.state.context_id
                     else await self._ctx.context.completions.create(
+                        model=self.model,
                         messages=messages,
                         stream=stream,
                         **kwargs,
@@ -157,10 +160,12 @@ class _AsyncCompletions:
                                 life_cycle="llm_call",
                                 reason=he.reason,
                                 state=self._ctx.state,
+                                details=he.details,
                             )
                             return
                     resp = (
                         await self._ctx.chat.completions.create(
+                            model=self.model,
                             messages=self._ctx.state.messages,
                             stream=stream,
                             tool_pool=self._ctx.tool_pool,
@@ -168,6 +173,7 @@ class _AsyncCompletions:
                         )
                         if not self._ctx.state.context_id
                         else await self._ctx.context.completions.create(
+                            model=self.model,
                             messages=messages,
                             stream=stream,
                             **kwargs,
@@ -184,6 +190,7 @@ class _AsyncCompletions:
                             life_cycle="tool_call",
                             reason=he.reason,
                             state=self._ctx.state,
+                            details=he.details,
                         )
                         break
 
@@ -205,13 +212,13 @@ class Context:
             state
             if state
             else State(
-                model=model,
                 context_id="",
                 messages=[],
                 parameters=parameters,
                 context_parameters=context_parameters,
             )
         )
+        self.model = model
         self.chat = _AsyncChat(client=self.client, state=self.state)
         if context_parameters is not None:
             self.context = _AsyncContext(client=self.client, state=self.state)
@@ -223,7 +230,7 @@ class Context:
     async def init(self) -> None:
         if self.state.context_parameters is not None:
             resp: CreateContextResponse = await self.context.create(
-                model=self.state.model,
+                model=self.model,
                 mode=self.state.context_parameters.mode,
                 messages=self.state.context_parameters.messages,
                 ttl=self.state.context_parameters.ttl,
