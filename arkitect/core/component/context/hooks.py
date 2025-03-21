@@ -19,21 +19,23 @@ from .model import State
 
 class HookInterruptException(Exception):
     def __init__(
-            self,
-            reason: str,
-            state: Optional[State] = None,
+        self,
+        reason: str,
+        state: Optional[State] = None,
+        details: Optional[Any] = None,
     ):
         self.reason = reason
         self.state = state
+        self.details = details
 
 
 class PreToolCallHook(abc.ABC):
     @abc.abstractmethod
     async def pre_tool_call(
-            self,
-            name: str,
-            arguments: str,
-            state: State,
+        self,
+        name: str,
+        arguments: str,
+        state: State,
     ) -> State:
         pass
 
@@ -41,12 +43,12 @@ class PreToolCallHook(abc.ABC):
 class PostToolCallHook(abc.ABC):
     @abc.abstractmethod
     async def post_tool_call(
-            self,
-            name: str,
-            arguments: str,
-            response: Any,
-            exception: Optional[Exception],
-            state: State,
+        self,
+        name: str,
+        arguments: str,
+        response: Any,
+        exception: Optional[Exception],
+        state: State,
     ) -> State:
         pass
 
@@ -54,8 +56,8 @@ class PostToolCallHook(abc.ABC):
 class PreLLMCallHook(abc.ABC):
     @abc.abstractmethod
     async def pre_llm_call(
-            self,
-            state: State,
+        self,
+        state: State,
     ) -> State:
         pass
 
