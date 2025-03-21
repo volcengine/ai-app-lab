@@ -9,9 +9,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any
 from arkitect.core.component.tool.builder import build_mcp_clients_from_config
-from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.types.llm.model import ArkMessage
+from arkitect.core.component.context.context import Context
+from arkitect.core.component.context.hooks import (
+    PostToolCallHook,
+    PreToolCallHook,
+    PreLLMCallHook,
+    HookInterruptException,
+)
+from arkitect.core.component.context.model import State, ContextInterruption
+from models.messages import OutputTextChunk, ReasoningChunk
+
+
+class PreToolCallHookInterrupHook(PreToolCallHook):
+    async def pre_tool_call(self, name: str, arguments: str, state: State) -> State:
+        print(state.messages)
+        return state
+
+
+class PostToolCallHookInterrupHook(PostToolCallHook):
+    async def post_tool_call(
+        self,
+        name: str,
+        arguments: str,
+        response: Any,
+        exception: Exception | None,
+        state: State,
+    ) -> State:
+        print(state.messages)
+        raise HookInterruptException(
+            reason="post tool call interrupt",
+            state=state,
+        )
+
+
+class PreLLMCallHookInterrupHook(PreLLMCallHook):
+    async def pre_llm_call(self, state: State) -> State:
+        print("pre llm call interrupt")
+        print(state.messages)
+        return state
 
 
 async def main():
@@ -19,23 +56,32 @@ async def main():
         "/Users/bytedance/Documents/deepresearch/ai-app-lab/demohouse/deep_research_agent/backend/mcp_config.json"
     )
 
-    for client in clients.values():
-        await client.connect_to_server()
-
-    for client in clients.values():
-        print(await client.list_tools())
-
-    llm = BaseChatLanguageModel(
-        messages=[
-            ArkMessage(
-                role="user",
-                content="https://raw.githubusercontent.com/modelcontextprotocol/servers/refs/heads/main/src/everart/Dockerfile 这里有什么",
-            )
-        ],
+    ctx = Context(
         model="doubao-1.5-pro-32k-250115",
+        tools=list(clients.values()),
     )
-    resp = await llm.arun(functions=list(clients.values()))
-    print(resp)
+    await ctx.init()
+    ctx.add_post_tool_call_hook(PostToolCallHookInterrupHook())
+    ctx.add_pre_tool_call_hook(PreToolCallHookInterrupHook())
+    ctx.add_pre_llm_call_hook(PreLLMCallHookInterrupHook())
+
+    resp = await ctx.completions.create(
+        [
+            {
+                "role": "user",
+                "content": "https://raw.githubusercontent.com/modelcontextprotocol/servers/refs/heads/main/src/everart/Dockerfile 这里有什么",
+            }
+        ],
+    )
+    async for chunk in resp:
+        if isinstance(chunk, ReasoningChunk):
+            print(chunk.reasoning_content)
+        elif isinstance(chunk, OutputTextChunk):
+            print(chunk.content)
+        elif isinstance(chunk, ContextInterruption):
+            state = chunk.state
+            print(state)
+            print(chunk.reason)
 
 
 if __name__ == "__main__":

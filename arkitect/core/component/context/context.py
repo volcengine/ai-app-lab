@@ -24,8 +24,12 @@ from volcenginesdkarkruntime.types.chat import (
 from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
-from arkitect.core.component.context.hooks import Hook, PreToolCallHook, PostToolCallHook, PreLLMCallHook, \
-    HookInterruptException
+from arkitect.core.component.context.hooks import (
+    PreToolCallHook,
+    PostToolCallHook,
+    PreLLMCallHook,
+    HookInterruptException,
+)
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
 from arkitect.types.llm.model import (
@@ -56,7 +60,9 @@ class _AsyncCompletions:
                 parameters = tool_call_param.get("function", {}).get("arguments", "{}")
                 # pre tool call hooks
                 for pre_hook in self._ctx.pre_tool_call_hooks:
-                    self._ctx.state = await pre_hook.pre_tool_call(tool_name, parameters, self._ctx.state)
+                    self._ctx.state = await pre_hook.pre_tool_call(
+                        tool_name, parameters, self._ctx.state
+                    )
 
                 # tool execution
                 tool_resp = None
@@ -88,11 +94,14 @@ class _AsyncCompletions:
         return False
 
     async def create(
-            self,
-            messages: List[ChatCompletionMessageParam],
-            stream: Optional[Literal[True, False]] = True,
-            **kwargs: Dict[str, Any],
-    ) -> Union[ChatCompletion | ContextInterruption, AsyncIterable[ChatCompletionChunk | ContextInterruption]]:
+        self,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[True, False]] = True,
+        **kwargs: Dict[str, Any],
+    ) -> Union[
+        ChatCompletion | ContextInterruption,
+        AsyncIterable[ChatCompletionChunk | ContextInterruption],
+    ]:
         self._ctx.state.messages.extend(messages)
 
         if not stream:
@@ -133,12 +142,14 @@ class _AsyncCompletions:
         else:
 
             async def iterator(
-                    messages: List[ChatCompletionMessageParam],
+                messages: List[ChatCompletionMessageParam],
             ) -> AsyncIterable[ChatCompletionChunk]:
                 while True:
                     for llm_hook in self._ctx.pre_llm_call_hooks:
                         try:
-                            self._ctx.state = await llm_hook.pre_llm_call(self._ctx.state)
+                            self._ctx.state = await llm_hook.pre_llm_call(
+                                self._ctx.state
+                            )
                         except HookInterruptException as he:
                             yield ContextInterruption(
                                 life_cycle="llm_call",
@@ -179,13 +190,13 @@ class _AsyncCompletions:
 
 class Context:
     def __init__(
-            self,
-            *,
-            model: str,
-            state: State | None = None,
-            tools: list[MCPClient | Callable] | ToolPool | None = None,
-            parameters: Optional[ArkChatParameters] = None,
-            context_parameters: Optional[ArkContextParameters] = None,
+        self,
+        *,
+        model: str,
+        state: State | None = None,
+        tools: list[MCPClient | Callable] | ToolPool | None = None,
+        parameters: Optional[ArkChatParameters] = None,
+        context_parameters: Optional[ArkContextParameters] = None,
     ):
         self.client = default_ark_client()
         self.state = (
@@ -230,11 +241,11 @@ class Context:
     def completions(self) -> _AsyncCompletions:
         return _AsyncCompletions(self)
 
-    def add_pre_tool_call_hook(self, hook: Hook) -> None:
+    def add_pre_tool_call_hook(self, hook: PreToolCallHook) -> None:
         self.pre_tool_call_hooks.append(hook)
 
-    def add_post_tool_call_hook(self, hook: Hook) -> None:
+    def add_post_tool_call_hook(self, hook: PostToolCallHook) -> None:
         self.post_tool_call_hooks.append(hook)
 
-    def add_pre_llm_call_hook(self, hook: Hook) -> None:
+    def add_pre_llm_call_hook(self, hook: PreLLMCallHook) -> None:
         self.pre_llm_call_hooks.append(hook)
