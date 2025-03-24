@@ -134,10 +134,6 @@ class DefaultSupervisor(Supervisor, BaseModel):
                 self.planning.update_item(planning_item.id, planning_item)
                 return
 
-    async def finished(self) -> bool:
-        todos = self.planning.get_todos()
-        return todos is None
-
     def _prepare_assign_prompt(self) -> str:
         tpl = Template(self.assign_prompt)
         # format the agent
@@ -160,7 +156,7 @@ class DefaultSupervisor(Supervisor, BaseModel):
     def _format_agent_desc(self) -> str:
         descs = []
         for agent_template in self.worker_agents.values():
-            descs.append(f"name: {agent_template.name}\n 能力: {agent_template.instruction}")
+            descs.append(f"成员name: {agent_template.name}  成员能力: {agent_template.instruction}")
         return "\n".join(descs)
 
     async def _assign_next_todo(self, agent_name: str, task_id: str | int) -> AssignWorkerResponse:
@@ -182,12 +178,6 @@ class DefaultSupervisor(Supervisor, BaseModel):
         """
         INFO(f"_accept_agent_response: accept={accept}, append_description={append_description}")
         return AcceptAgentResponse(accept=accept, append_description=append_description)
-
-    async def reload_planning(self, planning: Planning) -> None:
-        self.planning = planning
-
-    async def dump_planning(self) -> Planning:
-        return self.planning
 
 
 if __name__ == "__main__":

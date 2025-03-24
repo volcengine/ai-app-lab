@@ -35,15 +35,3 @@ class Supervisor(abc.ABC, BaseModel):
     @abc.abstractmethod
     async def receive_step(self, planning_item: PlanningItem) -> AsyncIterable[MessageChunk]:
         pass
-
-    @abc.abstractmethod
-    async def finished(self) -> bool:
-        pass
-
-    @abc.abstractmethod
-    async def reload_planning(self, planning: Planning) -> None:
-        pass
-
-    @abc.abstractmethod
-    async def dump_planning(self) -> Planning:
-        pass

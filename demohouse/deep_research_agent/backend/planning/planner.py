@@ -8,7 +8,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import abc
+from abc import ABC
 from typing import AsyncIterable, Union, List, Optional
 
 from pydantic import BaseModel
@@ -20,9 +21,25 @@ from arkitect.telemetry.logger import INFO
 from arkitect.types.llm.model import ArkMessage
 from models.messages import MessageChunk, ReasoningChunk, OutputTextChunk
 
-from models.planning import Planner, Planning, PlanningItem
+from models.planning import Planning, PlanningItem
 from models.tool_events import PlanningMakeToolCallEvent, PlanningMakeToolCompletedEvent
 from prompt.planning import DEFAULT_PLANNER_PROMPT
+
+"""
+Planner is an interface to generate planning for single task
+"""
+
+
+class Planner(ABC):
+    @abc.abstractmethod
+    async def make_planning(self, task: str) -> Planning:
+        pass
+
+    @abc.abstractmethod
+    async def astream_make_planning(self, task: str) -> AsyncIterable[
+        Union[MessageChunk, PlanningMakeToolCallEvent, PlanningMakeToolCompletedEvent]
+    ]:
+        pass
 
 
 class ReasoningLLMPlanner(BaseModel, Planner):

@@ -58,7 +58,7 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
 
     ```shell
     git clone https://github.com/volcengine/ai-app-lab.git
-    cd demohouse/deep_research
+    cd demohouse/service
     ```
 
 2. 设置环境变量
@@ -136,13 +136,13 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
 
     ```shell
     git clone https://github.com/volcengine/ai-app-lab.git
-    cd demohouse/deep_research
+    cd demohouse/service
     ```
 
 3. 打包本地代码为 `code.zip`
 
     ```shell
-    cd demohouse/deep_research
+    cd demohouse/service
     zip -r code.zip *
     ```
 
@@ -186,7 +186,7 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
      1. 执行以下命令，在本地启动 webui，并连接远程服务。
 
        ```shell
-       cd demohouse/deep_research
+       cd demohouse/service
        # 安装项目依赖
        poetry install
        # 设置环境变量为前面步骤中的高代码应用botID

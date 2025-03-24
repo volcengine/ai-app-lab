@@ -14,7 +14,7 @@ import logging
 
 from arkitect.core.component.llm.model import ArkMessage, ArkChatRequest
 
-from deep_research import DeepResearch, ExtraConfig
+from service import DeepResearch, ExtraConfig
 from search_engine.volc_bot import VolcBotSearchEngine
 from search_engine.tavily import TavilySearchEngine
 

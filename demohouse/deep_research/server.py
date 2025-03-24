@@ -23,7 +23,7 @@ from arkitect.launcher.vefaas import bot_wrapper
 from arkitect.telemetry.trace import task
 from search_engine.tavily import TavilySearchEngine
 from search_engine.volc_bot import VolcBotSearchEngine
-from deep_research import DeepResearch, ExtraConfig
+from service import DeepResearch, ExtraConfig
 
 from utils import get_last_message
 

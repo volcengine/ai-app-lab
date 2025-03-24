@@ -22,7 +22,7 @@ ASSIGN_TODO_PROMPT = """
 
 {{planning_details}}
 
-请你根据计划的执行情况，调用_assign_next_todo选择一个团队成员（name）和一个待执行的任务（id）
+请你根据计划的执行情况，调用_assign_next_todo选择一个团队中的成员（name）和一个待执行的任务（id），输出的成员name必须在前面给定的成员列表中
 """
 
 ACCEPT_AGENT_RESPONSE = """

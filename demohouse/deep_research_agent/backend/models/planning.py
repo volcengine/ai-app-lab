@@ -15,6 +15,7 @@ from typing import List, Optional, Dict, AsyncIterable, Union
 
 from pydantic import BaseModel
 
+from models.messages import MessageChunk
 """
 PlanningItem is a descriptor for single item
 """
@@ -110,18 +111,3 @@ class Planning(BaseModel):
             md.append("```")
 
         return "\n".join(md)
-
-
-"""
-Planner is an interface to generate planning for single task
-"""
-
-
-class Planner(ABC):
-    @abc.abstractmethod
-    async def make_planning(self, task: str) -> Planning:
-        pass
-
-    @abc.abstractmethod
-    async def astream_make_planning(self, task: str) -> AsyncIterable[Union[str, Planning]]:
-        pass
