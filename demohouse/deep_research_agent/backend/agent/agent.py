@@ -43,3 +43,14 @@ class Agent(abc.ABC, BaseModel):
             **kwargs
     ) -> AsyncIterable[AgentStepChunk]:
         pass
+
+
+class AgentTemplate(BaseModel):
+    name: str = ""
+    instruction: str = ""
+    tools: List[Union[MCPClient | Callable]] = []
+
+    class Config:
+        """Configuration for this pydantic object."""
+
+        arbitrary_types_allowed = True

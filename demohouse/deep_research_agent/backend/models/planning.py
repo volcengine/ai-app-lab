@@ -32,6 +32,18 @@ class PlanningItem(BaseModel):
     # mark if this task done
     done: bool = False
 
+    def to_markdown_str(self,
+                        level: int = 1,
+                        include_progress: bool = True,
+                        ) -> str:
+        md = [f"{'#' * level} [{self.id}] {self.description}"]
+        if include_progress:
+            md.append(f"{'#' * (level + 1)} 处理记录")
+            md.extend([f"  - {record}" for record in self.process_records])
+        md.append(f"{'#' * (level + 1)} 执行结果")
+        md.append(self.result_summary)
+        return "\n".join(md)
+
 
 """
 Planning is the model for agent planning_use

@@ -11,7 +11,6 @@
 
 from typing import AsyncIterable, Optional, Any
 
-from anyio.to_interpreter import Worker
 from pydantic import Field, BaseModel
 from jinja2 import Template
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
@@ -58,6 +57,9 @@ class WorkerAgent(Agent):
         )
 
         async for chunk in rsp_stream:
+            # TODO yield tool calls
+            # if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.tool_calls:
+            #     yield ToolCallEvent(type="")
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
                 yield OutputTextChunk(delta=chunk.choices[0].delta.content)
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:

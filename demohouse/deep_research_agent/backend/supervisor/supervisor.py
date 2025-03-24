@@ -10,25 +10,30 @@
 # limitations under the License.
 
 import abc
-from typing import Dict, Type
+from typing import Dict, Union, AsyncIterable
 
 from openai import BaseModel
 from pydantic import Field
 
-from demohouse.deep_research_agent.backend.agent.agent import Agent
+from agent.agent import AgentTemplate
+from models.messages import MessageChunk
+from models.tool_events import AssignTodoToolCompletedEvent
 from models.planning import Planning, PlanningItem
 
 
 class Supervisor(abc.ABC, BaseModel):
     planning: Planning = Field(default_factory=None)
-    worker_agents: Dict[str, Type[Agent]] = {}
+    worker_agents: Dict[str, AgentTemplate] = {}
+    llm_model: str = ''
 
     @abc.abstractmethod
-    async def assign_next_todo(self, **kwargs) -> (PlanningItem, Agent):
+    async def astream_assign_next_todo(self, **kwargs) -> AsyncIterable[
+        Union[MessageChunk, AssignTodoToolCompletedEvent]
+    ]:
         pass
 
     @abc.abstractmethod
-    async def receive_step(self, planning_item: PlanningItem) -> None:
+    async def receive_step(self, planning_item: PlanningItem) -> AsyncIterable[MessageChunk]:
         pass
 
     @abc.abstractmethod

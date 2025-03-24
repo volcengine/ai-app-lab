@@ -119,12 +119,26 @@ for supervisor
 """
 
 
-class AssignTodoToolCallEvent(ToolCallEvent):
-    type: str = "assign_todo"
-    planning: Planning = Field(default_factory=Planning)  # echo current planning here
-
-
 class AssignTodoToolCompletedEvent(ToolCompletedEvent):
     type: str = "assign_todo"
     planning_item: PlanningItem = Field(default_factory=PlanningItem)
     worker_agent: str
+
+
+"""
+for custom functions
+"""
+
+
+class CustomFunctionsToolCallEvent(ToolCallEvent):
+    type: str = "function"
+    function_name: str
+    function_arguments: str
+
+
+class CustomFunctionsToolCompletedEvent(ToolCompletedEvent):
+    type: str = "function"
+    function_name: str
+    function_arguments: str = ''
+    function_execute_result: str = ''
+    has_exception: bool = False
