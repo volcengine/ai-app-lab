@@ -16,6 +16,7 @@ import copy
 import json
 from typing import Any, AsyncIterable, Callable, Dict, List, Literal, Optional, Union
 
+from pydantic import BaseModel
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
@@ -42,6 +43,13 @@ from .context_completion import _AsyncContext
 from .model import State, ContextInterruption
 
 
+class ToolChunk(BaseModel):
+    tool_call_id: str
+    tool_name: str
+    tool_arguments: str
+    tool_response: Any | None = None
+
+
 class _AsyncCompletions:
     def __init__(self, ctx: "Context"):
         self._ctx = ctx
@@ -56,16 +64,17 @@ class _AsyncCompletions:
             return False
         for tool_call in last_message.get("tool_calls"):
             tool_name = tool_call.get("function", {}).get("name")
-            tool_call_param = copy.deepcopy(tool_call)
 
             if await self._ctx.tool_pool.contain(tool_name):
-                parameters = tool_call_param.get("function", {}).get("arguments", "{}")
                 # pre tool call hooks
                 for pre_hook in self._ctx.pre_tool_call_hooks:
                     self._ctx.state = await pre_hook.pre_tool_call(
-                        tool_name, parameters, self._ctx.state
+                        tool_name,
+                        tool_call.get("function", {}).get("arguments", "{}"),
+                        self._ctx.state,
                     )
-
+                tool_call_param = copy.deepcopy(tool_call)
+                parameters = tool_call_param.get("function", {}).get("arguments", "{}")
                 # tool execution
                 tool_resp = None
                 tool_exception = None
@@ -96,10 +105,10 @@ class _AsyncCompletions:
         return True
 
     async def create(
-            self,
-            messages: List[ChatCompletionMessageParam],
-            stream: Optional[Literal[True, False]] = True,
-            **kwargs: Dict[str, Any],
+        self,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[True, False]] = True,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         ChatCompletion | ContextInterruption,
         AsyncIterable[ChatCompletionChunk | ContextInterruption],
@@ -148,7 +157,7 @@ class _AsyncCompletions:
         else:
 
             async def iterator(
-                    messages: List[ChatCompletionMessageParam],
+                messages: List[ChatCompletionMessageParam],
             ) -> AsyncIterable[ChatCompletionChunk]:
                 while True:
                     try:
@@ -194,21 +203,149 @@ class _AsyncCompletions:
                     assert isinstance(resp, AsyncIterable)
                     async for chunk in resp:
                         yield chunk
-                        if chunk.choices[0].finish_reason in ['stop', 'length', 'content_filter']:
+                        if chunk.choices[0].finish_reason in [
+                            "stop",
+                            "length",
+                            "content_filter",
+                        ]:
                             return
 
             return iterator(messages)
 
+    async def create_chat_stream(
+        self,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[True, False]] = True,
+        **kwargs: Dict[str, Any],
+    ) -> Union[
+        ChatCompletion | ContextInterruption,
+        AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk],
+    ]:
+        self._ctx.state.messages.extend(messages)
+
+        async def iterator(
+            messages: List[ChatCompletionMessageParam],
+        ) -> AsyncIterable[ChatCompletionChunk]:
+            while True:
+                try:
+                    async for chunk in self.create_tool_call_stream():
+                        yield chunk
+                except HookInterruptException as he:
+                    yield ContextInterruption(
+                        life_cycle="tool_call",
+                        reason=he.reason,
+                        state=self._ctx.state,
+                        details=he.details,
+                    )
+                    return
+                for llm_hook in self._ctx.pre_llm_call_hooks:
+                    try:
+                        self._ctx.state = await llm_hook.pre_llm_call(self._ctx.state)
+                    except HookInterruptException as he:
+                        yield ContextInterruption(
+                            life_cycle="llm_call",
+                            reason=he.reason,
+                            state=self._ctx.state,
+                            details=he.details,
+                        )
+                        return
+                resp = (
+                    await self._ctx.chat.completions.create(
+                        model=self.model,
+                        messages=self._ctx.state.messages,
+                        stream=stream,
+                        tool_pool=self._ctx.tool_pool,
+                        **kwargs,
+                    )
+                    if not self._ctx.state.context_id
+                    else await self._ctx.context.completions.create(
+                        model=self.model,
+                        messages=messages,
+                        stream=stream,
+                        **kwargs,
+                    )
+                )
+                assert isinstance(resp, AsyncIterable)
+                async for chunk in resp:
+                    yield chunk
+                    if chunk.choices[0].finish_reason in [
+                        "stop",
+                        "length",
+                        "content_filter",
+                    ]:
+                        return
+
+        return iterator(messages)
+
+    async def create_tool_call_stream(self) -> AsyncIterable[ToolChunk]:
+        last_message = self._ctx.get_latest_message()
+        if last_message is None or not last_message.get("tool_calls"):
+            return
+        if self._ctx.tool_pool is None:
+            return
+        for tool_call in last_message.get("tool_calls"):
+            tool_name = tool_call.get("function", {}).get("name")
+
+            if await self._ctx.tool_pool.contain(tool_name):
+                # pre tool call hooks
+                for pre_hook in self._ctx.pre_tool_call_hooks:
+                    self._ctx.state = await pre_hook.pre_tool_call(
+                        tool_name,
+                        tool_call.get("function", {}).get("arguments", "{}"),
+                        self._ctx.state,
+                    )
+                tool_call_param = copy.deepcopy(tool_call)
+                parameters = tool_call_param.get("function", {}).get("arguments", "{}")
+                # tool execution
+                tool_resp = None
+                tool_exception = None
+                yield ToolChunk(
+                    tool_call_id=tool_call_param.get("id", ""),
+                    tool_name=tool_name,
+                    tool_arguments=parameters,
+                )
+                try:
+                    tool_resp = await self._ctx.tool_pool.execute_tool(
+                        tool_name=tool_name, parameters=json.loads(parameters)
+                    )
+                except Exception as e:
+                    tool_exception = e
+
+                yield ToolChunk(
+                    tool_call_id=tool_call_param.get("id", ""),
+                    tool_name=tool_name,
+                    tool_arguments=parameters,
+                    tool_resp=tool_resp,
+                )
+                self._ctx.state.messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tool_call_param.get("id", ""),
+                        "content": tool_resp if tool_resp else str(tool_exception),
+                    }
+                )
+
+                # post tool call hooks
+                for post_hook in self._ctx.post_tool_call_hooks:
+                    self._ctx.state = await post_hook.post_tool_call(
+                        tool_name,
+                        parameters,
+                        tool_resp,
+                        tool_exception,
+                        self._ctx.state,
+                    )
+        return
+
 
 class Context:
     def __init__(
-            self,
-            *,
-            model: str,
-            state: State | None = None,
-            tools: list[MCPClient | Callable] | ToolPool | None = None,
-            parameters: Optional[ArkChatParameters] = None,
-            context_parameters: Optional[ArkContextParameters] = None,
+        self,
+        *,
+        model: str,
+        state: State | None = None,
+        tools: list[MCPClient | Callable] | ToolPool | None = None,
+        parameters: Optional[ArkChatParameters] = None,
+        context_parameters: Optional[ArkContextParameters] = None,
     ):
         self.client = default_ark_client()
         self.state = (
