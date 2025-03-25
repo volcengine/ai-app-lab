@@ -1,27 +1,22 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import List, Dict, Literal
 
-from typing import List, Dict
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from models.planning import Planning, PlanningItem
 
-"""
-ToolCall events will be sent when tool is called.
-"""
 
-
-class ToolCallEvent(BaseModel):
-    type: str  # unique tool type
+class BaseEvent(BaseModel):
+    id: str = ''
 
     class Config:
         """Configuration for this pydantic object."""
@@ -30,27 +25,73 @@ class ToolCallEvent(BaseModel):
 
 
 """
-ToolCompleted events will be send when the tool execution is completed.
+Errors
 """
 
 
-class ToolCompletedEvent(BaseModel):
-    type: str  # unique tool type
+class ErrorEvent(BaseEvent):
+    error_code: str = ""
+    error_msg: str = ""
 
-    class Config:
-        """Configuration for this pydantic object."""
 
-        arbitrary_types_allowed = True
+class InvalidParameter(ErrorEvent):
+    parameter: str = ""
+    error_code: str = "InvalidParameter"
+    error_msg: str = "the specific parameter is invalid"
+
+
+class InternalServiceError(ErrorEvent):
+    error_code: str = "InternalServiceError"
 
 
 """
-ToolException events will be sent when the tool execution is failed.
+Messages
 """
 
 
-class ToolExceptionEvent(BaseModel):
-    type: str  # unique tool type
-    exception: str  # exception message
+class MessageEvent(BaseEvent):
+    pass
+
+
+class OutputTextEvent(MessageEvent):
+    delta: str = ''
+
+
+class ReasoningEvent(MessageEvent):
+    delta: str = ''
+
+
+"""
+Tool-Using
+"""
+
+
+class ToolCallEvent(BaseEvent):
+    type: str = ''
+
+
+class ToolCompletedEvent(BaseEvent):
+    type: str = ''
+    success: bool = True
+    error_msg: str = ''
+
+
+"""
+for function
+"""
+
+
+class FunctionCallEvent(ToolCallEvent):
+    type: str = 'function'
+    function_name: str = ''
+    function_parameter: str = ''
+
+
+class FunctionCompletedEvent(ToolCompletedEvent):
+    type: str = 'function'
+    function_name: str = ''
+    function_parameter: str = ''
+    function_result: str = ''
 
 
 """
@@ -100,45 +141,17 @@ class PythonExecutorToolCompletedEvent(ToolCompletedEvent):
 
 
 """
-for planner
+Custom Events
 """
 
 
-class PlanningMakeToolCallEvent(ToolCallEvent):
-    type: str = "planning_make"
-    task: str = ""
+class PlanningEvent(BaseEvent):
+    type: str = 'planning'
+    action: Literal['made', 'update']
+    planning: Planning
 
 
-class PlanningMakeToolCompletedEvent(ToolCompletedEvent):
-    type: str = "planning_make"
-    planning: Planning = Field(default_factory=Planning)
-
-
-"""
-for supervisor
-"""
-
-
-class AssignTodoToolCompletedEvent(ToolCompletedEvent):
-    type: str = "assign_todo"
-    planning_item: PlanningItem = Field(default_factory=PlanningItem)
-    worker_agent: str
-
-
-"""
-for custom functions
-"""
-
-
-class CustomFunctionsToolCallEvent(ToolCallEvent):
-    type: str = "function"
-    function_name: str
-    function_arguments: str
-
-
-class CustomFunctionsToolCompletedEvent(ToolCompletedEvent):
-    type: str = "function"
-    function_name: str
-    function_arguments: str = ''
-    function_execute_result: str = ''
-    has_exception: bool = False
+class AssignTodoEvent(BaseEvent):
+    type: str = 'assign_todo'
+    agent_name: str = ''
+    planning_item: PlanningItem

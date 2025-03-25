@@ -25,6 +25,7 @@ class State(BaseModel):
     messages: List[ChatCompletionMessageParam] = Field(default_factory=list)
     parameters: Optional[ArkChatParameters] = Field(default=None)
     context_parameters: Optional[ArkContextParameters] = Field(default=None)
+    details: Optional[Any] = None
 
 
 class ContextInterruption(BaseModel):

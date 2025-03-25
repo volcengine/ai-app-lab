@@ -9,13 +9,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import abc
-from abc import ABC
 from typing import List, Optional, Dict, AsyncIterable, Union
 
 from pydantic import BaseModel
 
-from models.messages import MessageChunk
 """
 PlanningItem is a descriptor for single item
 """

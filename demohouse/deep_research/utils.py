@@ -15,7 +15,7 @@ from typing import List, AsyncIterable, Generator
 
 import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 
-from arkitect.core.component.llm.model import ArkMessage, ArkChatCompletionChunk
+from arkitect.core.component.llm.llm import ArkMessage, ArkChatCompletionChunk
 
 
 def cast_content_to_reasoning_content(

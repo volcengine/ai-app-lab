@@ -15,11 +15,8 @@ from typing import AsyncIterable, Union, List, Callable
 from pydantic import BaseModel
 
 from arkitect.core.component.tool import MCPClient
-from models.messages import MessageChunk
-from models.planning import PlanningItem
-from models.tool_events import ToolCompletedEvent, ToolCallEvent
-
-AgentStepChunk = MessageChunk | ToolCallEvent | ToolCompletedEvent
+from models.events import BaseEvent
+from state.global_state import GlobalState
 
 """
 Agent is the core interface for all runnable agents
@@ -27,8 +24,9 @@ Agent is the core interface for all runnable agents
 
 
 class Agent(abc.ABC, BaseModel):
-    llm_model: str = ""
+    name: str = ""
     instruction: str = ""
+    llm_model: str = ""
     tools: List[Union[MCPClient | Callable]] = []
 
     class Config:
@@ -36,21 +34,11 @@ class Agent(abc.ABC, BaseModel):
 
         arbitrary_types_allowed = True
 
-    # stream run step
+    # stream run
     @abc.abstractmethod
     async def astream_step(
             self,
-            **kwargs
-    ) -> AsyncIterable[AgentStepChunk]:
+            global_state: GlobalState,
+            **kwargs,
+    ) -> AsyncIterable[BaseEvent]:
         pass
-
-
-class AgentTemplate(BaseModel):
-    name: str = ""
-    instruction: str = ""
-    tools: List[Union[MCPClient | Callable]] = []
-
-    class Config:
-        """Configuration for this pydantic object."""
-
-        arbitrary_types_allowed = True

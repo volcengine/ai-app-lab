@@ -72,6 +72,7 @@ class _AsyncCompletions(AsyncCompletions):
                     content="",
                     tool_calls=[],
                 )
+                self._state.messages.append(chat_completion_messages.__dict__)
                 async for chunk in resp:
                     if len(chunk.choices) > 0:
                         if chunk.choices[0].delta.content:
@@ -91,7 +92,6 @@ class _AsyncCompletions(AsyncCompletions):
                 chat_completion_messages.tool_calls = [
                     v.model_dump() for v in final_tool_calls.values()
                 ]
-                self._state.messages.append(chat_completion_messages.__dict__)
 
             return iterator()
 

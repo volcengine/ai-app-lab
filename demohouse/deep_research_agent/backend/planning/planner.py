@@ -91,7 +91,7 @@ class ReasoningLLMPlanner(BaseModel, Planner):
                     delta=chunk.choices[0].delta.content
                 )
 
-        # currently we manually generate the tool call stream events here.
+        # currently we manually generate the tool call stream events.py here.
         yield PlanningMakeToolCallEvent(task=task)
         yield PlanningMakeToolCompletedEvent(planning=self.planning)
 

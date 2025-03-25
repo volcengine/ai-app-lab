@@ -15,72 +15,123 @@ from pydantic import Field, BaseModel
 from jinja2 import Template
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
-from agent.agent import Agent, AgentStepChunk
+from agent.agent import Agent
 from arkitect.core.component.context.context import Context
-from arkitect.core.component.context.hooks import PostToolCallHook
-from arkitect.core.component.context.model import State
-from models.messages import OutputTextChunk, ReasoningChunk
+from arkitect.core.component.context.hooks import PostToolCallHook, PreToolCallHook, HookInterruptException
+from arkitect.core.component.context.model import State, ContextInterruption
+
+from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, InternalServiceError, InvalidParameter
 from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
+from state.deep_research_state import DeepResearchState
+from state.global_state import GlobalState
+from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
 
 
-class PlanningRecordHook(BaseModel, PostToolCallHook):
-    planning_item: PlanningItem = Field(default_factory=PlanningItem)
+class WorkerToolCallHook(BaseModel, PostToolCallHook, PreToolCallHook):
+    async def pre_tool_call(self, name: str, arguments: str, state: State) -> State:
+        if isinstance(state.details, dict) and state.details.get('interrupt', False):
+            state.details.update({'interrupt': False})
+            return state
+        else:
+            if not state.details:
+                state.details = {'interrupt': True}
+            else:
+                state.details.update({'interrupt': True})
+            raise HookInterruptException(
+                reason='tool_call',
+                state=state,
+                details=convert_pre_tool_call_to_event(function_name=name, function_parameter=arguments)
+            )
 
     async def post_tool_call(self, name: str, arguments: str, response: Any, exception: Optional[Exception],
                              state: State) -> State:
-        self.planning_item.process_records.append(
-            f"执行工具调用{'成功' if not exception else '失败'}：{name} 参数：{arguments} 结果：{response or exception}"
+        raise HookInterruptException(
+            reason='tool_call',
+            state=state,
+            details=convert_post_tool_call_to_event(
+                function_name=name,
+                function_parameter=arguments,
+                exception=exception,
+                function_result=response
+            )
         )
-        return state
 
 
 class WorkerAgent(Agent):
-    planning: Planning = Field(default_factory=Planning)
-    planning_item: PlanningItem = Field(default_factory=PlanningItem)
-    state: Optional[State] = None
     system_prompt: str = DEFAULT_WORKER_PROMPT
+    _tool_call_hook: WorkerToolCallHook = WorkerToolCallHook()
 
-    async def astream_step(self, **kwargs) -> AsyncIterable[AgentStepChunk]:
-        ctx = Context(
-            model=self.llm_model,
-            tools=self.tools,
-            state=self.state,
-        )
-        await ctx.init()
-        ctx.add_post_tool_call_hook(PlanningRecordHook(planning_item=self.planning_item))
+    async def astream_step(
+            self,
+            global_state: GlobalState,
+            **kwargs,
+    ) -> AsyncIterable[BaseEvent]:
 
-        rsp_stream = await ctx.completions.create(
-            messages=[
-                {"role": "system", "content": self.generate_system_prompt()},
+        # extract args:
+
+        planning: Planning = global_state.custom_state.planning
+        task_id = kwargs.pop('task_id')
+
+        if not planning or not task_id or not planning.get_item(task_id):
+            yield InvalidParameter(paramter="task_id")
+
+        planning_item = planning.get_item(task_id)
+
+        ctx_state: Optional[State] = None
+
+        while True:
+            ctx = Context(
+                model=self.llm_model,
+                tools=self.tools,
+                state=ctx_state,
+            )
+
+            await ctx.init()
+            ctx.add_pre_tool_call_hook(self._tool_call_hook)
+            ctx.add_post_tool_call_hook(self._tool_call_hook)
+
+            messages = [] if ctx_state else [
+                {"role": "system",
+                 "content": self.generate_system_prompt(planning=planning, planning_item=planning_item)},
             ]
-        )
 
-        async for chunk in rsp_stream:
-            # TODO yield tool calls
-            # if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.tool_calls:
-            #     yield ToolCallEvent(type="")
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
-                yield OutputTextChunk(delta=chunk.choices[0].delta.content)
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
-                yield ReasoningChunk(delta=chunk.choices[0].delta.reasoning_content)
+            rsp_stream = await ctx.completions.create(
+                messages=messages,
+            )
 
-        # after all we tidy the final result
-        last_message = ctx.get_latest_message()
-        if last_message:
-            self.planning_item.result_summary = last_message.get("content")
+            try:
+                async for chunk in rsp_stream:
+                    if isinstance(chunk, ContextInterruption):
+                        ctx_state = chunk.state
+                        if isinstance(chunk.details, BaseEvent):
+                            yield chunk.details
+                        break
+                    if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
+                        yield OutputTextEvent(delta=chunk.choices[0].delta.content)
+                    if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
+                        yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
+                    if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].finish_reason in ['stop', 'length',
+                                                                                                     'content_filter']:
+                        last_message = ctx.get_latest_message()
+                        print(f">>>{last_message}")
+                        # update planning
+                        planning_item.result_summary = last_message.get('content')
+                        planning.update_item(task_id, planning_item)
+                        # end the loop
+                        return
+            except Exception as e:
+                yield InternalServiceError(error_msg=str(e))
+                return
 
-    def generate_system_prompt(self) -> str:
+    def generate_system_prompt(self, planning: Planning, planning_item: PlanningItem) -> str:
         return Template(self.system_prompt).render(
             instruction=self.instruction,
-            complex_task=self.planning.root_task,
-            planning_details=self.planning.to_markdown_str(include_progress=False),
-            task_id=str(self.planning_item.id),
-            task_description=self.planning_item.description,
+            complex_task=planning.root_task,
+            planning_details=planning.to_markdown_str(include_progress=False),
+            task_id=str(planning_item.id),
+            task_description=planning_item.description,
         )
-
-    def get_result(self) -> PlanningItem:
-        return self.planning_item
 
 
 if __name__ == "__main__":
@@ -108,17 +159,34 @@ if __name__ == "__main__":
             llm_model="deepseek-r1-250120",
             instruction="数据计算专家，会做两位数的加法",
             tools=[add],
-            planning=Planning(root_task="计算给定的题目", items={"1": planning_item}),
-            planning_item=planning_item
         )
 
-        async for chunk in agent.astream_step():
-            if isinstance(chunk, OutputTextChunk):
-                print(chunk.delta, end="")
-            if isinstance(chunk, ReasoningChunk):
-                print(chunk.delta, end="")
+        global_state = GlobalState(
+            custom_state=DeepResearchState(
+                planning=Planning(root_tasks='计算给出的问题', items={'1': planning_item})
+            )
+        )
 
-        print(agent.get_result())
+        thinking = True
+
+        async for chunk in agent.astream_step(
+                global_state=global_state,
+                task_id='1',
+        ):
+            if isinstance(chunk, OutputTextEvent):
+                if thinking:
+                    thinking = False
+                    print("---思考结束---")
+                print(chunk.delta, end="")
+            elif isinstance(chunk, ReasoningEvent):
+                if not thinking:
+                    print("---思考开始---")
+                    thinking = True
+                print(chunk.delta, end="")
+            else:
+                print(chunk)
+
+        print(global_state.custom_state.planning.to_markdown_str())
 
 
     import asyncio
