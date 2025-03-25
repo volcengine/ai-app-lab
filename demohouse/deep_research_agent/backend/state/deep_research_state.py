@@ -10,6 +10,7 @@
 # limitations under the License.
 
 from typing import List, Any
+from typing import List, Any, Optional
 
 from openai import BaseModel
 from pydantic import Field
@@ -19,7 +20,7 @@ from models.planning import Planning
 
 class DeepResearchState(BaseModel):
     # global planning
-    planning: Planning = Field(default_factory=Planning)
+    planning: Optional[Planning] = None
     # searched references
     references: List[Any] = []
 

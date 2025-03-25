@@ -1,32 +1,21 @@
-# Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
-# Licensed under the 【火山方舟】原型应用软件自用许可协议
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
-#     https://www.volcengine.com/docs/82379/1433703
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import json
-from typing import AsyncIterator, Union, Any, Optional
+from typing import AsyncIterable, Dict, Any, Optional
 
 from jinja2 import Template
 from pydantic import BaseModel
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
-from agent.agent import AgentTemplate
-from agent.worker import WorkerAgent
 from arkitect.core.component.context.context import Context
 from arkitect.core.component.context.hooks import PostToolCallHook, HookInterruptException
 from arkitect.core.component.context.model import State, ContextInterruption
 from arkitect.telemetry.logger import INFO
-from models.messages import MessageChunk, OutputTextChunk, ReasoningChunk
-from models.planning import Planning, PlanningItem
-from models.tool_events import AssignTodoToolCompletedEvent
-from supervisor.supervisor import Supervisor
+from agent.agent import Agent
+from agent.worker import Worker
+from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, InvalidParameter, PlanningEvent
+from models.planning import PlanningItem, Planning
 from prompt.supervisor import ASSIGN_TODO_PROMPT, ACCEPT_AGENT_RESPONSE
+from state.deep_research_state import DeepResearchState
+from state.global_state import GlobalState
 
 
 class SupervisorControlHook(PostToolCallHook):
@@ -64,63 +53,103 @@ class AcceptAgentResponse(BaseModel):
     append_description: str = ''
 
 
-class DefaultSupervisor(Supervisor, BaseModel):
+class Supervisor(Agent):
+    workers: Dict[str, Worker] = {}
     assign_prompt: str = ASSIGN_TODO_PROMPT
     accept_prompt: str = ACCEPT_AGENT_RESPONSE
-    control_hook: SupervisorControlHook = SupervisorControlHook()
+    _control_hook: SupervisorControlHook = SupervisorControlHook()
 
-    class Config:
-        """Configuration for this pydantic object."""
+    async def astream(self,
+                      global_state: GlobalState,
+                      **kwargs) -> AsyncIterable[BaseEvent]:
+        # extract args:
 
-        arbitrary_types_allowed = True
+        planning: Planning = global_state.custom_state.planning
 
-    async def astream_assign_next_todo(self, **kwargs) -> AsyncIterator[
-        Union[MessageChunk, AssignTodoToolCompletedEvent]
-    ]:
+        while planning.get_todos():
+            next_todo, next_agent = (None, None)
+            # 1. assign next_todo
+            async for assign_chunk in self.astream_assign_next_todo(planning):
+                yield assign_chunk
+                if isinstance(assign_chunk, AssignTodoEvent):
+                    next_todo = assign_chunk.planning_item
+                    next_agent = assign_chunk.agent_name
+                    break
+
+            if not next_todo or not next_agent:
+                INFO("got empty next_todo or next_agent, retry...")
+                continue
+
+            if next_agent not in self.workers:
+                yield InvalidParameter(parameter="next_agent")
+                return
+
+            # 2. run agent
+            worker = self.workers.get(next_agent)
+            async for worker_chunk in worker.astream(
+                    global_state=global_state,
+                    task_id=next_todo.id,
+            ):
+                yield worker_chunk
+
+            # 3. accept agent result
+            async for receive_chunk in self.receive_step(
+                    planning=planning,
+                    planning_item=next_todo,
+            ):
+                yield receive_chunk
+
+            # TODO save after accept
+            yield PlanningEvent(
+                action='update',
+                planning=planning,
+            )
+
+    async def astream_assign_next_todo(self, planning: Planning) -> AsyncIterable[BaseEvent]:
         ctx = Context(
             model=self.llm_model,
             tools=[self._assign_next_todo],
         )
         await ctx.init()
-        ctx.add_post_tool_call_hook(self.control_hook)
+        ctx.add_post_tool_call_hook(self._control_hook)
 
         rsp_stream = await ctx.completions.create(
             messages=[
-                {"role": "system", "content": self._prepare_assign_prompt()}
+                {"role": "system", "content": self._prepare_assign_prompt(planning=planning)}
             ]
         )
 
         async for chunk in rsp_stream:
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
-                yield OutputTextChunk(delta=chunk.choices[0].delta.content)
+                yield OutputTextEvent(delta=chunk.choices[0].delta.content)
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
-                yield ReasoningChunk(delta=chunk.choices[0].delta.reasoning_content)
+                yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
             if isinstance(chunk, ContextInterruption):
                 assign = AssignWorkerResponse(**json.loads(chunk.details))
-                yield AssignTodoToolCompletedEvent(
-                    planning_item=self.planning.get_item(assign.task_id),
-                    worker_agent=assign.agent_name,
+                yield AssignTodoEvent(
+                    planning_item=planning.get_item(assign.task_id),
+                    agent_name=assign.agent_name,
                 )
 
-    async def receive_step(self, planning_item: PlanningItem) -> AsyncIterator[MessageChunk]:
+    async def receive_step(self, planning: Planning, planning_item: PlanningItem) -> AsyncIterable[BaseEvent]:
         ctx = Context(
             model=self.llm_model,
             tools=[self._accept_agent_response],
         )
         await ctx.init()
-        ctx.add_post_tool_call_hook(self.control_hook)
+        ctx.add_post_tool_call_hook(self._control_hook)
 
         rsp_stream = await ctx.completions.create(
             messages=[
-                {"role": "system", "content": self._prepare_accept_prompt(planning_item)}
+                {"role": "system", "content": self._prepare_accept_prompt(planning, planning_item)}
             ]
         )
 
         async for chunk in rsp_stream:
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
-                yield OutputTextChunk(delta=chunk.choices[0].delta.content)
+                yield OutputTextEvent(delta=chunk.choices[0].delta.content)
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
-                yield ReasoningChunk(delta=chunk.choices[0].delta.reasoning_content)
+                yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
             if isinstance(chunk, ContextInterruption):
                 accept = AcceptAgentResponse(**json.loads(chunk.details))
                 if accept.accept:
@@ -131,32 +160,32 @@ class DefaultSupervisor(Supervisor, BaseModel):
                         f"中间执行结果: {planning_item.result_summary}"
                     )
                     planning_item.description += f"\n{accept.append_description}"
-                self.planning.update_item(planning_item.id, planning_item)
+                planning.update_item(planning_item.id, planning_item)
                 return
 
-    def _prepare_assign_prompt(self) -> str:
+    def _prepare_assign_prompt(self, planning: Planning) -> str:
         tpl = Template(self.assign_prompt)
         # format the agent
         return tpl.render(
             worker_agent_details=self._format_agent_desc(),
-            complex_task=self.planning.root_task,
-            planning_details=self.planning.to_markdown_str(include_progress=False),
+            complex_task=planning.root_task,
+            planning_details=planning.to_markdown_str(include_progress=False),
         )
 
-    def _prepare_accept_prompt(self, planning_item: PlanningItem) -> str:
+    def _prepare_accept_prompt(self, planning: Planning, planning_item: PlanningItem) -> str:
         tpl = Template(self.accept_prompt)
         # format the agent
         return tpl.render(
-            complex_task=self.planning.root_task,
-            planning_details=self.planning.to_markdown_str(include_progress=False),
+            complex_task=planning.root_task,
+            planning_details=planning.to_markdown_str(include_progress=False),
             sub_task=f"[id: {planning_item.id}] {planning_item.description}",
             planning_item_details=planning_item.to_markdown_str(),
         )
 
     def _format_agent_desc(self) -> str:
         descs = []
-        for agent_template in self.worker_agents.values():
-            descs.append(f"成员name: {agent_template.name}  成员能力: {agent_template.instruction}")
+        for worker in self.workers.values():
+            descs.append(f"成员name: {worker.name}  成员能力: {worker.instruction}")
         return "\n".join(descs)
 
     async def _assign_next_todo(self, agent_name: str, task_id: str | int) -> AssignWorkerResponse:
@@ -181,6 +210,18 @@ class DefaultSupervisor(Supervisor, BaseModel):
 
 
 if __name__ == "__main__":
+    async def add(a: int, b: int) -> int:
+        """Add two numbers
+        """
+        return a + b
+
+
+    async def compare(a: int, b: int) -> int:
+        """Compare two numbers, return the bigger one
+        """
+        return a if a > b else b
+
+
     async def main():
         planning: Planning = Planning(
             root_task="判断(1+20) 和 (22 + 23) 哪个结果大",
@@ -200,42 +241,37 @@ if __name__ == "__main__":
             }
         )
 
-        worker_agents = {
-            'adder': AgentTemplate(name='adder', instruction='做加法'),
-            'comparer': AgentTemplate(name='comparer', instruction='比较两个数大小'),
-        }
-
-        supervisor = DefaultSupervisor(
-            planning=planning,
-            worker_agents=worker_agents,
+        supervisor = Supervisor(
             llm_model="deepseek-r1-250120",
+            workers={
+                'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='做加法', tools=[add]),
+                'comparer': Worker(llm_model='deepseek-r1-250120', name='comparer', instruction='比较两个数大小', tools=[compare]),
+            }
         )
 
-        next_todo = None
+        thinking = True
 
-        async for c in supervisor.astream_assign_next_todo():
-            if isinstance(c, MessageChunk):
-                print(c.delta, end="")
-            if isinstance(c, AssignTodoToolCompletedEvent):
-                next_todo = c
+        async for chunk in supervisor.astream(
+            global_state=GlobalState(
+                custom_state=DeepResearchState(
+                    planning=planning
+                )
+            )
+        ):
+            if isinstance(chunk, OutputTextEvent):
+                if thinking:
+                    thinking = False
+                    print("---思考结束---")
+                print(chunk.delta, end="")
+            elif isinstance(chunk, ReasoningEvent):
+                if not thinking:
+                    print("---思考开始---")
+                    thinking = True
+                print(chunk.delta, end="")
+            else:
+                print(chunk)
 
-        worker = WorkerAgent(
-            llm_model="deepseek-r1-250120",
-            planning=planning,
-            planning_item=next_todo.planning_item,
-            **worker_agents.get(next_todo.worker_agent).__dict__,
-        )
-
-        async for ss in worker.astream_step():
-            if isinstance(ss, MessageChunk):
-                print(ss.delta, end="")
-
-        async for ac in supervisor.receive_step(worker.get_result()):
-            if isinstance(ac, MessageChunk):
-                print(ac.delta, end="")
-
-        print(supervisor.planning.to_markdown_str())
-
+        print(planning.to_markdown_str())
 
     import asyncio
 

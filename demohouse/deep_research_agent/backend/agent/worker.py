@@ -58,11 +58,11 @@ class WorkerToolCallHook(BaseModel, PostToolCallHook, PreToolCallHook):
         )
 
 
-class WorkerAgent(Agent):
+class Worker(Agent):
     system_prompt: str = DEFAULT_WORKER_PROMPT
     _tool_call_hook: WorkerToolCallHook = WorkerToolCallHook()
 
-    async def astream_step(
+    async def astream(
             self,
             global_state: GlobalState,
             **kwargs,
@@ -114,7 +114,6 @@ class WorkerAgent(Agent):
                     if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].finish_reason in ['stop', 'length',
                                                                                                      'content_filter']:
                         last_message = ctx.get_latest_message()
-                        print(f">>>{last_message}")
                         # update planning
                         planning_item.result_summary = last_message.get('content')
                         planning.update_item(task_id, planning_item)
@@ -128,7 +127,7 @@ class WorkerAgent(Agent):
         return Template(self.system_prompt).render(
             instruction=self.instruction,
             complex_task=planning.root_task,
-            planning_details=planning.to_markdown_str(include_progress=False),
+            planning_detail=planning.to_markdown_str(include_progress=False),
             task_id=str(planning_item.id),
             task_description=planning_item.description,
         )
@@ -155,7 +154,7 @@ if __name__ == "__main__":
             description="计算 1 + 19",
         )
 
-        agent = WorkerAgent(
+        agent = Worker(
             llm_model="deepseek-r1-250120",
             instruction="数据计算专家，会做两位数的加法",
             tools=[add],
@@ -169,7 +168,7 @@ if __name__ == "__main__":
 
         thinking = True
 
-        async for chunk in agent.astream_step(
+        async for chunk in agent.astream(
                 global_state=global_state,
                 task_id='1',
         ):

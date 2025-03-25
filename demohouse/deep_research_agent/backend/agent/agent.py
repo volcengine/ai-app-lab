@@ -36,7 +36,7 @@ class Agent(abc.ABC, BaseModel):
 
     # stream run
     @abc.abstractmethod
-    async def astream_step(
+    async def astream(
             self,
             global_state: GlobalState,
             **kwargs,

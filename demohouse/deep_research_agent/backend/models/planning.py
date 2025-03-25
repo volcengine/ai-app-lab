@@ -79,7 +79,7 @@ class Planning(BaseModel):
             self,
             level: int = 1,
             with_wrapper: bool = True,
-            include_progress: bool = True
+            include_progress: bool = True,
     ) -> str:
         md = []
         if with_wrapper:
