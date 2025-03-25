@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict, AsyncIterable, Union, Optional
+from typing import AsyncIterable, Optional
 
 from arkitect.telemetry.logger import INFO
 
@@ -17,13 +17,16 @@ from agent.worker import Worker
 from agent.planner import Planner
 from agent.supervisor import Supervisor
 from models.events import *
-from state.deep_research_state import DeepResearchState
+from state.deep_research_state import DeepResearchState, DeepResearchStateManager
 from state.global_state import GlobalState
 
 
 class DeepResearch(BaseModel):
     default_llm_model: str = ''
     workers: Dict[str, Worker] = {}
+    reasoning_accept: bool = True
+    max_planning_items: int = 10
+    state_manager: Optional[DeepResearchStateManager] = None
 
     class Config:
         """Configuration for this pydantic object."""
@@ -32,7 +35,6 @@ class DeepResearch(BaseModel):
 
     async def astream(
             self,
-            root_task: str,
             dr_state: DeepResearchState,
     ) -> AsyncIterable[BaseEvent]:
         global_state = GlobalState(
@@ -40,8 +42,17 @@ class DeepResearch(BaseModel):
         )
         # 1. restore the checkpoint or make new one
         if not dr_state.planning:
-            async for chunk in self._make_plan(root_task=root_task, global_state=global_state):
+            async for chunk in self._make_plan(
+                    root_task=dr_state.root_task,
+                    global_state=global_state,
+                    max_plannings=self.max_planning_items,
+            ):
                 yield chunk
+        else:
+            yield PlanningEvent(
+                action='load',
+                planning=dr_state.planning,
+            )
 
         INFO(f'planning: \n {dr_state.planning.to_markdown_str()}')
 
@@ -49,6 +60,8 @@ class DeepResearch(BaseModel):
         supervisor = Supervisor(
             llm_model=self.default_llm_model,
             workers=self.workers,
+            reasoning_accept=self.reasoning_accept,
+            state_manager=self.state_manager,
         )
 
         async for event in supervisor.astream(
@@ -56,14 +69,16 @@ class DeepResearch(BaseModel):
         ):
             yield event
 
-    async def _make_plan(self, root_task: str, global_state: GlobalState) -> AsyncIterable[BaseEvent]:
+    async def _make_plan(self, root_task: str, global_state: GlobalState, max_plannings: int) \
+            -> AsyncIterable[BaseEvent]:
         planner = Planner(
             llm_model=self.default_llm_model
         )
 
         async for chunk in planner.astream(
                 global_state=global_state,
-                task=root_task
+                task=root_task,
+                max_plannings=max_plannings,
         ):
             if isinstance(chunk, PlanningEvent):
                 global_state.custom_state.planning = chunk.planning

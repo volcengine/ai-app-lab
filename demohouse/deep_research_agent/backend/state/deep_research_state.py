@@ -17,6 +17,8 @@ from models.planning import Planning
 
 
 class DeepResearchState(BaseModel):
+    # root task
+    root_task: str = ''
     # global planning
     planning: Optional[Planning] = None
     # searched references

@@ -25,7 +25,7 @@ from agent.worker import Worker
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, InvalidParameter, PlanningEvent
 from models.planning import PlanningItem, Planning
 from prompt.supervisor import ASSIGN_TODO_PROMPT, ACCEPT_AGENT_RESPONSE
-from state.deep_research_state import DeepResearchState
+from state.deep_research_state import DeepResearchState, DeepResearchStateManager
 from state.global_state import GlobalState
 
 
@@ -68,7 +68,9 @@ class Supervisor(Agent):
     workers: Dict[str, Worker] = {}
     assign_prompt: str = ASSIGN_TODO_PROMPT
     accept_prompt: str = ACCEPT_AGENT_RESPONSE
+    reasoning_accept: bool = True
     _control_hook: SupervisorControlHook = SupervisorControlHook()
+    state_manager: Optional[DeepResearchStateManager] = None
 
     async def astream(self,
                       global_state: GlobalState,
@@ -104,13 +106,23 @@ class Supervisor(Agent):
                 yield worker_chunk
 
             # 3. accept agent result
-            async for receive_chunk in self.receive_step(
-                    planning=planning,
-                    planning_item=next_todo,
-            ):
-                yield receive_chunk
+            if self.reasoning_accept:
+                # accept with reasoning
+                async for receive_chunk in self.receive_step(
+                        planning=planning,
+                        planning_item=next_todo,
+                ):
+                    yield receive_chunk
+            else:
+                # accept directly
+                next_todo.done = True
+                planning.update_item(next_todo.id, next_todo)
 
-            # TODO save after accept
+            if self.state_manager:
+                await self.state_manager.dump(
+                    state=global_state.custom_state
+                )
+
             yield PlanningEvent(
                 action='update',
                 planning=planning,

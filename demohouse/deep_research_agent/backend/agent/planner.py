@@ -30,6 +30,7 @@ class Planner(Agent):
 
     async def astream(self, global_state: GlobalState, **kwargs) -> AsyncIterable[BaseEvent]:
         task = kwargs.pop('task')
+        max_plannings = kwargs.pop('max_plannings')
 
         llm = BaseChatLanguageModel(
             model=self.llm_model,
@@ -41,6 +42,7 @@ class Planner(Agent):
 
         rsp_stream = llm.astream(
             task=task,
+            max_plannings=max_plannings,
             functions=[self.save_planning],
         )
 

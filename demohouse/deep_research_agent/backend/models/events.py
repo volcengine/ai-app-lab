@@ -50,14 +50,16 @@ Messages
 
 
 class MessageEvent(BaseEvent):
-    pass
+    type: str = ''
 
 
 class OutputTextEvent(MessageEvent):
+    type: str = 'output_text'
     delta: str = ''
 
 
 class ReasoningEvent(MessageEvent):
+    type: str = 'reasoning_text'
     delta: str = ''
 
 
@@ -147,7 +149,7 @@ Custom Events
 
 class PlanningEvent(BaseEvent):
     type: str = 'planning'
-    action: Literal['made', 'update']
+    action: Literal['made', 'load', 'update']
     planning: Planning
 
 

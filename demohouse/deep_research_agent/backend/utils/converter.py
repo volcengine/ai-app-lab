@@ -11,7 +11,7 @@
 
 from typing import Optional, Any
 
-from arkitect.core.component.context.model import State
+from arkitect.utils.context import get_reqid
 from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent
 
 
@@ -40,3 +40,8 @@ def convert_post_tool_call_to_event(
         success=exception is None,
         error_msg='' if not exception else str(exception)
     )
+
+
+def convert_event_to_sse_response(event: BaseEvent) -> str:
+    event.id = get_reqid()
+    return f"data: {event.model_dump_json(exclude_none=True)}\n\n"
