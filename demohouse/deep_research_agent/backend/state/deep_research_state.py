@@ -8,12 +8,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from typing import List, Any
+import abc
 from typing import List, Any, Optional
 
 from openai import BaseModel
-from pydantic import Field
 
 from models.planning import Planning
 
@@ -28,3 +26,14 @@ class DeepResearchState(BaseModel):
         """Configuration for this pydantic object."""
 
         arbitrary_types_allowed = True
+
+
+class DeepResearchStateManager(abc.ABC):
+
+    @abc.abstractmethod
+    async def dump(self, state: DeepResearchState) -> None:
+        pass
+
+    @abc.abstractmethod
+    async def load(self) -> Optional[DeepResearchState]:
+        pass
