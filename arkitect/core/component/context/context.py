@@ -47,7 +47,13 @@ class ToolChunk(BaseModel):
     tool_call_id: str
     tool_name: str
     tool_arguments: str
+    tool_exception: Optional[Exception] = None
     tool_response: Any | None = None
+
+    class Config:
+        """Configuration for this pydantic object."""
+
+        arbitrary_types_allowed = True
 
 
 class _AsyncCompletions:
@@ -105,10 +111,10 @@ class _AsyncCompletions:
         return True
 
     async def create(
-        self,
-        messages: List[ChatCompletionMessageParam],
-        stream: Optional[Literal[True, False]] = True,
-        **kwargs: Dict[str, Any],
+            self,
+            messages: List[ChatCompletionMessageParam],
+            stream: Optional[Literal[True, False]] = True,
+            **kwargs: Dict[str, Any],
     ) -> Union[
         ChatCompletion | ContextInterruption,
         AsyncIterable[ChatCompletionChunk | ContextInterruption],
@@ -157,7 +163,7 @@ class _AsyncCompletions:
         else:
 
             async def iterator(
-                messages: List[ChatCompletionMessageParam],
+                    messages: List[ChatCompletionMessageParam],
             ) -> AsyncIterable[ChatCompletionChunk]:
                 while True:
                     try:
@@ -213,10 +219,10 @@ class _AsyncCompletions:
             return iterator(messages)
 
     async def create_chat_stream(
-        self,
-        messages: List[ChatCompletionMessageParam],
-        stream: Optional[Literal[True, False]] = True,
-        **kwargs: Dict[str, Any],
+            self,
+            messages: List[ChatCompletionMessageParam],
+            stream: Optional[Literal[True, False]] = True,
+            **kwargs: Dict[str, Any],
     ) -> Union[
         ChatCompletion | ContextInterruption,
         AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk],
@@ -224,7 +230,7 @@ class _AsyncCompletions:
         self._ctx.state.messages.extend(messages)
 
         async def iterator(
-            messages: List[ChatCompletionMessageParam],
+                messages: List[ChatCompletionMessageParam],
         ) -> AsyncIterable[ChatCompletionChunk]:
             while True:
                 try:
@@ -315,7 +321,8 @@ class _AsyncCompletions:
                     tool_call_id=tool_call_param.get("id", ""),
                     tool_name=tool_name,
                     tool_arguments=parameters,
-                    tool_resp=tool_resp,
+                    tool_exception=tool_exception,
+                    tool_response=tool_resp,
                 )
                 self._ctx.state.messages.append(
                     {
@@ -339,13 +346,13 @@ class _AsyncCompletions:
 
 class Context:
     def __init__(
-        self,
-        *,
-        model: str,
-        state: State | None = None,
-        tools: list[MCPClient | Callable] | ToolPool | None = None,
-        parameters: Optional[ArkChatParameters] = None,
-        context_parameters: Optional[ArkContextParameters] = None,
+            self,
+            *,
+            model: str,
+            state: State | None = None,
+            tools: list[MCPClient | Callable] | ToolPool | None = None,
+            parameters: Optional[ArkChatParameters] = None,
+            context_parameters: Optional[ArkContextParameters] = None,
     ):
         self.client = default_ark_client()
         self.state = (

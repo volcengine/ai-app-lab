@@ -16,7 +16,7 @@ from jinja2 import Template
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
 from agent.agent import Agent
-from arkitect.core.component.context.context import Context
+from arkitect.core.component.context.context import Context, ToolChunk
 from arkitect.core.component.context.hooks import PostToolCallHook, PreToolCallHook, HookInterruptException
 from arkitect.core.component.context.model import State, ContextInterruption
 
@@ -28,39 +28,8 @@ from state.global_state import GlobalState
 from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
 
 
-class WorkerToolCallHook(BaseModel, PostToolCallHook, PreToolCallHook):
-    async def pre_tool_call(self, name: str, arguments: str, state: State) -> State:
-        if isinstance(state.details, dict) and state.details.get('interrupt', False):
-            state.details.update({'interrupt': False})
-            return state
-        else:
-            if not state.details:
-                state.details = {'interrupt': True}
-            else:
-                state.details.update({'interrupt': True})
-            raise HookInterruptException(
-                reason='tool_call',
-                state=state,
-                details=convert_pre_tool_call_to_event(function_name=name, function_parameter=arguments)
-            )
-
-    async def post_tool_call(self, name: str, arguments: str, response: Any, exception: Optional[Exception],
-                             state: State) -> State:
-        raise HookInterruptException(
-            reason='tool_call',
-            state=state,
-            details=convert_post_tool_call_to_event(
-                function_name=name,
-                function_parameter=arguments,
-                exception=exception,
-                function_result=response
-            )
-        )
-
-
 class Worker(Agent):
     system_prompt: str = DEFAULT_WORKER_PROMPT
-    _tool_call_hook: WorkerToolCallHook = WorkerToolCallHook()
 
     async def astream(
             self,
@@ -78,50 +47,51 @@ class Worker(Agent):
 
         planning_item = planning.get_item(task_id)
 
-        ctx_state: Optional[State] = None
+        ctx = Context(
+            model=self.llm_model,
+            tools=self.tools,
+        )
 
-        while True:
-            ctx = Context(
-                model=self.llm_model,
-                tools=self.tools,
-                state=ctx_state,
-            )
+        await ctx.init()
 
-            await ctx.init()
-            ctx.add_pre_tool_call_hook(self._tool_call_hook)
-            ctx.add_post_tool_call_hook(self._tool_call_hook)
-
-            messages = [] if ctx_state else [
+        rsp_stream = await ctx.completions.create_chat_stream(
+            messages=[
                 {"role": "system",
                  "content": self.generate_system_prompt(planning=planning, planning_item=planning_item)},
-            ]
+            ],
+        )
 
-            rsp_stream = await ctx.completions.create(
-                messages=messages,
-            )
+        try:
+            async for chunk in rsp_stream:
+                if isinstance(chunk, ToolChunk):
+                    if chunk.tool_exception or chunk.tool_response:
+                        # post
+                        yield convert_post_tool_call_to_event(
+                            function_name=chunk.tool_name,
+                            function_parameter=chunk.tool_arguments,
+                            function_result=chunk.tool_response,
+                            exception=chunk.tool_exception,
+                        )
+                    else:
+                        # pre
+                        yield convert_pre_tool_call_to_event(
+                            function_name=chunk.tool_name,
+                            function_parameter=chunk.tool_arguments,
+                        )
+                if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
+                    yield OutputTextEvent(delta=chunk.choices[0].delta.content)
+                if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
+                    yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
-            try:
-                async for chunk in rsp_stream:
-                    if isinstance(chunk, ContextInterruption):
-                        ctx_state = chunk.state
-                        if isinstance(chunk.details, BaseEvent):
-                            yield chunk.details
-                        break
-                    if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
-                        yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-                    if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
-                        yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
-                    if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].finish_reason in ['stop', 'length',
-                                                                                                     'content_filter']:
-                        last_message = ctx.get_latest_message()
-                        # update planning
-                        planning_item.result_summary = last_message.get('content')
-                        planning.update_item(task_id, planning_item)
-                        # end the loop
-                        return
-            except Exception as e:
-                yield InternalServiceError(error_msg=str(e))
-                return
+            last_message = ctx.get_latest_message()
+            # update planning
+            planning_item.result_summary = last_message.get('content')
+            planning.update_item(task_id, planning_item)
+            # end the loop
+            return
+        except Exception as e:
+            yield InternalServiceError(error_msg=str(e))
+            return
 
     def generate_system_prompt(self, planning: Planning, planning_item: PlanningItem) -> str:
         return Template(self.system_prompt).render(
@@ -183,7 +153,7 @@ if __name__ == "__main__":
                     thinking = True
                 print(chunk.delta, end="")
             else:
-                print(chunk)
+                print(f"{chunk.model_dump_json()}")
 
         print(global_state.custom_state.planning.to_markdown_str())
 
