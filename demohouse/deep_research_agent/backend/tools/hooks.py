@@ -17,7 +17,8 @@ from arkitect.core.component.context.hooks import PostToolCallHook
 from arkitect.core.component.context.model import State
 from arkitect.telemetry.logger import ERROR
 from state.global_state import GlobalState
-from utils.converter import convert_bot_search_result_to_event
+from utils.converter import convert_bot_search_result_to_event, convert_python_execute_result_to_event, \
+    convert_references_to_format_str
 
 
 class WebSearchPostToolCallHook(BaseModel, PostToolCallHook):
@@ -37,10 +38,42 @@ class WebSearchPostToolCallHook(BaseModel, PostToolCallHook):
 
         if event.success:
             state.messages[-1].update({
-                'content': event.summary
+                'content': f"""
+                [搜索总结]
+                
+                {event.summary}
+                
+                [参考资料]
+                {convert_references_to_format_str(event.references)}
+                """
             })
             # save references
             self.global_state.custom_state.references += event.references
+        else:
+            state.messages[-1].update({
+                'content': f'执行工具错误：{event.error_msg}'
+            })
+
+        return state
+
+
+class PythonExecutorPostToolCallHook(BaseModel, PostToolCallHook):
+    class Config:
+        """Configuration for this pydantic object."""
+
+        arbitrary_types_allowed = True
+
+    async def post_tool_call(self, name: str, arguments: str, response: Any, exception: Optional[Exception],
+                             state: State) -> State:
+        if name != 'python_executor':
+            return state
+
+        event = convert_python_execute_result_to_event(arguments, response)
+
+        if event.success:
+            state.messages[-1].update({
+                'content': event.stdout
+            })
         else:
             state.messages[-1].update({
                 'content': f'执行工具错误：{event.error_msg}'

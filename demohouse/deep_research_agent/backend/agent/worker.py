@@ -26,7 +26,7 @@ from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
 from state.deep_research_state import DeepResearchState
 from state.global_state import GlobalState
-from tools.hooks import WebSearchPostToolCallHook
+from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHook
 from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
 
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
                 ).get('web_search'),
             ],
             post_tool_call_hooks=[
-                WebSearchPostToolCallHook(global_state=global_state)
+                WebSearchPostToolCallHook(global_state=global_state),
             ]
         )
 

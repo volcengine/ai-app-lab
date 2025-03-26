@@ -9,13 +9,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
-from typing import Optional, Any, Union
+from typing import Optional, Any, Union, List
 
 from volcenginesdkarkruntime.types.bot_chat import BotChatCompletion
+from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
 
 from arkitect.utils.context import get_reqid
 from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent, WebSearchToolCallEvent, \
-    WebSearchToolCompletedEvent
+    WebSearchToolCompletedEvent, PythonExecutorToolCompletedEvent, PythonExecutorToolCallEvent
 
 
 def convert_pre_tool_call_to_event(
@@ -25,6 +26,10 @@ def convert_pre_tool_call_to_event(
     if function_name == 'web_search':
         return WebSearchToolCallEvent(
             query=json.loads(function_parameter).get('message')
+        )
+    elif function_name == 'python_executor':
+        return PythonExecutorToolCallEvent(
+            code=json.loads(function_parameter).get('pyCode')
         )
 
     # TODO inner tool wrapper
@@ -42,6 +47,10 @@ def convert_post_tool_call_to_event(
 ) -> Optional[BaseEvent]:
     if function_name == 'web_search':
         return convert_bot_search_result_to_event(
+            function_parameter, function_result
+        )
+    elif function_name == 'python_executor':
+        return convert_python_execute_result_to_event(
             function_parameter, function_result
         )
 
@@ -69,6 +78,29 @@ def convert_bot_search_result_to_event(raw_args: str, raw_response: str) -> WebS
             success=False,
             error_msg=str(e)
         )
+
+
+def convert_python_execute_result_to_event(raw_args: str, raw_response: str) -> PythonExecutorToolCompletedEvent:
+    try:
+        py_code: str = json.loads(raw_args).get('pyCode')
+        body = json.loads(raw_response).get('body')
+        run_result = json.loads(body).get('run_result')
+        return PythonExecutorToolCompletedEvent(
+            code=py_code,
+            stdout=run_result,
+        )
+    except Exception as e:
+        return PythonExecutorToolCompletedEvent(
+            success=False,
+            error_msg=str(e)
+        )
+
+
+def convert_references_to_format_str(refs: List[Reference]) -> str:
+    formatted = []
+    for ref in refs:
+        formatted.append(f"- [{ref.title}]({ref.url})")
+    return '\n'.join(formatted)
 
 
 def convert_event_to_sse_response(event: BaseEvent) -> str:

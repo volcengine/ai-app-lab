@@ -143,6 +143,7 @@ class PythonExecutorToolCallEvent(ToolCallEvent):
 
 class PythonExecutorToolCompletedEvent(ToolCompletedEvent):
     type: str = "python_executor"
+    code: str = ""
     stdout: str = ""
 
 
