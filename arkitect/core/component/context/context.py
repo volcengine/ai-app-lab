@@ -111,10 +111,10 @@ class _AsyncCompletions:
         return True
 
     async def create(
-            self,
-            messages: List[ChatCompletionMessageParam],
-            stream: Optional[Literal[True, False]] = True,
-            **kwargs: Dict[str, Any],
+        self,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[True, False]] = True,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         ChatCompletion | ContextInterruption,
         AsyncIterable[ChatCompletionChunk | ContextInterruption],
@@ -163,7 +163,7 @@ class _AsyncCompletions:
         else:
 
             async def iterator(
-                    messages: List[ChatCompletionMessageParam],
+                messages: List[ChatCompletionMessageParam],
             ) -> AsyncIterable[ChatCompletionChunk]:
                 while True:
                     try:
@@ -219,10 +219,10 @@ class _AsyncCompletions:
             return iterator(messages)
 
     async def create_chat_stream(
-            self,
-            messages: List[ChatCompletionMessageParam],
-            stream: Optional[Literal[True, False]] = True,
-            **kwargs: Dict[str, Any],
+        self,
+        messages: List[ChatCompletionMessageParam],
+        stream: Optional[Literal[True, False]] = True,
+        **kwargs: Dict[str, Any],
     ) -> Union[
         ChatCompletion | ContextInterruption,
         AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk],
@@ -230,7 +230,7 @@ class _AsyncCompletions:
         self._ctx.state.messages.extend(messages)
 
         async def iterator(
-                messages: List[ChatCompletionMessageParam],
+            messages: List[ChatCompletionMessageParam],
         ) -> AsyncIterable[ChatCompletionChunk]:
             while True:
                 try:
@@ -346,13 +346,13 @@ class _AsyncCompletions:
 
 class Context:
     def __init__(
-            self,
-            *,
-            model: str,
-            state: State | None = None,
-            tools: list[MCPClient | Callable] | ToolPool | None = None,
-            parameters: Optional[ArkChatParameters] = None,
-            context_parameters: Optional[ArkContextParameters] = None,
+        self,
+        *,
+        model: str,
+        state: State | None = None,
+        tools: list[MCPClient | Callable] | ToolPool | None = None,
+        parameters: Optional[ArkChatParameters] = None,
+        context_parameters: Optional[ArkContextParameters] = None,
     ):
         self.client = default_ark_client()
         self.state = (
@@ -388,11 +388,13 @@ class Context:
             await self.tool_pool.refresh_tool_list()
         return
 
-    def get_latest_message(self, role: str = 'assistant') -> Optional[ChatCompletionMessageParam]:
+    def get_latest_message(
+        self, role: str = "assistant"
+    ) -> Optional[ChatCompletionMessageParam]:
         if len(self.state.messages) == 0:
             return None
         for message in reversed(self.state.messages):
-            if message.get('role', '') == role:
+            if message.get("role", "") == role:
                 return message
 
     @property

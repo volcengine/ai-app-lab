@@ -44,7 +44,7 @@ async def test_connect_to_sse_client():
             "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
         },
     )
-    client.cleanup()
+    await client.cleanup()
     server_process.kill()
 
 

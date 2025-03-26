@@ -84,7 +84,6 @@ async def spawn_mcp_server_from_config(
     config_file: str,
 ) -> list[Process]:
     # https://www.librechat.ai/docs/configuration/librechat_yaml/object_structure/mcp_servers#servername
-
     # check file exist
     if not os.path.exists(config_file):
         raise ValueError(f"Config file {config_file} does not exist")
