@@ -50,6 +50,8 @@ class DeepResearch(BaseModel):
                     workers=self.workers,
             ):
                 yield chunk
+            if self.state_manager:
+                await self.state_manager.dump(dr_state)
         else:
             yield PlanningEvent(
                 action='load',

@@ -12,6 +12,7 @@
 import asyncio
 from typing import Optional, Dict
 
+from arkitect.core.component.tool import MCPClient
 from arkitect.core.component.tool.builder import build_mcp_clients_from_config, spawn_mcp_server_from_config
 
 from agent.worker import Worker
@@ -27,13 +28,15 @@ from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHoo
 from utils.converter import convert_references_to_format_str
 from tools.mock import compare, add
 
-TASK = "帮我指定一个暑假日本7天旅行的行程计划"
+TASK = "计算一下1+2*987是多少"
 
 
 async def main(session_id: Optional[str] = None):
     # await spawn_mcp_server_from_config(MCP_CONFIG_FILE_PATH)
 
     # await asyncio.sleep(10)
+
+    mcp_clients, cleanup = build_mcp_clients_from_config(config_file=MCP_CONFIG_FILE_PATH)
 
     manager = FileStateManager(path=f"/tmp/deep_research_session/{session_id}.json") if session_id else None
 
@@ -52,7 +55,7 @@ async def main(session_id: Optional[str] = None):
 
     service = DeepResearch(
         default_llm_model="deepseek-r1-250120",
-        workers=get_workers(global_state=global_state),
+        workers=get_workers(global_state=global_state, mcp_clients=mcp_clients),
         state_manager=manager,
         reasoning_accept=False,
     )
@@ -112,8 +115,10 @@ async def main(session_id: Optional[str] = None):
     print("\n----💰token usage ----")
     print(dr_state.total_usage)
 
+    await cleanup()
 
-def get_workers(global_state: GlobalState) -> Dict[str, Worker]:
+
+def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
     return {
         # 'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='会计算两位数的加法',
         #                 tools=[add]),
@@ -124,10 +129,7 @@ def get_workers(global_state: GlobalState) -> Dict[str, Worker]:
             llm_model='deepseek-r1-250120', name='web_searcher',
             instruction='联网查询资料内容',
             tools=[
-                build_mcp_clients_from_config(
-                    config_file=MCP_CONFIG_FILE_PATH,
-                    timeout=300,
-                ).get('web_search')
+                mcp_clients.get('web_search')
             ],
             post_tool_call_hooks=[WebSearchPostToolCallHook(global_state=global_state)]
         ),
@@ -135,20 +137,14 @@ def get_workers(global_state: GlobalState) -> Dict[str, Worker]:
             llm_model='deepseek-r1-250120', name='link_reader',
             instruction='读取指定url链接的内容（网页/文件）',
             tools=[
-                build_mcp_clients_from_config(
-                    config_file=MCP_CONFIG_FILE_PATH,
-                    timeout=300,
-                ).get('link_reader')
+                mcp_clients.get('link_reader')
             ]
         ),
         'python_executor': Worker(
             llm_model='deepseek-r1-250120', name='python_executor',
             instruction='运行指定的python代码并获取结果',
             tools=[
-                build_mcp_clients_from_config(
-                    config_file=MCP_CONFIG_FILE_PATH,
-                    timeout=300,
-                ).get('python_executor')
+                mcp_clients.get('python_executor')
             ],
             post_tool_call_hooks=[PythonExecutorPostToolCallHook()]
         ),
@@ -156,4 +152,4 @@ def get_workers(global_state: GlobalState) -> Dict[str, Worker]:
 
 
 if __name__ == "__main__":
-    asyncio.run(main(session_id="debug-mcp-10"))
+    asyncio.run(main(session_id="debug-mcp-11"))

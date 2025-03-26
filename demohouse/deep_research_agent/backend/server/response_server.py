@@ -9,43 +9,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import uuid
-from typing import AsyncIterable
+from contextlib import asynccontextmanager
+from typing import AsyncIterable, Tuple, Callable, Dict, AsyncIterator, Any
 
 import uvicorn
+import asyncio
 from starlette.middleware.cors import CORSMiddleware
 
 from agent.worker import Worker
 from arkitect.core.component.bot.middleware import ListenDisconnectionMiddleware, LogIdMiddleware
+from arkitect.core.component.tool import MCPClient
+from arkitect.core.component.tool.builder import spawn_mcp_server_from_config, build_mcp_clients_from_config
 from arkitect.telemetry.logger import INFO, ERROR
 
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
+
+from config.config import MCP_CONFIG_FILE_PATH
 from deep_research.deep_research import DeepResearch
 from models.events import BaseEvent, InternalServiceError
 from models.server import CreateSessionRequest, RunSessionRequest
 from state.deep_research_state import DeepResearchStateManager, DeepResearchState
 from state.file_state_manager import FileStateManager
+from state.global_state import GlobalState
+from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHook
 from utils.converter import convert_event_to_sse_response
-from tools.mock import add, compare
 
 SESSION_PATH = "/tmp/deep_research_session"
 
-WORKERS = {
-    'adder': Worker(
-        llm_model='deepseek-r1-250120',
-        name='adder',
-        instruction='会计算两位数的加法',
-        tools=[add],
-    ),
-    'comparer': Worker(
-        llm_model='deepseek-r1-250120',
-        name='comparer',
-        instruction='能够比较两个数字的大小并找到最大的那个',
-        tools=[compare],
-    )
-}
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[Dict[str, Any]]:
+    # start up mcp servers
+    await spawn_mcp_server_from_config(config_file=MCP_CONFIG_FILE_PATH)
+    # wait for start up
+    await asyncio.sleep(10)
+    # init mcp clients
+    mcp_clients, clean_up = build_mcp_clients_from_config(
+        config_file=MCP_CONFIG_FILE_PATH,
+    )
+
+    app.state.mcp_clients = mcp_clients
+
+    yield
+
+    # cleanup when shutdown
+    await clean_up()
+
+
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(ListenDisconnectionMiddleware)
 app.add_middleware(LogIdMiddleware)
 app.add_middleware(
@@ -58,13 +70,13 @@ app.add_middleware(
 
 
 async def _run_deep_research(
-        state_manager: DeepResearchStateManager
+        state_manager: DeepResearchStateManager,
 ) -> AsyncIterable[BaseEvent]:
     dr_state = await state_manager.load()
 
     dr = DeepResearch(
         default_llm_model='deepseek-r1-250120',
-        workers=WORKERS,
+        workers=get_workers(GlobalState(custom_state=dr_state), app.state.mcp_clients),
         reasoning_accept=False,
         max_planning_items=5,
         state_manager=state_manager,
@@ -123,10 +135,38 @@ async def stream_response(request: RunSessionRequest):
     )
 
 
+def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
+    return {
+        'web_searcher': Worker(
+            llm_model='deepseek-r1-250120', name='web_searcher',
+            instruction='联网查询资料内容',
+            tools=[
+                mcp_clients.get('web_search')
+            ],
+            post_tool_call_hooks=[WebSearchPostToolCallHook(global_state=global_state)]
+        ),
+        'link_reader': Worker(
+            llm_model='deepseek-r1-250120', name='link_reader',
+            instruction='读取指定url链接的内容（网页/文件）',
+            tools=[
+                mcp_clients.get('link_reader')
+            ]
+        ),
+        'python_executor': Worker(
+            llm_model='deepseek-r1-250120', name='python_executor',
+            instruction='运行指定的python代码并获取结果',
+            tools=[
+                mcp_clients.get('python_executor')
+            ],
+            post_tool_call_hooks=[PythonExecutorPostToolCallHook()]
+        ),
+    }
+
+
 if __name__ == "__main__":
     uvicorn.run(
         app="server.response_server:app",
         host="0.0.0.0",
         port=8000,
-        workers=1
+        workers=1,
     )
