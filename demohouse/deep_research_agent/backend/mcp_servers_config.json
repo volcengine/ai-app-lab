@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "web_search": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://code.byted.org/machinelearning/mcp@fix/bot_search#subdirectory=server/mcp_server_ark",
+        "mcp-server-ark"
+      ],
+      "env": {
+        "ARK_BOT_ID": "{}",
+        "ARK_API_KEY": "{}",
+        "ARK_BOT_DESCRIPTION": "这是联网搜索工具，如果需要搜索互联网上的内容，请使用此工具。输入为关键词，每次最多一个关键词",
+        "ARK_BOT_NAME": "web_search"
+      }
+    },
+    "link_reader": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://code.byted.org/machinelearning/mcp@fix/bot_search#subdirectory=server/mcp_server_ark",
+        "mcp-server-ark"
+      ],
+      "env": {
+        "ARK_TOOL_LINK_READER": "True"
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Optional, Dict, AsyncIterable, Union
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -88,6 +88,7 @@ class Planning(BaseModel):
             level: int = 1,
             with_wrapper: bool = True,
             include_progress: bool = True,
+            simplify: bool = False,
     ) -> str:
         md = []
         if with_wrapper:
@@ -98,8 +99,11 @@ class Planning(BaseModel):
         for item in self.items:
             # 状态图标 + 标题
             status_text = "已完成" if item.done else "未完成"
-            md.append(
-                f"\n{'#' * (level + 1)} [任务id: {item.id}][状态: {status_text}][执行者：{item.assign_agent}] {item.description}\n")
+            if not simplify:
+                md.append(
+                    f"\n{'#' * (level + 1)} [任务id: {item.id}][状态: {status_text}][执行者：{item.assign_agent}] {item.description}\n")
+            else:
+                md.append(f"\n {'#' * (level + 1)} [任务id: {item.id}] {item.description} \n")
 
             if include_progress:
                 # 处理记录（带缩进）

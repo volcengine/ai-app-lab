@@ -12,22 +12,30 @@
 import asyncio
 from typing import Optional
 
+from arkitect.core.component.tool.builder import build_mcp_clients_from_config
+
 from agent.worker import Worker
 from deep_research.deep_research import DeepResearch
 from models.events import MessageEvent, OutputTextEvent, ReasoningEvent, ToolCallEvent, ToolCompletedEvent, \
     PlanningEvent, AssignTodoEvent
 from state.deep_research_state import DeepResearchState
 from state.file_state_manager import FileStateManager
+from config.config import MCP_CONFIG_FILE_PATH
 from tools.mock import compare, add
 
-TASK = "比较 (1 + 23) 和 (7 + 19) 哪个更大"
+TASK = "头顶尖尖的是什么梗"
 
 WORKERS = {
-    'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='会计算两位数的加法',
-                    tools=[add]),
-    'comparer': Worker(llm_model='deepseek-r1-250120', name='comparer',
-                       instruction='能够比较两个数字的大小并找到最大的那个',
-                       tools=[compare])
+    # 'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='会计算两位数的加法',
+    #                 tools=[add]),
+    # 'comparer': Worker(llm_model='deepseek-r1-250120', name='comparer',
+    #                    instruction='能够比较两个数字的大小并找到最大的那个',
+    #                    tools=[compare]),
+    'web_searcher': Worker(llm_model='deepseek-r1-250120', name='web_searcher',
+                           instruction='能够联网查询资料内容',
+                           tools=[build_mcp_clients_from_config(
+                               config_file=MCP_CONFIG_FILE_PATH,
+                           ).get('web_search')]),
 }
 
 
@@ -86,4 +94,4 @@ async def main(session_id: Optional[str] = None):
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main(session_id="debug-2"))

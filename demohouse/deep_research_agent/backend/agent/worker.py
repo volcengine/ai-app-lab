@@ -9,28 +9,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import AsyncIterable, Optional, Any
+from typing import AsyncIterable, List
 
-from pydantic import Field, BaseModel
 from jinja2 import Template
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
 from agent.agent import Agent
 from arkitect.core.component.context.context import Context, ToolChunk
-from arkitect.core.component.context.hooks import PostToolCallHook, PreToolCallHook, HookInterruptException
-from arkitect.core.component.context.model import State, ContextInterruption
+from arkitect.core.component.context.hooks import PostToolCallHook
+from arkitect.core.component.tool.builder import build_mcp_clients_from_config
 from arkitect.types.llm.model import ArkChatParameters
+from config.config import MCP_CONFIG_FILE_PATH
 
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, InternalServiceError, InvalidParameter
 from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
 from state.deep_research_state import DeepResearchState
 from state.global_state import GlobalState
+from tools.hooks import WebSearchPostToolCallHook
 from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
 
 
 class Worker(Agent):
     system_prompt: str = DEFAULT_WORKER_PROMPT
+
+    post_tool_call_hooks: List[PostToolCallHook] = []
 
     async def astream(
             self,
@@ -57,6 +60,8 @@ class Worker(Agent):
         )
 
         await ctx.init()
+        for post_hook in self.post_tool_call_hooks:
+            ctx.add_post_tool_call_hook(post_hook)
 
         rsp_stream = await ctx.completions.create_chat_stream(
             messages=[
@@ -85,12 +90,13 @@ class Worker(Agent):
                         )
                 if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
                     yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
+                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[
+                    0].delta.reasoning_content:
                     yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
             last_message = ctx.get_latest_message()
             # update planning (using a wrapper)
-            planning_item.result_summary = f"```\n{last_message.get('content')}\n```"
+            planning_item.result_summary = f"\n{last_message.get('content')}\n"
             planning.update_item(task_id, planning_item)
             # end the loop
             return
@@ -102,7 +108,7 @@ class Worker(Agent):
         return Template(self.system_prompt).render(
             instruction=self.instruction,
             complex_task=planning.root_task,
-            planning_detail=planning.to_markdown_str(include_progress=False),
+            planning_detail=planning.to_markdown_str(include_progress=False, simplify=True),
             task_id=str(planning_item.id),
             task_description=planning_item.description,
         )
@@ -126,24 +132,30 @@ if __name__ == "__main__":
 
         planning_item = PlanningItem(
             id='1',
-            description="计算 1 + 19",
-        )
-
-        agent = Worker(
-            llm_model="deepseek-r1-250120",
-            instruction="数据计算专家，会做两位数的加法",
-            tools=[add],
+            description="马斯克是谁",
         )
 
         global_state = GlobalState(
             custom_state=DeepResearchState(
-                planning=Planning(root_tasks='计算给出的问题', items={'1': planning_item})
+                planning=Planning(root_tasks='马斯克是谁', items=[planning_item])
             )
+        )
+
+        searcher = Worker(
+            llm_model='deepseek-r1-250120',
+            name='web_searcher',
+            instruction='能够联网查询资料内容',
+            tools=[
+                build_mcp_clients_from_config(config_file=MCP_CONFIG_FILE_PATH).get('web_search'),
+            ],
+            post_tool_call_hooks=[
+                WebSearchPostToolCallHook(global_state=global_state)
+            ]
         )
 
         thinking = True
 
-        async for chunk in agent.astream(
+        async for chunk in searcher.astream(
                 global_state=global_state,
                 task_id='1',
         ):

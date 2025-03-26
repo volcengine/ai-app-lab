@@ -1,0 +1,1 @@
+MCP_CONFIG_FILE_PATH = "/Users/bytedance/Projects/ai-app-lab/demohouse/deep_research_agent/backend/mcp_servers_config.json"

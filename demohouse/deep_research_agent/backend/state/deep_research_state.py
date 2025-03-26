@@ -13,6 +13,7 @@ from typing import List, Any, Optional
 
 from openai import BaseModel
 from pydantic import Field
+from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
 
 from models.planning import Planning
 from models.usage import TotalUsage
@@ -24,7 +25,7 @@ class DeepResearchState(BaseModel):
     # global planning
     planning: Optional[Planning] = None
     # searched references
-    references: List[Any] = []
+    references: List[Reference] = []
     # token usages
     total_usage: TotalUsage = Field(default_factory=TotalUsage)
 
