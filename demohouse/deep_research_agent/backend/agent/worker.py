@@ -146,7 +146,10 @@ if __name__ == "__main__":
             name='web_searcher',
             instruction='能够联网查询资料内容',
             tools=[
-                build_mcp_clients_from_config(config_file=MCP_CONFIG_FILE_PATH).get('web_search'),
+                build_mcp_clients_from_config(
+                    config_file=MCP_CONFIG_FILE_PATH,
+                    timeout=300,
+                ).get('web_search'),
             ],
             post_tool_call_hooks=[
                 WebSearchPostToolCallHook(global_state=global_state)
@@ -173,6 +176,7 @@ if __name__ == "__main__":
                 print(f"{chunk.model_dump_json()}")
 
         print(global_state.custom_state.planning.to_markdown_str())
+        print(f"refs count={len(global_state.custom_state.references)}")
 
 
     import asyncio

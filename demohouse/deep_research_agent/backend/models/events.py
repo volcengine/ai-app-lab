@@ -11,6 +11,7 @@
 from typing import List, Dict, Literal, Optional
 
 from pydantic import BaseModel
+from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
 
 from models.planning import Planning, PlanningItem
 
@@ -105,13 +106,14 @@ for web search
 
 class WebSearchToolCallEvent(ToolCallEvent):
     type: str = "web_search"
-    queries: List[str] = []
+    query: str = ""
 
 
 class WebSearchToolCompletedEvent(ToolCompletedEvent):
     type: str = "web_search"
-    summaries: Dict[str, str]  # summary for each query
-    references: List[any]  # reference urls, attach with query
+    query: str = ""
+    summary: str = ""
+    references: List[Reference]  # reference urls, attach with query
 
 
 """

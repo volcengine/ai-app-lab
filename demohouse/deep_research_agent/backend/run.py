@@ -17,7 +17,7 @@ from arkitect.core.component.tool.builder import build_mcp_clients_from_config
 from agent.worker import Worker
 from deep_research.deep_research import DeepResearch
 from models.events import MessageEvent, OutputTextEvent, ReasoningEvent, ToolCallEvent, ToolCompletedEvent, \
-    PlanningEvent, AssignTodoEvent
+    PlanningEvent, AssignTodoEvent, WebSearchToolCallEvent, WebSearchToolCompletedEvent
 from state.deep_research_state import DeepResearchState
 from state.file_state_manager import FileStateManager
 from config.config import MCP_CONFIG_FILE_PATH
@@ -33,9 +33,12 @@ WORKERS = {
     #                    tools=[compare]),
     'web_searcher': Worker(llm_model='deepseek-r1-250120', name='web_searcher',
                            instruction='能够联网查询资料内容',
-                           tools=[build_mcp_clients_from_config(
-                               config_file=MCP_CONFIG_FILE_PATH,
-                           ).get('web_search')]),
+                           tools=[
+                               build_mcp_clients_from_config(
+                                   config_file=MCP_CONFIG_FILE_PATH,
+                                   timeout=300,
+                               ).get('web_search')
+                           ]),
 }
 
 
@@ -55,6 +58,7 @@ async def main(session_id: Optional[str] = None):
         default_llm_model="deepseek-r1-250120",
         workers=WORKERS,
         state_manager=manager,
+        reasoning_accept=False,
     )
 
     thinking = True
@@ -75,11 +79,19 @@ async def main(session_id: Optional[str] = None):
                     thinking = True
                 print(chunk.delta, end="")
         elif isinstance(chunk, ToolCallEvent):
-            print(f"\n ---🔧⏳start using tools [{chunk.type}] ---")
-            print(chunk.model_dump_json())
+            if isinstance(chunk, WebSearchToolCallEvent):
+                print(f"\n ---🌍 searching [{chunk.query}] ---")
+            else:
+                print(f"\n ---🔧⏳start using tools [{chunk.type}] ---")
+                print(chunk.model_dump_json())
         elif isinstance(chunk, ToolCompletedEvent):
-            print(f"\n ---🔧✅end using tools [{chunk.type}] ---")
-            print(chunk.model_dump_json())
+            if isinstance(chunk, WebSearchToolCompletedEvent):
+                print(f"\n ---📒 search result of [{chunk.query}] ---")
+                print(f"\n[summary]: \n {chunk.summary}")
+                print(f"\n[references count]: \n {len(chunk.references)}")
+            else:
+                print(f"\n ---🔧✅end using tools [{chunk.type}] ---")
+                print(chunk.model_dump_json())
         elif isinstance(chunk, PlanningEvent):
             print(f"\n --- 📖 planning {chunk.action} ---")
             print(f"********************************")
@@ -94,4 +106,4 @@ async def main(session_id: Optional[str] = None):
 
 
 if __name__ == "__main__":
-    asyncio.run(main(session_id="debug-2"))
+    asyncio.run(main(session_id="debug-mcp-1"))

@@ -8,5 +8,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 
-MCP_CONFIG_FILE_PATH = "/Users/bytedance/Projects/ai-app-lab/demohouse/deep_research_agent/backend/mcp_servers_config.json"
+MCP_CONFIG_FILE_PATH = os.environ.get('DEEP_RESEARCH_MCP_CONFIG_FILE_PATH')

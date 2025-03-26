@@ -8,16 +8,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 from typing import Any, Optional
 
 from pydantic import BaseModel
-from volcenginesdkarkruntime.types.bot_chat import BotChatCompletion
 
 from arkitect.core.component.context.hooks import PostToolCallHook
 from arkitect.core.component.context.model import State
 from arkitect.telemetry.logger import ERROR
 from state.global_state import GlobalState
+from utils.converter import convert_bot_search_result_to_event
 
 
 class WebSearchPostToolCallHook(BaseModel, PostToolCallHook):
@@ -32,20 +32,18 @@ class WebSearchPostToolCallHook(BaseModel, PostToolCallHook):
                              state: State) -> State:
         if name != 'web_search':
             return state
-        try:
-            bot_response = BotChatCompletion.parse_raw(response)
-            # 1. extract the response content as tool response
-            if bot_response.choices and bot_response.choices[0].message:
-                state.messages[-1].update({
-                    'content': bot_response.choices[0].message.content
-                })
-            # 2. save the references into global state
-            if bot_response.references:
-                self.global_state.custom_state.references += bot_response.references
-        except Exception as e:
-            ERROR(f"fail to execute web search post tool call {e}")
+
+        event = convert_bot_search_result_to_event(arguments, response)
+
+        if event.success:
             state.messages[-1].update({
-                'content': f'执行工具错误: {e}'
+                'content': event.summary
+            })
+            # save references
+            self.global_state.custom_state.references += event.references
+        else:
+            state.messages[-1].update({
+                'content': f'执行工具错误：{event.error_msg}'
             })
 
         return state

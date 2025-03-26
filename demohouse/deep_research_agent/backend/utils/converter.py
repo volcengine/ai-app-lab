@@ -8,17 +8,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
+from typing import Optional, Any, Union
 
-from typing import Optional, Any
+from volcenginesdkarkruntime.types.bot_chat import BotChatCompletion
 
 from arkitect.utils.context import get_reqid
-from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent
+from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent, WebSearchToolCallEvent, \
+    WebSearchToolCompletedEvent
 
 
 def convert_pre_tool_call_to_event(
         function_name: str,
         function_parameter: str
 ) -> Optional[BaseEvent]:
+    if function_name == 'web_search':
+        return WebSearchToolCallEvent(
+            query=json.loads(function_parameter).get('message')
+        )
+
     # TODO inner tool wrapper
     return FunctionCallEvent(
         function_name=function_name,
@@ -32,6 +40,11 @@ def convert_post_tool_call_to_event(
         function_result: Any,
         exception: Optional[Exception] = None,
 ) -> Optional[BaseEvent]:
+    if function_name == 'web_search':
+        return convert_bot_search_result_to_event(
+            function_parameter, function_result
+        )
+
     # TODO inner tool wrapper
     return FunctionCompletedEvent(
         function_name=function_name,
@@ -40,6 +53,22 @@ def convert_post_tool_call_to_event(
         success=exception is None,
         error_msg='' if not exception else str(exception)
     )
+
+
+def convert_bot_search_result_to_event(raw_args: str, raw_response: str) -> WebSearchToolCompletedEvent:
+    try:
+        query = json.loads(raw_args).get('message')
+        bot_response = BotChatCompletion.model_construct(**json.loads(raw_response))
+        return WebSearchToolCompletedEvent(
+            query=query,
+            summary=bot_response.choices[0].message.content,
+            references=bot_response.references
+        )
+    except Exception as e:
+        return WebSearchToolCompletedEvent(
+            success=False,
+            error_msg=str(e)
+        )
 
 
 def convert_event_to_sse_response(event: BaseEvent) -> str:
