@@ -19,6 +19,7 @@ from agent.agent import Agent
 from arkitect.core.component.context.context import Context, ToolChunk
 from arkitect.core.component.context.hooks import PostToolCallHook, PreToolCallHook, HookInterruptException
 from arkitect.core.component.context.model import State, ContextInterruption
+from arkitect.types.llm.model import ArkChatParameters
 
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, InternalServiceError, InvalidParameter
 from models.planning import PlanningItem, Planning
@@ -50,6 +51,9 @@ class Worker(Agent):
         ctx = Context(
             model=self.llm_model,
             tools=self.tools,
+            parameters=ArkChatParameters(
+                stream_options={'include_usage': True}
+            )
         )
 
         await ctx.init()
@@ -63,6 +67,7 @@ class Worker(Agent):
 
         try:
             async for chunk in rsp_stream:
+                self.record_usage(chunk, global_state.custom_state.total_usage)
                 if isinstance(chunk, ToolChunk):
                     if chunk.tool_exception or chunk.tool_response:
                         # post
@@ -78,14 +83,14 @@ class Worker(Agent):
                             function_name=chunk.tool_name,
                             function_parameter=chunk.tool_arguments,
                         )
-                if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
+                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
                     yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-                if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
+                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
                     yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
             last_message = ctx.get_latest_message()
-            # update planning
-            planning_item.result_summary = last_message.get('content')
+            # update planning (using a wrapper)
+            planning_item.result_summary = f"```\n{last_message.get('content')}\n```"
             planning.update_item(task_id, planning_item)
             # end the loop
             return

@@ -12,8 +12,10 @@ import abc
 from typing import List, Any, Optional
 
 from openai import BaseModel
+from pydantic import Field
 
 from models.planning import Planning
+from models.usage import TotalUsage
 
 
 class DeepResearchState(BaseModel):
@@ -23,6 +25,8 @@ class DeepResearchState(BaseModel):
     planning: Optional[Planning] = None
     # searched references
     references: List[Any] = []
+    # token usages
+    total_usage: TotalUsage = Field(default_factory=TotalUsage)
 
     class Config:
         """Configuration for this pydantic object."""

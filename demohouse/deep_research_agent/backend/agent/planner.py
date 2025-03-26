@@ -16,7 +16,7 @@ from jinja2 import Template
 from agent.agent import Agent
 from arkitect.core.component.llm import BaseChatLanguageModel
 from arkitect.core.component.prompts import CustomPromptTemplate
-from arkitect.types.llm.model import ArkMessage
+from arkitect.types.llm.model import ArkMessage, ArkChatParameters
 from models.events import BaseEvent, ReasoningEvent, OutputTextEvent, PlanningEvent, MessageEvent
 from models.planning import Planning, PlanningItem
 from prompt.planning import DEFAULT_PLANNER_PROMPT
@@ -38,6 +38,9 @@ class Planner(Agent):
             messages=[
                 ArkMessage(role="user", content="run this task")
             ],
+            parameters=ArkChatParameters(
+                stream_options={'include_usage': True}
+            )
         )
 
         rsp_stream = llm.astream(
@@ -47,6 +50,9 @@ class Planner(Agent):
         )
 
         async for chunk in rsp_stream:
+            self.record_usage(chunk, global_state.custom_state.total_usage)
+            if not chunk.choices:
+                continue
             if chunk.choices[0].delta.reasoning_content:
                 yield ReasoningEvent(
                     delta=chunk.choices[0].delta.reasoning_content

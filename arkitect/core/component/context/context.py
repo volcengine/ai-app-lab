@@ -209,7 +209,7 @@ class _AsyncCompletions:
                     assert isinstance(resp, AsyncIterable)
                     async for chunk in resp:
                         yield chunk
-                        if chunk.choices[0].finish_reason in [
+                        if chunk.choices and chunk.choices[0].finish_reason in [
                             "stop",
                             "length",
                             "content_filter",
@@ -274,7 +274,7 @@ class _AsyncCompletions:
                 assert isinstance(resp, AsyncIterable)
                 async for chunk in resp:
                     yield chunk
-                    if chunk.choices[0].finish_reason in [
+                    if chunk.choices and chunk.choices[0].finish_reason in [
                         "stop",
                         "length",
                         "content_filter",
@@ -388,10 +388,12 @@ class Context:
             await self.tool_pool.refresh_tool_list()
         return
 
-    def get_latest_message(self) -> Optional[ChatCompletionMessageParam]:
+    def get_latest_message(self, role: str = 'assistant') -> Optional[ChatCompletionMessageParam]:
         if len(self.state.messages) == 0:
             return None
-        return self.state.messages[-1]
+        for message in reversed(self.state.messages):
+            if message.get('role', '') == role:
+                return message
 
     @property
     def completions(self) -> _AsyncCompletions:

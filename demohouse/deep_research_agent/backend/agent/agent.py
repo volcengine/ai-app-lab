@@ -10,12 +10,15 @@
 # limitations under the License.
 
 import abc
-from typing import AsyncIterable, Union, List, Callable
+from typing import AsyncIterable, Union, List, Callable, Any
 
 from pydantic import BaseModel
+from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
 from arkitect.core.component.tool import MCPClient
+from arkitect.types.llm.model import ArkChatCompletionChunk
 from models.events import BaseEvent
+from models.usage import TotalUsage
 from state.global_state import GlobalState
 
 """
@@ -42,3 +45,13 @@ class Agent(abc.ABC, BaseModel):
             **kwargs,
     ) -> AsyncIterable[BaseEvent]:
         pass
+
+    @classmethod
+    def record_usage(cls, chunk: Any, total_usage: TotalUsage) -> None:
+        if not isinstance(chunk, ChatCompletionChunk) and not isinstance(chunk, ArkChatCompletionChunk):
+            return
+        if chunk.usage:
+            total_usage.prompt_tokens += chunk.usage.prompt_tokens
+            total_usage.completion_tokens += chunk.usage.completion_tokens
+            if chunk.usage.completion_tokens_details:
+                total_usage.reasoning_tokens += (chunk.usage.completion_tokens_details.reasoning_tokens or 0)

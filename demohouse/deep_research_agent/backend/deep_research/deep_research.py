@@ -11,6 +11,7 @@
 
 from typing import AsyncIterable, Optional
 
+from agent.summary import Summary
 from arkitect.telemetry.logger import INFO
 
 from agent.worker import Worker
@@ -56,16 +57,26 @@ class DeepResearch(BaseModel):
 
         INFO(f'planning: \n {dr_state.planning.to_markdown_str()}')
 
-        # 2. run with supervisor
-        supervisor = Supervisor(
-            llm_model=self.default_llm_model,
-            workers=self.workers,
-            reasoning_accept=self.reasoning_accept,
-            state_manager=self.state_manager,
-        )
+        if dr_state.planning.get_todos():
+            # 2. if planning not finished, run with supervisor
+            supervisor = Supervisor(
+                llm_model=self.default_llm_model,
+                workers=self.workers,
+                reasoning_accept=self.reasoning_accept,
+                state_manager=self.state_manager,
+            )
 
-        async for event in supervisor.astream(
-                global_state=global_state,
+            async for event in supervisor.astream(
+                    global_state=global_state,
+            ):
+                yield event
+
+        # 3. if planning finished, run an agent to summary
+        answer = Summary(
+            llm_model=self.default_llm_model
+        )
+        async for event in answer.astream(
+                global_state=global_state
         ):
             yield event
 

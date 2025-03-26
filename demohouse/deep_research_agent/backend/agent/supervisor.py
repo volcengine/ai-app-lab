@@ -22,6 +22,7 @@ from arkitect.core.component.context.model import State, ContextInterruption
 from arkitect.telemetry.logger import INFO
 from agent.agent import Agent
 from agent.worker import Worker
+from arkitect.types.llm.model import ArkChatParameters
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, InvalidParameter, PlanningEvent
 from models.planning import PlanningItem, Planning
 from prompt.supervisor import ASSIGN_TODO_PROMPT, ACCEPT_AGENT_RESPONSE
@@ -82,7 +83,7 @@ class Supervisor(Agent):
         while planning.get_todos():
             next_todo, next_agent = (None, None)
             # 1. assign next_todo
-            async for assign_chunk in self.astream_assign_next_todo(planning):
+            async for assign_chunk in self.astream_assign_next_todo(planning, global_state):
                 yield assign_chunk
                 if isinstance(assign_chunk, AssignTodoEvent):
                     next_todo = assign_chunk.planning_item
@@ -111,6 +112,7 @@ class Supervisor(Agent):
                 async for receive_chunk in self.receive_step(
                         planning=planning,
                         planning_item=next_todo,
+                        global_state=global_state,
                 ):
                     yield receive_chunk
             else:
@@ -128,10 +130,13 @@ class Supervisor(Agent):
                 planning=planning,
             )
 
-    async def astream_assign_next_todo(self, planning: Planning) -> AsyncIterable[BaseEvent]:
+    async def astream_assign_next_todo(self, planning: Planning, global_state: GlobalState) -> AsyncIterable[BaseEvent]:
         ctx = Context(
             model=self.llm_model,
             tools=[self._assign_next_todo],
+            parameters=ArkChatParameters(
+                stream_options={'include_usage': True}
+            )
         )
         await ctx.init()
         ctx.add_post_tool_call_hook(self._control_hook)
@@ -143,9 +148,10 @@ class Supervisor(Agent):
         )
 
         async for chunk in rsp_stream:
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
+            self.record_usage(chunk, global_state.custom_state.total_usage)
+            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
                 yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
+            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
                 yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
             if isinstance(chunk, ContextInterruption):
                 assign = AssignWorkerResponse(**json.loads(chunk.details))
@@ -154,10 +160,14 @@ class Supervisor(Agent):
                     agent_name=assign.agent_name,
                 )
 
-    async def receive_step(self, planning: Planning, planning_item: PlanningItem) -> AsyncIterable[BaseEvent]:
+    async def receive_step(self, planning: Planning, planning_item: PlanningItem, global_state: GlobalState) \
+            -> AsyncIterable[BaseEvent]:
         ctx = Context(
             model=self.llm_model,
             tools=[self._accept_agent_response],
+            parameters=ArkChatParameters(
+                stream_options={'include_usage': True}
+            )
         )
         await ctx.init()
         ctx.add_post_tool_call_hook(self._control_hook)
@@ -169,9 +179,10 @@ class Supervisor(Agent):
         )
 
         async for chunk in rsp_stream:
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.content:
+            self.record_usage(chunk, global_state.custom_state.total_usage)
+            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
                 yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices[0].delta.reasoning_content:
+            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
                 yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
             if isinstance(chunk, ContextInterruption):
                 accept = AcceptAgentResponse(**json.loads(chunk.details))
@@ -268,18 +279,19 @@ if __name__ == "__main__":
             llm_model="deepseek-r1-250120",
             workers={
                 'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='做加法', tools=[add]),
-                'comparer': Worker(llm_model='deepseek-r1-250120', name='comparer', instruction='比较两个数大小', tools=[compare]),
+                'comparer': Worker(llm_model='deepseek-r1-250120', name='comparer', instruction='比较两个数大小',
+                                   tools=[compare]),
             }
         )
 
         thinking = True
 
         async for chunk in supervisor.astream(
-            global_state=GlobalState(
-                custom_state=DeepResearchState(
-                    planning=planning
+                global_state=GlobalState(
+                    custom_state=DeepResearchState(
+                        planning=planning
+                    )
                 )
-            )
         ):
             if isinstance(chunk, OutputTextEvent):
                 if thinking:
@@ -295,6 +307,7 @@ if __name__ == "__main__":
                 print(chunk)
 
         print(planning.to_markdown_str())
+
 
     import asyncio
 
