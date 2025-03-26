@@ -101,7 +101,9 @@ if __name__ == "__main__":
 
     async def main():
 
-        dr_state = DeepResearchState()
+        dr_state = DeepResearchState(
+            root_task='比较 (1 + 23) 和 (7 + 19) 哪个更大'
+        )
 
         service = DeepResearch(
             default_llm_model='deepseek-r1-250120',
@@ -115,7 +117,6 @@ if __name__ == "__main__":
         )
 
         async for chunk in service.astream(
-                root_task='判断 (1+ 192) 和 (23 + 173) 哪个更大',
                 dr_state=dr_state,
         ):
             if isinstance(chunk, MessageEvent):

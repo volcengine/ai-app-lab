@@ -70,10 +70,12 @@ Tool-Using
 
 class ToolCallEvent(BaseEvent):
     type: str = ''
+    status: str = 'pending'
 
 
 class ToolCompletedEvent(BaseEvent):
     type: str = ''
+    status: str = 'completed'
     success: bool = True
     error_msg: str = ''
 
