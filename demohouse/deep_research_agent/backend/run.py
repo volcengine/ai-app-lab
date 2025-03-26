@@ -24,9 +24,10 @@ from state.file_state_manager import FileStateManager
 from config.config import MCP_CONFIG_FILE_PATH
 from state.global_state import GlobalState
 from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHook
+from utils.converter import convert_references_to_format_str
 from tools.mock import compare, add
 
-TASK = "1*100+109的结果是多少"
+TASK = "帮我指定一个暑假日本7天旅行的行程计划"
 
 
 async def main(session_id: Optional[str] = None):
@@ -89,7 +90,7 @@ async def main(session_id: Optional[str] = None):
             if isinstance(chunk, WebSearchToolCompletedEvent):
                 print(f"\n ---📒 search result of [{chunk.query}] ---")
                 print(f"\n[summary]: \n {chunk.summary}")
-                print(f"\n[references count]: \n {len(chunk.references)}")
+                print(f"\n[references]: \n {convert_references_to_format_str(chunk.references)}")
             elif isinstance(chunk, PythonExecutorToolCompletedEvent):
                 print(f"\n ---💻 python run result ---")
                 print(f"""```stdout{'✅' if chunk.success else '❌'}
@@ -102,7 +103,7 @@ async def main(session_id: Optional[str] = None):
         elif isinstance(chunk, PlanningEvent):
             print(f"\n --- 📖 planning {chunk.action} ---")
             print(f"********************************")
-            print(chunk.planning.to_markdown_str())
+            print(chunk.planning.to_dashboard())
             print(f"********************************")
         elif isinstance(chunk, AssignTodoEvent):
             print(
@@ -155,4 +156,4 @@ def get_workers(global_state: GlobalState) -> Dict[str, Worker]:
 
 
 if __name__ == "__main__":
-    asyncio.run(main(session_id="debug-mcp-5"))
+    asyncio.run(main(session_id="debug-mcp-10"))

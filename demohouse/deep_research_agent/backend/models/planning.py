@@ -8,7 +8,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -121,3 +121,17 @@ class Planning(BaseModel):
             md.append("```")
 
         return "\n".join(md)
+
+    def to_dashboard(self) -> str:
+        texts = [
+            "任务执行情况："
+        ]
+        for item in self.items:
+            texts.append(f"{item.id}. [{'已完成' if item.done else '未完成'}] <{item.description}>")
+        texts.append("----------------")
+        for item in self.items:
+            if not item.done:
+                continue
+            texts.append(f"任务 {item.id} 执行结果: \n```\n{item.result_summary}\n```")
+            texts.append("----------------")
+        return "\n".join(texts)

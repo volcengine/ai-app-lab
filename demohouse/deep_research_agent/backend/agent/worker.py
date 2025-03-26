@@ -96,7 +96,7 @@ class Worker(Agent):
 
             last_message = ctx.get_latest_message()
             # update planning (using a wrapper)
-            planning_item.result_summary = f"\n{last_message.get('content')}\n"
+            planning_item.result_summary = f"{last_message.get('content')}"
             planning.update_item(task_id, planning_item)
             # end the loop
             return
@@ -108,7 +108,7 @@ class Worker(Agent):
         return Template(self.system_prompt).render(
             instruction=self.instruction,
             complex_task=planning.root_task,
-            planning_detail=planning.to_markdown_str(include_progress=False, simplify=True),
+            planning_detail=planning.to_dashboard(),
             task_id=str(planning_item.id),
             task_description=planning_item.description,
         )
