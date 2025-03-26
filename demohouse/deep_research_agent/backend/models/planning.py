@@ -23,6 +23,8 @@ class PlanningItem(BaseModel):
     id: str = ""
     # the plain text description of this task
     description: str = ""
+    # assign agent
+    assign_agent: str = ""
     # important records to save during process
     process_records: List[str] = []
     # result summary
@@ -50,29 +52,35 @@ Planning is the model for agent planning_use
 
 class Planning(BaseModel):
     root_task: str = ""
-    items: Dict[str, PlanningItem] = {}
+    items: List[PlanningItem] = []
 
     # return all items
     def list_items(self) -> List[PlanningItem]:
-        return [i for i in self.items.values()]
+        return self.items
 
     # return specific item
     def get_item(self, task_id: str) -> Optional[PlanningItem]:
-        return self.items.get(task_id)
+        for item in self.items:
+            if item.id == task_id:
+                return item
 
     # get all the to-dos
     def get_todos(self) -> List[PlanningItem]:
-        return [i for i in self.items.values() if not i.done]
+        return [i for i in self.items if not i.done]
+
+    def get_next_todo(self) -> Optional[PlanningItem]:
+        for item in self.items:
+            if not item.done:
+                return item
 
     # update an item
     def update_item(self, item_id: str, item: PlanningItem):
-        self.items.update({item_id: item})
-
-    def reload_from_file(self, path: str):
-        pass
-
-    def save_to_file(self, path: str):
-        pass
+        for _item in self.items:
+            if _item.id == item_id:
+                _item.done = item.done
+                _item.process_records = item.process_records
+                _item.result_summary = item.result_summary
+                break
 
     # format output, for llm prompt using
     def to_markdown_str(
@@ -87,10 +95,11 @@ class Planning(BaseModel):
 
         md += [f"{'#' * level} 任务计划"]
 
-        for item_id, item in self.items.items():
+        for item in self.items:
             # 状态图标 + 标题
             status_text = "已完成" if item.done else "未完成"
-            md.append(f"\n{'#' * (level + 1)} [任务id: {item_id}][状态: {status_text}] {item.description}\n")
+            md.append(
+                f"\n{'#' * (level + 1)} [任务id: {item.id}][状态: {status_text}][执行者：{item.assign_agent}] {item.description}\n")
 
             if include_progress:
                 # 处理记录（带缩进）

@@ -81,25 +81,19 @@ class Supervisor(Agent):
         planning: Planning = global_state.custom_state.planning
 
         while planning.get_todos():
-            next_todo, next_agent = (None, None)
+            next_todo = planning.get_next_todo()
             # 1. assign next_todo
-            async for assign_chunk in self.astream_assign_next_todo(planning, global_state):
-                yield assign_chunk
-                if isinstance(assign_chunk, AssignTodoEvent):
-                    next_todo = assign_chunk.planning_item
-                    next_agent = assign_chunk.agent_name
-                    break
+            yield AssignTodoEvent(
+                agent_name=next_todo.assign_agent,
+                planning_item=next_todo,
+            )
 
-            if not next_todo or not next_agent:
-                INFO("got empty next_todo or next_agent, retry...")
-                continue
-
-            if next_agent not in self.workers:
+            if next_todo.assign_agent not in self.workers:
                 yield InvalidParameter(parameter="next_agent")
                 return
 
             # 2. run agent
-            worker = self.workers.get(next_agent)
+            worker = self.workers.get(next_todo.assign_agent)
             async for worker_chunk in worker.astream(
                     global_state=global_state,
                     task_id=next_todo.id,

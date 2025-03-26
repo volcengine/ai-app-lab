@@ -9,11 +9,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import AsyncIterable, Optional, List
+from typing import AsyncIterable, Optional, List, Dict
 
 from jinja2 import Template
 
 from agent.agent import Agent
+from agent.worker import Worker
 from arkitect.core.component.llm import BaseChatLanguageModel
 from arkitect.core.component.prompts import CustomPromptTemplate
 from arkitect.types.llm.model import ArkMessage, ArkChatParameters
@@ -31,6 +32,7 @@ class Planner(Agent):
     async def astream(self, global_state: GlobalState, **kwargs) -> AsyncIterable[BaseEvent]:
         task = kwargs.pop('task')
         max_plannings = kwargs.pop('max_plannings')
+        workers: Dict[str, Worker] = kwargs.pop('workers')
 
         llm = BaseChatLanguageModel(
             model=self.llm_model,
@@ -44,9 +46,10 @@ class Planner(Agent):
         )
 
         rsp_stream = llm.astream(
-            task=task,
+            complex_task=task,
             max_plannings=max_plannings,
-            functions=[self.save_planning],
+            worker_details=self._format_worker_details(workers),
+            functions=[self.save_task],
         )
 
         async for chunk in rsp_stream:
@@ -70,26 +73,34 @@ class Planner(Agent):
             planning=self.planning,
         )
 
-    def save_planning(self, task_list: List[str]) -> str:
-        """当你完成任务计划拆解时，调用此函数将拆解好的计划保存
+    def _format_worker_details(self, workers: Dict[str, Worker]) -> str:
+        descs = []
+        for worker in workers.values():
+            descs.append(f"name: {worker.name} 能力介绍: {worker.instruction}")
+        return "\n".join(descs)
+
+    def save_task(self, task_description: str, worker_name: str) -> str:
+        """当你要向计划中添加一个任务的时候，调用此函数
 
         Args:
-            task_list: 拆解的任务列表，每个元素都是一个任务描述
-
+            task_description(str): 任务描述
+            worker_name(str): 该任务要分配给哪个团队成员执行
         Returns:
             None
         """
-        self.planning = Planning(
-            items={
-                str(i + 1): PlanningItem(
-                    id=str(i + 1),
-                    description=t,
-                    done=False
-                ) for t, i in zip(task_list, range(len(task_list)))
-            }
+
+        if not self.planning:
+            self.planning = Planning(items=[])
+
+        item = PlanningItem(
+            id=str(len(self.planning.items) + 1),
+            description=task_description,
+            assign_agent=worker_name,
         )
 
-        return 'planning saved.'
+        self.planning.items.append(item)
+
+        return 'task added.'
 
 
 if __name__ == "__main__":
@@ -101,12 +112,20 @@ if __name__ == "__main__":
                 global_state=GlobalState(
                     custom_state=DeepResearchState()
                 ),
-                task="分析英伟达过去20个月的股票表现，给出中短期的投资建议"
+                task="比较 (1 + 23) 和 (7 + 19) 哪个更大",
+                max_plannings=10,
+                workers={
+                    'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='会计算两位数的加法'),
+                    'comparer': Worker(llm_model='deepseek-r1-250120', name='comparer',
+                                       instruction='能够比较两个数字的大小并找到最大的那个')
+                }
         ):
             if isinstance(chunk, MessageEvent):
                 print(chunk.delta, end="")
             if isinstance(chunk, PlanningEvent):
                 print(chunk)
+
+        print(planner.planning.to_markdown_str())
 
 
     import asyncio

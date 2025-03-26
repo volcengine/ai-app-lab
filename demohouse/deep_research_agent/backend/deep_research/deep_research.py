@@ -47,6 +47,7 @@ class DeepResearch(BaseModel):
                     root_task=dr_state.root_task,
                     global_state=global_state,
                     max_plannings=self.max_planning_items,
+                    workers=self.workers,
             ):
                 yield chunk
         else:
@@ -80,7 +81,9 @@ class DeepResearch(BaseModel):
         ):
             yield event
 
-    async def _make_plan(self, root_task: str, global_state: GlobalState, max_plannings: int) \
+    async def _make_plan(self, root_task: str,
+                         global_state: GlobalState, max_plannings: int,
+                         workers: Dict[str, Worker]) \
             -> AsyncIterable[BaseEvent]:
         planner = Planner(
             llm_model=self.default_llm_model
@@ -90,6 +93,7 @@ class DeepResearch(BaseModel):
                 global_state=global_state,
                 task=root_task,
                 max_plannings=max_plannings,
+                workers=workers,
         ):
             if isinstance(chunk, PlanningEvent):
                 global_state.custom_state.planning = chunk.planning

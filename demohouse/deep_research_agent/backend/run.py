@@ -86,4 +86,4 @@ async def main(session_id: Optional[str] = None):
 
 
 if __name__ == "__main__":
-    asyncio.run(main("debug-1"))
+    asyncio.run(main())
