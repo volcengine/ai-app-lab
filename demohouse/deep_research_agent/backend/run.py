@@ -19,7 +19,7 @@ from agent.worker import Worker
 from deep_research.deep_research import DeepResearch
 from models.events import MessageEvent, OutputTextEvent, ReasoningEvent, ToolCallEvent, ToolCompletedEvent, \
     PlanningEvent, AssignTodoEvent, WebSearchToolCallEvent, WebSearchToolCompletedEvent, PythonExecutorToolCallEvent, \
-    PythonExecutorToolCompletedEvent
+    PythonExecutorToolCompletedEvent, LinkReaderToolCallEvent, LinkReaderToolCompletedEvent
 from state.deep_research_state import DeepResearchState
 from state.file_state_manager import FileStateManager
 from config.config import MCP_CONFIG_FILE_PATH
@@ -28,13 +28,13 @@ from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHoo
 from utils.converter import convert_references_to_format_str
 from tools.mock import compare, add
 
-TASK = "计算一下1+2*987是多少"
+TASK = "帮我制定一个10月青海+新疆七日游的旅行计划，并用python绘制一个可视化的表格图呈现"
 
 
 async def main(session_id: Optional[str] = None):
-    # await spawn_mcp_server_from_config(MCP_CONFIG_FILE_PATH)
+    await spawn_mcp_server_from_config(MCP_CONFIG_FILE_PATH)
 
-    # await asyncio.sleep(10)
+    await asyncio.sleep(10)
 
     mcp_clients, cleanup = build_mcp_clients_from_config(config_file=MCP_CONFIG_FILE_PATH)
 
@@ -86,6 +86,8 @@ async def main(session_id: Optional[str] = None):
                 {chunk.code}
                 ```
                 """)
+            if isinstance(chunk, LinkReaderToolCallEvent):
+                print(f"\n ---🕷️ run link reader {chunk.urls}---")
             else:
                 print(f"\n ---🔧⏳start using tools [{chunk.type}] ---")
                 print(chunk.model_dump_json())
@@ -100,6 +102,9 @@ async def main(session_id: Optional[str] = None):
                 {chunk.stdout} or {chunk.error_msg}
                 ```
                 """)
+            elif isinstance(chunk, LinkReaderToolCompletedEvent):
+                print(f"\n ---🕷️link reader result ---")
+                print(f"\n[results=] {chunk.results}")
             else:
                 print(f"\n ---🔧✅end using tools [{chunk.type}] ---")
                 print(chunk.model_dump_json())
@@ -152,4 +157,4 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
 
 
 if __name__ == "__main__":
-    asyncio.run(main(session_id="debug-mcp-12"))
+    asyncio.run(main(session_id="debug-mcp-14"))

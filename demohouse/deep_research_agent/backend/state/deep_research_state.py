@@ -11,7 +11,7 @@
 import abc
 from typing import List, Any, Optional
 
-from openai import BaseModel
+from pydantic import BaseModel
 from pydantic import Field
 from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
 

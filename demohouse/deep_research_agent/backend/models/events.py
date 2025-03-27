@@ -113,7 +113,7 @@ class WebSearchToolCompletedEvent(ToolCompletedEvent):
     type: str = "web_search"
     query: str = ""
     summary: str = ""
-    references: List[Reference]  # reference urls, attach with query
+    references: List[Reference] = []  # reference urls, attach with query
 
 
 """
@@ -128,7 +128,7 @@ class LinkReaderToolCallEvent(ToolCallEvent):
 
 class LinkReaderToolCompletedEvent(ToolCompletedEvent):
     type: str = "link_reader"
-    results: Dict[str, str]  # for each url
+    results: List = []  # for each url
 
 
 """
@@ -154,7 +154,7 @@ Custom Events
 
 class PlanningEvent(BaseEvent):
     type: str = 'planning'
-    action: Literal['made', 'load', 'update']
+    action: Literal['made', 'load', 'update', 'done']
     planning: Planning
 
 

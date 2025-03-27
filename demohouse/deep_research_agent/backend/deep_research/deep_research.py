@@ -74,7 +74,13 @@ class DeepResearch(BaseModel):
             ):
                 yield event
 
-        # 3. if planning finished, run an agent to summary
+        if not dr_state.planning.get_todos():
+            # 3. if planning finished, run an agent to summary
+            yield PlanningEvent(
+                action='done',
+                planning=dr_state.planning,
+            )
+
         answer = Summary(
             llm_model=self.default_llm_model
         )

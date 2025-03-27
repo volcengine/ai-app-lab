@@ -32,7 +32,7 @@ from models.server import CreateSessionRequest, RunSessionRequest
 from state.deep_research_state import DeepResearchStateManager, DeepResearchState
 from state.file_state_manager import FileStateManager
 from state.global_state import GlobalState
-from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHook
+from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHook, LinkReaderPostToolCallHook
 from utils.converter import convert_event_to_sse_response
 
 SESSION_PATH = "/tmp/deep_research_session"
@@ -150,7 +150,8 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
             instruction='读取指定url链接的内容（网页/文件）',
             tools=[
                 mcp_clients.get('link_reader')
-            ]
+            ],
+            post_tool_call_hooks=[LinkReaderPostToolCallHook()]
         ),
         'python_executor': Worker(
             llm_model='deepseek-r1-250120', name='python_executor',

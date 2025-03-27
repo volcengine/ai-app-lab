@@ -18,7 +18,7 @@ from arkitect.core.component.context.model import State
 from arkitect.telemetry.logger import ERROR
 from state.global_state import GlobalState
 from utils.converter import convert_bot_search_result_to_event, convert_python_execute_result_to_event, \
-    convert_references_to_format_str
+    convert_references_to_format_str, convert_link_reader_result_to_event
 
 
 class WebSearchPostToolCallHook(BaseModel, PostToolCallHook):
@@ -80,3 +80,28 @@ class PythonExecutorPostToolCallHook(BaseModel, PostToolCallHook):
             })
 
         return state
+
+
+class LinkReaderPostToolCallHook(BaseModel, PostToolCallHook):
+    async def post_tool_call(self, name: str, arguments: str, response: Any, exception: Optional[Exception],
+                             state: State) -> State:
+        if name != 'link_reader':
+            return state
+
+        event = convert_link_reader_result_to_event(response)
+
+        if not event.success:
+            state.messages[-1].update({
+                'content': f'执行工具错误：{event.error_msg}'
+            })
+        else:
+            # format the link reader
+            texts = []
+            for result in event.results:
+                url = result.get('url', '')
+                text = result.get('content', '')
+                texts.append(f"读取到{url}网页的内容为：{text[:2000]}")  # avoid too much contents
+
+            state.messages[-1].update({
+                'content': "\n".join(texts)
+            })

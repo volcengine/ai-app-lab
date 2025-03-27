@@ -16,7 +16,8 @@ from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
 
 from arkitect.utils.context import get_reqid
 from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent, WebSearchToolCallEvent, \
-    WebSearchToolCompletedEvent, PythonExecutorToolCompletedEvent, PythonExecutorToolCallEvent
+    WebSearchToolCompletedEvent, PythonExecutorToolCompletedEvent, PythonExecutorToolCallEvent, \
+    LinkReaderToolCompletedEvent, LinkReaderToolCallEvent
 
 
 def convert_pre_tool_call_to_event(
@@ -30,6 +31,10 @@ def convert_pre_tool_call_to_event(
     elif function_name == 'run_python':
         return PythonExecutorToolCallEvent(
             code=json.loads(function_parameter).get('pyCode')
+        )
+    elif function_name == 'link_reader':
+        return LinkReaderToolCallEvent(
+            urls=json.loads(function_parameter).get('url_list', [])
         )
 
     # TODO inner tool wrapper
@@ -52,6 +57,10 @@ def convert_post_tool_call_to_event(
     elif function_name == 'run_python':
         return convert_python_execute_result_to_event(
             function_parameter, function_result
+        )
+    elif function_name == 'link_reader':
+        return convert_link_reader_result_to_event(
+            function_result
         )
 
     # TODO inner tool wrapper
@@ -91,6 +100,26 @@ def convert_python_execute_result_to_event(raw_args: str, raw_response: str) -> 
         )
     except Exception as e:
         return PythonExecutorToolCompletedEvent(
+            success=False,
+            error_msg=str(e)
+        )
+
+
+def convert_link_reader_result_to_event(raw_response: str) -> LinkReaderToolCompletedEvent:
+    try:
+        results: dict = json.loads(raw_response)
+        error_msg: str = results.get('error', '')
+        if error_msg:
+            return LinkReaderToolCompletedEvent(
+                success=False,
+                error_msg=error_msg
+            )
+        ark_web_data_list: list = results.get('ark_web_data_list', [])
+        return LinkReaderToolCompletedEvent(
+            results=ark_web_data_list
+        )
+    except Exception as e:
+        return LinkReaderToolCompletedEvent(
             success=False,
             error_msg=str(e)
         )
