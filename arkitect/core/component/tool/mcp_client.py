@@ -35,6 +35,7 @@ from arkitect.core.component.tool.utils import (
 )
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ChatCompletionTool
+from arkitect.telemetry.trace import task
 
 logger = logging.getLogger(__name__)
 
