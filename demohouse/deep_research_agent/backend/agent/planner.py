@@ -33,6 +33,11 @@ class Planner(Agent):
         task = kwargs.pop('task')
         max_plannings = kwargs.pop('max_plannings')
         workers: Dict[str, Worker] = kwargs.pop('workers')
+        if not self.planning:
+            self.planning = Planning(
+                root_task=task,
+                items=[]
+            )
 
         llm = BaseChatLanguageModel(
             model=self.llm_model,

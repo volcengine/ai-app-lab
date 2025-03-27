@@ -113,7 +113,7 @@ class WebSearchToolCompletedEvent(ToolCompletedEvent):
     type: str = "web_search"
     query: str = ""
     summary: str = ""
-    references: List[Reference] = []  # reference urls, attach with query
+    references: Optional[List[Reference]] = []  # reference urls, attach with query
 
 
 """

@@ -28,7 +28,7 @@ from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHoo
 from utils.converter import convert_references_to_format_str
 from tools.mock import compare, add
 
-TASK = "帮我制定一个10月青海+新疆七日游的旅行计划，并用python绘制一个可视化的表格图呈现"
+TASK = "介绍一下马斯克是谁，分析一下他的商业版图"
 
 
 async def main(session_id: Optional[str] = None):
@@ -157,4 +157,4 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
 
 
 if __name__ == "__main__":
-    asyncio.run(main(session_id="debug-mcp-14"))
+    asyncio.run(main(session_id="test-1"))

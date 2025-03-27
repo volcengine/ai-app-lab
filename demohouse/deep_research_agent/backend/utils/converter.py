@@ -80,7 +80,7 @@ def convert_bot_search_result_to_event(raw_args: str, raw_response: str) -> WebS
         return WebSearchToolCompletedEvent(
             query=query,
             summary=bot_response.choices[0].message.content,
-            references=bot_response.references
+            references=bot_response.references if bot_response.references else []
         )
     except Exception as e:
         return WebSearchToolCompletedEvent(
