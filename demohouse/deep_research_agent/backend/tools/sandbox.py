@@ -8,7 +8,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os
 from typing import Any
 import httpx
 import json
@@ -20,7 +20,7 @@ mcp = FastMCP(name="vefaas-sandbox", port=7003)
 
 # Constants
 Sandbox_API_BASE = (
-    "{xxxx}"  # 替换为用户沙盒服务地址
+    os.getenv("SANDBOX_FAAS_URL")  # 替换为用户沙盒服务地址
 )
 
 
@@ -93,7 +93,8 @@ def run_bash(bashStr) -> str:
 
 @mcp.tool()
 def run_python(pyCode) -> str:
-    """run a python code, if you need to save files, write them into /mnt/tos directory"""
+    """run a python code, if you need to save files, write them into /mnt/tos directory. remember to use print() to
+    echo the results into stdout."""
     return run_code(pyCode, "python")
 
 
