@@ -152,4 +152,4 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
 
 
 if __name__ == "__main__":
-    asyncio.run(main(session_id="debug-mcp-11"))
+    asyncio.run(main(session_id="debug-mcp-12"))

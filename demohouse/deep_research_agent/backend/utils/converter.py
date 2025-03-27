@@ -27,7 +27,7 @@ def convert_pre_tool_call_to_event(
         return WebSearchToolCallEvent(
             query=json.loads(function_parameter).get('message')
         )
-    elif function_name == 'python_executor':
+    elif function_name == 'run_python':
         return PythonExecutorToolCallEvent(
             code=json.loads(function_parameter).get('pyCode')
         )
@@ -49,7 +49,7 @@ def convert_post_tool_call_to_event(
         return convert_bot_search_result_to_event(
             function_parameter, function_result
         )
-    elif function_name == 'python_executor':
+    elif function_name == 'run_python':
         return convert_python_execute_result_to_event(
             function_parameter, function_result
         )

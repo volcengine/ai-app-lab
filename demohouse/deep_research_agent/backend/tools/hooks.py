@@ -65,7 +65,7 @@ class PythonExecutorPostToolCallHook(BaseModel, PostToolCallHook):
 
     async def post_tool_call(self, name: str, arguments: str, response: Any, exception: Optional[Exception],
                              state: State) -> State:
-        if name != 'python_executor':
+        if name != 'run_python':
             return state
 
         event = convert_python_execute_result_to_event(arguments, response)

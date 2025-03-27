@@ -93,7 +93,7 @@ def run_bash(bashStr) -> str:
 
 @mcp.tool()
 def run_python(pyCode) -> str:
-    """run a python code"""
+    """run a python code, if you need to save files, write them into /mnt/tos directory"""
     return run_code(pyCode, "python")
 
 
