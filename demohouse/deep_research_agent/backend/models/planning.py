@@ -66,6 +66,12 @@ class Planning(BaseModel):
             if item.id == task_id:
                 return item
 
+    def delete_item(self, task_id: str) -> None:
+        for i, item in enumerate(self.items):
+            if item.id == task_id:
+                del self.items[i]
+                return
+
     # get all the to-dos
     def get_todos(self) -> List[PlanningItem]:
         return [i for i in self.items if not i.done]
@@ -129,7 +135,8 @@ class Planning(BaseModel):
             "任务执行情况："
         ]
         for item in self.items:
-            texts.append(f"{item.id}. [{'已完成' if item.done else '未完成'}][执行者：{item.assign_agent}] <{item.description}>")
+            texts.append(
+                f"{item.id}. [{'已完成' if item.done else '未完成'}][执行者：{item.assign_agent}] <{item.description}>")
         texts.append("----------------")
         for item in self.items:
             if not item.done:

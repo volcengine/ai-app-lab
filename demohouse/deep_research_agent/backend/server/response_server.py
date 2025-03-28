@@ -19,7 +19,7 @@ from starlette.middleware.cors import CORSMiddleware
 from agent.worker import Worker
 from arkitect.core.component.bot.middleware import ListenDisconnectionMiddleware, LogIdMiddleware
 from arkitect.core.component.tool import MCPClient
-from arkitect.core.component.tool.builder import spawn_mcp_server_from_config, build_mcp_clients_from_config
+from arkitect.core.component.tool.builder import build_mcp_clients_from_config
 from arkitect.telemetry.logger import INFO, ERROR
 
 from fastapi import FastAPI, Request
@@ -32,11 +32,10 @@ from models.server import CreateSessionRequest, RunSessionRequest
 from state.deep_research_state import DeepResearchStateManager, DeepResearchState
 from state.file_state_manager import FileStateManager
 from state.global_state import GlobalState
-from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHook, LinkReaderPostToolCallHook
+from tools.hooks import PythonExecutorPostToolCallHook, SearcherPostToolCallHook
 from utils.converter import convert_event_to_sse_response
 
 SESSION_PATH = "/tmp/deep_research_session"
-
 
 # @asynccontextmanager
 # async def lifespan(app: FastAPI) -> AsyncIterator[Dict[str, Any]]:
@@ -70,7 +69,6 @@ app.add_middleware(
 async def _run_deep_research(
         state_manager: DeepResearchStateManager,
 ) -> AsyncIterable[BaseEvent]:
-
     # init mcp client
     mcp_clients, clean_up = build_mcp_clients_from_config(
         config_file=MCP_CONFIG_FILE_PATH,
@@ -152,10 +150,7 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
             tools=[
                 mcp_clients.get('search')
             ],
-            post_tool_call_hooks=[
-                WebSearchPostToolCallHook(global_state=global_state),
-                LinkReaderPostToolCallHook(),
-            ]
+            post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state)
         ),
         'coder': Worker(
             llm_model='deepseek-r1-250120', name='coder',
@@ -163,7 +158,7 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
             tools=[
                 mcp_clients.get('code')
             ],
-            post_tool_call_hooks=[PythonExecutorPostToolCallHook()]
+            post_tool_call_hook=PythonExecutorPostToolCallHook()
         ),
     }
 

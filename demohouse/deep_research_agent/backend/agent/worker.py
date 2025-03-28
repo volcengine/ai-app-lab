@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import AsyncIterable, List
+from typing import AsyncIterable, List, Optional
 
 from jinja2 import Template
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
@@ -26,14 +26,13 @@ from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
 from state.deep_research_state import DeepResearchState
 from state.global_state import GlobalState
-from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHook
 from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
 
 
 class Worker(Agent):
     system_prompt: str = DEFAULT_WORKER_PROMPT
 
-    post_tool_call_hooks: List[PostToolCallHook] = []
+    post_tool_call_hook: Optional[PostToolCallHook] = None
 
     async def astream(
             self,
@@ -60,8 +59,7 @@ class Worker(Agent):
         )
 
         await ctx.init()
-        for post_hook in self.post_tool_call_hooks:
-            ctx.add_post_tool_call_hook(post_hook)
+        ctx.set_post_tool_call_hook(self.post_tool_call_hook)
 
         rsp_stream = await ctx.completions.create_chat_stream(
             messages=[
@@ -112,73 +110,3 @@ class Worker(Agent):
             task_id=str(planning_item.id),
             task_description=planning_item.description,
         )
-
-
-if __name__ == "__main__":
-    def add(a: int, b: int) -> int:
-        """Add two numbers
-
-        Args:
-            a (int): first number
-            b (int): second number
-
-        Returns:
-            int: sum of a and b
-        """
-        return a + b
-
-
-    async def main() -> None:
-
-        planning_item = PlanningItem(
-            id='1',
-            description="马斯克是谁",
-        )
-
-        global_state = GlobalState(
-            custom_state=DeepResearchState(
-                planning=Planning(root_tasks='马斯克是谁', items=[planning_item])
-            )
-        )
-
-        searcher = Worker(
-            llm_model='deepseek-r1-250120',
-            name='web_searcher',
-            instruction='能够联网查询资料内容',
-            tools=[
-                build_mcp_clients_from_config(
-                    config_file=MCP_CONFIG_FILE_PATH,
-                    timeout=300,
-                ).get('web_search'),
-            ],
-            post_tool_call_hooks=[
-                WebSearchPostToolCallHook(global_state=global_state),
-            ]
-        )
-
-        thinking = True
-
-        async for chunk in searcher.astream(
-                global_state=global_state,
-                task_id='1',
-        ):
-            if isinstance(chunk, OutputTextEvent):
-                if thinking:
-                    thinking = False
-                    print("---思考结束---")
-                print(chunk.delta, end="")
-            elif isinstance(chunk, ReasoningEvent):
-                if not thinking:
-                    print("---思考开始---")
-                    thinking = True
-                print(chunk.delta, end="")
-            else:
-                print(f"{chunk.model_dump_json()}")
-
-        print(global_state.custom_state.planning.to_markdown_str())
-        print(f"refs count={len(global_state.custom_state.references)}")
-
-
-    import asyncio
-
-    asyncio.run(main())

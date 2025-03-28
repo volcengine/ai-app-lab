@@ -79,3 +79,20 @@ class PlanningHolder(BaseModel):
             self.planning.update_item(task_id, task)
 
         return "task done."
+
+    async def delete_task(self, task_id: str | int) -> str:
+        """当你要删除计划中的一个任务时，调用此函数
+
+            Args:
+                task_id(str): 要删除的任务id
+            Returns:
+                None
+        """
+        task = self.planning.get_item(str(task_id))
+        if task:
+            if task.result_summary:
+                return "this task is executed, could not be deleted."
+            task.done = True
+            self.planning.delete_item(str(task_id))
+
+        return "task deleted."

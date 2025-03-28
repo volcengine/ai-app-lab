@@ -186,7 +186,8 @@ class Supervisor(Agent):
         )
         ctx = Context(
             model=self.llm_model,
-            tools=[planning_holder.update_task, planning_holder.mark_task_done, planning_holder.add_task],
+            tools=[planning_holder.update_task, planning_holder.mark_task_done,
+                   planning_holder.add_task, planning_holder.delete_task],
             parameters=ArkChatParameters(
                 stream_options={'include_usage': True}
             )

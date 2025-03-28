@@ -45,9 +45,10 @@ DEFAULT_PLANNING_UPDATE_PROMPT = """
 
 {{completed_task_result}}
 
-请根据上面的情况调整更新计划，你可以进行如下三种操作：
+请根据上面的情况调整更新计划，你可以进行如下四种操作：
 
 1. 如果你认为此任务已经完成，可以调用 mark_task_done 标记任务完成
 2. 如果你需要调整一个任务的描述，可以调用 update_task
 3. 如果你需要增加新的任务，可以调用 add_task
+4. 如果你觉得某个任务不需要再执行了，可以调用 delete_task
 """
