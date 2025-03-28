@@ -15,8 +15,15 @@
 from typing import Any
 
 from mcp import Tool
-from mcp.types import CallToolResult, TextContent
-from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
+from mcp.types import CallToolResult, ImageContent, TextContent
+from volcenginesdkarkruntime.types.chat import (
+    ChatCompletionContentPartParam,
+    ChatCompletionContentPartTextParam,
+)
+from volcenginesdkarkruntime.types.chat.chat_completion_content_part_image_param import (  # noqa: E501
+    ChatCompletionContentPartImageParam,
+    ImageURL,
+)
 
 from arkitect.types.llm.model import ChatCompletionTool, FunctionDefinition
 
@@ -29,10 +36,34 @@ def convert_to_chat_completion_content_part_param(
     message_parts = []
     for part in result.content:
         if isinstance(part, TextContent):
-            message_parts.append(part.text)
+            message_parts.append(convert_to_text_param(part))
+        elif isinstance(part, ImageContent):
+            message_parts.append(convert_to_image_param(part))
         else:
-            raise NotImplementedError("Non-text tool response not supported")
+            raise NotImplementedError("Only text/image tool response are supported now")
     return message_parts
+
+
+def convert_to_text_param(
+    text_content: TextContent,
+) -> ChatCompletionContentPartTextParam:
+    return ChatCompletionContentPartTextParam(
+        type="text",
+        text=text_content.text,
+    )
+
+
+def convert_to_image_param(
+    image_content: ImageContent,
+) -> ChatCompletionContentPartImageParam:
+    data_url = f"data:{image_content.mimeType};base64,{image_content.data}"
+    return ChatCompletionContentPartImageParam(
+        type="image_url",
+        image_url=ImageURL(
+            url=data_url,
+            detail="auto",
+        ),
+    )
 
 
 def convert_schema(

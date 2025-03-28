@@ -25,6 +25,7 @@ from arkitect.core.component.tool.utils import (
     mcp_to_chat_completion_tool,
 )
 from arkitect.telemetry.logger import WARN
+from arkitect.telemetry.trace.wrapper import task
 from arkitect.types.llm.model import ChatCompletionTool
 
 
@@ -58,6 +59,7 @@ class ToolPool:
     async def initialize(self) -> None:
         await self.refresh_tool_list()
 
+    @task()
     async def refresh_tool_list(self) -> None:
         tools = await self.session.list_tools()
         self.tools = {t.name: mcp_to_chat_completion_tool(t) for t in tools}
@@ -67,6 +69,7 @@ class ToolPool:
             new_names = [t.function.name for t in new_tools]
             self._all_tool_name.update(new_names)
 
+    @task()
     async def list_tools(self, use_cache: bool = True) -> list[ChatCompletionTool]:
         if not use_cache:
             await self.refresh_tool_list()
@@ -81,6 +84,7 @@ class ToolPool:
             )
         return chat_completion_tools
 
+    @task()
     async def execute_tool(
         self,
         tool_name: str,
@@ -98,6 +102,7 @@ class ToolPool:
                     return await client.execute_tool(tool_name, parameters)
         raise ValueError(f"Tool {tool_name} is not found!")
 
+    @task()
     async def contain(self, tool_name: str) -> bool:
         return tool_name in self._all_tool_name
 

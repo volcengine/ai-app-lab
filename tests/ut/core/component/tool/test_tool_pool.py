@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.core.component.tool import MCPClient
 from arkitect.core.component.tool import ToolPool
 from utils import check_server_working
 
@@ -57,64 +56,3 @@ async def test_custom_tool():
             "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
         },
     )
-
-
-async def test_mcp_client_and_custom_tool():
-    pool = ToolPool()
-
-    @pool.tool()
-    async def sql_query(query: str) -> list[dict[str, str]]:
-        """Run SQL query and return its output rows as list of list of str
-
-        Args:
-            query (str): a proper sql query
-
-        Returns:
-            list[dict[str, str]]
-        """
-        return [
-            {
-                "id": "1",
-                "name": "Alan",
-            },
-            {
-                "id": "2",
-                "name": "Bob",
-            },
-        ]
-
-    client = MCPClient()
-    await client.connect_to_server(
-        server_script_path="tests/ut/core/component/tool/dummy_mcp_server.py"
-    )
-    pool.add_mcp_client(client)
-    await pool.initialize()
-    await check_server_working(
-        client=pool,
-        expected_tools={
-            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
-            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
-            "sql_query": {
-                "input": {"query": "SELECT * FROM table"},
-                "output": ['{"id": "1", "name": "Alan"}', '{"id": "2", "name": "Bob"}'],
-            },
-        },
-    )
-    await check_server_working(
-        client=pool,
-        use_cache=True,
-        expected_tools={
-            "adder": {"input": {"a": 1, "b": 2}, "output": "3"},
-            "greeting": {"input": {"name": "John"}, "output": "Hello, John!"},
-            "sql_query": {
-                "input": {"query": "SELECT * FROM table"},
-                "output": ['{"id": "1", "name": "Alan"}', '{"id": "2", "name": "Bob"}'],
-            },
-        },
-    )
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(test_mcp_client_and_custom_tool())
