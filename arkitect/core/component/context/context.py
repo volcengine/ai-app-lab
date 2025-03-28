@@ -14,7 +14,17 @@
 
 import copy
 import json
-from typing import Any, AsyncIterable, Callable, Dict, List, Literal, Optional, Union
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Union,
+)
 
 from pydantic import BaseModel
 from volcenginesdkarkruntime.types.chat import (
@@ -73,12 +83,11 @@ class _AsyncCompletions:
 
             if await self._ctx.tool_pool.contain(tool_name):
                 # pre tool call hooks
-                for pre_hook in self._ctx.pre_tool_call_hooks:
-                    self._ctx.state = await pre_hook.pre_tool_call(
-                        tool_name,
-                        tool_call.get("function", {}).get("arguments", "{}"),
-                        self._ctx.state,
-                    )
+                self._ctx.state = await self._ctx.pre_tool_call_hook.pre_tool_call(
+                    tool_name,
+                    tool_call.get("function", {}).get("arguments", "{}"),
+                    self._ctx.state,
+                )
                 tool_call_param = copy.deepcopy(tool_call)
                 parameters = tool_call_param.get("function", {}).get("arguments", "{}")
                 # tool execution
@@ -100,14 +109,13 @@ class _AsyncCompletions:
                 )
 
                 # post tool call hooks
-                for post_hook in self._ctx.post_tool_call_hooks:
-                    self._ctx.state = await post_hook.post_tool_call(
-                        tool_name,
-                        parameters,
-                        tool_resp,
-                        tool_exception,
-                        self._ctx.state,
-                    )
+                self._ctx.state = await self._ctx.post_tool_call_hook.post_tool_call(
+                    tool_name,
+                    parameters,
+                    tool_resp,
+                    tool_exception,
+                    self._ctx.state,
+                )
         return True
 
     async def create(
@@ -232,9 +240,10 @@ class _AsyncCompletions:
         async def iterator(
             messages: List[ChatCompletionMessageParam],
         ) -> AsyncIterable[ChatCompletionChunk]:
-            while True:
+            if self.need_tool_call():
+                tool_stream = self.create_tool_call_stream()
                 try:
-                    async for chunk in self.create_tool_call_stream():
+                    async for chunk in tool_stream:
                         yield chunk
                 except HookInterruptException as he:
                     yield ContextInterruption(
@@ -244,17 +253,23 @@ class _AsyncCompletions:
                         details=he.details,
                     )
                     return
-                for llm_hook in self._ctx.pre_llm_call_hooks:
-                    try:
-                        self._ctx.state = await llm_hook.pre_llm_call(self._ctx.state)
-                    except HookInterruptException as he:
-                        yield ContextInterruption(
-                            life_cycle="llm_call",
-                            reason=he.reason,
-                            state=self._ctx.state,
-                            details=he.details,
+
+            while True:
+                try:
+                    if self._ctx.pre_llm_call_hook:
+                        self._ctx.state = (
+                            await self._ctx.pre_llm_call_hook.pre_llm_call(
+                                self._ctx.state
+                            )
                         )
-                        return
+                except HookInterruptException as he:
+                    yield ContextInterruption(
+                        life_cycle="llm_call",
+                        reason=he.reason,
+                        state=self._ctx.state,
+                        details=he.details,
+                    )
+                    return
                 resp = (
                     await self._ctx.chat.completions.create(
                         model=self.model,
@@ -274,74 +289,93 @@ class _AsyncCompletions:
                 assert isinstance(resp, AsyncIterable)
                 async for chunk in resp:
                     yield chunk
-                    if chunk.choices and chunk.choices[0].finish_reason in [
-                        "stop",
-                        "length",
-                        "content_filter",
-                    ]:
+                messages = []
+
+                if self.need_tool_call():
+                    tool_stream = self.create_tool_call_stream()
+                    try:
+                        async for chunk in tool_stream:
+                            yield chunk
+                    except HookInterruptException as he:
+                        yield ContextInterruption(
+                            life_cycle="tool_call",
+                            reason=he.reason,
+                            state=self._ctx.state,
+                            details=he.details,
+                        )
                         return
+                else:
+                    break
 
         return iterator(messages)
 
-    async def create_tool_call_stream(self) -> AsyncIterable[ToolChunk]:
-        last_message = self._ctx.get_latest_message()
-        if last_message is None or not last_message.get("tool_calls"):
-            return
-        if self._ctx.tool_pool is None:
-            return
-        for tool_call in last_message.get("tool_calls"):
-            tool_name = tool_call.get("function", {}).get("name")
+    async def execute_tool(
+        self, tool_name: str, parameters: str
+    ) -> tuple[Any | None, Exception | None]:
+        tool_resp, tool_exception = None, None
+        try:
+            tool_resp = await self._ctx.tool_pool.execute_tool(
+                tool_name=tool_name, parameters=json.loads(parameters)
+            )
+        except Exception as e:
+            tool_exception = e
+        return tool_resp, tool_exception
 
-            if await self._ctx.tool_pool.contain(tool_name):
-                # pre tool call hooks
-                for pre_hook in self._ctx.pre_tool_call_hooks:
-                    self._ctx.state = await pre_hook.pre_tool_call(
+    def need_tool_call(self) -> bool:
+        last_message = self._ctx.get_latest_message()
+        if (
+            last_message is not None
+            and last_message.get("tool_calls")
+            and self._ctx.tool_pool is not None
+        ):
+            return True
+        return False
+
+    def create_tool_call_stream(self) -> AsyncIterable[ToolChunk]:
+        async def tool_call_events() -> AsyncIterable[ToolChunk]:
+            tool_calls = self._ctx.get_latest_message().get("tool_calls")
+            for tool_call in tool_calls:
+                tool_name = tool_call.get("function", {}).get("name")
+                arguments = tool_call.get("function", {}).get("arguments", "{}")
+                if self._ctx.pre_tool_call_hook:
+                    self._ctx.state = await self._ctx.pre_tool_call_hook.pre_tool_call(
                         tool_name,
-                        tool_call.get("function", {}).get("arguments", "{}"),
+                        arguments,
                         self._ctx.state,
                     )
-                tool_call_param = copy.deepcopy(tool_call)
-                parameters = tool_call_param.get("function", {}).get("arguments", "{}")
-                # tool execution
-                tool_resp = None
-                tool_exception = None
+                updated_arguments = tool_call.get("function", {}).get("arguments", "{}")
                 yield ToolChunk(
-                    tool_call_id=tool_call_param.get("id", ""),
+                    tool_call_id=tool_call.get("id", ""),
                     tool_name=tool_name,
-                    tool_arguments=parameters,
+                    tool_arguments=updated_arguments,
                 )
-                try:
-                    tool_resp = await self._ctx.tool_pool.execute_tool(
-                        tool_name=tool_name, parameters=json.loads(parameters)
+                resp, exceptions = await self.execute_tool(tool_name, updated_arguments)
+                yield ToolChunk(
+                    tool_call_id=tool_call.get("id", ""),
+                    tool_name=tool_name,
+                    tool_arguments=updated_arguments,
+                    tool_exception=exceptions,
+                    tool_response=resp,
+                )
+                if self._ctx.post_tool_call_hook:
+                    self._ctx.state = (
+                        await self._ctx.post_tool_call_hook.post_tool_call(
+                            name=tool_name,
+                            arguments=arguments,
+                            response=resp,
+                            exception=exceptions,
+                            state=self._ctx.state,
+                        )
                     )
-                except Exception as e:
-                    tool_exception = e
-
-                yield ToolChunk(
-                    tool_call_id=tool_call_param.get("id", ""),
-                    tool_name=tool_name,
-                    tool_arguments=parameters,
-                    tool_exception=tool_exception,
-                    tool_response=tool_resp,
-                )
                 self._ctx.state.messages.append(
                     {
                         "role": "tool",
-                        "tool_call_id": tool_call_param.get("id", ""),
-                        "content": tool_resp if tool_resp else str(tool_exception),
+                        "tool_call_id": tool_call.get("id", ""),
+                        "content": resp,
                     }
                 )
 
-                # post tool call hooks
-                for post_hook in self._ctx.post_tool_call_hooks:
-                    self._ctx.state = await post_hook.post_tool_call(
-                        tool_name,
-                        parameters,
-                        tool_resp,
-                        tool_exception,
-                        self._ctx.state,
-                    )
-        return
+        return tool_call_events()
 
 
 class Context:
@@ -370,9 +404,9 @@ class Context:
         if context_parameters is not None:
             self.context = _AsyncContext(client=self.client, state=self.state)
         self.tool_pool = build_tool_pool(tools)
-        self.pre_tool_call_hooks: list[PreToolCallHook] = []
-        self.post_tool_call_hooks: list[PostToolCallHook] = []
-        self.pre_llm_call_hooks: list[PreLLMCallHook] = []
+        self.pre_tool_call_hook: PreToolCallHook | None = None
+        self.post_tool_call_hook: PostToolCallHook | None = None
+        self.pre_llm_call_hook: PreLLMCallHook | None = None
 
     async def init(self) -> None:
         if self.state.context_parameters is not None:
@@ -391,21 +425,17 @@ class Context:
     def get_latest_message(
         self, role: str = "assistant"
     ) -> Optional[ChatCompletionMessageParam]:
-        if len(self.state.messages) == 0:
-            return None
-        for message in reversed(self.state.messages):
-            if message.get("role", "") == role:
-                return message
+        return self.state.messages[-1]
 
     @property
     def completions(self) -> _AsyncCompletions:
         return _AsyncCompletions(self)
 
-    def add_pre_tool_call_hook(self, hook: PreToolCallHook) -> None:
-        self.pre_tool_call_hooks.append(hook)
+    def set_pre_tool_call_hook(self, hook: PreToolCallHook) -> None:
+        self.pre_tool_call_hook = hook
 
-    def add_post_tool_call_hook(self, hook: PostToolCallHook) -> None:
-        self.post_tool_call_hooks.append(hook)
+    def set_post_tool_call_hook(self, hook: PostToolCallHook) -> None:
+        self.post_tool_call_hook = hook
 
-    def add_pre_llm_call_hook(self, hook: PreLLMCallHook) -> None:
-        self.pre_llm_call_hooks.append(hook)
+    def set_pre_llm_call_hook(self, hook: PreLLMCallHook) -> None:
+        self.pre_llm_call_hook = hook
