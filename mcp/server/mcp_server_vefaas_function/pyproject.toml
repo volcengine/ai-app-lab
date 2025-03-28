@@ -1,0 +1,28 @@
+[project]
+name = "vefaas-function"
+version = "0.0.1"
+description = "MCP server for managing veFaaS (Volc Engine Function as a Service) functions"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic",
+    "pydantic-core",
+    "fastapi",
+    "uvicorn",
+    "mcp",
+    "langchain-core",
+    "langchain-openai",
+    "langgraph",
+    "langchain-mcp-adapters",
+    "volcengine-python-sdk==1.0.128",
+    "sniffio",
+    "anyio",
+    "starlette",
+]
+
+[project.scripts]
+vefaas-function = "vefaas_server:main"
+
+[tool.setuptools]
+py-modules = ["vefaas_server"]
+

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "vefaas": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://code.byted.org/machinelearning/mcp#subdirectory=server/mcp_server_vefaas_function",
+        "vefaas-function"
+      ],
+      "env": {
+        "ACCESS_KEY_ID": "xxx",
+        "ACCESS_KEY_SECRET": "xxx"
+      }
+    }
+  }
+}
