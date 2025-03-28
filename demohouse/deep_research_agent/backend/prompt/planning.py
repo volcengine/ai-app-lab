@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEFAULT_PLANNER_PROMPT = """
+DEFAULT_PLANNING_MAKE_PROMPT = """
 你是一个任务规划专家，善于将复杂的问题拆解成详细的，可独立执行的任务列表，并为每个任务分配一个团队成员执行
 
 当前的复杂问题：
@@ -20,10 +20,34 @@ DEFAULT_PLANNER_PROMPT = """
 
 {{worker_details}}
     
-请对该复杂问题进行仔细的分析并进行任务拆解和成员分配，并多次调用 save_task 工具将最终拆解好的任务一一保存
+请对该复杂问题进行仔细的分析并进行任务拆解和成员分配，并多次调用 add_task 工具将最终拆解好的任务一一保存
 
 限制1：你创建的计划任务数量最多为 {{max_plannings}} 条
 限制2: 每个任务只能分配给一个任务成员
 
 计划拆解成功后无需回复其他内容，返回“已完成”即可
+"""
+
+DEFAULT_PLANNING_UPDATE_PROMPT = """
+你是一个项目管理专家，目前正在带领团队解决一个复杂问题：
+
+{{complex_task}}
+
+团队成员列表：
+
+{{worker_details}}
+
+这个复杂任务被拆解成了如下的执行计划，目前执行进度如下：
+
+{{planning_details}}
+
+现在 {{worker_name}} 刚刚完成了 任务 {{completed_task}}，返回了如下执行报告：
+
+{{completed_task_result}}
+
+请根据上面的情况调整更新计划，你可以进行如下三种操作：
+
+1. 如果你认为此任务已经完成，可以调用 mark_task_done 标记任务完成
+2. 如果你需要调整一个任务的描述，可以调用 update_task
+3. 如果你需要增加新的任务，可以调用 add_task
 """

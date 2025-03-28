@@ -82,7 +82,7 @@ async def _run_deep_research(
         dr = DeepResearch(
             default_llm_model='deepseek-r1-250120',
             workers=get_workers(GlobalState(custom_state=dr_state), mcp_clients),
-            reasoning_accept=False,
+            dynamic_planning=True,
             max_planning_items=5,
             state_manager=state_manager,
         )
@@ -146,27 +146,22 @@ async def stream_response(request: RunSessionRequest):
 
 def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
     return {
-        'web_searcher': Worker(
-            llm_model='deepseek-r1-250120', name='web_searcher',
-            instruction='联网查询资料内容',
+        'searcher': Worker(
+            llm_model='deepseek-r1-250120', name='searcher',
+            instruction='联网搜索公域资料，读取网页内容',
             tools=[
-                mcp_clients.get('web_search')
+                mcp_clients.get('search')
             ],
-            post_tool_call_hooks=[WebSearchPostToolCallHook(global_state=global_state)]
+            post_tool_call_hooks=[
+                WebSearchPostToolCallHook(global_state=global_state),
+                LinkReaderPostToolCallHook(),
+            ]
         ),
-        'link_reader': Worker(
-            llm_model='deepseek-r1-250120', name='link_reader',
-            instruction='读取指定url链接的内容（网页/文件）',
+        'coder': Worker(
+            llm_model='deepseek-r1-250120', name='coder',
+            instruction='编写和运行python代码',
             tools=[
-                mcp_clients.get('link_reader')
-            ],
-            post_tool_call_hooks=[LinkReaderPostToolCallHook()]
-        ),
-        'python_executor': Worker(
-            llm_model='deepseek-r1-250120', name='python_executor',
-            instruction='运行指定的python代码并获取结果',
-            tools=[
-                mcp_clients.get('python_executor')
+                mcp_clients.get('code')
             ],
             post_tool_call_hooks=[PythonExecutorPostToolCallHook()]
         ),
@@ -176,7 +171,7 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
 if __name__ == "__main__":
     uvicorn.run(
         app="server.response_server:app",
-        host="127.0.0.1",
+        host="0.0.0.0",
         port=8088,
         workers=1,
     )

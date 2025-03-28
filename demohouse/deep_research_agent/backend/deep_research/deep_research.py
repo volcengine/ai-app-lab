@@ -12,20 +12,19 @@
 from typing import AsyncIterable, Optional
 
 from agent.summary import Summary
-from arkitect.telemetry.logger import INFO
 
 from agent.worker import Worker
-from agent.planner import Planner
 from agent.supervisor import Supervisor
 from models.events import *
 from state.deep_research_state import DeepResearchState, DeepResearchStateManager
 from state.global_state import GlobalState
+from tools.mock import add, compare
 
 
 class DeepResearch(BaseModel):
     default_llm_model: str = ''
     workers: Dict[str, Worker] = {}
-    reasoning_accept: bool = True
+    dynamic_planning: bool = False
     max_planning_items: int = 10
     state_manager: Optional[DeepResearchStateManager] = None
 
@@ -41,46 +40,33 @@ class DeepResearch(BaseModel):
         global_state = GlobalState(
             custom_state=dr_state,
         )
-        # 1. restore the checkpoint or make new one
-        if not dr_state.planning:
-            async for chunk in self._make_plan(
-                    root_task=dr_state.root_task,
-                    global_state=global_state,
-                    max_plannings=self.max_planning_items,
-                    workers=self.workers,
-            ):
-                yield chunk
-            if self.state_manager:
-                await self.state_manager.dump(dr_state)
-        else:
-            yield PlanningEvent(
-                action='load',
-                planning=dr_state.planning,
-            )
 
-        INFO(f'planning: \n {dr_state.planning.to_markdown_str()}')
+        if dr_state.planning and dr_state.planning.items:
+            # load from session, yield a load chunk
+            yield PlanningEvent(action='load', planning=dr_state.planning)
 
-        if dr_state.planning.get_todos():
-            # 2. if planning not finished, run with supervisor
-            supervisor = Supervisor(
-                llm_model=self.default_llm_model,
-                workers=self.workers,
-                reasoning_accept=self.reasoning_accept,
-                state_manager=self.state_manager,
-            )
+        # 1. run with supervisor
+        supervisor = Supervisor(
+            llm_model=self.default_llm_model,
+            workers=self.workers,
+            dynamic_planning=self.dynamic_planning,
+            max_plannings=self.max_planning_items,
+            state_manager=self.state_manager,
+        )
 
-            async for event in supervisor.astream(
-                    global_state=global_state,
-            ):
-                yield event
+        async for event in supervisor.astream(
+                global_state=global_state,
+        ):
+            yield event
 
+        # 2. until no more todos
         if not dr_state.planning.get_todos():
-            # 3. if planning finished, run an agent to summary
             yield PlanningEvent(
                 action='done',
                 planning=dr_state.planning,
             )
 
+        # if planning finished, run an agent to summary
         answer = Summary(
             llm_model=self.default_llm_model
         )
@@ -89,38 +75,8 @@ class DeepResearch(BaseModel):
         ):
             yield event
 
-    async def _make_plan(self, root_task: str,
-                         global_state: GlobalState, max_plannings: int,
-                         workers: Dict[str, Worker]) \
-            -> AsyncIterable[BaseEvent]:
-        planner = Planner(
-            llm_model=self.default_llm_model
-        )
-
-        async for chunk in planner.astream(
-                global_state=global_state,
-                task=root_task,
-                max_plannings=max_plannings,
-                workers=workers,
-        ):
-            if isinstance(chunk, PlanningEvent):
-                global_state.custom_state.planning = chunk.planning
-            yield chunk
-
 
 if __name__ == "__main__":
-
-    async def add(a: int, b: int) -> int:
-        """Add two numbers
-        """
-        return a + b
-
-
-    async def compare(a: int, b: int) -> int:
-        """Compare two numbers, return the bigger one
-        """
-        return a if a > b else b
-
 
     async def main():
 

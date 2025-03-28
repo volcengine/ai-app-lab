@@ -10,4 +10,4 @@
 # limitations under the License.
 import os
 
-MCP_CONFIG_FILE_PATH = os.environ.get('DEEP_RESEARCH_MCP_CONFIG_FILE_PATH')
+MCP_CONFIG_FILE_PATH = os.environ.get('DEEP_RESEARCH_MCP_CONFIG_FILE_PATH') or './mcp_servers_config.json'

@@ -27,6 +27,8 @@ class PlanningItem(BaseModel):
     assign_agent: str = ""
     # important records to save during process
     process_records: List[str] = []
+    # archived history
+    history: List[str] = []
     # result summary
     result_summary: str = ""
     # mark if this task done
@@ -127,7 +129,7 @@ class Planning(BaseModel):
             "任务执行情况："
         ]
         for item in self.items:
-            texts.append(f"{item.id}. [{'已完成' if item.done else '未完成'}] <{item.description}>")
+            texts.append(f"{item.id}. [{'已完成' if item.done else '未完成'}][执行者：{item.assign_agent}] <{item.description}>")
         texts.append("----------------")
         for item in self.items:
             if not item.done:
