@@ -28,14 +28,10 @@ from tools.hooks import WebSearchPostToolCallHook, PythonExecutorPostToolCallHoo
 from utils.converter import convert_references_to_format_str
 from tools.mock import compare, add
 
-TASK = "我有一个朋友，他在北京长大，人大附中毕业，有海外留学经验，现在是字节跳动公司的一位管理层干部，请帮我推算一下他的家庭资产是什么量级"
+TASK = "1*1212*239的结果是多少"
 
 
 async def main(session_id: Optional[str] = None):
-    await spawn_mcp_server_from_config(MCP_CONFIG_FILE_PATH)
-
-    await asyncio.sleep(10)
-
     mcp_clients, cleanup = build_mcp_clients_from_config(config_file=MCP_CONFIG_FILE_PATH)
 
     manager = FileStateManager(path=f"/tmp/deep_research_session/{session_id}.json") if session_id else None
@@ -99,7 +95,7 @@ async def main(session_id: Optional[str] = None):
             elif isinstance(chunk, PythonExecutorToolCompletedEvent):
                 print(f"\n ---💻 python run result ---")
                 print(f"""```stdout{'✅' if chunk.success else '❌'}
-                {chunk.stdout} or {chunk.error_msg}
+                {chunk.stdout or chunk.error_msg}
                 ```
                 """)
             elif isinstance(chunk, LinkReaderToolCompletedEvent):
@@ -157,4 +153,4 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
 
 
 if __name__ == "__main__":
-    asyncio.run(main(session_id="test-kuolao-1"))
+    asyncio.run(main(session_id="test-example-4"))

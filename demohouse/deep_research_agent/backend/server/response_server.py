@@ -38,26 +38,24 @@ from utils.converter import convert_event_to_sse_response
 SESSION_PATH = "/tmp/deep_research_session"
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[Dict[str, Any]]:
-    # start up mcp servers
-    await spawn_mcp_server_from_config(config_file=MCP_CONFIG_FILE_PATH)
-    # wait for start up
-    await asyncio.sleep(10)
-    # init mcp clients
-    mcp_clients, clean_up = build_mcp_clients_from_config(
-        config_file=MCP_CONFIG_FILE_PATH,
-    )
-
-    app.state.mcp_clients = mcp_clients
-
-    yield
-
-    # cleanup when shutdown
-    await clean_up()
+# @asynccontextmanager
+# async def lifespan(app: FastAPI) -> AsyncIterator[Dict[str, Any]]:
+#     # init mcp clients
+#     mcp_clients, clean_up = build_mcp_clients_from_config(
+#         config_file=MCP_CONFIG_FILE_PATH,
+#     )
+#
+#     app.state.mcp_clients = mcp_clients
+#
+#     yield
+#
+#     # cleanup when shutdown
+#     await clean_up()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    # lifespan=lifespan
+)
 app.add_middleware(ListenDisconnectionMiddleware)
 app.add_middleware(LogIdMiddleware)
 app.add_middleware(
@@ -72,20 +70,31 @@ app.add_middleware(
 async def _run_deep_research(
         state_manager: DeepResearchStateManager,
 ) -> AsyncIterable[BaseEvent]:
-    dr_state = await state_manager.load()
 
-    dr = DeepResearch(
-        default_llm_model='deepseek-r1-250120',
-        workers=get_workers(GlobalState(custom_state=dr_state), app.state.mcp_clients),
-        reasoning_accept=False,
-        max_planning_items=5,
-        state_manager=state_manager,
+    # init mcp client
+    mcp_clients, clean_up = build_mcp_clients_from_config(
+        config_file=MCP_CONFIG_FILE_PATH,
     )
 
-    async for event in dr.astream(
-            dr_state=dr_state,
-    ):
-        yield event
+    dr_state = await state_manager.load()
+
+    try:
+        dr = DeepResearch(
+            default_llm_model='deepseek-r1-250120',
+            workers=get_workers(GlobalState(custom_state=dr_state), mcp_clients),
+            reasoning_accept=False,
+            max_planning_items=5,
+            state_manager=state_manager,
+        )
+
+        async for event in dr.astream(
+                dr_state=dr_state,
+        ):
+            yield event
+    except BaseException as e:
+        ERROR(str(e))
+    finally:
+        await clean_up()
 
 
 @app.post("/session/create")
@@ -167,7 +176,7 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
 if __name__ == "__main__":
     uvicorn.run(
         app="server.response_server:app",
-        host="0.0.0.0",
-        port=8000,
+        host="127.0.0.1",
+        port=8088,
         workers=1,
     )
