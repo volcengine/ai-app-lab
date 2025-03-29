@@ -43,7 +43,8 @@ class DeepResearch(BaseModel):
 
         if dr_state.planning and dr_state.planning.items:
             # load from session, yield a load chunk
-            yield PlanningEvent(action='load', planning=dr_state.planning)
+            yield PlanningEvent(action='load', planning=dr_state.planning,
+                                formatted_str=dr_state.planning.to_dashboard())
 
         # 1. run with supervisor
         supervisor = Supervisor(
@@ -64,6 +65,7 @@ class DeepResearch(BaseModel):
             yield PlanningEvent(
                 action='done',
                 planning=dr_state.planning,
+                formatted_str=dr_state.planning.to_dashboard(),
             )
 
         # if planning finished, run an agent to summary

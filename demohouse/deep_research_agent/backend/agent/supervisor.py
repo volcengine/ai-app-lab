@@ -93,7 +93,9 @@ class Supervisor(Agent):
             async for chunk in self._make_planning(global_state):
                 yield chunk
 
-            yield PlanningEvent(action='made', planning=planning)
+            yield PlanningEvent(action='made',
+                                planning=planning,
+                                formatted_str=planning.to_dashboard())
             if self.state_manager:
                 await self.state_manager.dump(global_state.custom_state)
 
@@ -138,6 +140,7 @@ class Supervisor(Agent):
             yield PlanningEvent(
                 action='update',
                 planning=planning,
+                formatted_str=planning.to_dashboard(),
             )
 
     @task()

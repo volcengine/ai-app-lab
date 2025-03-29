@@ -158,6 +158,7 @@ class PlanningEvent(BaseEvent):
     type: str = 'planning'
     action: Literal['made', 'load', 'update', 'done']
     planning: Planning
+    formatted_str: Optional[str] = ''
 
 
 class AssignTodoEvent(BaseEvent):
