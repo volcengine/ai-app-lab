@@ -21,6 +21,7 @@ from arkitect.core.component.context.model import State, ContextInterruption
 from arkitect.telemetry.logger import INFO
 from agent.agent import Agent
 from agent.worker import Worker
+from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, InvalidParameter, PlanningEvent
 from models.planning import PlanningItem, Planning
@@ -75,6 +76,7 @@ class Supervisor(Agent):
     _control_hook: SupervisorControlHook = SupervisorControlHook()
     state_manager: Optional[DeepResearchStateManager] = None
 
+    @task()
     async def astream(self,
                       global_state: GlobalState,
                       **kwargs) -> AsyncIterable[BaseEvent]:
@@ -139,6 +141,7 @@ class Supervisor(Agent):
                 planning=planning,
             )
 
+    @task()
     async def _make_planning(self, global_state: GlobalState) -> AsyncIterable[BaseEvent]:
 
         planning = global_state.custom_state.planning
@@ -176,6 +179,7 @@ class Supervisor(Agent):
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
                 yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
+    @task()
     async def _update_planning(self,
                                global_state: GlobalState,
                                task_to_update: PlanningItem

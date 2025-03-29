@@ -8,8 +8,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Optional
 
 from pydantic import BaseModel
+
+from arkitect.types.runtime.model import Request, Response
 
 
 class CreateSessionRequest(BaseModel):
@@ -18,3 +21,9 @@ class CreateSessionRequest(BaseModel):
 
 class RunSessionRequest(BaseModel):
     session_id: str
+
+
+class DeepResearchRequest(Request):
+    stream: bool = True  # must be true
+    root_task: str = ''
+    session_id: Optional[str] = None

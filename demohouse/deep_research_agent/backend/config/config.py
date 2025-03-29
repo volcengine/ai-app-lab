@@ -11,3 +11,5 @@
 import os
 
 MCP_CONFIG_FILE_PATH = os.environ.get('DEEP_RESEARCH_MCP_CONFIG_FILE_PATH') or './mcp_servers_config.json'
+
+SESSION_SAVE_PATH = os.environ.get('SESSION_SAVE_PATH') or '/tmp/deep_research_session/'

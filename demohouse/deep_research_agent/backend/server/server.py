@@ -8,62 +8,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 import uuid
-from contextlib import asynccontextmanager
 from typing import AsyncIterable, Tuple, Callable, Dict, AsyncIterator, Any
 
-import uvicorn
-import asyncio
-from starlette.middleware.cors import CORSMiddleware
-
 from agent.worker import Worker
-from arkitect.core.component.bot.middleware import ListenDisconnectionMiddleware, LogIdMiddleware
 from arkitect.core.component.tool import MCPClient
 from arkitect.core.component.tool.builder import build_mcp_clients_from_config
+from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.logger import INFO, ERROR
-
-from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse
-
-from config.config import MCP_CONFIG_FILE_PATH
+from arkitect.telemetry.trace import task, TraceConfig
+from arkitect.utils.context import get_reqid
+from config.config import MCP_CONFIG_FILE_PATH, SESSION_SAVE_PATH
 from deep_research.deep_research import DeepResearch
-from models.events import BaseEvent, InternalServiceError
-from models.server import CreateSessionRequest, RunSessionRequest
+from models.events import BaseEvent, InternalServiceError, InvalidParameter
+from models.request import CreateSessionRequest, RunSessionRequest, DeepResearchRequest
 from state.deep_research_state import DeepResearchStateManager, DeepResearchState
 from state.file_state_manager import FileStateManager
 from state.global_state import GlobalState
 from tools.hooks import PythonExecutorPostToolCallHook, SearcherPostToolCallHook
-from utils.converter import convert_event_to_sse_response
-
-SESSION_PATH = "/tmp/deep_research_session"
-
-# @asynccontextmanager
-# async def lifespan(app: FastAPI) -> AsyncIterator[Dict[str, Any]]:
-#     # init mcp clients
-#     mcp_clients, clean_up = build_mcp_clients_from_config(
-#         config_file=MCP_CONFIG_FILE_PATH,
-#     )
-#
-#     app.state.mcp_clients = mcp_clients
-#
-#     yield
-#
-#     # cleanup when shutdown
-#     await clean_up()
-
-
-app = FastAPI(
-    # lifespan=lifespan
-)
-app.add_middleware(ListenDisconnectionMiddleware)
-app.add_middleware(LogIdMiddleware)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 async def _run_deep_research(
@@ -95,51 +58,33 @@ async def _run_deep_research(
         await clean_up()
 
 
-@app.post("/session/create")
-async def create_session(request: CreateSessionRequest) -> dict:
+@task()
+async def create_session(request: DeepResearchRequest) -> str:
     dr_state = DeepResearchState(
-        root_task=request.task,
+        root_task=request.root_task,
     )
     session_id = uuid.uuid4().hex
 
-    try:
-        await FileStateManager(path=f"{SESSION_PATH}/{session_id}.json").dump(
-            dr_state
-        )
-    except Exception as e:
-        return {
-            'success': False,
-            'error': str(e),
-        }
-
-    return {
-        'success': True,
-        'session_id': session_id,
-    }
-
-
-@app.post("/session/run")
-async def stream_response(request: RunSessionRequest):
-    state_manager = FileStateManager(path=f"{SESSION_PATH}/{request.session_id}.json")
-
-    async def event_generator() -> AsyncIterable[str]:
-        try:
-            async for event in _run_deep_research(
-                    state_manager=state_manager,
-            ):
-                yield convert_event_to_sse_response(event)
-        except Exception as e:
-            ERROR(str(e))
-            yield InternalServiceError()
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-        }
+    await FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json").dump(
+        dr_state
     )
+
+    return session_id
+
+
+async def run_session(session_id: str) -> AsyncIterable[BaseEvent]:
+    state_manager = FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json")
+
+    try:
+        async for event in _run_deep_research(
+                state_manager=state_manager,
+        ):
+            event.session_id = session_id
+            event.id = get_reqid()
+            yield event
+    except Exception as e:
+        ERROR(str(e))
+        yield InternalServiceError()
 
 
 def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
@@ -163,10 +108,34 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
     }
 
 
+@task()
+async def main(
+        request: DeepResearchRequest
+) -> AsyncIterable[BaseEvent]:
+    if not request.session_id and not request.root_task:
+        yield InvalidParameter(parameter="root_task")
+        return
+    # create session
+    if not request.session_id and request.root_task:
+        session_id = await create_session(request)
+        request.session_id = session_id
+        INFO(f"no previous session, created new session {session_id}")
+    # run with session id
+    if request.session_id:
+        session_id = request.session_id
+        INFO(f"start run session {session_id}")
+        async for event in run_session(session_id):
+            yield event
+
+
 if __name__ == "__main__":
-    uvicorn.run(
-        app="server.response_server:app",
-        host="0.0.0.0",
-        port=8088,
-        workers=1,
+    port = os.getenv("_FAAS_RUNTIME_PORT")
+    launch_serve(
+        package_path="server.server",
+        port=int(port) if port else 8888,
+        health_check_path="/v1/ping",
+        endpoint_path="/api/response",
+        trace_on=True,
+        trace_config=TraceConfig(),
+        clients={},
     )

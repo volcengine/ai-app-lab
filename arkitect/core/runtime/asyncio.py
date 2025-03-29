@@ -99,7 +99,7 @@ class CustomAsyncRunner(AsyncRunner[RequestType, ResponseType]):
         try:
             async for resp in await self.invoke(request):  # type: ResponseType
                 if isinstance(resp, BaseModel):
-                    yield f"data:{resp.model_dump_json(exclude_unset=True, exclude_none=True)}\r\n\r\n"  # noqa E501
+                    yield f"data:{resp.model_dump_json(exclude_none=True)}\r\n\r\n"  # noqa E501
                 else:
                     yield f"data:{json.dumps(resp, ensure_ascii=False)}\r\n\r\n"  # noqa E501
         except APIException as e:

@@ -16,6 +16,7 @@ from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
 from agent.agent import Agent
 from arkitect.core.component.context.context import Context
+from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, InternalServiceError
 from models.planning import Planning

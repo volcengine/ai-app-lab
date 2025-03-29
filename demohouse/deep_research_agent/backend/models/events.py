@@ -13,11 +13,13 @@ from typing import List, Dict, Literal, Optional
 from pydantic import BaseModel
 from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
 
+from arkitect.types.runtime.model import Response
 from models.planning import Planning, PlanningItem
 
 
-class BaseEvent(BaseModel):
+class BaseEvent(Response):
     id: str = ''
+    session_id: Optional[str] = ''
 
     class Config:
         """Configuration for this pydantic object."""
