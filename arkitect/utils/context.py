@@ -96,6 +96,17 @@ def get_account_id(default_val: str = "") -> str:
     return _account_id.get(default_val)
 
 
+_user_id: contextvars.ContextVar[str] = contextvars.ContextVar("_user_id")
+
+
+def set_user_id(val: str = "") -> None:
+    _user_id.set(val)
+
+
+def get_user_id(default_val: str = "") -> str:
+    return _user_id.get(default_val)
+
+
 _custom_attributes: contextvars.ContextVar[Optional[Dict[str, Any]]] = (
     contextvars.ContextVar("_custom_attributes")
 )

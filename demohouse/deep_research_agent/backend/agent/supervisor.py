@@ -25,7 +25,7 @@ from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, InvalidParameter, PlanningEvent
 from models.planning import PlanningItem, Planning
-from prompt.planning import DEFAULT_PLANNING_MAKE_PROMPT, DEFAULT_PLANNING_UPDATE_PROMPT
+from prompt.planning import DEFAULT_PLANNING_MAKE_PROMPT, DEFAULT_PLANNING_UPDATE_PROMPT, get_planning_make_prompt
 from state.deep_research_state import DeepResearchState, DeepResearchStateManager
 from state.global_state import GlobalState
 from utils.planning_holder import PlanningHolder
@@ -69,7 +69,6 @@ class AcceptAgentResponse(BaseModel):
 
 class Supervisor(Agent):
     workers: Dict[str, Worker] = {}
-    planning_make_prompt: str = DEFAULT_PLANNING_MAKE_PROMPT
     planning_update_prompt: str = DEFAULT_PLANNING_UPDATE_PROMPT
     dynamic_planning: bool = False  # enable the dynamic planning ability
     max_plannings: int = 10,
@@ -164,7 +163,7 @@ class Supervisor(Agent):
             messages=[
                 {
                     "role": "user",
-                    "content": self._prepare_make_planning_prompt(
+                    "content": await self._prepare_make_planning_prompt(
                         root_task=planning.root_task
                     )
                 },
@@ -221,8 +220,10 @@ class Supervisor(Agent):
             if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
                 yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
-    def _prepare_make_planning_prompt(self, root_task: str) -> str:
-        return Template(self.planning_make_prompt).render(
+    async def _prepare_make_planning_prompt(self, root_task: str) -> str:
+        # this prompt can be dynamic load.
+        prompt = await get_planning_make_prompt()
+        return Template(prompt).render(
             complex_task=root_task,
             worker_details=self._format_agent_desc(),
             max_plannings=self.max_plannings,
