@@ -144,7 +144,8 @@ class Supervisor(Agent):
         planning = global_state.custom_state.planning
 
         planning_holder = PlanningHolder(
-            planning=planning
+            planning=planning,
+            max_plannings=self.max_plannings,
         )
         ctx = Context(
             model=self.llm_model,
@@ -182,7 +183,8 @@ class Supervisor(Agent):
         planning = global_state.custom_state.planning
 
         planning_holder = PlanningHolder(
-            planning=planning
+            planning=planning,
+            max_plannings=self.max_plannings
         )
         ctx = Context(
             model=self.llm_model,

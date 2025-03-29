@@ -80,7 +80,7 @@ async def _run_deep_research(
         dr = DeepResearch(
             default_llm_model='deepseek-r1-250120',
             workers=get_workers(GlobalState(custom_state=dr_state), mcp_clients),
-            dynamic_planning=True,
+            dynamic_planning=False,
             max_planning_items=5,
             state_manager=state_manager,
         )

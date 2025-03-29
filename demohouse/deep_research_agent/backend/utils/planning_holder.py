@@ -16,6 +16,7 @@ from models.planning import Planning, PlanningItem
 
 class PlanningHolder(BaseModel):
     planning: Planning = Field(default_factory=Planning)
+    max_plannings: int = 10
 
     class Config:
         """Configuration for this pydantic object."""
@@ -31,6 +32,8 @@ class PlanningHolder(BaseModel):
             Returns:
                 None
         """
+        if len(self.planning.items) > self.max_plannings:
+            return f'cannot add more than {self.max_plannings} tasks'
         next_id = len(self.planning.items) + 1
         self.planning.items.append(PlanningItem(
             id=str(next_id),
