@@ -12,7 +12,6 @@ import traceback
 from typing import AsyncIterable, Dict, Any, Optional
 
 from jinja2 import Template
-from openai import InternalServerError
 from pydantic import BaseModel
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 from volcenginesdkarkruntime.types.completion_usage import CompletionUsage, CompletionTokensDetails
@@ -20,7 +19,7 @@ from volcenginesdkarkruntime.types.completion_usage import CompletionUsage, Comp
 from arkitect.core.component.context.context import Context
 from arkitect.core.component.context.hooks import PostToolCallHook, HookInterruptException
 from arkitect.core.component.context.model import State
-from arkitect.core.errors import InvalidParameter
+from arkitect.core.errors import InvalidParameter, InternalServiceError
 from agent.agent import Agent
 from agent.worker import Worker
 from arkitect.telemetry.logger import ERROR
@@ -128,7 +127,7 @@ class Supervisor(Agent):
             except Exception as e:
                 ERROR(f"run worker error: {e}")
                 traceback.print_exc()
-                yield ErrorEvent(api_exception=InternalServerError(message=str(e)))
+                yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
                 return
 
             # 4. update planning (if it needs)

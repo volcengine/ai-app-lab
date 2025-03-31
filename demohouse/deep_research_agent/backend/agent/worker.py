@@ -18,6 +18,7 @@ from agent.agent import Agent
 from arkitect.core.component.context.context import Context, ToolChunk
 from arkitect.core.component.context.hooks import PostToolCallHook
 from arkitect.core.errors import InvalidParameter, InternalServiceError
+from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
 
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
@@ -32,6 +33,7 @@ class Worker(Agent):
 
     post_tool_call_hook: Optional[PostToolCallHook] = None
 
+    @task(watch_io=False)
     async def astream(
             self,
             global_state: GlobalState,

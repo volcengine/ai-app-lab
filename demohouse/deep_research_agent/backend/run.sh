@@ -1,0 +1,1 @@
+python -m server.bot_server

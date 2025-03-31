@@ -17,6 +17,7 @@ from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 from agent.agent import Agent
 from arkitect.core.component.context.context import Context
 from arkitect.core.errors import InternalServiceError
+from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
 from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
 from models.planning import Planning
@@ -27,6 +28,7 @@ from state.global_state import GlobalState
 class Summary(Agent):
     prompt: str = DEFAULT_SUMMARY_PROMPT
 
+    @task()
     async def astream(self, global_state: GlobalState, **kwargs) -> AsyncIterable[BaseEvent]:
         ctx = Context(
             model=self.llm_model,
