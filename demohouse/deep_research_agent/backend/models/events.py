@@ -161,3 +161,4 @@ class AssignTodoEvent(BaseEvent):
 # this event mark the session running is done.
 class EOFEvent(BaseEvent):
     type: str = 'eof'
+    references: List[Reference] = []

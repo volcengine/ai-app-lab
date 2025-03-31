@@ -31,6 +31,7 @@ from typing import (
 import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing_extensions import Literal
+from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
 from volcenginesdkarkruntime.types.chat.chat_completion import ChatCompletion, Choice
 from volcenginesdkarkruntime.types.chat.chat_completion_content_part_param import (
     ChatCompletionContentPartParam,
@@ -623,6 +624,8 @@ class ArkChatCompletionChunk(Response):
     bot_usage: Optional[BotUsage] = None
 
     metadata: Optional[Dict[str, Any]] = None
+
+    references: Optional[List[Reference]] = None
 
     @staticmethod
     def merge(

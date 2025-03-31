@@ -19,10 +19,11 @@ from arkitect.core.component.context.context import Context
 from arkitect.core.errors import InternalServiceError
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
-from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
-from models.planning import Planning
+from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent, ReferencesEvent
 from prompt.summary import DEFAULT_SUMMARY_PROMPT
+from state.deep_research_state import DeepResearchState
 from state.global_state import GlobalState
+from utils.converter import convert_references_to_markdown
 
 
 class Summary(Agent):
@@ -42,8 +43,8 @@ class Summary(Agent):
 
         rsp_stream = await ctx.completions.create_chat_stream(
             messages=[
-                {"role": "system",
-                 "content": await self.generate_system_prompt(planning=global_state.custom_state.planning)},
+                {"role": "user",
+                 "content": await self.generate_prompt(dr_state=global_state.custom_state)},
             ],
         )
 
@@ -52,16 +53,18 @@ class Summary(Agent):
                 self.record_usage(chunk, global_state.custom_state.total_usage)
                 if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
                     yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
+                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[
+                    0].delta.reasoning_content:
                     yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
             return
         except Exception as e:
             yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
             return
 
-    async def generate_system_prompt(self, planning: Planning) -> str:
+    async def generate_prompt(self, dr_state: DeepResearchState) -> str:
         return Template(self.prompt).render(
             instruction=self.instruction,
-            complex_task=planning.root_task,
-            planning_detail=planning.to_markdown_str(include_progress=False),
+            complex_task=dr_state.planning.root_task,
+            planning_detail=dr_state.planning.to_dashboard(),
+            reference_detail=convert_references_to_markdown(dr_state.references),
         )

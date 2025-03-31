@@ -161,6 +161,7 @@ def convert_event_to_bot_chunk(event: BaseEvent, ark_request: ArkChatRequest) ->
             )],
             created=int(time.time()),
             model=ark_request.model,
+            references=event.references,
             object="chat.completion.chunk",
         )
 
@@ -198,3 +199,10 @@ def convert_event_to_bot_chunk(event: BaseEvent, ark_request: ArkChatRequest) ->
     chunk.metadata = metadata
 
     return chunk
+
+
+def convert_references_to_markdown(refs: List[Reference]) -> str:
+    mds = []
+    for (i, ref) in enumerate(refs):
+        mds.append(f"{i+1}. [{ref.title}]({ref.url})")
+    return '\n'.join(mds)

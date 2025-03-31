@@ -86,8 +86,8 @@ class DeepResearch(BaseModel):
         ):
             yield event
 
-        # yield a special event to mark the session finshed
-        yield EOFEvent()
+        # yield a special event to mark the session finished
+        yield EOFEvent(references=global_state.custom_state.references)
 
 
 if __name__ == "__main__":
