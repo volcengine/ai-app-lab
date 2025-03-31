@@ -148,7 +148,7 @@ def convert_event_to_bot_chunk(event: BaseEvent, ark_request: ArkChatRequest) ->
 
     # for eof
     if isinstance(event, EOFEvent):
-        yield ArkChatCompletionChunk(
+        return ArkChatCompletionChunk(
             id=event.id,
             choices=[Choice(
                 index=0,
