@@ -156,3 +156,8 @@ class AssignTodoEvent(BaseEvent):
     type: str = 'assign_todo'
     agent_name: str = ''
     planning_item: PlanningItem
+
+
+# this event mark the session running is done.
+class EOFEvent(BaseEvent):
+    type: str = 'eof'

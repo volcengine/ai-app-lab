@@ -86,6 +86,9 @@ class DeepResearch(BaseModel):
         ):
             yield event
 
+        # yield a special event to mark the session finshed
+        yield EOFEvent()
+
 
 if __name__ == "__main__":
 

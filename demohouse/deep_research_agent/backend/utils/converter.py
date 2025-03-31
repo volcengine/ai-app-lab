@@ -20,7 +20,8 @@ from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatRequest
 from arkitect.utils.context import get_reqid
 from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent, WebSearchToolCallEvent, \
     WebSearchToolCompletedEvent, PythonExecutorToolCompletedEvent, PythonExecutorToolCallEvent, \
-    LinkReaderToolCompletedEvent, LinkReaderToolCallEvent, OutputTextEvent, ReasoningEvent, PlanningEvent, ErrorEvent
+    LinkReaderToolCompletedEvent, LinkReaderToolCallEvent, OutputTextEvent, ReasoningEvent, PlanningEvent, ErrorEvent, \
+    EOFEvent
 
 
 def convert_pre_tool_call_to_event(
@@ -145,6 +146,24 @@ def convert_event_to_bot_chunk(event: BaseEvent, ark_request: ArkChatRequest) ->
     if isinstance(event, ErrorEvent):
         raise event.api_exception
 
+    # for eof
+    if isinstance(event, EOFEvent):
+        yield ArkChatCompletionChunk(
+            id=event.id,
+            choices=[Choice(
+                index=0,
+                delta=ChoiceDelta(
+                    content='',
+                    reasoning_content='',
+                    role='assistant'
+                ),
+                finish_reason='stop',
+            )],
+            created=int(time.time()),
+            model=ark_request.model,
+            object="chat.completion.chunk",
+        )
+
     # build base chunk
     chunk = ArkChatCompletionChunk(
         id=event.id,
@@ -156,7 +175,6 @@ def convert_event_to_bot_chunk(event: BaseEvent, ark_request: ArkChatRequest) ->
                     reasoning_content=(event.delta if isinstance(event, ReasoningEvent) else ''),
                     role='assistant'
                 )
-                # todo: finish reason
             )
         ],
         created=int(time.time()),
