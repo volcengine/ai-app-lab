@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "search": {
-      "url": "http://10.37.40.225:7001/sse"
+      "url": "http://localhost:7001/sse"
     },
     "code": {
-      "url":"http://10.37.40.225:7003/sse"
+      "url":"https://localhost:7003/sse"
     }
   }
 }

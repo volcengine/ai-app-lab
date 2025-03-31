@@ -9,15 +9,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
+import time
 from typing import Optional, Any, Union, List
 
 from volcenginesdkarkruntime.types.bot_chat import BotChatCompletion
 from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
+from volcenginesdkarkruntime.types.chat.chat_completion_chunk import Choice, ChoiceDelta
 
+from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatRequest
 from arkitect.utils.context import get_reqid
 from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent, WebSearchToolCallEvent, \
     WebSearchToolCompletedEvent, PythonExecutorToolCompletedEvent, PythonExecutorToolCallEvent, \
-    LinkReaderToolCompletedEvent, LinkReaderToolCallEvent
+    LinkReaderToolCompletedEvent, LinkReaderToolCallEvent, OutputTextEvent, ReasoningEvent, PlanningEvent, ErrorEvent
 
 
 def convert_pre_tool_call_to_event(
@@ -135,3 +138,45 @@ def convert_references_to_format_str(refs: List[Reference]) -> str:
 def convert_event_to_sse_response(event: BaseEvent) -> str:
     event.id = get_reqid()
     return f"data: {event.model_dump_json(exclude_none=True)}\n\n"
+
+
+def convert_event_to_bot_chunk(event: BaseEvent, ark_request: ArkChatRequest) -> ArkChatCompletionChunk:
+    # for error, we can just raise and let error handler to handle it.
+    if isinstance(event, ErrorEvent):
+        raise event.api_exception
+
+    # build base chunk
+    chunk = ArkChatCompletionChunk(
+        id=event.id,
+        choices=[
+            Choice(
+                index=0,
+                delta=ChoiceDelta(
+                    content=(event.delta if isinstance(event, OutputTextEvent) else ''),
+                    reasoning_content=(event.delta if isinstance(event, ReasoningEvent) else ''),
+                    role='assistant'
+                )
+                # todo: finish reason
+            )
+        ],
+        created=int(time.time()),
+        model=ark_request.model,
+        usage=event.usage if isinstance(event, PlanningEvent) else None,
+        object="chat.completion.chunk",
+    )
+
+    # build metadata
+    metadata = {}
+    if ark_request.metadata:
+        metadata.update(ark_request.metadata)
+    metadata.update({
+        'session_id': event.session_id,
+    })
+    # only dump the non-text events
+    if not isinstance(event, (OutputTextEvent, ReasoningEvent)):
+        metadata.update({
+            'event': event.model_dump_json(exclude_none=True, exclude={'id', 'session_id'})
+        })
+    chunk.metadata = metadata
+
+    return chunk

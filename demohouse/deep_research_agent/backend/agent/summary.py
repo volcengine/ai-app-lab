@@ -16,14 +16,16 @@ from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
 from agent.agent import Agent
 from arkitect.core.component.context.context import Context
+from arkitect.core.errors import InternalServiceError
 from arkitect.types.llm.model import ArkChatParameters
-from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, InternalServiceError
+from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
 from models.planning import Planning
-from prompt.summary import get_summary_prompt
+from prompt.summary import DEFAULT_SUMMARY_PROMPT
 from state.global_state import GlobalState
 
 
 class Summary(Agent):
+    prompt: str = DEFAULT_SUMMARY_PROMPT
 
     async def astream(self, global_state: GlobalState, **kwargs) -> AsyncIterable[BaseEvent]:
         ctx = Context(
@@ -52,13 +54,11 @@ class Summary(Agent):
                     yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
             return
         except Exception as e:
-            yield InternalServiceError(error_msg=str(e))
+            yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
             return
 
     async def generate_system_prompt(self, planning: Planning) -> str:
-        # this prompt can by dynamic load
-        prompt = await get_summary_prompt()
-        return Template(prompt).render(
+        return Template(self.prompt).render(
             instruction=self.instruction,
             complex_task=planning.root_task,
             planning_detail=planning.to_markdown_str(include_progress=False),

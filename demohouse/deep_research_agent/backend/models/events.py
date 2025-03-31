@@ -12,7 +12,9 @@ from typing import List, Dict, Literal, Optional
 
 from pydantic import BaseModel
 from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
+from volcenginesdkarkruntime.types.completion_usage import CompletionUsage
 
+from arkitect.core.errors import APIException
 from arkitect.types.runtime.model import Response
 from models.planning import Planning, PlanningItem
 
@@ -33,18 +35,7 @@ Errors
 
 
 class ErrorEvent(BaseEvent):
-    error_code: str = ""
-    error_msg: str = ""
-
-
-class InvalidParameter(ErrorEvent):
-    parameter: str = ""
-    error_code: str = "InvalidParameter"
-    error_msg: str = "the specific parameter is invalid"
-
-
-class InternalServiceError(ErrorEvent):
-    error_code: str = "InternalServiceError"
+    api_exception: APIException
 
 
 """
@@ -158,7 +149,7 @@ class PlanningEvent(BaseEvent):
     type: str = 'planning'
     action: Literal['made', 'load', 'update', 'done']
     planning: Planning
-    formatted_str: Optional[str] = ''
+    usage: Optional[CompletionUsage] = None
 
 
 class AssignTodoEvent(BaseEvent):

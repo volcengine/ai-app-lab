@@ -13,3 +13,9 @@ import os
 MCP_CONFIG_FILE_PATH = os.environ.get('DEEP_RESEARCH_MCP_CONFIG_FILE_PATH') or './mcp_servers_config.json'
 
 SESSION_SAVE_PATH = os.environ.get('SESSION_SAVE_PATH') or '/tmp/deep_research_session/'
+
+WORKER_LLM_MODEL = os.environ.get('WORKER_LLM_MODEL') or 'deepseek-r1-250120'
+
+SUPERVISOR_LLM_MODEL = os.environ.get('SUPERVISOR_LLM_MODEL') or 'deepseek-r1-250120'
+
+SUMMARY_LLM_MODEL = os.environ.get('SUMMARY_LLM_MODEL') or 'deepseek-r1-250120'

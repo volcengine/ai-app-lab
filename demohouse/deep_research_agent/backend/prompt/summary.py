@@ -9,9 +9,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-async def get_summary_prompt() -> str:
-    return DEFAULT_SUMMARY_PROMPT
-
 
 DEFAULT_SUMMARY_PROMPT = """
 用户提供了一个复杂问题：

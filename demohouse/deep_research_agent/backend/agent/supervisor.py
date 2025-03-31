@@ -8,24 +8,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import traceback
 from typing import AsyncIterable, Dict, Any, Optional
 
 from jinja2 import Template
+from openai import InternalServerError
 from pydantic import BaseModel
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
+from volcenginesdkarkruntime.types.completion_usage import CompletionUsage, CompletionTokensDetails
 
-from arkitect.core.component.context.context import Context, ToolChunk
+from arkitect.core.component.context.context import Context
 from arkitect.core.component.context.hooks import PostToolCallHook, HookInterruptException
-from arkitect.core.component.context.model import State, ContextInterruption
-from arkitect.telemetry.logger import INFO
+from arkitect.core.component.context.model import State
+from arkitect.core.errors import InvalidParameter
 from agent.agent import Agent
 from agent.worker import Worker
+from arkitect.telemetry.logger import ERROR
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
-from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, InvalidParameter, PlanningEvent
+from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, PlanningEvent, ErrorEvent
 from models.planning import PlanningItem, Planning
-from prompt.planning import DEFAULT_PLANNING_MAKE_PROMPT, DEFAULT_PLANNING_UPDATE_PROMPT, get_planning_make_prompt
+from prompt.planning import DEFAULT_PLANNING_MAKE_PROMPT, DEFAULT_PLANNING_UPDATE_PROMPT
 from state.deep_research_state import DeepResearchState, DeepResearchStateManager
 from state.global_state import GlobalState
 from utils.planning_holder import PlanningHolder
@@ -70,6 +73,7 @@ class AcceptAgentResponse(BaseModel):
 class Supervisor(Agent):
     workers: Dict[str, Worker] = {}
     planning_update_prompt: str = DEFAULT_PLANNING_UPDATE_PROMPT
+    planning_make_prompt: str = DEFAULT_PLANNING_MAKE_PROMPT
     dynamic_planning: bool = False  # enable the dynamic planning ability
     max_plannings: int = 10,
     _control_hook: SupervisorControlHook = SupervisorControlHook()
@@ -93,9 +97,11 @@ class Supervisor(Agent):
             async for chunk in self._make_planning(global_state):
                 yield chunk
 
-            yield PlanningEvent(action='made',
-                                planning=planning,
-                                formatted_str=planning.to_dashboard())
+            yield PlanningEvent(
+                action='made',
+                planning=planning,
+                usage=self._to_completion_usage(global_state)
+            )
             if self.state_manager:
                 await self.state_manager.dump(global_state.custom_state)
 
@@ -108,16 +114,22 @@ class Supervisor(Agent):
             )
 
             if next_todo.assign_agent not in self.workers.keys():
-                yield InvalidParameter(parameter="next_agent")
+                yield ErrorEvent(api_exception=InvalidParameter(parameter="next_agent"))
                 return
 
             # 3. run agent
             worker = self.workers.get(next_todo.assign_agent)
-            async for worker_chunk in worker.astream(
-                    global_state=global_state,
-                    task_id=next_todo.id,
-            ):
-                yield worker_chunk
+            try:
+                async for worker_chunk in worker.astream(
+                        global_state=global_state,
+                        task_id=next_todo.id,
+                ):
+                    yield worker_chunk
+            except Exception as e:
+                ERROR(f"run worker error: {e}")
+                traceback.print_exc()
+                yield ErrorEvent(api_exception=InternalServerError(message=str(e)))
+                return
 
             # 4. update planning (if it needs)
             if self.dynamic_planning:
@@ -140,7 +152,7 @@ class Supervisor(Agent):
             yield PlanningEvent(
                 action='update',
                 planning=planning,
-                formatted_str=planning.to_dashboard(),
+                usage=self._to_completion_usage(global_state)
             )
 
     @task()
@@ -225,8 +237,7 @@ class Supervisor(Agent):
 
     async def _prepare_make_planning_prompt(self, root_task: str) -> str:
         # this prompt can be dynamic load.
-        prompt = await get_planning_make_prompt()
-        return Template(prompt).render(
+        return Template(self.planning_make_prompt).render(
             complex_task=root_task,
             worker_details=self._format_agent_desc(),
             max_plannings=self.max_plannings,
@@ -250,6 +261,20 @@ class Supervisor(Agent):
         for worker in self.workers.values():
             descs.append(f"成员name: {worker.name}  成员能力: {worker.instruction}")
         return "\n".join(descs)
+
+    def _to_completion_usage(self, global_state: GlobalState) -> Optional[CompletionUsage]:
+        if isinstance(global_state.custom_state, DeepResearchState):
+            if global_state.custom_state.total_usage:
+                return CompletionUsage(
+                    prompt_tokens=global_state.custom_state.total_usage.prompt_tokens,
+                    completion_tokens=global_state.custom_state.total_usage.completion_tokens,
+                    total_tokens=(
+                            global_state.custom_state.total_usage.prompt_tokens + global_state.custom_state.total_usage.completion_tokens),
+                    completion_tokens_details=CompletionTokensDetails(
+                        reasoning_tokens=global_state.custom_state.total_usage.reasoning_tokens,
+                    )
+                )
+        return None
 
 
 if __name__ == "__main__":

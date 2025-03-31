@@ -15,13 +15,15 @@ from typing import AsyncIterable, Tuple, Callable, Dict, AsyncIterator, Any
 from agent.worker import Worker
 from arkitect.core.component.tool import MCPClient
 from arkitect.core.component.tool.builder import build_mcp_clients_from_config
+from arkitect.core.errors import ResourceNotFound, InternalServiceError, InvalidParameter, MissingParameter
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.logger import INFO, ERROR
 from arkitect.telemetry.trace import task, TraceConfig
 from arkitect.utils.context import get_reqid
-from config.config import MCP_CONFIG_FILE_PATH, SESSION_SAVE_PATH
+from config.config import MCP_CONFIG_FILE_PATH, SESSION_SAVE_PATH, WORKER_LLM_MODEL, SUPERVISOR_LLM_MODEL, \
+    SUMMARY_LLM_MODEL
 from deep_research.deep_research import DeepResearch
-from models.events import BaseEvent, InternalServiceError, InvalidParameter
+from models.events import BaseEvent, ErrorEvent
 from models.request import CreateSessionRequest, RunSessionRequest, DeepResearchRequest
 from state.deep_research_state import DeepResearchStateManager, DeepResearchState
 from state.file_state_manager import FileStateManager
@@ -39,9 +41,16 @@ async def _run_deep_research(
 
     dr_state = await state_manager.load()
 
+    if not dr_state:
+        yield ErrorEvent(api_exception=ResourceNotFound(
+            resource_type="session",
+        ))
+        return
+
     try:
         dr = DeepResearch(
-            default_llm_model='deepseek-r1-250120',
+            supervisor_llm_model=SUPERVISOR_LLM_MODEL,
+            summary_llm_model=SUMMARY_LLM_MODEL,
             workers=get_workers(GlobalState(custom_state=dr_state), mcp_clients),
             dynamic_planning=False,
             max_planning_items=5,
@@ -54,6 +63,7 @@ async def _run_deep_research(
             yield event
     except BaseException as e:
         ERROR(str(e))
+        yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
     finally:
         await clean_up()
 
@@ -72,6 +82,7 @@ async def create_session(request: DeepResearchRequest) -> str:
     return session_id
 
 
+@task()
 async def run_session(session_id: str) -> AsyncIterable[BaseEvent]:
     state_manager = FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json")
 
@@ -84,13 +95,13 @@ async def run_session(session_id: str) -> AsyncIterable[BaseEvent]:
             yield event
     except Exception as e:
         ERROR(str(e))
-        yield InternalServiceError()
+        yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
 
 
 def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
     return {
         'searcher': Worker(
-            llm_model='deepseek-r1-250120', name='searcher',
+            llm_model=WORKER_LLM_MODEL, name='searcher',
             instruction='联网搜索公域资料，读取网页内容',
             tools=[
                 mcp_clients.get('search')
@@ -98,7 +109,7 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
             post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state)
         ),
         'coder': Worker(
-            llm_model='deepseek-r1-250120', name='coder',
+            llm_model=WORKER_LLM_MODEL, name='coder',
             instruction='编写和运行python代码',
             tools=[
                 mcp_clients.get('code')
@@ -109,11 +120,13 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
 
 
 @task()
-async def main(
+async def event_handler(
         request: DeepResearchRequest
 ) -> AsyncIterable[BaseEvent]:
+    if not request.stream:
+        yield ErrorEvent(api_exception=InvalidParameter(parameter='stream', cause="request.stream should be true"))
     if not request.session_id and not request.root_task:
-        yield InvalidParameter(parameter="root_task")
+        yield ErrorEvent(api_exception=MissingParameter(parameter='root_task'))
         return
     # create session
     if not request.session_id and request.root_task:
@@ -128,6 +141,14 @@ async def main(
             yield event
 
 
+async def main(
+        request: DeepResearchRequest
+) -> AsyncIterable[BaseEvent]:
+    async for event in event_handler(request):
+        yield event
+
+
+# this will run server in raw-event mode
 if __name__ == "__main__":
     port = os.getenv("_FAAS_RUNTIME_PORT")
     launch_serve(

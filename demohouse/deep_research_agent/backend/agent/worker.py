@@ -8,7 +8,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import traceback
 from typing import AsyncIterable, List, Optional
 
 from jinja2 import Template
@@ -17,14 +17,12 @@ from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 from agent.agent import Agent
 from arkitect.core.component.context.context import Context, ToolChunk
 from arkitect.core.component.context.hooks import PostToolCallHook
-from arkitect.core.component.tool.builder import build_mcp_clients_from_config
+from arkitect.core.errors import InvalidParameter, InternalServiceError
 from arkitect.types.llm.model import ArkChatParameters
-from config.config import MCP_CONFIG_FILE_PATH
 
-from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, InternalServiceError, InvalidParameter
+from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
 from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
-from state.deep_research_state import DeepResearchState
 from state.global_state import GlobalState
 from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
 
@@ -46,7 +44,7 @@ class Worker(Agent):
         task_id = kwargs.pop('task_id')
 
         if not planning or not task_id or not planning.get_item(task_id):
-            yield InvalidParameter(paramter="task_id")
+            yield ErrorEvent(api_exception=InvalidParameter(parameter="task_id"))
 
         planning_item = planning.get_item(task_id)
 
@@ -63,7 +61,7 @@ class Worker(Agent):
 
         rsp_stream = await ctx.completions.create_chat_stream(
             messages=[
-                {"role": "system",
+                {"role": "user",
                  "content": self.generate_system_prompt(planning=planning, planning_item=planning_item)},
             ],
         )
@@ -99,7 +97,7 @@ class Worker(Agent):
             # end the loop
             return
         except Exception as e:
-            yield InternalServiceError(error_msg=str(e))
+            yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
             return
 
     def generate_system_prompt(self, planning: Planning, planning_item: PlanningItem) -> str:

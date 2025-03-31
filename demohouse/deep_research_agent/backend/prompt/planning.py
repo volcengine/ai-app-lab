@@ -9,13 +9,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.utils.context import get_account_id, get_user_id
-
-
-async def get_planning_make_prompt() -> str:
-    return DEFAULT_PLANNING_MAKE_PROMPT
-
-
 DEFAULT_PLANNING_MAKE_PROMPT = """
 你是一个任务规划专家，善于将复杂的问题拆解成详细的，可独立执行的任务列表，并为每个任务分配一个团队成员执行
 

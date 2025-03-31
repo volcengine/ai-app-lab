@@ -11,6 +11,8 @@
 
 from typing import AsyncIterable, Optional
 
+from volcenginesdkarkruntime.types.completion_usage import CompletionTokensDetails
+
 from agent.summary import Summary
 
 from agent.worker import Worker
@@ -22,7 +24,8 @@ from tools.mock import add, compare
 
 
 class DeepResearch(BaseModel):
-    default_llm_model: str = ''
+    supervisor_llm_model: str = ''
+    summary_llm_model: str = ''
     workers: Dict[str, Worker] = {}
     dynamic_planning: bool = False
     max_planning_items: int = 10
@@ -43,12 +46,11 @@ class DeepResearch(BaseModel):
 
         if dr_state.planning and dr_state.planning.items:
             # load from session, yield a load chunk
-            yield PlanningEvent(action='load', planning=dr_state.planning,
-                                formatted_str=dr_state.planning.to_dashboard())
+            yield PlanningEvent(action='load', planning=dr_state.planning)
 
         # 1. run with supervisor
         supervisor = Supervisor(
-            llm_model=self.default_llm_model,
+            llm_model=self.supervisor_llm_model,
             workers=self.workers,
             dynamic_planning=self.dynamic_planning,
             max_plannings=self.max_planning_items,
@@ -65,12 +67,19 @@ class DeepResearch(BaseModel):
             yield PlanningEvent(
                 action='done',
                 planning=dr_state.planning,
-                formatted_str=dr_state.planning.to_dashboard(),
+                usage=CompletionUsage(
+                    prompt_tokens=dr_state.total_usage.prompt_tokens,
+                    completion_tokens=dr_state.total_usage.completion_tokens,
+                    total_tokens=(dr_state.total_usage.prompt_tokens + dr_state.total_usage.completion_tokens),
+                    completion_tokens_details=CompletionTokensDetails(
+                        reasoning_tokens=dr_state.total_usage.reasoning_tokens,
+                    )
+                )
             )
 
         # if planning finished, run an agent to summary
         answer = Summary(
-            llm_model=self.default_llm_model
+            llm_model=self.summary_llm_model
         )
         async for event in answer.astream(
                 global_state=global_state
