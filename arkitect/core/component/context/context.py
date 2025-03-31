@@ -357,6 +357,13 @@ class _AsyncCompletions:
                     tool_exception=exceptions,
                     tool_response=resp,
                 )
+                self._ctx.state.messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tool_call.get("id", ""),
+                        "content": resp,
+                    }
+                )
                 if self._ctx.post_tool_call_hook:
                     self._ctx.state = (
                         await self._ctx.post_tool_call_hook.post_tool_call(
@@ -367,13 +374,6 @@ class _AsyncCompletions:
                             state=self._ctx.state,
                         )
                     )
-                self._ctx.state.messages.append(
-                    {
-                        "role": "tool",
-                        "tool_call_id": tool_call.get("id", ""),
-                        "content": resp,
-                    }
-                )
 
         return tool_call_events()
 
