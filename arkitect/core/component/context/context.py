@@ -185,19 +185,20 @@ class _AsyncCompletions:
                             details=he.details,
                         )
                         break
-                    for llm_hook in self._ctx.pre_llm_call_hooks:
-                        try:
-                            self._ctx.state = await llm_hook.pre_llm_call(
+                    try:
+                        self._ctx.state = (
+                            await self._ctx.pre_llm_call_hook.pre_llm_call(
                                 self._ctx.state
                             )
-                        except HookInterruptException as he:
-                            yield ContextInterruption(
-                                life_cycle="llm_call",
-                                reason=he.reason,
-                                state=self._ctx.state,
-                                details=he.details,
-                            )
-                            return
+                        )
+                    except HookInterruptException as he:
+                        yield ContextInterruption(
+                            life_cycle="llm_call",
+                            reason=he.reason,
+                            state=self._ctx.state,
+                            details=he.details,
+                        )
+                        return
                     resp = (
                         await self._ctx.chat.completions.create(
                             model=self.model,
