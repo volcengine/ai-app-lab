@@ -72,6 +72,7 @@ async def _run_deep_research(
 async def create_session(request: DeepResearchRequest) -> str:
     dr_state = DeepResearchState(
         root_task=request.root_task,
+        enabled_mcp_servers=request.enabled_mcp_servers,
     )
     session_id = uuid.uuid4().hex
 
@@ -99,24 +100,52 @@ async def run_session(session_id: str) -> AsyncIterable[BaseEvent]:
 
 
 def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
-    return {
-        'searcher': Worker(
-            llm_model=WORKER_LLM_MODEL, name='searcher',
-            instruction='联网搜索公域资料，读取网页内容',
-            tools=[
-                mcp_clients.get('search')
-            ],
-            post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state)
-        ),
-        'coder': Worker(
-            llm_model=WORKER_LLM_MODEL, name='coder',
-            instruction='编写和运行python代码',
-            tools=[
-                mcp_clients.get('code')
-            ],
-            post_tool_call_hook=PythonExecutorPostToolCallHook()
-        ),
-    }
+    workers = {}
+
+    searcher = Worker(
+        llm_model=WORKER_LLM_MODEL, name='searcher',
+        instruction='联网搜索公域资料，读取网页或链接内容',
+        tools=[
+            mcp_clients.get('web_search'), mcp_clients.get('link_reader')
+        ],
+        post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state)
+    )
+
+    coder = Worker(
+        llm_model=WORKER_LLM_MODEL, name='coder',
+        instruction='编写和运行python代码',
+        tools=[
+            mcp_clients.get('code')
+        ],
+        post_tool_call_hook=PythonExecutorPostToolCallHook()
+    )
+
+    knowledgebase_retriever = Worker(
+        llm_model=WORKER_LLM_MODEL, name='knowledgebase_retriever',
+        instruction='查询私域知识库信息',
+        tools=[
+            mcp_clients.get('knowledgebase')
+        ],
+    )
+
+    if global_state.custom_state.enabled_mcp_server:
+        # add dynamic mask
+        if ('web_search' in global_state.custom_state.enabled_mcp_server
+                or 'link_reader' in global_state.custom_state.enabled_mcp_server):
+            global_state.custom_state.enabled_mcp_server.append('')
+            workers.update({'searcher': searcher})
+        if 'python_executor' in global_state.custom_state.enabled_mcp_server:
+            workers.update({'coder': coder})
+        if 'knowledge_base' in global_state.custom_state.enabled_mcp_server:
+            workers.update({'knowledgebase_retriever': knowledgebase_retriever})
+        return workers
+    else:
+        # no mask
+        return {
+            'searcher': searcher,
+            'coder': coder,
+            'knowledgebase_retriever': knowledgebase_retriever,
+        }
 
 
 @task()

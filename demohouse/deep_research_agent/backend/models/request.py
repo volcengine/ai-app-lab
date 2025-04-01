@@ -8,7 +8,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
 
@@ -27,3 +27,4 @@ class DeepResearchRequest(Request):
     stream: bool = True  # must be true
     root_task: str = ''
     session_id: Optional[str] = None
+    enabled_mcp_servers: Optional[List[str]] = None

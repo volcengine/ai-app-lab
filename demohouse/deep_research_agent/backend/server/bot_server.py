@@ -9,7 +9,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-from typing import AsyncIterable
+from typing import AsyncIterable, List, Dict
 
 from arkitect.core.errors import MissingParameter
 from arkitect.launcher.local.serve import launch_serve
@@ -23,12 +23,25 @@ from utils.message import get_last_message
 from utils.converter import convert_event_to_bot_chunk
 
 
+def extract_enabled_mcp_servers(mcp_servers: Dict[str, Dict]) -> List[str]:
+    enabled = []
+    for k, v in mcp_servers.items():
+        if not v.get("disable", False):
+            enabled.append(k)
+    return enabled
+
+
 @task()
 async def main(
         request: ArkChatRequest,
 ) -> AsyncIterable[ArkChatCompletionChunk]:
     query = get_last_message(request.messages, "user")
     session_id = (request.metadata or {}).get("session_id", "")
+    enabled_mcp_servers = []
+    mcp_servers = (request.metadata or {}).get("mcp_servers", {})
+    if mcp_servers:
+        enabled_mcp_servers = extract_enabled_mcp_servers(mcp_servers)
+
     if not query and not session_id:
         raise MissingParameter(parameter="messages")
 
@@ -37,6 +50,7 @@ async def main(
                 stream=request.stream,
                 root_task=query.content,
                 session_id=session_id,
+                enabled_mcp_servers=enabled_mcp_servers,
             )
     ):
         yield convert_event_to_bot_chunk(event, request)

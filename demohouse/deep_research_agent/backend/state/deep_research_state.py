@@ -28,6 +28,8 @@ class DeepResearchState(BaseModel):
     references: List[Reference] = []
     # token usages
     total_usage: TotalUsage = Field(default_factory=TotalUsage)
+    # dynamic mask for mcp servers
+    enabled_mcp_servers: List[str] = []
 
     class Config:
         """Configuration for this pydantic object."""
