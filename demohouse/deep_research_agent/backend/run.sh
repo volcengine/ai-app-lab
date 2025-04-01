@@ -9,4 +9,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#!/bin/bash
+set -x
+# shellcheck disable=SC2046
+cd `dirname $0`
+export PYTHONPATH=./site-packages
+export PATH=$PATH:/opt/bytefaas/site-packages/bin/
+
+supervisord -c supervisord.conf
+supervisorctl update
+
 python -m server.bot_server

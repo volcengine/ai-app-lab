@@ -9,7 +9,14 @@ readme = "README.md"
 python = ">=3.10, <4.0"
 arkitect = { path="../../../../ai-app-lab",  develop=true }
 mcp = "^1.4.1"
+mcp_server_ark = { path = "mcp_server_ark-0.1.0-py3-none-any.whl" } 
+mcp_server_tls = { path = "mcp_server_tls-0.1.0-py3-none-any.whl" } 
+supervisor = "^4.2.5"
 
+
+
+[tool.poetry.group.dev.dependencies]
+poetry-plugin-export = "^1.9.0"
 
 [build-system]
 requires = ["poetry-core"]
