@@ -8,6 +8,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -22,6 +23,25 @@ class PlanningHolder(BaseModel):
         """Configuration for this pydantic object."""
 
         arbitrary_types_allowed = True
+
+    async def save_tasks(self, task_descriptions: List[str], worker_names: List[str]) -> str:
+        """调用此函数保存计划任务，按顺序传入任务描述和要分配给的团队成员
+            Args:
+                task_descriptions(List[str]): 任务描述列表
+                worker_names(List[str]): 要分配给的团队成员列表（和任务描述列表的顺序对齐）
+        """
+        next_task_id = 1
+        for task_description, worker_name in zip(task_descriptions, worker_names):
+            if len(self.planning.items) > self.max_plannings:
+                return "保存成功，已经达到任务数量上限"
+            self.planning.items.append(PlanningItem(
+                id=str(next_task_id),
+                description=task_description,
+                assign_agent=worker_name,
+            ))
+            next_task_id += 1
+
+        return "保存成功"
 
     async def add_task(self, task_description: str, worker_name: str) -> str:
         """当你要向计划中添加一个任务的时候，调用此函数

@@ -25,6 +25,7 @@ from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
 from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
 from state.global_state import GlobalState
+from utils.common import get_env_info
 from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
 
 
@@ -109,4 +110,5 @@ class Worker(Agent):
             planning_detail=planning.to_dashboard(),
             task_id=str(planning_item.id),
             task_description=planning_item.description,
+            env_info=get_env_info(),
         )

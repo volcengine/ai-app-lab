@@ -16,6 +16,10 @@ DEFAULT_WORKER_PROMPT = """
 
 {{planning_detail}}
 
+环境信息：
+
+{{env_info}}
+
 目前你需要执行计划列表中的第{{task_id}}项任务，即：
 
 {{task_description}}

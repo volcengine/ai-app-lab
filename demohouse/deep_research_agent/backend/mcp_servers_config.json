@@ -3,6 +3,9 @@
     "search": {
       "url": "http://localhost:7001/sse"
     },
+    "code": {
+      "url": "http://localhost:7002/sse"
+    },
     "tls": {
       "url": "http://localhost:7003/sse"
     },

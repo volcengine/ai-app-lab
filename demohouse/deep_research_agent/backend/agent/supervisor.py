@@ -30,6 +30,7 @@ from models.planning import PlanningItem, Planning
 from prompt.planning import DEFAULT_PLANNING_MAKE_PROMPT, DEFAULT_PLANNING_UPDATE_PROMPT
 from state.deep_research_state import DeepResearchState, DeepResearchStateManager
 from state.global_state import GlobalState
+from utils.common import get_env_info
 from utils.planning_holder import PlanningHolder
 from tools.mock import add, compare
 
@@ -165,7 +166,7 @@ class Supervisor(Agent):
         )
         ctx = Context(
             model=self.llm_model,
-            tools=[planning_holder.add_task],
+            tools=[planning_holder.save_tasks],
             parameters=ArkChatParameters(
                 stream_options={'include_usage': True}
             )
@@ -240,6 +241,7 @@ class Supervisor(Agent):
             complex_task=root_task,
             worker_details=self._format_agent_desc(),
             max_plannings=self.max_plannings,
+            env_info=get_env_info(),
         )
 
     def _prepare_update_planning_prompt(self, planning: Planning,

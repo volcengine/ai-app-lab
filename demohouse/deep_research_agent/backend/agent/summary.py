@@ -19,7 +19,7 @@ from arkitect.core.component.context.context import Context
 from arkitect.core.errors import InternalServiceError
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
-from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent, ReferencesEvent
+from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
 from prompt.summary import DEFAULT_SUMMARY_PROMPT
 from state.deep_research_state import DeepResearchState
 from state.global_state import GlobalState

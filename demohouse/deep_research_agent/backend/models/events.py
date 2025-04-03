@@ -141,6 +141,23 @@ class PythonExecutorToolCompletedEvent(ToolCompletedEvent):
 
 
 """
+for knowledge base
+"""
+
+
+class KnowledgeBaseSearchToolCallEvent(ToolCallEvent):
+    type: str = "knowledge_base_search"
+    query: str = ""
+    limit: int = 3
+    collection_name: str = ""
+
+
+class KnowledgeBaseSearchToolCompletedEvent(ToolCompletedEvent):
+    type: str = "knowledge_base_search"
+    references: List[Reference] = []  # for each url
+
+
+"""
 Custom Events
 """
 

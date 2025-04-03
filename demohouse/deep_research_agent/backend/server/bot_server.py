@@ -13,7 +13,6 @@ from typing import AsyncIterable, List, Dict
 
 from arkitect.core.errors import MissingParameter
 from arkitect.launcher.local.serve import launch_serve
-from arkitect.telemetry.logger import INFO, ERROR
 from arkitect.telemetry.trace import task, TraceConfig
 from arkitect.types.llm.model import ArkChatRequest, ArkChatCompletionChunk
 from models.request import DeepResearchRequest
@@ -39,6 +38,7 @@ async def main(
     session_id = (request.metadata or {}).get("session_id", "")
     enabled_mcp_servers = []
     mcp_servers = (request.metadata or {}).get("mcp_servers", {})
+    max_plannings = (request.metadata or {}).get("max_plannings", 5)
     if mcp_servers:
         enabled_mcp_servers = extract_enabled_mcp_servers(mcp_servers)
 
@@ -51,6 +51,7 @@ async def main(
                 root_task=query.content,
                 session_id=session_id,
                 enabled_mcp_servers=enabled_mcp_servers,
+                max_plannings=max_plannings,
             )
     ):
         yield convert_event_to_bot_chunk(event, request)

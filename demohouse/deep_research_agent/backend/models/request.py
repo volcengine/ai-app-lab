@@ -28,3 +28,4 @@ class DeepResearchRequest(Request):
     root_task: str = ''
     session_id: Optional[str] = None
     enabled_mcp_servers: Optional[List[str]] = None
+    max_plannings: int = 5

@@ -17,7 +17,7 @@ from arkitect.core.component.context.hooks import PostToolCallHook
 from arkitect.core.component.context.model import State
 from state.global_state import GlobalState
 from utils.converter import convert_bot_search_result_to_event, convert_python_execute_result_to_event, \
-    convert_references_to_format_str, convert_link_reader_result_to_event
+    convert_references_to_format_str, convert_link_reader_result_to_event, convert_knowledge_base_result_to_event
 
 
 class SearcherPostToolCallHook(BaseModel, PostToolCallHook):
@@ -34,6 +34,7 @@ class SearcherPostToolCallHook(BaseModel, PostToolCallHook):
             return await self._web_search_post_tool_call(arguments, response, exception, state)
         elif name == 'link_reader':
             return await self._link_reader_post_tool_call(arguments, response, exception, state)
+        return state
 
     async def _web_search_post_tool_call(self, arguments: str, response: Any, exception: Optional[Exception],
                                          state: State) -> State:
@@ -81,6 +82,29 @@ class SearcherPostToolCallHook(BaseModel, PostToolCallHook):
             state.messages[-1].update({
                 'content': "\n".join(texts)
             })
+
+        return state
+
+
+class KnowledgeBasePostToolCallHook(BaseModel, PostToolCallHook):
+    global_state: GlobalState
+
+    class Config:
+        """Configuration for this pydantic object."""
+
+        arbitrary_types_allowed = True
+
+    async def post_tool_call(self, name: str, arguments: str, response: Any, exception: Optional[Exception],
+                             state: State) -> State:
+        if name == 'search_knowledge':
+            event = convert_knowledge_base_result_to_event(arguments, json.dumps(response))
+            if event:
+                texts = ['检索到以下内容：']
+                for ref in event.references:
+                    texts.append(f"- [文件名：{ref.doc_name}](分块名：{ref.chunk_title})")
+                    texts.append(f"\n{ref.summary}")
+                state.messages[-1]['content'] = '\n'.join(texts)
+                self.global_state.custom_state.references += event.references
 
         return state
 

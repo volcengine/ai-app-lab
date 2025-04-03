@@ -20,6 +20,8 @@ from models.usage import TotalUsage
 
 
 class DeepResearchState(BaseModel):
+    # session_id
+    session_id: str = ''
     # root task
     root_task: str = ''
     # global planning

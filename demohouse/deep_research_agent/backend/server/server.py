@@ -28,11 +28,12 @@ from models.request import CreateSessionRequest, RunSessionRequest, DeepResearch
 from state.deep_research_state import DeepResearchStateManager, DeepResearchState
 from state.file_state_manager import FileStateManager
 from state.global_state import GlobalState
-from tools.hooks import PythonExecutorPostToolCallHook, SearcherPostToolCallHook
+from tools.hooks import PythonExecutorPostToolCallHook, SearcherPostToolCallHook, KnowledgeBasePostToolCallHook
 
 
 async def _run_deep_research(
         state_manager: DeepResearchStateManager,
+        max_plannings: int
 ) -> AsyncIterable[BaseEvent]:
     # init mcp client
     mcp_clients, clean_up = build_mcp_clients_from_config(
@@ -53,7 +54,7 @@ async def _run_deep_research(
             summary_llm_model=SUMMARY_LLM_MODEL,
             workers=get_workers(GlobalState(custom_state=dr_state), mcp_clients),
             dynamic_planning=False,
-            max_planning_items=5,
+            max_planning_items=max_plannings,
             state_manager=state_manager,
         )
 
@@ -70,11 +71,13 @@ async def _run_deep_research(
 
 @task()
 async def create_session(request: DeepResearchRequest) -> str:
+    session_id = uuid.uuid4().hex
+
     dr_state = DeepResearchState(
         root_task=request.root_task,
+        session_id=session_id,
         enabled_mcp_servers=request.enabled_mcp_servers,
     )
-    session_id = uuid.uuid4().hex
 
     await FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json").dump(
         dr_state
@@ -84,12 +87,13 @@ async def create_session(request: DeepResearchRequest) -> str:
 
 
 @task()
-async def run_session(session_id: str) -> AsyncIterable[BaseEvent]:
+async def run_session(session_id: str, max_plannings: int) -> AsyncIterable[BaseEvent]:
     state_manager = FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json")
 
     try:
         async for event in _run_deep_research(
                 state_manager=state_manager,
+                max_plannings=max_plannings,
         ):
             event.session_id = session_id
             event.id = get_reqid()
@@ -106,7 +110,7 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
         llm_model=WORKER_LLM_MODEL, name='searcher',
         instruction='联网搜索公域资料，读取网页或链接内容',
         tools=[
-            mcp_clients.get('web_search'), mcp_clients.get('link_reader')
+            mcp_clients.get('search')
         ],
         post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state)
     )
@@ -120,30 +124,42 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
         post_tool_call_hook=PythonExecutorPostToolCallHook()
     )
 
+    log_retriever = Worker(
+        llm_model=WORKER_LLM_MODEL, name='log_retriever',
+        instruction='查询日志信息',
+        tools=[
+            mcp_clients.get('tls')
+        ]
+    )
+
     knowledgebase_retriever = Worker(
         llm_model=WORKER_LLM_MODEL, name='knowledgebase_retriever',
         instruction='查询私域知识库信息',
         tools=[
             mcp_clients.get('knowledgebase')
         ],
+        post_tool_call_hook=KnowledgeBasePostToolCallHook(global_state=global_state)
     )
 
-    if global_state.custom_state.enabled_mcp_server:
+    if global_state.custom_state.enabled_mcp_servers:
         # add dynamic mask
-        if ('web_search' in global_state.custom_state.enabled_mcp_server
-                or 'link_reader' in global_state.custom_state.enabled_mcp_server):
-            global_state.custom_state.enabled_mcp_server.append('')
+        if ('web_search' in global_state.custom_state.enabled_mcp_servers
+                or 'link_reader' in global_state.custom_state.enabled_mcp_servers):
             workers.update({'searcher': searcher})
-        if 'python_executor' in global_state.custom_state.enabled_mcp_server:
+        if 'code' in global_state.custom_state.enabled_mcp_servers:
             workers.update({'coder': coder})
-        if 'knowledge_base' in global_state.custom_state.enabled_mcp_server:
+        if 'tls' in global_state.custom_state.enabled_mcp_servers:
+            workers.update({'log_retriever': log_retriever})
+        if 'knowledgebase' in global_state.custom_state.enabled_mcp_servers:
             workers.update({'knowledgebase_retriever': knowledgebase_retriever})
+
         return workers
     else:
         # no mask
         return {
             'searcher': searcher,
             'coder': coder,
+            'log_retriever': log_retriever,
             'knowledgebase_retriever': knowledgebase_retriever,
         }
 
@@ -166,7 +182,7 @@ async def event_handler(
     if request.session_id:
         session_id = request.session_id
         INFO(f"start run session {session_id}")
-        async for event in run_session(session_id):
+        async for event in run_session(session_id, request.max_plannings):
             yield event
 
 

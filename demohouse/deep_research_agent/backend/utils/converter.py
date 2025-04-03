@@ -21,7 +21,7 @@ from arkitect.utils.context import get_reqid
 from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent, WebSearchToolCallEvent, \
     WebSearchToolCompletedEvent, PythonExecutorToolCompletedEvent, PythonExecutorToolCallEvent, \
     LinkReaderToolCompletedEvent, LinkReaderToolCallEvent, OutputTextEvent, ReasoningEvent, PlanningEvent, ErrorEvent, \
-    EOFEvent
+    EOFEvent, KnowledgeBaseSearchToolCompletedEvent, KnowledgeBaseSearchToolCallEvent
 
 
 def convert_pre_tool_call_to_event(
@@ -39,6 +39,13 @@ def convert_pre_tool_call_to_event(
     elif function_name == 'link_reader':
         return LinkReaderToolCallEvent(
             urls=json.loads(function_parameter).get('url_list', [])
+        )
+    elif function_name == 'search_knowledge':
+        args = json.loads(function_parameter)
+        return KnowledgeBaseSearchToolCallEvent(
+            query=args.get('query', ''),
+            limit=args.get('limit', 3),
+            collection_name=args.get('collection_name', ''),
         )
 
     # TODO inner tool wrapper
@@ -66,12 +73,16 @@ def convert_post_tool_call_to_event(
         return convert_link_reader_result_to_event(
             function_result
         )
+    elif function_name == 'search_knowledge':
+        return convert_knowledge_base_result_to_event(
+            function_parameter, function_result
+        )
 
     # TODO inner tool wrapper
     return FunctionCompletedEvent(
         function_name=function_name,
         function_parameter=function_parameter,
-        function_result=function_result,
+        function_result=function_result if isinstance(function_result, str) else json.dumps(function_result),
         success=exception is None,
         error_msg='' if not exception else str(exception)
     )
@@ -124,6 +135,34 @@ def convert_link_reader_result_to_event(raw_response: str) -> LinkReaderToolComp
         )
     except Exception as e:
         return LinkReaderToolCompletedEvent(
+            success=False,
+            error_msg=str(e)
+        )
+
+
+def convert_knowledge_base_result_to_event(raw_args: str, raw_response: str) -> KnowledgeBaseSearchToolCompletedEvent:
+    try:
+        args = json.loads(raw_args)
+        results: List = json.loads(raw_response) if isinstance(raw_response, str) else raw_response
+        event = KnowledgeBaseSearchToolCompletedEvent()
+        for result in results:
+            if result.get('type', '') == 'text':
+                text_item = json.loads(result.get('text', '{}'))
+                doc_info = text_item.get('doc_info', {})
+                event.references.append(
+                    Reference(
+                        summary=text_item.get('content', ''),
+                        doc_id=doc_info.get('doc_id', ''),
+                        doc_name=doc_info.get('doc_name', ''),
+                        doc_type=doc_info.get('doc_type', ''),
+                        chunk_title=text_item.get('chunk_title', ''),
+                        chunk_id=str(text_item.get('chunk_id', '')),
+                        collection_name=args.get('collection_name', ''),
+                    )
+                )
+        return event
+    except Exception as e:
+        return KnowledgeBaseSearchToolCompletedEvent(
             success=False,
             error_msg=str(e)
         )
@@ -204,5 +243,5 @@ def convert_event_to_bot_chunk(event: BaseEvent, ark_request: ArkChatRequest) ->
 def convert_references_to_markdown(refs: List[Reference]) -> str:
     mds = []
     for (i, ref) in enumerate(refs):
-        mds.append(f"{i+1}. [{ref.title}]({ref.url})")
+        mds.append(f"{i + 1}. [{ref.title}]({ref.url})")
     return '\n'.join(mds)
