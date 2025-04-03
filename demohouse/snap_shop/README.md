@@ -6,7 +6,7 @@
 
 ### 直接体验
 
-您可以通过访问[火山方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/assistant/detail?id=bot-20241211162948-5l2kk-procode-preset)在线体验。
+您可以通过访问[火山方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/application/detail?id=bot-20250313161133-ggqlb&prev=application&projectName=default)在线体验。
 
 ### 流程架构
 
