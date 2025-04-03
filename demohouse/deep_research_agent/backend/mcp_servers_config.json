@@ -3,9 +3,11 @@
     "search": {
       "url": "http://localhost:7001/sse"
     },
-    "code": {
-      "url":"https://localhost:7003/sse"
+    "tls": {
+      "url": "http://localhost:7003/sse"
+    },
+    "knowledgebase": {
+      "url": "http://localhost:7004/sse"
     }
   }
 }
-

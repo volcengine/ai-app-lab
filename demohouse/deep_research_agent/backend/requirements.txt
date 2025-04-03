@@ -1,6 +1,7 @@
-arkitect-0.2.0-py3-none-any.whl
-mcp_server_ark-0.1.0-py3-none-any.whl
-mcp_server_tls-0.1.0-py3-none-any.whl
+git+https://github.com/luminghao-bytedance/ai-app-lab.git@feat/deepresearch_agent
+git+https://github.com/volcengine/ai-app-lab.git#subdirectory=mcp/server/mcp_server_ark
+git+https://github.com/volcengine/ai-app-lab.git#subdirectory=mcp/server/mcp_server_tls
+git+https://github.com/volcengine/ai-app-lab.git#subdirectory=mcp/server/mcp_server_knowledgebase
 aiofiles==23.2.1 ; python_version >= "3.10" and python_version < "4.0"
 aiohappyeyeballs==2.6.1 ; python_version >= "3.10" and python_version < "4.0"
 aiohttp==3.11.14 ; python_version >= "3.10" and python_version < "4.0"
