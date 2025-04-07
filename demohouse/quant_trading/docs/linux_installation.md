@@ -45,6 +45,8 @@ $ export ARK_API_KEY={your api key}
     </a>
 </p>
 
+> 当然你也可以更换成 Deepseek-R1 等别的模型，我也做了一下测试，模型效果一致性还可以。
+
 执行环境变量操作：
 ```
 export VLM_MODEL_NAME={your vlm model}
@@ -68,8 +70,8 @@ $ pip install -r requirements.txt
 
 - 指定 AI server 的参数
 ```
-$ export AI_SERVER_IP=192.168.35.51
-$ export AI_SERVER_PORT=8080
+$ export AI_SERVER_IP={your ai server ip}
+$ export AI_SERVER_PORT={your ai server port}
 ```
 
 - 启动服务
@@ -81,8 +83,8 @@ $ python quant_trading/server.py
 
 - 指定 web server 参数
 ```
-$ export WEB_SERVER_IP=192.168.35.51
-$ export WEB_SERVER_PORT=7680
+$ export WEB_SERVER_IP={your web server ip}
+$ export WEB_SERVER_PORT={your web server port}
 ```
 
 - 启动服务
@@ -90,4 +92,4 @@ $ export WEB_SERVER_PORT=7680
 $ python quant_trading/webui.py
 ```
 
-好了，可以在浏览器上访问 web server 地址了。
+好了，可以在浏览器上访问 web server 地址了。访问地址是：`http://{WEB_SERVER_IP}:{WEB_SERVER_PORT}/`

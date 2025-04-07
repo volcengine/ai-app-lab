@@ -64,10 +64,9 @@ def clear(chat_history):
     return chat_history
 
 
-# if __name__ == "__main__":
 with gr.Blocks(css=block_css, theme=gr.themes.Default(**default_theme_args)) as demo:
 
-    gr.Markdown('# Arkitect 股票 AI 量化交易助手')
+    gr.Markdown('# 火山方舟 Arkitect 股票 AI 量化交易助手')
 
     with gr.Column(scale=10):
         chatbot = gr.Chatbot([[None, init_message]],

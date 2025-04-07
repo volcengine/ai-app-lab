@@ -22,21 +22,21 @@ VLM_MODEL_ENDPOINT_ID = os.getenv('VLM_MODEL_ENDPOINT_ID') or "{YOUR_VLM_MODEL_E
 LLM_MODEL_NAME = os.getenv('LLM_MODEL_NAME') or "{YOUR_LLM_MODEL_NAME}"
 LLM_MODEL_ENDPOINT_ID = os.getenv('LLM_MODEL_ENDPOINT_ID') or "{YOUR_LLM_MODEL_ENDPOINT_ID}"
 
-
-"""
-for webui
-"""
-
 # ark api key
 ARK_API_KEY = os.getenv('ARK_API_KEY') or "{YOUR_ARK_API_KEY}"
 # api server address for web ui
 
 AI_SERVER_IP = os.getenv('AI_SERVER_IP') or "{YOUR_AI_SERVER_IP}"
 AI_SERVER_PORT = os.getenv('AI_SERVER_PORT') or "{YOUR_AI_SERVER_PORT}"
+
+
+"""
+for webui
+"""
 ARK_API_ADDR = f"http://{AI_SERVER_IP}:{AI_SERVER_PORT}/api/v1/bots"
 
 WEB_SERVER_IP = os.getenv('WEB_SERVER_IP') or "{YOUR_WEB_SERVER_IP}"
 WEB_SERVER_PORT = os.getenv('WEB_SERVER_PORT') or "{YOUR_WEB_SERVER_PORT}"
 
-# while using remote api, need bot id
+# while using remote api, maybe need bot id
 API_BOT_ID = os.getenv("API_BOT_ID") or "{YOUR_API_BOT_ID}"
