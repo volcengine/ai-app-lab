@@ -16,21 +16,11 @@ import asyncio
 import logging
 import gradio as gr
 from gradio import ChatMessage
-from pydantic import BaseModel
-from openai import OpenAI
 from typing import Any, Generator
 
-from config import (ARK_API_KEY, ARK_API_ADDR, LLM_MODEL_NAME,
-                    VLM_MODEL_NAME, LLM_BROWSING_MODEL_NAME)
+from config import (ARK_API_ADDR, LLM_MODEL_NAME,
+                    WEB_SERVER_IP, WEB_SERVER_PORT)
 from quant_trading_dispatcher import QuantTradingDispatcher
-
-# pdb.set_trace()
-# client = OpenAI(base_url=ARK_API_ADDR, api_key=ARK_API_KEY)
-
-# logging.basicConfig(
-#     level=logging.INFO, format="[%(asctime)s][%(levelname)s] %(message)s"
-# )
-# LOGGER = logging.getLogger(__name__)
 
 
 init_message = "哈喽，我可以帮你预测今天该买哪些股票，回答股票相关问题。"
@@ -95,4 +85,4 @@ with gr.Blocks(css=block_css, theme=gr.themes.Default(**default_theme_args)) as 
                     outputs=[chatbot])
 
 # 启动应用
-demo.launch(server_name="0.0.0.0", server_port=7860)
+demo.launch(server_name="0.0.0.0", server_port=WEB_SERVER_PORT)

@@ -15,22 +15,13 @@ import os
 for server
 """
 
-# recommend to use DeepSeek-R1 model
-LLM_BROWSING_MODEL_NAME = "doubao-pro-32k-browsing-241115"
-LLM_BROWSING_MODEL_ENDPOINT_ID = "ep-m-20250318111841-mlzkp"
+# recommend to use DeepSeek-R1 model or doubao model
+VLM_MODEL_NAME = os.getenv('VLM_MODEL_NAME') or "{YOUR_VLM_MODEL_NAME}"
+VLM_MODEL_ENDPOINT_ID = os.getenv('VLM_MODEL_ENDPOINT_ID') or "{YOUR_VLM_MODEL_ENDPOINT_ID}"
 
-VLM_MODEL_NAME = "doubao-1-5-vision-pro-32k-250115"
-VLM_MODEL_ENDPOINT_ID = "ep-m-20250318094241-f5887"
+LLM_MODEL_NAME = os.getenv('LLM_MODEL_NAME') or "{YOUR_LLM_MODEL_NAME}"
+LLM_MODEL_ENDPOINT_ID = os.getenv('LLM_MODEL_ENDPOINT_ID') or "{YOUR_LLM_MODEL_ENDPOINT_ID}"
 
-LLM_MODEL_NAME = "doubao-1-5-pro-32k-250115"
-LLM_MODEL_ENDPOINT_ID = "ep-m-20250316221825-6fglr"
-
-# default set to volc bot, if using tavily, change it into "tavily"
-SEARCH_ENGINE = os.getenv('SEARCH_ENGINE') or "volc_bot"
-# optional, if you select tavily as search engine, please configure this
-# TAVILY_API_KEY = os.getenv('TAVILY_API_KEY') or "{YOUR_TAVILY_API_KEY}"
-# optional, if you select volc bot as search engine, please configure this
-SEARCH_BOT_ID = os.getenv('SEARCH_BOT_ID') or "{YOUR_SEARCH_BOT_ID}"
 
 """
 for webui
@@ -40,9 +31,12 @@ for webui
 ARK_API_KEY = os.getenv('ARK_API_KEY') or "{YOUR_ARK_API_KEY}"
 # api server address for web ui
 
-IP = "192.168.35.51"
-PORT = 8080
-ARK_API_ADDR = f"http://{IP}:{PORT}/api/v1/bots"
+AI_SERVER_IP = os.getenv('AI_SERVER_IP') or "{YOUR_AI_SERVER_IP}"
+AI_SERVER_PORT = os.getenv('AI_SERVER_PORT') or "{YOUR_AI_SERVER_PORT}"
+ARK_API_ADDR = f"http://{AI_SERVER_IP}:{AI_SERVER_PORT}/api/v1/bots"
+
+WEB_SERVER_IP = os.getenv('WEB_SERVER_IP') or "{YOUR_WEB_SERVER_IP}"
+WEB_SERVER_PORT = os.getenv('WEB_SERVER_PORT') or "{YOUR_WEB_SERVER_PORT}"
 
 # while using remote api, need bot id
 API_BOT_ID = os.getenv("API_BOT_ID") or "{YOUR_API_BOT_ID}"
