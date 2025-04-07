@@ -34,14 +34,14 @@ $ export ARK_API_KEY={your api key}
 并且在火山引擎模型广场上选择需要的模型，这里需要一个 LLM ，以及一个 VLM。
 <p align="left">
     <a alt="jionlp logo">
-        <img src="../../quant_trading/image/model_ground_pic.jpg?raw=true" style="width:auto;height:200px">
+        <img src="../../quant_trading/image/model_ground_pic.jpg?raw=true" style="width:auto;height:300px">
     </a>
 </p>
 
 在这里我默认选用 `doubao-1-5-vision-pro-32k-250115` 和 `doubao-1-5-pro-32k-250115`，模型均对应一个接入点 end_point_id，如图所示。
 <p align="left">
     <a alt="jionlp logo">
-        <img src="../../quant_trading/image/model_online_pic.jpg?raw=true" style="width:auto;height:200px">
+        <img src="../../quant_trading/image/model_online_pic.jpg?raw=true" style="width:auto;height:300px">
     </a>
 </p>
 
