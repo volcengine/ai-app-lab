@@ -10,7 +10,7 @@
 
 - 对于许多股民来说，并不会编程，也不使用 Linux，因此在 Windows 上的安装，我打算提供一体化打包安装。
 
-### [Linux安装方法]()
+### [Linux安装方法](../../blob/main/demohouse/quant_trading/docs/linux_installation.md)
 
 - 这个就是常规针对程序员的安装方法
 
