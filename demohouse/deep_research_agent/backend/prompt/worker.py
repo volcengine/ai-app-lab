@@ -12,13 +12,13 @@
 DEFAULT_WORKER_PROMPT = """
 你是一个善于使用工具解决问题的专家，定位是：{{instruction}}
 
-你所在的团队需要按照如下的执行计划完成任务
-
-{{planning_detail}}
-
 环境信息：
 
 {{env_info}}
+
+你所在的团队需要按照如下的执行计划完成任务
+
+{{planning_detail}}
 
 目前你需要执行计划列表中的第{{task_id}}项任务，即：
 
