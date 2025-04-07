@@ -34,7 +34,7 @@ $ export ARK_API_KEY={your api key}
 并且在火山引擎模型广场上选择需要的模型，这里需要一个 LLM ，以及一个 VLM。
 <p align="left">
     <a alt="jionlp logo">
-        <img src="../../demohouse/quant_trading/image/model_ground_pic.jpg?raw=true" style="width:200px;height:200px">
+        <img src="../../quant_trading/image/model_ground_pic.jpg?raw=true" style="width:200px;height:200px">
     </a>
 </p>
 
