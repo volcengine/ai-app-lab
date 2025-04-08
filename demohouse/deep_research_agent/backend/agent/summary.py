@@ -29,7 +29,7 @@ from utils.converter import convert_references_to_markdown
 class Summary(Agent):
     prompt: str = DEFAULT_SUMMARY_PROMPT
 
-    @task()
+    @task(trace_all=False)
     async def astream(self, global_state: GlobalState, **kwargs) -> AsyncIterable[BaseEvent]:
         ctx = Context(
             model=self.llm_model,

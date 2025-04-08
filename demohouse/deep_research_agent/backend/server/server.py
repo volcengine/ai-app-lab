@@ -69,7 +69,7 @@ async def _run_deep_research(
         await clean_up()
 
 
-@task()
+# @task()
 async def create_session(request: DeepResearchRequest) -> str:
     session_id = uuid.uuid4().hex
 
@@ -86,7 +86,7 @@ async def create_session(request: DeepResearchRequest) -> str:
     return session_id
 
 
-@task()
+# @task()
 async def run_session(session_id: str, max_plannings: int) -> AsyncIterable[BaseEvent]:
     state_manager = FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json")
 
@@ -103,6 +103,7 @@ async def run_session(session_id: str, max_plannings: int) -> AsyncIterable[Base
         yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
 
 
+@task()
 def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
     workers = {}
 
@@ -115,14 +116,14 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
         post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state)
     )
 
-    coder = Worker(
-        llm_model=WORKER_LLM_MODEL, name='coder',
-        instruction='编写和运行python代码',
-        tools=[
-            mcp_clients.get('code')
-        ],
-        post_tool_call_hook=PythonExecutorPostToolCallHook()
-    )
+    # coder = Worker(
+    #     llm_model=WORKER_LLM_MODEL, name='coder',
+    #     instruction='编写和运行python代码',
+    #     tools=[
+    #         mcp_clients.get('code')
+    #     ],
+    #     post_tool_call_hook=PythonExecutorPostToolCallHook()
+    # )
 
     log_retriever = Worker(
         llm_model=WORKER_LLM_MODEL, name='log_retriever',
@@ -146,8 +147,8 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
         if ('web_search' in global_state.custom_state.enabled_mcp_servers
                 or 'link_reader' in global_state.custom_state.enabled_mcp_servers):
             workers.update({'searcher': searcher})
-        if 'code' in global_state.custom_state.enabled_mcp_servers:
-            workers.update({'coder': coder})
+        # if 'code' in global_state.custom_state.enabled_mcp_servers:
+        #     workers.update({'coder': coder})
         if 'tls' in global_state.custom_state.enabled_mcp_servers:
             workers.update({'log_retriever': log_retriever})
         if 'knowledgebase' in global_state.custom_state.enabled_mcp_servers:
@@ -164,7 +165,7 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
         }
 
 
-@task()
+# @task()
 async def event_handler(
         request: DeepResearchRequest
 ) -> AsyncIterable[BaseEvent]:

@@ -34,7 +34,7 @@ class Worker(Agent):
 
     post_tool_call_hook: Optional[PostToolCallHook] = None
 
-    @task(watch_io=False)
+    @task(trace_all=False)
     async def astream(
             self,
             global_state: GlobalState,

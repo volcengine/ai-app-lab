@@ -30,7 +30,7 @@ def extract_enabled_mcp_servers(mcp_servers: Dict[str, Dict]) -> List[str]:
     return enabled
 
 
-@task()
+@task(trace_all=False)
 async def main(
         request: ArkChatRequest,
 ) -> AsyncIterable[ArkChatCompletionChunk]:

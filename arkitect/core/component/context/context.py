@@ -43,6 +43,7 @@ from arkitect.core.component.context.hooks import (
 )
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
+from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
@@ -238,6 +239,7 @@ class _AsyncCompletions:
     ]:
         self._ctx.state.messages.extend(messages)
 
+        @task()
         async def iterator(
             messages: List[ChatCompletionMessageParam],
         ) -> AsyncIterable[ChatCompletionChunk]:
