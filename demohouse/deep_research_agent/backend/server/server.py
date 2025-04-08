@@ -15,25 +15,38 @@ from typing import AsyncIterable, Tuple, Callable, Dict, AsyncIterator, Any
 from agent.worker import Worker
 from arkitect.core.component.tool import MCPClient
 from arkitect.core.component.tool.builder import build_mcp_clients_from_config
-from arkitect.core.errors import ResourceNotFound, InternalServiceError, InvalidParameter, MissingParameter
+from arkitect.core.errors import (
+    ResourceNotFound,
+    InternalServiceError,
+    InvalidParameter,
+    MissingParameter,
+)
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.logger import INFO, ERROR
 from arkitect.telemetry.trace import task, TraceConfig
 from arkitect.utils.context import get_reqid
-from config.config import MCP_CONFIG_FILE_PATH, SESSION_SAVE_PATH, WORKER_LLM_MODEL, SUPERVISOR_LLM_MODEL, \
-    SUMMARY_LLM_MODEL
+from config.config import (
+    MCP_CONFIG_FILE_PATH,
+    SESSION_SAVE_PATH,
+    WORKER_LLM_MODEL,
+    SUPERVISOR_LLM_MODEL,
+    SUMMARY_LLM_MODEL,
+)
 from deep_research.deep_research import DeepResearch
 from models.events import BaseEvent, ErrorEvent
 from models.request import CreateSessionRequest, RunSessionRequest, DeepResearchRequest
 from state.deep_research_state import DeepResearchStateManager, DeepResearchState
 from state.file_state_manager import FileStateManager
 from state.global_state import GlobalState
-from tools.hooks import PythonExecutorPostToolCallHook, SearcherPostToolCallHook, KnowledgeBasePostToolCallHook
+from tools.hooks import (
+    PythonExecutorPostToolCallHook,
+    SearcherPostToolCallHook,
+    KnowledgeBasePostToolCallHook,
+)
 
 
 async def _run_deep_research(
-        state_manager: DeepResearchStateManager,
-        max_plannings: int
+    state_manager: DeepResearchStateManager, max_plannings: int
 ) -> AsyncIterable[BaseEvent]:
     # init mcp client
     mcp_clients, clean_up = build_mcp_clients_from_config(
@@ -43,9 +56,11 @@ async def _run_deep_research(
     dr_state = await state_manager.load()
 
     if not dr_state:
-        yield ErrorEvent(api_exception=ResourceNotFound(
-            resource_type="session",
-        ))
+        yield ErrorEvent(
+            api_exception=ResourceNotFound(
+                resource_type="session",
+            )
+        )
         return
 
     try:
@@ -59,7 +74,7 @@ async def _run_deep_research(
         )
 
         async for event in dr.astream(
-                dr_state=dr_state,
+            dr_state=dr_state,
         ):
             yield event
     except BaseException as e:
@@ -79,9 +94,7 @@ async def create_session(request: DeepResearchRequest) -> str:
         enabled_mcp_servers=request.enabled_mcp_servers,
     )
 
-    await FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json").dump(
-        dr_state
-    )
+    await FileStateManager(path=f"{SESSION_SAVE_PATH}/{session_id}.json").dump(dr_state)
 
     return session_id
 
@@ -92,8 +105,8 @@ async def run_session(session_id: str, max_plannings: int) -> AsyncIterable[Base
 
     try:
         async for event in _run_deep_research(
-                state_manager=state_manager,
-                max_plannings=max_plannings,
+            state_manager=state_manager,
+            max_plannings=max_plannings,
         ):
             event.session_id = session_id
             event.id = get_reqid()
@@ -104,16 +117,17 @@ async def run_session(session_id: str, max_plannings: int) -> AsyncIterable[Base
 
 
 @task()
-def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) -> Dict[str, Worker]:
+def get_workers(
+    global_state: GlobalState, mcp_clients: Dict[str, MCPClient]
+) -> Dict[str, Worker]:
     workers = {}
 
     searcher = Worker(
-        llm_model=WORKER_LLM_MODEL, name='searcher',
-        instruction='联网搜索公域资料，读取网页或链接内容',
-        tools=[
-            mcp_clients.get('search')
-        ],
-        post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state)
+        llm_model=WORKER_LLM_MODEL,
+        name="searcher",
+        instruction="联网搜索公域资料，读取网页或链接内容",
+        tools=[mcp_clients.get("search")],
+        post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state),
     )
 
     # coder = Worker(
@@ -126,53 +140,55 @@ def get_workers(global_state: GlobalState, mcp_clients: Dict[str, MCPClient]) ->
     # )
 
     log_retriever = Worker(
-        llm_model=WORKER_LLM_MODEL, name='log_retriever',
-        instruction='查询日志信息',
-        tools=[
-            mcp_clients.get('tls')
-        ]
+        llm_model=WORKER_LLM_MODEL,
+        name="log_retriever",
+        instruction="查询日志信息",
+        tools=[mcp_clients.get("tls")],
     )
 
     knowledgebase_retriever = Worker(
-        llm_model=WORKER_LLM_MODEL, name='knowledgebase_retriever',
-        instruction='查询私域知识库信息',
-        tools=[
-            mcp_clients.get('knowledgebase')
-        ],
-        post_tool_call_hook=KnowledgeBasePostToolCallHook(global_state=global_state)
+        llm_model=WORKER_LLM_MODEL,
+        name="knowledgebase_retriever",
+        instruction="查询私域知识库信息",
+        tools=[mcp_clients.get("knowledgebase")],
+        post_tool_call_hook=KnowledgeBasePostToolCallHook(global_state=global_state),
     )
 
     if global_state.custom_state.enabled_mcp_servers:
         # add dynamic mask
-        if ('web_search' in global_state.custom_state.enabled_mcp_servers
-                or 'link_reader' in global_state.custom_state.enabled_mcp_servers):
-            workers.update({'searcher': searcher})
+        if (
+            "web_search" in global_state.custom_state.enabled_mcp_servers
+            or "link_reader" in global_state.custom_state.enabled_mcp_servers
+        ):
+            workers.update({"searcher": searcher})
         # if 'code' in global_state.custom_state.enabled_mcp_servers:
         #     workers.update({'coder': coder})
-        if 'tls' in global_state.custom_state.enabled_mcp_servers:
-            workers.update({'log_retriever': log_retriever})
-        if 'knowledgebase' in global_state.custom_state.enabled_mcp_servers:
-            workers.update({'knowledgebase_retriever': knowledgebase_retriever})
+        if "tls" in global_state.custom_state.enabled_mcp_servers:
+            workers.update({"log_retriever": log_retriever})
+        if "knowledgebase" in global_state.custom_state.enabled_mcp_servers:
+            workers.update({"knowledgebase_retriever": knowledgebase_retriever})
 
         return workers
     else:
         # no mask
         return {
-            'searcher': searcher,
-            'coder': coder,
-            'log_retriever': log_retriever,
-            'knowledgebase_retriever': knowledgebase_retriever,
+            "searcher": searcher,
+            # 'coder': coder,
+            "log_retriever": log_retriever,
+            "knowledgebase_retriever": knowledgebase_retriever,
         }
 
 
 # @task()
-async def event_handler(
-        request: DeepResearchRequest
-) -> AsyncIterable[BaseEvent]:
+async def event_handler(request: DeepResearchRequest) -> AsyncIterable[BaseEvent]:
     if not request.stream:
-        yield ErrorEvent(api_exception=InvalidParameter(parameter='stream', cause="request.stream should be true"))
+        yield ErrorEvent(
+            api_exception=InvalidParameter(
+                parameter="stream", cause="request.stream should be true"
+            )
+        )
     if not request.session_id and not request.root_task:
-        yield ErrorEvent(api_exception=MissingParameter(parameter='root_task'))
+        yield ErrorEvent(api_exception=MissingParameter(parameter="root_task"))
         return
     # create session
     if not request.session_id and request.root_task:
@@ -187,9 +203,7 @@ async def event_handler(
             yield event
 
 
-async def main(
-        request: DeepResearchRequest
-) -> AsyncIterable[BaseEvent]:
+async def main(request: DeepResearchRequest) -> AsyncIterable[BaseEvent]:
     async for event in event_handler(request):
         yield event
 
