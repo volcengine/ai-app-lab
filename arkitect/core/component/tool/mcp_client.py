@@ -67,6 +67,7 @@ class MCPClient:
         self.tools: Dict[str, Tool] = {}
         self._mcp_server_name: str = name if name is not None else ""
         self._chat_completion_tools: dict[str, ChatCompletionTool] = {}
+        self._lock = asyncio.Lock()
 
     async def connect_to_server(
         self,
@@ -167,26 +168,32 @@ class MCPClient:
 
     @task()
     async def list_mcp_tools(self, use_cache: bool = True) -> list[Tool]:
-        if self.session is None:
-            logger.warning("MCP client is not connected to server yet. Connecting...")
-            await self.connect_to_server()
-        if not use_cache:
-            response = await self.session.list_tools()
-            self.tools = {t.name: t for t in response.tools}
-        return list(self.tools.values())
+        async with self._lock:
+            if self.session is None:
+                logger.warning(
+                    "MCP client is not connected to server yet. Connecting..."
+                )
+                await self.connect_to_server()
+            if not use_cache:
+                response = await self.session.list_tools()
+                self.tools = {t.name: t for t in response.tools}
+            return list(self.tools.values())
 
     @task()
     async def list_tools(self, use_cache: bool = True) -> list[ChatCompletionTool]:
-        if self.session is None:
-            logger.warning("MCP client is not connected to server yet. Connecting...")
-            await self.connect_to_server()
-        if not use_cache:
-            response = await self.session.list_tools()
-            self.tools = {t.name: t for t in response.tools}
-            self._chat_completion_tools = {
-                t.name: mcp_to_chat_completion_tool(t) for t in response.tools
-            }
-        return list(self._chat_completion_tools.values())
+        async with self._lock:
+            if self.session is None:
+                logger.warning(
+                    "MCP client is not connected to server yet. Connecting..."
+                )
+                await self.connect_to_server()
+            if not use_cache:
+                response = await self.session.list_tools()
+                self.tools = {t.name: t for t in response.tools}
+                self._chat_completion_tools = {
+                    t.name: mcp_to_chat_completion_tool(t) for t in response.tools
+                }
+            return list(self._chat_completion_tools.values())
 
     @property
     def name(self) -> str:
@@ -198,18 +205,24 @@ class MCPClient:
         tool_name: str,
         parameters: dict[str, Any],
     ) -> str | list[ChatCompletionContentPartParam]:
-        if self.session is None:
-            logger.warning("MCP client is not connected to server yet. Connecting...")
-            await self.connect_to_server()
-        result = await self.session.call_tool(tool_name, parameters)
-        return convert_to_chat_completion_content_part_param(result)
+        async with self._lock:
+            if self.session is None:
+                logger.warning(
+                    "MCP client is not connected to server yet. Connecting..."
+                )
+                await self.connect_to_server()
+            result = await self.session.call_tool(tool_name, parameters)
+            return convert_to_chat_completion_content_part_param(result)
 
     @task()
     async def get_tool(self, tool_name: str, use_cache: bool = True) -> Tool | None:
-        if self.session is None:
-            logger.warning("MCP client is not connected to server yet. Connecting...")
-            await self.connect_to_server()
-        if not use_cache:
-            response = await self.session.list_tools()
-            self.tools = {t.name: t for t in response.tools}
-        return self.tools.get(tool_name, None)
+        async with self._lock:
+            if self.session is None:
+                logger.warning(
+                    "MCP client is not connected to server yet. Connecting..."
+                )
+                await self.connect_to_server()
+            if not use_cache:
+                response = await self.session.list_tools()
+                self.tools = {t.name: t for t in response.tools}
+            return self.tools.get(tool_name, None)
