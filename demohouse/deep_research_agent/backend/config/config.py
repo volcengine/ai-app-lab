@@ -19,3 +19,5 @@ WORKER_LLM_MODEL = os.environ.get('WORKER_LLM_MODEL') or 'deepseek-r1-250120'
 SUPERVISOR_LLM_MODEL = os.environ.get('SUPERVISOR_LLM_MODEL') or 'deepseek-r1-250120'
 
 SUMMARY_LLM_MODEL = os.environ.get('SUMMARY_LLM_MODEL') or 'deepseek-r1-250120'
+
+COLLECTION_DESCRIPTION = os.environ.get('COLLECTION_DESCRIPTION') or '私域知识'

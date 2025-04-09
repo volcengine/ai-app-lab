@@ -30,7 +30,7 @@ from config.config import (
     SESSION_SAVE_PATH,
     WORKER_LLM_MODEL,
     SUPERVISOR_LLM_MODEL,
-    SUMMARY_LLM_MODEL,
+    SUMMARY_LLM_MODEL, COLLECTION_DESCRIPTION,
 )
 from deep_research.deep_research import DeepResearch
 from models.events import BaseEvent, ErrorEvent
@@ -151,7 +151,7 @@ def get_workers(
     knowledgebase_retriever = Worker(
         llm_model=WORKER_LLM_MODEL,
         name="knowledgebase_retriever",
-        instruction="查询私域知识库信息",
+        instruction=f"查询私域知识库信息，该知识库中包含的内容：{COLLECTION_DESCRIPTION}",
         tools=[mcp_clients.get("knowledgebase")],
         post_tool_call_hook=KnowledgeBasePostToolCallHook(global_state=global_state),
     )
