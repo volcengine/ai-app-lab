@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import os
-from typing import Any, Callable, Dict, Optional, Tuple, Type
+from typing import Any, Dict, Optional, Tuple, Type
 
 from arkitect.core.client import Client
 from arkitect.core.component.bot import BotServer
@@ -34,8 +34,6 @@ def launch_serve(
     trace_config: Optional[TraceConfig] = None,
     trace_on: bool = True,
     trace_log_dir: Optional[str] = "./",
-    on_startup: Optional[Callable] = None,
-    on_shutdown: Optional[Callable] = None,
     **kwargs: Any,
 ) -> None:
     set_resource_type(os.getenv("RESOURCE_TYPE") or "")
@@ -56,7 +54,5 @@ def launch_serve(
         health_check_path=health_check_path,
         endpoint_config=get_endpoint_config(endpoint_path, runnable_func),
         clients=clients if clients else get_default_client_configs(),
-        on_startup=on_startup,
-        on_shutdown=on_shutdown,
     )
     server.run(app=server.app, host=host, port=port, **kwargs)
