@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,16 @@ from typing import AsyncIterable, Dict, Any, Optional
 from jinja2 import Template
 from pydantic import BaseModel
 from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
-from volcenginesdkarkruntime.types.completion_usage import CompletionUsage, CompletionTokensDetails
+from volcenginesdkarkruntime.types.completion_usage import (
+    CompletionUsage,
+    CompletionTokensDetails,
+)
 
 from arkitect.core.component.context.context import Context
-from arkitect.core.component.context.hooks import PostToolCallHook, HookInterruptException
+from arkitect.core.component.context.hooks import (
+    PostToolCallHook,
+    HookInterruptException,
+)
 from arkitect.core.component.context.model import State
 from arkitect.core.errors import InvalidParameter, InternalServiceError
 from agent.agent import Agent
@@ -25,7 +31,14 @@ from agent.worker import Worker
 from arkitect.telemetry.logger import ERROR
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatParameters
-from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, AssignTodoEvent, PlanningEvent, ErrorEvent
+from models.events import (
+    BaseEvent,
+    OutputTextEvent,
+    ReasoningEvent,
+    AssignTodoEvent,
+    PlanningEvent,
+    ErrorEvent,
+)
 from models.planning import PlanningItem, Planning
 from prompt.planning import DEFAULT_PLANNING_MAKE_PROMPT, DEFAULT_PLANNING_UPDATE_PROMPT
 from state.deep_research_state import DeepResearchState, DeepResearchStateManager
@@ -41,22 +54,26 @@ class SupervisorControlHook(PostToolCallHook):
 
         arbitrary_types_allowed = True
 
-    async def post_tool_call(self, name: str, arguments: str, response: Any, exception: Optional[Exception],
-                             state: State) -> State:
-        if name not in ['_assign_next_todo', '_accept_agent_response']:
+    async def post_tool_call(
+        self,
+        name: str,
+        arguments: str,
+        response: Any,
+        exception: Optional[Exception],
+        state: State,
+    ) -> State:
+        if name not in ["_assign_next_todo", "_accept_agent_response"]:
             # pass
             return state
         if exception:
             raise HookInterruptException(
-                reason='exception',
+                reason="exception",
                 details=exception,
                 state=state,
             )
         else:
             raise HookInterruptException(
-                reason='finished',
-                details=response,
-                state=state
+                reason="finished", details=response, state=state
             )
 
 
@@ -67,7 +84,7 @@ class AssignWorkerResponse(BaseModel):
 
 class AcceptAgentResponse(BaseModel):
     accept: bool
-    append_description: str = ''
+    append_description: str = ""
 
 
 class Supervisor(Agent):
@@ -75,32 +92,29 @@ class Supervisor(Agent):
     planning_update_prompt: str = DEFAULT_PLANNING_UPDATE_PROMPT
     planning_make_prompt: str = DEFAULT_PLANNING_MAKE_PROMPT
     dynamic_planning: bool = False  # enable the dynamic planning ability
-    max_plannings: int = 10,
+    max_plannings: int = (10,)
     _control_hook: SupervisorControlHook = SupervisorControlHook()
     state_manager: Optional[DeepResearchStateManager] = None
 
     # @task()
-    async def astream(self,
-                      global_state: GlobalState,
-                      **kwargs) -> AsyncIterable[BaseEvent]:
+    async def astream(
+        self, global_state: GlobalState, **kwargs
+    ) -> AsyncIterable[BaseEvent]:
         # extract args:
 
         planning: Planning = global_state.custom_state.planning
 
         if not planning or not planning.items:
             # 1. make plan
-            planning = Planning(
-                root_task=global_state.custom_state.root_task,
-                items=[]
-            )
+            planning = Planning(root_task=global_state.custom_state.root_task, items=[])
             global_state.custom_state.planning = planning
             async for chunk in self._make_planning(global_state):
                 yield chunk
 
             yield PlanningEvent(
-                action='made',
+                action="made",
                 planning=planning,
-                usage=self._to_completion_usage(global_state)
+                usage=self._to_completion_usage(global_state),
             )
             if self.state_manager:
                 await self.state_manager.dump(global_state.custom_state)
@@ -121,8 +135,8 @@ class Supervisor(Agent):
             worker = self.workers.get(next_todo.assign_agent)
             try:
                 async for worker_chunk in worker.astream(
-                        global_state=global_state,
-                        task_id=next_todo.id,
+                    global_state=global_state,
+                    task_id=next_todo.id,
                 ):
                     yield worker_chunk
             except Exception as e:
@@ -135,8 +149,8 @@ class Supervisor(Agent):
             if self.dynamic_planning:
                 # dynamic update the planning
                 async for receive_chunk in self._update_planning(
-                        global_state=global_state,
-                        task_to_update=next_todo,
+                    global_state=global_state,
+                    task_to_update=next_todo,
                 ):
                     yield receive_chunk
             else:
@@ -145,18 +159,18 @@ class Supervisor(Agent):
                 planning.update_item(next_todo.id, next_todo)
 
             if self.state_manager:
-                await self.state_manager.dump(
-                    state=global_state.custom_state
-                )
+                await self.state_manager.dump(state=global_state.custom_state)
 
             yield PlanningEvent(
-                action='update',
+                action="update",
                 planning=planning,
-                usage=self._to_completion_usage(global_state)
+                usage=self._to_completion_usage(global_state),
             )
 
     @task(trace_all=False)
-    async def _make_planning(self, global_state: GlobalState) -> AsyncIterable[BaseEvent]:
+    async def _make_planning(
+        self, global_state: GlobalState
+    ) -> AsyncIterable[BaseEvent]:
 
         planning = global_state.custom_state.planning
 
@@ -167,20 +181,18 @@ class Supervisor(Agent):
         ctx = Context(
             model=self.llm_model,
             tools=[planning_holder.save_tasks],
-            parameters=ArkChatParameters(
-                stream_options={'include_usage': True}
-            )
+            parameters=ArkChatParameters(stream_options={"include_usage": True}),
         )
 
         await ctx.init()
 
-        rsp_stream = await ctx.completions.create_chat_stream(
+        rsp_stream = await ctx.completions.create(
             messages=[
                 {
                     "role": "user",
                     "content": await self._prepare_make_planning_prompt(
                         root_task=planning.root_task
-                    )
+                    ),
                 },
             ],
         )
@@ -188,41 +200,49 @@ class Supervisor(Agent):
         async for chunk in rsp_stream:
             self.record_usage(chunk, global_state.custom_state.total_usage)
             # we ignore the tool chunks
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
+            if (
+                isinstance(chunk, ChatCompletionChunk)
+                and chunk.choices
+                and chunk.choices[0].delta.content
+            ):
                 yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
+            if (
+                isinstance(chunk, ChatCompletionChunk)
+                and chunk.choices
+                and chunk.choices[0].delta.reasoning_content
+            ):
                 yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
     @task(trace_all=False)
-    async def _update_planning(self,
-                               global_state: GlobalState,
-                               task_to_update: PlanningItem
-                               ) -> AsyncIterable[BaseEvent]:
+    async def _update_planning(
+        self, global_state: GlobalState, task_to_update: PlanningItem
+    ) -> AsyncIterable[BaseEvent]:
         planning = global_state.custom_state.planning
 
         planning_holder = PlanningHolder(
-            planning=planning,
-            max_plannings=self.max_plannings
+            planning=planning, max_plannings=self.max_plannings
         )
         ctx = Context(
             model=self.llm_model,
-            tools=[planning_holder.update_task, planning_holder.mark_task_done,
-                   planning_holder.add_task, planning_holder.delete_task],
-            parameters=ArkChatParameters(
-                stream_options={'include_usage': True}
-            )
+            tools=[
+                planning_holder.update_task,
+                planning_holder.mark_task_done,
+                planning_holder.add_task,
+                planning_holder.delete_task,
+            ],
+            parameters=ArkChatParameters(stream_options={"include_usage": True}),
         )
 
         await ctx.init()
 
-        rsp_stream = await ctx.completions.create_chat_stream(
+        rsp_stream = await ctx.completions.create(
             messages=[
                 {
                     "role": "user",
                     "content": self._prepare_update_planning_prompt(
                         planning=planning,
                         completed_task=task_to_update,
-                    )
+                    ),
                 },
             ],
         )
@@ -230,9 +250,17 @@ class Supervisor(Agent):
         async for chunk in rsp_stream:
             self.record_usage(chunk, global_state.custom_state.total_usage)
             # we ignore the tool chunks
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
+            if (
+                isinstance(chunk, ChatCompletionChunk)
+                and chunk.choices
+                and chunk.choices[0].delta.content
+            ):
                 yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-            if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.reasoning_content:
+            if (
+                isinstance(chunk, ChatCompletionChunk)
+                and chunk.choices
+                and chunk.choices[0].delta.reasoning_content
+            ):
                 yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
     async def _prepare_make_planning_prompt(self, root_task: str) -> str:
@@ -244,9 +272,9 @@ class Supervisor(Agent):
             env_info=get_env_info(),
         )
 
-    def _prepare_update_planning_prompt(self, planning: Planning,
-                                        completed_task: PlanningItem
-                                        ) -> str:
+    def _prepare_update_planning_prompt(
+        self, planning: Planning, completed_task: PlanningItem
+    ) -> str:
         return Template(self.planning_update_prompt).render(
             complex_task=planning.root_task,
             worker_details=self._format_agent_desc(),
@@ -263,17 +291,21 @@ class Supervisor(Agent):
             descs.append(f"成员name: {worker.name}  成员能力: {worker.instruction}")
         return "\n".join(descs)
 
-    def _to_completion_usage(self, global_state: GlobalState) -> Optional[CompletionUsage]:
+    def _to_completion_usage(
+        self, global_state: GlobalState
+    ) -> Optional[CompletionUsage]:
         if isinstance(global_state.custom_state, DeepResearchState):
             if global_state.custom_state.total_usage:
                 return CompletionUsage(
                     prompt_tokens=global_state.custom_state.total_usage.prompt_tokens,
                     completion_tokens=global_state.custom_state.total_usage.completion_tokens,
                     total_tokens=(
-                            global_state.custom_state.total_usage.prompt_tokens + global_state.custom_state.total_usage.completion_tokens),
+                        global_state.custom_state.total_usage.prompt_tokens
+                        + global_state.custom_state.total_usage.completion_tokens
+                    ),
                     completion_tokens_details=CompletionTokensDetails(
                         reasoning_tokens=global_state.custom_state.total_usage.reasoning_tokens,
-                    )
+                    ),
                 )
         return None
 
@@ -291,18 +323,25 @@ if __name__ == "__main__":
         supervisor = Supervisor(
             llm_model="deepseek-r1-250120",
             workers={
-                'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='做加法', tools=[add]),
-                'comparer': Worker(llm_model='deepseek-r1-250120', name='comparer', instruction='比较两个数大小',
-                                   tools=[compare]),
+                "adder": Worker(
+                    llm_model="deepseek-r1-250120",
+                    name="adder",
+                    instruction="做加法",
+                    tools=[add],
+                ),
+                "comparer": Worker(
+                    llm_model="deepseek-r1-250120",
+                    name="comparer",
+                    instruction="比较两个数大小",
+                    tools=[compare],
+                ),
             },
             dynamic_planning=True,
         )
 
         thinking = True
 
-        async for chunk in supervisor.astream(
-                global_state=global_state
-        ):
+        async for chunk in supervisor.astream(global_state=global_state):
             if isinstance(chunk, OutputTextEvent):
                 if thinking:
                     thinking = False
@@ -317,7 +356,6 @@ if __name__ == "__main__":
                 print(chunk)
 
         print(global_state.custom_state.planning.to_markdown_str())
-
 
     import asyncio
 

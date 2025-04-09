@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,10 @@ from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
 from state.global_state import GlobalState
 from utils.common import get_env_info
-from utils.converter import convert_post_tool_call_to_event, convert_pre_tool_call_to_event
+from utils.converter import (
+    convert_post_tool_call_to_event,
+    convert_pre_tool_call_to_event,
+)
 
 
 class Worker(Agent):
@@ -36,15 +39,15 @@ class Worker(Agent):
 
     @task(trace_all=False)
     async def astream(
-            self,
-            global_state: GlobalState,
-            **kwargs,
+        self,
+        global_state: GlobalState,
+        **kwargs,
     ) -> AsyncIterable[BaseEvent]:
 
         # extract args:
 
         planning: Planning = global_state.custom_state.planning
-        task_id = kwargs.pop('task_id')
+        task_id = kwargs.pop("task_id")
 
         if not planning or not task_id or not planning.get_item(task_id):
             yield ErrorEvent(api_exception=InvalidParameter(parameter="task_id"))
@@ -54,18 +57,20 @@ class Worker(Agent):
         ctx = Context(
             model=self.llm_model,
             tools=self.tools,
-            parameters=ArkChatParameters(
-                stream_options={'include_usage': True}
-            )
+            parameters=ArkChatParameters(stream_options={"include_usage": True}),
         )
 
         await ctx.init()
         ctx.set_post_tool_call_hook(self.post_tool_call_hook)
 
-        rsp_stream = await ctx.completions.create_chat_stream(
+        rsp_stream = await ctx.completions.create(
             messages=[
-                {"role": "user",
-                 "content": self.generate_system_prompt(planning=planning, planning_item=planning_item)},
+                {
+                    "role": "user",
+                    "content": self.generate_system_prompt(
+                        planning=planning, planning_item=planning_item
+                    ),
+                },
             ],
         )
 
@@ -87,10 +92,17 @@ class Worker(Agent):
                             function_name=chunk.tool_name,
                             function_parameter=chunk.tool_arguments,
                         )
-                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[0].delta.content:
+                if (
+                    isinstance(chunk, ChatCompletionChunk)
+                    and chunk.choices
+                    and chunk.choices[0].delta.content
+                ):
                     yield OutputTextEvent(delta=chunk.choices[0].delta.content)
-                if isinstance(chunk, ChatCompletionChunk) and chunk.choices and chunk.choices[
-                    0].delta.reasoning_content:
+                if (
+                    isinstance(chunk, ChatCompletionChunk)
+                    and chunk.choices
+                    and chunk.choices[0].delta.reasoning_content
+                ):
                     yield ReasoningEvent(delta=chunk.choices[0].delta.reasoning_content)
 
             last_message = ctx.get_latest_message()
@@ -103,7 +115,9 @@ class Worker(Agent):
             yield ErrorEvent(api_exception=InternalServiceError(message=str(e)))
             return
 
-    def generate_system_prompt(self, planning: Planning, planning_item: PlanningItem) -> str:
+    def generate_system_prompt(
+        self, planning: Planning, planning_item: PlanningItem
+    ) -> str:
         return Template(self.system_prompt).render(
             instruction=self.instruction,
             complex_task=planning.root_task,

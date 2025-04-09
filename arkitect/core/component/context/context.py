@@ -195,11 +195,12 @@ class _AsyncCompletions:
 
             async def iterator(
                 messages: List[ChatCompletionMessageParam],
-            ) -> AsyncIterable[ChatCompletionChunk]:
-                while True:
+            ) -> AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk]:
+                if self.need_tool_call():
+                    tool_stream = self.create_tool_call_stream()
                     try:
-                        if not await self.handle_tool_call():
-                            break
+                        async for chunk in tool_stream:
+                            yield chunk
                     except HookInterruptException as he:
                         yield ContextInterruption(
                             life_cycle="tool_call",
@@ -207,7 +208,9 @@ class _AsyncCompletions:
                             state=self._ctx.state,
                             details=he.details,
                         )
-                        break
+                        return
+
+                while True:
                     try:
                         if self._ctx.pre_llm_call_hook:
                             self._ctx.state = (
@@ -242,12 +245,7 @@ class _AsyncCompletions:
                     assert isinstance(resp, AsyncIterable)
                     async for chunk in resp:
                         yield chunk
-                        if chunk.choices and chunk.choices[0].finish_reason in [
-                            "stop",
-                            "length",
-                            "content_filter",
-                        ]:
-                            return
+                    messages = []
 
                     try:
                         if self._ctx.post_llm_call_hook:
@@ -265,106 +263,122 @@ class _AsyncCompletions:
                         )
                         return
 
+                    if self.need_tool_call():
+                        tool_stream = self.create_tool_call_stream()
+                        try:
+                            async for chunk in tool_stream:
+                                yield chunk
+                        except HookInterruptException as he:
+                            yield ContextInterruption(
+                                life_cycle="tool_call",
+                                reason=he.reason,
+                                state=self._ctx.state,
+                                details=he.details,
+                            )
+                            return
+                    else:
+                        break
+
             return iterator(messages)
 
-    async def create_chat_stream(
-        self,
-        messages: List[ChatCompletionMessageParam],
-        stream: Optional[Literal[True, False]] = True,
-        **kwargs: Dict[str, Any],
-    ) -> Union[
-        ChatCompletion | ContextInterruption,
-        AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk],
-    ]:
-        self._ctx.state.messages.extend(messages)
+    # async def create_chat_stream(
+    #     self,
+    #     messages: List[ChatCompletionMessageParam],
+    #     stream: Optional[Literal[True, False]] = True,
+    #     **kwargs: Dict[str, Any],
+    # ) -> Union[
+    #     ChatCompletion | ContextInterruption,
+    #     AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk],
+    # ]:
+    #     self._ctx.state.messages.extend(messages)
 
-        async def iterator(
-            messages: List[ChatCompletionMessageParam],
-        ) -> AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk]:
-            if self.need_tool_call():
-                tool_stream = self.create_tool_call_stream()
-                try:
-                    async for chunk in tool_stream:
-                        yield chunk
-                except HookInterruptException as he:
-                    yield ContextInterruption(
-                        life_cycle="tool_call",
-                        reason=he.reason,
-                        state=self._ctx.state,
-                        details=he.details,
-                    )
-                    return
+    #     async def iterator(
+    #         messages: List[ChatCompletionMessageParam],
+    #     ) -> AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk]:
+    #         if self.need_tool_call():
+    #             tool_stream = self.create_tool_call_stream()
+    #             try:
+    #                 async for chunk in tool_stream:
+    #                     yield chunk
+    #             except HookInterruptException as he:
+    #                 yield ContextInterruption(
+    #                     life_cycle="tool_call",
+    #                     reason=he.reason,
+    #                     state=self._ctx.state,
+    #                     details=he.details,
+    #                 )
+    #                 return
 
-            while True:
-                try:
-                    if self._ctx.pre_llm_call_hook:
-                        self._ctx.state = (
-                            await self._ctx.pre_llm_call_hook.pre_llm_call(
-                                self._ctx.state
-                            )
-                        )
-                except HookInterruptException as he:
-                    yield ContextInterruption(
-                        life_cycle="llm_call",
-                        reason=he.reason,
-                        state=self._ctx.state,
-                        details=he.details,
-                    )
-                    return
-                resp = (
-                    await self._ctx.chat.completions.create(
-                        model=self.model,
-                        messages=self._ctx.state.messages,
-                        stream=stream,
-                        tool_pool=self._ctx.tool_pool,
-                        **kwargs,
-                    )
-                    if not self._ctx.state.context_id
-                    else await self._ctx.context.completions.create(
-                        model=self.model,
-                        messages=messages,
-                        stream=stream,
-                        **kwargs,
-                    )
-                )
-                assert isinstance(resp, AsyncIterable)
-                async for chunk in resp:
-                    yield chunk
-                messages = []
+    #         while True:
+    #             try:
+    #                 if self._ctx.pre_llm_call_hook:
+    #                     self._ctx.state = (
+    #                         await self._ctx.pre_llm_call_hook.pre_llm_call(
+    #                             self._ctx.state
+    #                         )
+    #                     )
+    #             except HookInterruptException as he:
+    #                 yield ContextInterruption(
+    #                     life_cycle="llm_call",
+    #                     reason=he.reason,
+    #                     state=self._ctx.state,
+    #                     details=he.details,
+    #                 )
+    #                 return
+    #             resp = (
+    #                 await self._ctx.chat.completions.create(
+    #                     model=self.model,
+    #                     messages=self._ctx.state.messages,
+    #                     stream=stream,
+    #                     tool_pool=self._ctx.tool_pool,
+    #                     **kwargs,
+    #                 )
+    #                 if not self._ctx.state.context_id
+    #                 else await self._ctx.context.completions.create(
+    #                     model=self.model,
+    #                     messages=messages,
+    #                     stream=stream,
+    #                     **kwargs,
+    #                 )
+    #             )
+    #             assert isinstance(resp, AsyncIterable)
+    #             async for chunk in resp:
+    #                 yield chunk
+    #             messages = []
 
-                try:
-                    if self._ctx.post_llm_call_hook:
-                        self._ctx.state = (
-                            await self._ctx.post_llm_call_hook.post_llm_call(
-                                self._ctx.state
-                            )
-                        )
-                except HookInterruptException as he:
-                    yield ContextInterruption(
-                        life_cycle="llm_call",
-                        reason=he.reason,
-                        state=self._ctx.state,
-                        details=he.details,
-                    )
-                    return
+    #             try:
+    #                 if self._ctx.post_llm_call_hook:
+    #                     self._ctx.state = (
+    #                         await self._ctx.post_llm_call_hook.post_llm_call(
+    #                             self._ctx.state
+    #                         )
+    #                     )
+    #             except HookInterruptException as he:
+    #                 yield ContextInterruption(
+    #                     life_cycle="llm_call",
+    #                     reason=he.reason,
+    #                     state=self._ctx.state,
+    #                     details=he.details,
+    #                 )
+    #                 return
 
-                if self.need_tool_call():
-                    tool_stream = self.create_tool_call_stream()
-                    try:
-                        async for chunk in tool_stream:
-                            yield chunk
-                    except HookInterruptException as he:
-                        yield ContextInterruption(
-                            life_cycle="tool_call",
-                            reason=he.reason,
-                            state=self._ctx.state,
-                            details=he.details,
-                        )
-                        return
-                else:
-                    break
+    #             if self.need_tool_call():
+    #                 tool_stream = self.create_tool_call_stream()
+    #                 try:
+    #                     async for chunk in tool_stream:
+    #                         yield chunk
+    #                 except HookInterruptException as he:
+    #                     yield ContextInterruption(
+    #                         life_cycle="tool_call",
+    #                         reason=he.reason,
+    #                         state=self._ctx.state,
+    #                         details=he.details,
+    #                     )
+    #                     return
+    #             else:
+    #                 break
 
-        return iterator(messages)
+    #     return iterator(messages)
 
     async def execute_tool(
         self, tool_name: str, parameters: str
