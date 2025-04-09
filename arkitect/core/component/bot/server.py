@@ -14,18 +14,7 @@
 
 import asyncio
 from contextlib import asynccontextmanager
-import inspect
-from typing import (
-    Any,
-    AsyncIterator,
-    Callable,
-    Dict,
-    Generic,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import Any, AsyncIterator, Dict, Generic, Optional, Tuple, Type, Union
 
 import fastapi
 import uvicorn
@@ -87,23 +76,11 @@ class BotServer(BaseModel, Generic[RequestType, ResponseType]):
         clients: Optional[Dict[str, Tuple[Type[Client], Dict[str, Any]]]] = None,
         app: Optional[FastAPI] = None,
         health_check_path: Optional[str] = None,
-        on_startup: Optional[Callable] = None,
-        on_shutdown: Optional[Callable] = None,
         **kwargs: Any,
     ):
         @asynccontextmanager
         async def lifespan(app: FastAPI) -> AsyncIterator[Dict[str, Any]]:
-            if on_startup:
-                if inspect.iscoroutinefunction(on_startup):
-                    await on_startup()
-                else:
-                    on_startup()
             yield {"client_pool": get_client_pool(clients)}
-            if on_shutdown:
-                if inspect.iscoroutinefunction(on_shutdown):
-                    await on_shutdown()
-                else:
-                    on_shutdown()
 
         super().__init__(
             runner=runner,
