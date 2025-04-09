@@ -62,6 +62,15 @@ class PreLLMCallHook(abc.ABC):
         pass
 
 
+class PostLLMCallHook(abc.ABC):
+    @abc.abstractmethod
+    async def post_llm_call(
+        self,
+        state: State,
+    ) -> State:
+        pass
+
+
 Hook = Union[
     PreToolCallHook,
     PostToolCallHook,

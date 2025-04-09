@@ -36,6 +36,7 @@ from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
 from arkitect.core.component.context.hooks import (
+    PostLLMCallHook,
     PreToolCallHook,
     PostToolCallHook,
     PreLLMCallHook,
@@ -43,12 +44,10 @@ from arkitect.core.component.context.hooks import (
 )
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
-from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
 )
-
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext
 from .model import State, ContextInterruption
@@ -83,12 +82,13 @@ class _AsyncCompletions:
             tool_name = tool_call.get("function", {}).get("name")
 
             if await self._ctx.tool_pool.contain(tool_name):
-                # pre tool call hooks
-                self._ctx.state = await self._ctx.pre_tool_call_hook.pre_tool_call(
-                    tool_name,
-                    tool_call.get("function", {}).get("arguments", "{}"),
-                    self._ctx.state,
-                )
+                if self._ctx.pre_tool_call_hook:
+                    # pre tool call hooks
+                    self._ctx.state = await self._ctx.pre_tool_call_hook.pre_tool_call(
+                        tool_name,
+                        tool_call.get("function", {}).get("arguments", "{}"),
+                        self._ctx.state,
+                    )
                 tool_call_param = copy.deepcopy(tool_call)
                 parameters = tool_call_param.get("function", {}).get("arguments", "{}")
                 # tool execution
@@ -108,15 +108,17 @@ class _AsyncCompletions:
                         "content": tool_resp if tool_resp else str(tool_exception),
                     }
                 )
-
-                # post tool call hooks
-                self._ctx.state = await self._ctx.post_tool_call_hook.post_tool_call(
-                    tool_name,
-                    parameters,
-                    tool_resp,
-                    tool_exception,
-                    self._ctx.state,
-                )
+                if self._ctx.post_tool_call_hook:
+                    # post tool call hooks
+                    self._ctx.state = (
+                        await self._ctx.post_tool_call_hook.post_tool_call(
+                            tool_name,
+                            parameters,
+                            tool_resp,
+                            tool_exception,
+                            self._ctx.state,
+                        )
+                    )
         return True
 
     async def create(
@@ -132,16 +134,20 @@ class _AsyncCompletions:
 
         if not stream:
             while True:
-                for llm_hook in self._ctx.pre_llm_call_hooks:
-                    try:
-                        self._ctx.state = await llm_hook.pre_llm_call(self._ctx.state)
-                    except HookInterruptException as he:
-                        return ContextInterruption(
-                            life_cycle="llm_call",
-                            reason=he.reason,
-                            state=self._ctx.state,
-                            details=he.details,
+                try:
+                    if self._ctx.pre_llm_call_hook:
+                        self._ctx.state = (
+                            await self._ctx.pre_llm_call_hook.pre_llm_call(
+                                self._ctx.state
+                            )
                         )
+                except HookInterruptException as he:
+                    return ContextInterruption(
+                        life_cycle="llm_call",
+                        reason=he.reason,
+                        state=self._ctx.state,
+                        details=he.details,
+                    )
                 resp = (
                     await self._ctx.chat.completions.create(
                         model=self.model,
@@ -158,6 +164,22 @@ class _AsyncCompletions:
                         **kwargs,
                     )
                 )
+
+                try:
+                    if self._ctx.post_llm_call_hook:
+                        self._ctx.state = (
+                            await self._ctx.post_llm_call_hook.post_llm_call(
+                                self._ctx.state
+                            )
+                        )
+                except HookInterruptException as he:
+                    return ContextInterruption(
+                        life_cycle="llm_call",
+                        reason=he.reason,
+                        state=self._ctx.state,
+                        details=he.details,
+                    )
+
                 try:
                     if await self.handle_tool_call():
                         break
@@ -187,11 +209,12 @@ class _AsyncCompletions:
                         )
                         break
                     try:
-                        self._ctx.state = (
-                            await self._ctx.pre_llm_call_hook.pre_llm_call(
-                                self._ctx.state
+                        if self._ctx.pre_llm_call_hook:
+                            self._ctx.state = (
+                                await self._ctx.pre_llm_call_hook.pre_llm_call(
+                                    self._ctx.state
+                                )
                             )
-                        )
                     except HookInterruptException as he:
                         yield ContextInterruption(
                             life_cycle="llm_call",
@@ -226,6 +249,22 @@ class _AsyncCompletions:
                         ]:
                             return
 
+                    try:
+                        if self._ctx.post_llm_call_hook:
+                            self._ctx.state = (
+                                await self._ctx.post_llm_call_hook.post_llm_call(
+                                    self._ctx.state
+                                )
+                            )
+                    except HookInterruptException as he:
+                        yield ContextInterruption(
+                            life_cycle="llm_call",
+                            reason=he.reason,
+                            state=self._ctx.state,
+                            details=he.details,
+                        )
+                        return
+
             return iterator(messages)
 
     async def create_chat_stream(
@@ -239,10 +278,9 @@ class _AsyncCompletions:
     ]:
         self._ctx.state.messages.extend(messages)
 
-        @task()
         async def iterator(
             messages: List[ChatCompletionMessageParam],
-        ) -> AsyncIterable[ChatCompletionChunk]:
+        ) -> AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk]:
             if self.need_tool_call():
                 tool_stream = self.create_tool_call_stream()
                 try:
@@ -293,6 +331,22 @@ class _AsyncCompletions:
                 async for chunk in resp:
                     yield chunk
                 messages = []
+
+                try:
+                    if self._ctx.post_llm_call_hook:
+                        self._ctx.state = (
+                            await self._ctx.post_llm_call_hook.post_llm_call(
+                                self._ctx.state
+                            )
+                        )
+                except HookInterruptException as he:
+                    yield ContextInterruption(
+                        life_cycle="llm_call",
+                        reason=he.reason,
+                        state=self._ctx.state,
+                        details=he.details,
+                    )
+                    return
 
                 if self.need_tool_call():
                     tool_stream = self.create_tool_call_stream()
@@ -347,6 +401,7 @@ class _AsyncCompletions:
                         self._ctx.state,
                     )
                 updated_arguments = tool_call.get("function", {}).get("arguments", "{}")
+
                 yield ToolChunk(
                     tool_call_id=tool_call.get("id", ""),
                     tool_name=tool_name,
@@ -410,6 +465,7 @@ class Context:
         self.pre_tool_call_hook: PreToolCallHook | None = None
         self.post_tool_call_hook: PostToolCallHook | None = None
         self.pre_llm_call_hook: PreLLMCallHook | None = None
+        self.post_llm_call_hook: PostLLMCallHook | None = None
 
     async def init(self) -> None:
         if self.state.context_parameters is not None:
@@ -442,3 +498,6 @@ class Context:
 
     def set_pre_llm_call_hook(self, hook: PreLLMCallHook) -> None:
         self.pre_llm_call_hook = hook
+
+    def set_post_llm_call_hook(self, hook: PostLLMCallHook) -> None:
+        self.post_llm_call_hook = hook
