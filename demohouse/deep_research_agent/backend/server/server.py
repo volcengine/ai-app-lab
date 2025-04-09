@@ -42,6 +42,7 @@ from tools.hooks import (
     PythonExecutorPostToolCallHook,
     SearcherPostToolCallHook,
     KnowledgeBasePostToolCallHook,
+    TLSPostToolCallHook,
 )
 
 
@@ -144,6 +145,7 @@ def get_workers(
         name="log_retriever",
         instruction="查询日志信息",
         tools=[mcp_clients.get("tls")],
+        post_tool_call_hook=TLSPostToolCallHook(),
     )
 
     knowledgebase_retriever = Worker(
