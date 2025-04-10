@@ -1,12 +1,12 @@
 from typing import Any, Optional
+
 from arkitect.core.component.context.context import Context
+from arkitect.core.component.context.hooks import (
+    PostToolCallHook,
+    PreToolCallHook,
+)
 from arkitect.core.component.context.model import State, ToolChunk
 from arkitect.core.component.tool.builder import build_mcp_clients_from_config
-
-from arkitect.core.component.context.hooks import (
-    PreToolCallHook,
-    PostToolCallHook,
-)
 
 CONFIG_FILE_PATH = "./mcp_config.json"
 
@@ -19,13 +19,8 @@ class MyHooks(PreToolCallHook, PostToolCallHook):
         state: State,
     ) -> State:
         print("\n" + "=" * 20 + "Inside pre tool call" + "=" * 20 + "\n")
-        last_assistant_message = state.messages[-1]
-        tool_call_part = last_assistant_message["tool_calls"]
-        for tool_call in tool_call_part:
-            print(
-                f"Tool {tool_call['function']['name']} with {tool_call['function']['arguments']}"
-            )
-            # you may modify this or ask users for approval here
+        print(f"Tool {name} with {arguments}")
+        # you may modify this or ask users for approval here
         return state  # return state no matter if have modified it
 
     async def post_tool_call(

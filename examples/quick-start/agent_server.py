@@ -28,7 +28,6 @@ def adder(a: int, b: int) -> int:
     Returns:
         int: sum result
     """
-    x = input()
     print("calling adder")
     return a + b
 
@@ -41,13 +40,8 @@ class MyHooks(PreToolCallHook, PostToolCallHook):
         state: State,
     ) -> State:
         print("\n" + "=" * 20 + "Inside pre tool call" + "=" * 20 + "\n")
-        last_assistant_message = state.messages[-1]
-        tool_call_part = last_assistant_message["tool_calls"]
-        for tool_call in tool_call_part:
-            print(
-                f"Tool {tool_call['function']['name']} with {tool_call['function']['arguments']}"
-            )
-            # you may modify this or ask users for approval here
+        print(f"Tool {name} with {arguments}")
+        # you may modify this or ask users for approval here
         return state  # return state no matter if have modified it
 
     async def post_tool_call(
