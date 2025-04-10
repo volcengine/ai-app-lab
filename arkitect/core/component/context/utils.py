@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from arkitect.core.component.context.model import ToolChunk
-from volcenginesdkarkruntime.types.chat import ChatCompletion, ChatCompletionChunk
 from typing import Union
 
+from volcenginesdkarkruntime.types.chat import ChatCompletion, ChatCompletionChunk
+
+from arkitect.core.component.context.model import ToolChunk
 from arkitect.telemetry import logger
 from arkitect.types.llm.model import (
     ActionDetail,
@@ -61,3 +62,4 @@ def convert_chunk(
             )
     elif isinstance(chunk, ChatCompletion):
         return ArkChatResponse(**chunk.model_dump())
+    return None

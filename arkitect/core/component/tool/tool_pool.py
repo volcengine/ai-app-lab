@@ -14,8 +14,6 @@
 
 from typing import Any, Callable, Dict
 
-from mcp.server.fastmcp import FastMCP
-from mcp.types import CallToolResult
 from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
 
 from arkitect.core.component.tool.mcp_client import MCPClient
@@ -27,6 +25,8 @@ from arkitect.core.component.tool.utils import (
 from arkitect.telemetry.logger import WARN
 from arkitect.telemetry.trace.wrapper import task
 from arkitect.types.llm.model import ChatCompletionTool
+from mcp.server.fastmcp import FastMCP
+from mcp.types import CallToolResult
 
 
 class ToolPool:

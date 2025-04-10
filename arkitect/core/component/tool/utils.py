@@ -14,8 +14,6 @@
 
 from typing import Any
 
-from mcp import Tool
-from mcp.types import CallToolResult, ImageContent, TextContent
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletionContentPartParam,
     ChatCompletionContentPartTextParam,
@@ -26,6 +24,8 @@ from volcenginesdkarkruntime.types.chat.chat_completion_content_part_image_param
 )
 
 from arkitect.types.llm.model import ChatCompletionTool, FunctionDefinition
+from mcp import Tool
+from mcp.types import CallToolResult, ImageContent, TextContent
 
 
 def convert_to_chat_completion_content_part_param(

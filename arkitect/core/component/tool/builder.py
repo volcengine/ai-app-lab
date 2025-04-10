@@ -22,9 +22,9 @@ from typing import Callable
 
 import anyio
 from anyio.abc import Process
-from mcp.client.stdio import get_default_environment
 
 from arkitect.core.component.tool.mcp_client import MCPClient
+from mcp.client.stdio import get_default_environment
 
 
 def build_mcp_clients_from_config(  # type: ignore

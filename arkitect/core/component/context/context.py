@@ -25,7 +25,6 @@ from typing import (
     Union,
 )
 
-from pydantic import BaseModel
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletion,

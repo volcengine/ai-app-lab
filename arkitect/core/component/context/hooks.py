@@ -79,7 +79,6 @@ Hook = Union[
 
 
 class ApprovalHook(PreToolCallHook):
-
     async def pre_tool_call(
         self,
         name: str,
