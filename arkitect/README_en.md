@@ -78,6 +78,7 @@ async def default_model_calling(
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     parameters = ArkChatParameters(**request.__dict__)
     ctx = Context(model="doubao-1.5-pro-32k-250115", parameters=parameters)
+    await ctx.init()
     messages = [
         {"role": message.role, "content": message.content}
         for message in request.messages
@@ -178,10 +179,11 @@ def adder(a: int, b: int) -> int:
 async def default_model_calling(
     request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
-    # parameters = ArkChatParameters(**request.__dict__)
+    parameters = ArkChatParameters(**request.__dict__)
     ctx = Context(
-        model="doubao-1-5-pro-32k-250115",
+        model="deepseek-v3-241226",
         tools=[adder],
+        parameters=parameters,
     )
     await ctx.init()
     messages = [
