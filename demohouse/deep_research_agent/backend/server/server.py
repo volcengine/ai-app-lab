@@ -126,7 +126,7 @@ def get_workers(
     searcher = Worker(
         llm_model=WORKER_LLM_MODEL,
         name="searcher",
-        instruction="联网搜索公域资料，读取网页或链接内容",
+        instruction="1. 联网搜索公域资料 2. 读取网页或链接内容（需要提供以`https://`开头的完整URL）",
         tools=[mcp_clients.get("search")],
         post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state),
     )
