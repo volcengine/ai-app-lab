@@ -17,7 +17,6 @@ import json
 from typing import (
     Any,
     AsyncIterable,
-    AsyncIterator,
     Callable,
     Dict,
     List,
@@ -36,11 +35,11 @@ from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
 from arkitect.core.component.context.hooks import (
+    HookInterruptException,
     PostLLMCallHook,
-    PreToolCallHook,
     PostToolCallHook,
     PreLLMCallHook,
-    HookInterruptException,
+    PreToolCallHook,
 )
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
@@ -48,9 +47,10 @@ from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
 )
+
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext
-from .model import State, ContextInterruption
+from .model import ContextInterruption, State
 
 
 class ToolChunk(BaseModel):
@@ -281,111 +281,12 @@ class _AsyncCompletions:
 
             return iterator(messages)
 
-    # async def create_chat_stream(
-    #     self,
-    #     messages: List[ChatCompletionMessageParam],
-    #     stream: Optional[Literal[True, False]] = True,
-    #     **kwargs: Dict[str, Any],
-    # ) -> Union[
-    #     ChatCompletion | ContextInterruption,
-    #     AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk],
-    # ]:
-    #     self._ctx.state.messages.extend(messages)
-
-    #     async def iterator(
-    #         messages: List[ChatCompletionMessageParam],
-    #     ) -> AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk]:
-    #         if self.need_tool_call():
-    #             tool_stream = self.create_tool_call_stream()
-    #             try:
-    #                 async for chunk in tool_stream:
-    #                     yield chunk
-    #             except HookInterruptException as he:
-    #                 yield ContextInterruption(
-    #                     life_cycle="tool_call",
-    #                     reason=he.reason,
-    #                     state=self._ctx.state,
-    #                     details=he.details,
-    #                 )
-    #                 return
-
-    #         while True:
-    #             try:
-    #                 if self._ctx.pre_llm_call_hook:
-    #                     self._ctx.state = (
-    #                         await self._ctx.pre_llm_call_hook.pre_llm_call(
-    #                             self._ctx.state
-    #                         )
-    #                     )
-    #             except HookInterruptException as he:
-    #                 yield ContextInterruption(
-    #                     life_cycle="llm_call",
-    #                     reason=he.reason,
-    #                     state=self._ctx.state,
-    #                     details=he.details,
-    #                 )
-    #                 return
-    #             resp = (
-    #                 await self._ctx.chat.completions.create(
-    #                     model=self.model,
-    #                     messages=self._ctx.state.messages,
-    #                     stream=stream,
-    #                     tool_pool=self._ctx.tool_pool,
-    #                     **kwargs,
-    #                 )
-    #                 if not self._ctx.state.context_id
-    #                 else await self._ctx.context.completions.create(
-    #                     model=self.model,
-    #                     messages=messages,
-    #                     stream=stream,
-    #                     **kwargs,
-    #                 )
-    #             )
-    #             assert isinstance(resp, AsyncIterable)
-    #             async for chunk in resp:
-    #                 yield chunk
-    #             messages = []
-
-    #             try:
-    #                 if self._ctx.post_llm_call_hook:
-    #                     self._ctx.state = (
-    #                         await self._ctx.post_llm_call_hook.post_llm_call(
-    #                             self._ctx.state
-    #                         )
-    #                     )
-    #             except HookInterruptException as he:
-    #                 yield ContextInterruption(
-    #                     life_cycle="llm_call",
-    #                     reason=he.reason,
-    #                     state=self._ctx.state,
-    #                     details=he.details,
-    #                 )
-    #                 return
-
-    #             if self.need_tool_call():
-    #                 tool_stream = self.create_tool_call_stream()
-    #                 try:
-    #                     async for chunk in tool_stream:
-    #                         yield chunk
-    #                 except HookInterruptException as he:
-    #                     yield ContextInterruption(
-    #                         life_cycle="tool_call",
-    #                         reason=he.reason,
-    #                         state=self._ctx.state,
-    #                         details=he.details,
-    #                     )
-    #                     return
-    #             else:
-    #                 break
-
-    #     return iterator(messages)
-
     async def execute_tool(
         self, tool_name: str, parameters: str
     ) -> tuple[Any | None, Exception | None]:
         tool_resp, tool_exception = None, None
         try:
-            tool_resp = await self._ctx.tool_pool.execute_tool(
+            tool_resp = await self._ctx.tool_pool.execute_tool(  # type: ignore
                 tool_name=tool_name, parameters=json.loads(parameters)
             )
         except Exception as e:
@@ -404,7 +305,7 @@ class _AsyncCompletions:
 
     def create_tool_call_stream(self) -> AsyncIterable[ToolChunk]:
         async def tool_call_events() -> AsyncIterable[ToolChunk]:
-            tool_calls = self._ctx.get_latest_message().get("tool_calls")
+            tool_calls = self._ctx.get_latest_message().get("tool_calls")  # type: ignore
             for tool_call in tool_calls:
                 tool_name = tool_call.get("function", {}).get("name")
                 arguments = tool_call.get("function", {}).get("arguments", "{}")

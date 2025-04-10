@@ -18,7 +18,6 @@ import logging
 from contextlib import AsyncExitStack
 from typing import Any, Dict
 
-import anyio
 from mcp import (
     ClientSession,
     StdioServerParameters,
@@ -35,7 +34,6 @@ from arkitect.core.component.tool.utils import (
 )
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ChatCompletionTool
-from arkitect.telemetry.trace import task
 
 logger = logging.getLogger(__name__)
 
