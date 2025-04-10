@@ -1,9 +1,9 @@
-# 深度推理 Deep Research
+# 深度推理 Deep Search
 
 ## 应用介绍
 
-Deep Research 是一款专为应对复杂问题而设计的高效工具，利用 DeepSeek-R1 大模型对复杂问题进行多角度分析，并辅助互联网资料，快速生成最合适用户的解决方案。
-无论是在学术研究、企业决策还是产品调研中，Deep Research 都能够有效地协助用户深入挖掘，提出切实可行的解决策略。
+Deep Search 是一款专为应对复杂问题而设计的高效工具，利用 DeepSeek-R1 大模型对复杂问题进行多角度分析，并辅助互联网资料，快速生成最合适用户的解决方案。
+无论是在学术研究、企业决策还是产品调研中，Deep Search 都能够有效地协助用户深入挖掘，提出切实可行的解决策略。
 
 ![img.png](docs/preview.png)
 
@@ -44,7 +44,7 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
 
 ## 快速入门
 
-本文为您介绍如何在本地以及利用火山方舟高代码应用快速部署 Deep Research 项目，本项目可以通过以下两种方式进行部署：
+本文为您介绍如何在本地以及利用火山方舟高代码应用快速部署 Deep search 项目，本项目可以通过以下两种方式进行部署：
 
 | **方式**      | **说明**                  | **适用场景**                  |
 |-------------|-------------------------|---------------------------|
@@ -58,7 +58,7 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
 
     ```shell
     git clone https://github.com/volcengine/ai-app-lab.git
-    cd demohouse/service
+    cd demohouse/deep_search
     ```
 
 2. 设置环境变量
@@ -136,13 +136,13 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
 
     ```shell
     git clone https://github.com/volcengine/ai-app-lab.git
-    cd demohouse/service
+    cd demohouse/deep_search
     ```
 
 3. 打包本地代码为 `code.zip`
 
     ```shell
-    cd demohouse/service
+    cd demohouse/deep_search
     zip -r code.zip *
     ```
 
@@ -186,7 +186,7 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
      1. 执行以下命令，在本地启动 webui，并连接远程服务。
 
        ```shell
-       cd demohouse/service
+       cd demohouse/deep_search
        # 安装项目依赖
        poetry install
        # 设置环境变量为前面步骤中的高代码应用botID
@@ -225,7 +225,7 @@ Deep Research 是一款专为应对复杂问题而设计的高效工具，利用
 ├── README.md
 ├── __init__.py
 ├── config.py
-├── deep_research.py # 项目核心逻辑实现
+├── deep_search.py # 项目核心逻辑实现
 ├── docs
 ├── poetry.lock
 ├── prompt.py # 思考/总结 prompt

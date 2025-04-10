@@ -16,14 +16,23 @@ from pydantic import BaseModel, Field
 from typing_extensions import Optional
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.llm.llm import ArkMessage, ArkChatRequest, ArkChatResponse, ArkChatCompletionChunk
+from arkitect.core.component.llm.model import (
+    ArkMessage,
+    ArkChatRequest,
+    ArkChatResponse,
+    ArkChatCompletionChunk,
+)
 from arkitect.core.component.prompts import CustomPromptTemplate
 from arkitect.telemetry.logger import INFO
 
-from .search_engine import SearchEngine, SearchResult
-from .search_engine.volc_bot import VolcBotSearchEngine
-from .prompt import DEFAULT_PLANNING_PROMPT, DEFAULT_SUMMARY_PROMPT
-from .utils import get_current_date, cast_content_to_reasoning_content, gen_metadata_chunk
+from search_engine import SearchEngine, SearchResult
+from search_engine.tavily import TavilySearchEngine
+from prompt import DEFAULT_PLANNING_PROMPT, DEFAULT_SUMMARY_PROMPT
+from utils import (
+    get_current_date,
+    cast_content_to_reasoning_content,
+    gen_metadata_chunk,
+)
 
 """
 ResultsSummary is using to store the result searched so far
@@ -35,6 +44,7 @@ class ResultsSummary(BaseModel):
     key: query
     values: list of searched references for this query
     """
+
     ref_dict: Dict[str, List[SearchResult]] = Field(default_factory=dict)
 
     def add_result(self, query: str, results: List[SearchResult]) -> None:
@@ -49,7 +59,7 @@ class ResultsSummary(BaseModel):
         output = ""
 
         for key, value in self.ref_dict.items():
-            output += f"\n【查询 “{key}” 得到的相关资料】"
+            output += f"\n【Searching “{key}” result】"
             output += "\n".join([v.summary_content for v in value])
 
         return output
@@ -72,17 +82,19 @@ class ExtraConfig(BaseModel):
 
 
 """
-DeepResearch 
+DeepSearch
 """
 
 
-class DeepResearch(BaseModel):
-    search_engine: SearchEngine = Field(default_factory=VolcBotSearchEngine)
+class DeepSearch(BaseModel):
+    search_engine: SearchEngine = Field(default_factory=TavilySearchEngine)
     planning_endpoint_id: str = Field(default_factory="")
     summary_endpoint_id: str = Field(default_factory="")
     extra_config: ExtraConfig = Field(default_factory=ExtraConfig)
 
-    async def arun_deep_research(self, request: ArkChatRequest, question: str) -> ArkChatResponse:
+    async def arun_deep_research(
+        self, request: ArkChatRequest, question: str
+    ) -> ArkChatResponse:
         references = ResultsSummary()
         buffered_reasoning_content = ""
 
@@ -94,7 +106,9 @@ class DeepResearch(BaseModel):
         )
 
         async for reasoning_chunk in reasoning_stream:
-            buffered_reasoning_content += reasoning_chunk.choices[0].delta.reasoning_content
+            buffered_reasoning_content += reasoning_chunk.choices[
+                0
+            ].delta.reasoning_content
 
         # 2. run summary
         # append the reasoning content as an assistant message to help summary
@@ -105,17 +119,17 @@ class DeepResearch(BaseModel):
             )
         )
         resp = await self.arun_summary(
-            request=request,
-            question=question,
-            references=references
+            request=request, question=question, references=references
         )
         # append the reasoning buffer
         resp.choices[0].message.reasoning_content = (
-                buffered_reasoning_content + resp.choices[0].message.reasoning_content)
+            buffered_reasoning_content + resp.choices[0].message.reasoning_content
+        )
         return resp
 
-    async def astream_deep_research(self, request: ArkChatRequest, question: str) \
-            -> AsyncIterable[ArkChatCompletionChunk]:
+    async def astream_deep_research(
+        self, request: ArkChatRequest, question: str
+    ) -> AsyncIterable[ArkChatCompletionChunk]:
         references = ResultsSummary()
         buffered_reasoning_content = ""
 
@@ -127,7 +141,9 @@ class DeepResearch(BaseModel):
         )
 
         async for reasoning_chunk in reasoning_stream:
-            buffered_reasoning_content += reasoning_chunk.choices[0].delta.reasoning_content
+            buffered_reasoning_content += reasoning_chunk.choices[
+                0
+            ].delta.reasoning_content
             yield reasoning_chunk
 
         # 2. stream summary
@@ -148,10 +164,7 @@ class DeepResearch(BaseModel):
             yield summary_chunk
 
     async def astream_planning(
-            self,
-            request: ArkChatRequest,
-            question: str,
-            references: ResultsSummary
+        self, request: ArkChatRequest, question: str, references: ResultsSummary
     ) -> AsyncIterable[ArkChatCompletionChunk]:
 
         planned_rounds = 1
@@ -160,7 +173,10 @@ class DeepResearch(BaseModel):
 
             llm = BaseChatLanguageModel(
                 endpoint_id=self.planning_endpoint_id,
-                template=CustomPromptTemplate(template=self.extra_config.planning_template or DEFAULT_PLANNING_PROMPT),
+                template=CustomPromptTemplate(
+                    template=self.extra_config.planning_template
+                    or DEFAULT_PLANNING_PROMPT
+                ),
                 messages=request.messages,
             )
 
@@ -168,7 +184,7 @@ class DeepResearch(BaseModel):
                 reference=references.to_plaintext(),  # pass the search result to prompt template
                 question=question,
                 max_search_words=self.extra_config.max_search_words,
-                meta_info=f"当前时间：{get_current_date()}"
+                meta_info=get_current_date(),
             )
 
             planning_result = ""
@@ -186,11 +202,7 @@ class DeepResearch(BaseModel):
             new_queries = self.check_query(planning_result)
             if not new_queries:
                 # YIELD state with metadata
-                yield gen_metadata_chunk(
-                    metadata={
-                        'search_state': 'finished'
-                    }
-                )
+                yield gen_metadata_chunk(metadata={"search_state": "finished"})
                 INFO("planning finished")
                 break
             else:
@@ -198,9 +210,9 @@ class DeepResearch(BaseModel):
                 # YIELD state with metadata
                 yield gen_metadata_chunk(
                     metadata={
-                        'search_rounds': planned_rounds,
-                        'search_state': 'searching',
-                        'search_keywords': new_queries
+                        "search_rounds": planned_rounds,
+                        "search_state": "searching",
+                        "search_keywords": new_queries,
                     }
                 )
                 search_results = await self.search_engine.asearch(new_queries)
@@ -208,43 +220,50 @@ class DeepResearch(BaseModel):
                 # YIELD state with metadata
                 yield gen_metadata_chunk(
                     metadata={
-                        'search_rounds': planned_rounds,
-                        'search_state': 'searched',
-                        'search_keywords': new_queries,
-                        'search_results': search_results
+                        "search_rounds": planned_rounds,
+                        "search_state": "searched",
+                        "search_keywords": new_queries,
+                        "search_results": search_results,
                     }
                 )
                 for search_result in search_results:
-                    references.add_result(query=search_result.query, results=[search_result])
+                    references.add_result(
+                        query=search_result.query, results=[search_result]
+                    )
 
-    async def arun_summary(self, request: ArkChatRequest, question: str, references: ResultsSummary) -> ArkChatResponse:
+    async def arun_summary(
+        self, request: ArkChatRequest, question: str, references: ResultsSummary
+    ) -> ArkChatResponse:
         llm = BaseChatLanguageModel(
             endpoint_id=self.summary_endpoint_id,
-            template=CustomPromptTemplate(template=self.extra_config.summary_template),
+            template=CustomPromptTemplate(
+                template=self.extra_config.summary_template or DEFAULT_SUMMARY_PROMPT
+            ),
             messages=request.messages,
         )
 
         return await llm.arun(
             reference=references.to_plaintext(),
             question=question,
-            meta_info=f"当前时间：{get_current_date()}"
+            meta_info=get_current_date(),
         )
 
-    async def astream_summary(self, request: ArkChatRequest, question: str, references: ResultsSummary) \
-            -> AsyncIterable[ArkChatCompletionChunk]:
+    async def astream_summary(
+        self, request: ArkChatRequest, question: str, references: ResultsSummary
+    ) -> AsyncIterable[ArkChatCompletionChunk]:
         llm = BaseChatLanguageModel(
             endpoint_id=self.summary_endpoint_id,
-            template=CustomPromptTemplate(template=self.extra_config.summary_template or DEFAULT_SUMMARY_PROMPT),
+            template=CustomPromptTemplate(template=self.extra_config.summary_template),
             messages=request.messages,
         )
 
-        INFO("----- 联网资料 -----")
+        INFO("----- Search result -----")
         INFO(f"{references.to_plaintext()}")
 
         stream = llm.astream(
             reference=references.to_plaintext(),
             question=question,
-            meta_info=f"当前时间：{get_current_date()}"
+            meta_info=get_current_date(),
         )
 
         async for chunk in stream:
@@ -252,6 +271,6 @@ class DeepResearch(BaseModel):
 
     @classmethod
     def check_query(cls, output: str) -> Optional[List[str]]:
-        if '无需' in output:
+        if "No need to search" in output:
             return None
-        return [o.strip() for o in output.split(';')]
+        return [o.strip() for o in output.split(";")]

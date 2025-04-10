@@ -1,6 +1,6 @@
 # Overview
 
-Deep Research is a high-efficiency tool built for tackling complex problems. Powered by the DeepSeek-R1, it provides in-depth, multi-angle analysis and integrates online resources to deliver well-rounded solutions quickly. Whether you're conducting academic research, making business decisions, or exploring product insights, Deep Research helps you dive deeper and develop practical, actionable strategies.
+Deep search is a high-efficiency tool built for tackling complex problems. Powered by the DeepSeek-R1, it provides in-depth, multi-angle analysis and integrates online resources to deliver well-rounded solutions quickly. Whether you're conducting academic search, making business decisions, or exploring product insights, Deep search helps you dive deeper and develop practical, actionable strategies.
 
 ## Expense Details
 
@@ -23,7 +23,7 @@ Deep Research is a high-efficiency tool built for tackling complex problems. Pow
 
    ```shell
    git clone https://github.com/volcengine/ai-app-lab.git
-   cd demohouse/deep_research
+   cd demohouse/deep_search
    ```
 
 2. Set environment variables
@@ -46,7 +46,7 @@ Deep Research is a high-efficiency tool built for tackling complex problems. Pow
 
    > Note
    >
-   > Deep research server default runs on localhost:8888, providing OpenAI compatible API
+   > Deep search server default runs on localhost:8888, providing OpenAI compatible API
    >
 
    ```shell
@@ -60,7 +60,7 @@ Deep Research is a high-efficiency tool built for tackling complex problems. Pow
 4. Start webui
 
    ```shell
-   # set your deep research server api addr
+   # set your deep search server api addr
    export API_ADDR=http://localhost:8888/api/v3/bots
 
    python -m venv .venv
@@ -96,7 +96,7 @@ The model outputs from the thinking stage will be integrated into the reasoning_
 ├── README.md
 ├── __init__.py
 ├── config.py
-├── deep_research.py # core logic
+├── deep_search.py # core logic
 ├── docs
 ├── poetry.lock
 ├── prompt.py # planning/summary prompt

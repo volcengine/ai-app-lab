@@ -23,7 +23,7 @@ from state.global_state import GlobalState
 from tools.mock import add, compare
 
 
-class DeepResearch(BaseModel):
+class DeepSearch(BaseModel):
     supervisor_llm_model: str = ''
     summary_llm_model: str = ''
     workers: Dict[str, Worker] = {}
@@ -98,7 +98,7 @@ if __name__ == "__main__":
             root_task='比较 (1 + 23) 和 (7 + 19) 哪个更大'
         )
 
-        service = DeepResearch(
+        service = DeepSearch(
             default_llm_model='deepseek-r1-250120',
             workers={
                 'adder': Worker(llm_model='deepseek-r1-250120', name='adder', instruction='会计算两位数的加法',
