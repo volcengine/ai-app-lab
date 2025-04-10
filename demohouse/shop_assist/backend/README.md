@@ -41,8 +41,8 @@ pip install poetry==1.6.1
 ## 快速入门
 本文为您介绍如何在本地部署智能导购应用，并进行调用。
 1. 创建商品信息检索用知识库，并记录知识库名称备用。
-   1. 创建知识库，按下图所示配置标签 产品名: List<String>，其他配置保持默认。
-      ![alt text](assets/image-2.png)
+   1. 创建知识库，按下图所示配置标签 `产品名: List<String>` `account_id: String`，其他配置保持默认。
+      ![alt text](assets/image-10.png)
    2. 上传文档，上传`backend/docs/`下的产品介绍示例文档，并给每个产品文档标上和`backend/data/product.py`中一致的产品名标签。
       ![alt text](assets/image-3.png)
    3. （可选）添加自定义商品：
@@ -53,8 +53,8 @@ pip install poetry==1.6.1
 2. 创建 FAQ 检索用知识库，并记录 FAQ 知识库名称备用。
    1. 创建知识库
       1. 数据类型选择 结构化数据
-      2. 按下图所示配置标签 account_id: String
-        ![alt text](assets/image-5.png)
+      2. 按下图所示配置标签 `产品名: List<String>` `account_id: String`
+        ![alt text](assets/image-10.png)
       3. 其他配置保持默认。
    2. 上传backend/docs/faq_example.faq.xlsx示例文档
         ![alt text](assets/image-8.png)
@@ -82,8 +82,11 @@ export FAQ_COLLECTION_NAME="your_faq_collection_name"
 export LLM_ENDPOINT_ID="doubao-1-5-pro-32k-250115"
 # 填写存储FAQ使用的 TOS Bucket 名称
 export BUCKET_NAME="your_bucket_name"
-# True: 使用环境变量中的 VOLC_ACCESSKEY为后续LLM访问鉴权，False: 使用client请求中的Authorization header为后续LLM访问鉴权
+# True: 使用环境变量中的 VOLC_ACCESSKEY 或 ARK_API_KEY 为后续LLM访问鉴权
+# False: 使用client请求中的Authorization header为后续LLM访问鉴权
 export USE_SERVER_AUTH="True" 
+# 由于 Model ID 不支持AKSK鉴权，如USE_SERVER_AUTH为True，且LLM_ENDPOINT_ID使用Model ID 需设置环境变量中的ARK_API_KEY
+export ARK_API_KEY="your_api_key"
 ```
 
 5. 安装依赖
