@@ -78,24 +78,31 @@ Hook = Union[
 ]
 
 
-async def approval_tool_hook(state: State) -> State:
-    if len(state.messages) == 0:
-        return state
-    last_message = state.messages[-1]
-    if not last_message.get("tool_calls"):
-        return state
+class ApprovalHook(PreToolCallHook):
 
-    formated_output = []
-    for tool_call in last_message.get("tool_calls"):
-        tool_name = tool_call.get("function", {}).get("name")
-        tool_call_param = tool_call.get("function", {}).get("arguments", "{}")
-        formated_output.append(
-            f"tool_name: {tool_name}\ntool_call_param: {tool_call_param}\n"
-        )
-    print("tool call parameters:")
-    print("".join(formated_output))
-    y_or_n = input("input Y to approve\n")
-    if y_or_n == "Y":
-        return state
-    else:
-        raise ValueError("tool call parameters not approved")
+    async def pre_tool_call(
+        self,
+        name: str,
+        arguments: str,
+        state: State,
+    ) -> State:
+        if len(state.messages) == 0:
+            return state
+        last_message = state.messages[-1]
+        if not last_message.get("tool_calls"):
+            return state
+
+        formated_output = []
+        for tool_call in last_message.get("tool_calls"):
+            tool_name = tool_call.get("function", {}).get("name")
+            tool_call_param = tool_call.get("function", {}).get("arguments", "{}")
+            formated_output.append(
+                f"tool_name: {tool_name}\ntool_call_param: {tool_call_param}\n"
+            )
+        print("tool call parameters:")
+        print("".join(formated_output))
+        y_or_n = input("input Y to approve\n")
+        if y_or_n == "Y":
+            return state
+        else:
+            raise HookInterruptException(reason="approval failed", state=state)

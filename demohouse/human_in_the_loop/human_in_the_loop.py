@@ -18,7 +18,8 @@ from volcenginesdkarkruntime.types.context import TruncationStrategy
 
 from arkitect.core.client.http import default_ark_client
 from arkitect.core.component.context.context import Context
-from arkitect.core.component.context.hooks import approval_tool_hook
+from arkitect.core.component.context.hooks import ApprovalHook
+from arkitect.core.component.context.model import ToolChunk
 from arkitect.types.llm.model import ArkContextParameters
 
 
@@ -53,7 +54,8 @@ async def main():
     # human in the loop example
     ctx = Context(model="doubao-1.5-pro-32k-250115", tools=[link_reader])
     await ctx.init()
-    ctx.add_pre_tool_call_hook(approval_tool_hook)
+    approval_hook = ApprovalHook()
+    ctx.set_pre_tool_call_hook(approval_hook)
     while True:
         question = input("用户输入：")
         if question == "exit":
@@ -62,19 +64,27 @@ async def main():
             [{"role": "user", "content": question}], stream=True
         )
         async for chunk in completion:
-            if chunk.choices:
+            if isinstance(chunk, ToolChunk):
+                if chunk.tool_exception or chunk.tool_response:
+                    print(f"工具结果：{chunk.tool_response}")
+                    print(f"工具异常：{chunk.tool_exception}")
+                else:
+                    print(f"工具调用：{chunk.tool_name}")
+                    print(f"工具参数：{chunk.tool_arguments}")
+            elif chunk.choices:
                 print(chunk.choices[0].delta.content, end="")
         print()
 
     # context api example
     ctx2 = Context(
-        model="doubao-1.5-pro-32k-250115",
+        model="<YOUR ENDPOINT>",
         context_parameters=ArkContextParameters(
             messages=[{"role": "system", "content": "You are an ai assistant."}],
             truncation_strategy=TruncationStrategy(
                 type="last_history_tokens",
             ),
         ),
+        tools=[link_reader],
     )
     await ctx2.init()
 
