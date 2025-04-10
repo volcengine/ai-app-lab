@@ -58,26 +58,37 @@
 ```Python
 import os
 from typing import AsyncIterable, Union
-from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.llm.model import ArkChatRequest, ArkChatResponse, ArkChatCompletionChunk, ArkChatParameters, Response
+
+from arkitect.core.component.context.context import Context
+
+from arkitect.types.llm.model import (
+    ArkChatCompletionChunk,
+    ArkChatParameters,
+    ArkChatRequest,
+    ArkChatResponse,
+    Response,
+)
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
 
-endpoint_id = "<YOUR ENDPOINT ID>"
 
 @task()
-async def default_model_calling(request: ArkChatRequest) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
+async def default_model_calling(
+    request: ArkChatRequest,
+) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     parameters = ArkChatParameters(**request.__dict__)
-    llm = BaseChatLanguageModel(
-        endpoint_id=endpoint_id,
-        messages=request.messages,
-        parameters=parameters,
-    )
+    ctx = Context(model="doubao-1.5-pro-32k-250115", parameters=parameters)
+    messages = [
+        {"role": message.role, "content": message.content}
+        for message in request.messages
+    ]
+    resp = await ctx.completions.create(messages=messages, stream=request.stream)
     if request.stream:
-        async for resp in llm.astream():
-            yield resp
+        async for chunk in resp:
+            yield chunk
     else:
-        yield await llm.arun()
+        yield resp
+
 
 @task()
 async def main(request: ArkChatRequest) -> AsyncIterable[Response]:
@@ -93,6 +104,7 @@ if __name__ == "__main__":
         endpoint_path="/api/v3/bots/chat/completions",
         clients={},
     )
+
 ```
 
 5. **Set API Key and Start Server:**
@@ -133,38 +145,57 @@ fc+llm
 import os
 from typing import AsyncIterable, Union
 
-from arkitect.core.component.llm import BaseChatLanguageModel
+from arkitect.core.component.context.context import Context
 
-from arkitect.core.component.llm.model import (
+from arkitect.core.component.context.model import ToolChunk
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
     ArkChatRequest,
     ArkChatResponse,
     Response,
 )
-from arkitect.core.component.tool import Calculator, ToolPool
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
 
-endpoint_id = "<YOUR ENDPOINT ID>"
+
+# you can define your own methods here and let LLM use as tools
+def adder(a: int, b: int) -> int:
+    """Add two integer numbers
+
+    Args:
+        a (int): first number
+        b (int): second number
+
+    Returns:
+        int: sum result
+    """
+    print("calling adder")
+    return a + b
+
 
 @task()
 async def default_model_calling(
     request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
-    parameters = ArkChatParameters(**request.__dict__)
-    ToolPool.register(Calculator())
-
-    llm = BaseChatLanguageModel(
-        endpoint_id=endpoint_id,
-        messages=request.messages,
-        parameters=parameters,
+    # parameters = ArkChatParameters(**request.__dict__)
+    ctx = Context(
+        model="doubao-1-5-pro-32k-250115",
+        tools=[adder],
     )
+    await ctx.init()
+    messages = [
+        {"role": message.role, "content": message.content}
+        for message in request.messages
+    ]
+    resp = await ctx.completions.create(messages=messages, stream=request.stream)
     if request.stream:
-        async for resp in llm.astream(functions=ToolPool.all()):
-            yield resp
+        async for chunk in resp:
+            if isinstance(chunk, ToolChunk):
+                continue
+            yield chunk
     else:
-        yield await llm.arun(functions=ToolPool.all())
+        yield resp
 
 
 @task()
@@ -182,6 +213,7 @@ if __name__ == "__main__":
         endpoint_path="/api/v3/bots/chat/completions",
         clients={},
     )
+
 ```
 
 5. **Set API Key and Start Server:**
