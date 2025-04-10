@@ -26,6 +26,7 @@ from typing import (
 )
 
 from pydantic import BaseModel
+from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
@@ -347,8 +348,9 @@ class Context:
         tools: list[MCPClient | Callable] | ToolPool | None = None,
         parameters: Optional[ArkChatParameters] = None,
         context_parameters: Optional[ArkContextParameters] = None,
+        client: Optional[AsyncArk] = None,
     ):
-        self.client = default_ark_client()
+        self.client = default_ark_client() if client is None else client
         self.state = (
             state
             if state
