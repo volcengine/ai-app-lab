@@ -25,7 +25,7 @@ jobs:
       - name: Apply Changes
         uses: EndBug/add-and-commit@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           author_name: License Bot
           author_email: license_bot@github.com
