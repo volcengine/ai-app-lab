@@ -23,7 +23,7 @@ from arkitect.launcher.vefaas import bot_wrapper
 from arkitect.telemetry.trace import task
 from search_engine.tavily import TavilySearchEngine
 from search_engine.volc_bot import VolcBotSearchEngine
-from service import DeepResearch, ExtraConfig
+from deep_search import DeepSearch, ExtraConfig
 
 from utils import get_last_message
 
@@ -56,7 +56,7 @@ async def main(
     max_search_words = metadata.get('max_search_words', 5)
     max_planning_rounds = metadata.get('max_planning_rounds', 5)
 
-    deep_research = DeepResearch(
+    deep_research = DeepSearch(
         search_engine=search_engine,
         planning_endpoint_id=REASONING_MODEL,
         summary_endpoint_id=REASONING_MODEL,
