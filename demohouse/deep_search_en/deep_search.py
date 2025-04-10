@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from typing_extensions import Optional
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.llm.model import (
+from arkitect.core.component.llm.llm import (
     ArkMessage,
     ArkChatRequest,
     ArkChatResponse,
