@@ -79,7 +79,7 @@ class VoiceBotService(BaseModel):
         self, inputs: AsyncIterable[WebEvent]
     ) -> AsyncIterable[WebEvent]:
         """
-        Main loop for handling input events.py and generating responses.
+        Main loop for handling input events and generating responses.
         """
         asr_responses = await self.handle_input_event(inputs)
         async for asr_recognized in self.handle_asr_response(asr_responses):
@@ -96,7 +96,7 @@ class VoiceBotService(BaseModel):
         self, inputs: AsyncIterable[WebEvent]
     ) -> AsyncIterable[ASRFullServerResponse]:
         """
-        Handle input events.py and generate ASR responses.
+        Handle input events and generate ASR responses.
         """
 
         async def async_gen() -> AsyncIterable[bytes]:
@@ -157,7 +157,7 @@ class VoiceBotService(BaseModel):
         Union[TTSSentenceStartPayload, TTSSentenceEndPayload, TTSDonePayload]
     ]:
         """
-        Handle TTS responses and generate TTS events.py.
+        Handle TTS responses and generate TTS events.
         """
         buffer = bytearray()
         if not self.tts_client.inited:

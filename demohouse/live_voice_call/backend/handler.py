@@ -64,13 +64,13 @@ async def handler(websocket: websockets.WebSocketCommonProtocol, path):
         ws: websockets.WebSocketCommonProtocol,
     ) -> AsyncIterable[WebEvent]:
         """
-        Asynchronously generate input events.py from the WebSocket connection.
+        Asynchronously generate input events from the WebSocket connection.
 
         Args:
             ws (websockets.WebSocketCommonProtocol): The client's WebSocket connection.
 
         Returns:
-            AsyncIterable[WebEvent]: An asynchronous generator of input events.py.
+            AsyncIterable[WebEvent]: An asynchronous generator of input events.
         """
         async for m in ws:
             input_event = convert_binary_to_web_event_to_binary(m)
@@ -84,11 +84,11 @@ async def handler(websocket: websockets.WebSocketCommonProtocol, path):
         ws: websockets.WebSocketCommonProtocol, output_events: AsyncIterable[WebEvent]
     ) -> None:
         """
-        Asynchronously fetch and send output events.py to the WebSocket connection.
+        Asynchronously fetch and send output events to the WebSocket connection.
 
         Args:
             ws (websockets.WebSocketCommonProtocol): The client's WebSocket connection.
-            output_events (AsyncIterable[WebEvent]): An asynchronous generator of output events.py.
+            output_events (AsyncIterable[WebEvent]): An asynchronous generator of output events.
         """
         async for output_event in output_events:
             INFO(
@@ -99,7 +99,7 @@ async def handler(websocket: websockets.WebSocketCommonProtocol, path):
 
     INFO(f"New connection: {websocket.remote_address}")
     try:
-        # Start the handler loop and asynchronously fetch output events.py
+        # Start the handler loop and asynchronously fetch output events
         outputs = service.handler_loop(async_gen(websocket))
         await asyncio.create_task(fetch_output(websocket, outputs))
     except websockets.exceptions.ConnectionClosed as e:

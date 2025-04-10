@@ -50,7 +50,7 @@ def _generate_tracking_info(tracking_number: str) -> Dict:
         tracking_number: Tracking number to generate info for
 
     Returns:
-        Dictionary containing tracking information and events.py
+        Dictionary containing tracking information and events
     """
     # Random locations for demo
     locations = [
@@ -61,16 +61,16 @@ def _generate_tracking_info(tracking_number: str) -> Dict:
         "深圳转运中心",
     ]
 
-    # Base time for events.py (now - 3 days)
+    # Base time for events (now - 3 days)
     base_time = datetime.now() - timedelta(days=3)
 
-    # Generate 3-5 random events.py
+    # Generate 3-5 random events
     num_events = random.randint(3, 5)
     statuses = list(TrackingStatus)[:num_events]  # Get first n statuses
 
     events = []
     for i, status in enumerate(statuses):
-        event_time = base_time + timedelta(hours=i * 8)  # 8 hours between events.py
+        event_time = base_time + timedelta(hours=i * 8)  # 8 hours between events
         location = random.choice(locations)
 
         description = {
@@ -93,7 +93,7 @@ def _generate_tracking_info(tracking_number: str) -> Dict:
     result = {
         "tracking_number": tracking_number,
         "current_status": str(statuses[-1]),  # Latest status
-        "events.py": events,
+        "events": events,
     }
     return result
 
@@ -107,7 +107,7 @@ def get_tracking_info(tracking_number: str) -> Dict:
         tracking_number: Tracking number to look up
 
     Returns:
-        Dictionary containing tracking information and events.py
+        Dictionary containing tracking information and events
     """
     # Check cache first
     tracking_info = _tracking_cache.get(tracking_number)

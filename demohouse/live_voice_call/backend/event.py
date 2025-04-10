@@ -37,7 +37,7 @@ class WebPayload(ABC):
 # Define error event
 class ErrorEvent(BaseModel):
     """
-    Model for error events.py.
+    Model for error events.
 
     Attributes:
         code (str): The error code.
@@ -126,7 +126,7 @@ class BotErrorPayload(WebPayload, BaseModel):
 # Define WebEvent
 class WebEvent(BaseModel):
     """
-    Model for web events.py.
+    Model for web events.
 
     Attributes:
         event (str): The event type.
