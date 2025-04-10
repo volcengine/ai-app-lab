@@ -72,10 +72,8 @@ def build_mcp_clients_from_config(  # type: ignore
             await exit_stack.aclose()
         except asyncio.CancelledError as e:
             logger.error("Error while closing exit stack: %s", e)
-            raise e
         except BaseException as e:
             logger.error("Error while closing exit stack: %s", e)
-            raise e
 
     return mcp_clients, cleanup
 

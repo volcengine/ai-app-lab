@@ -20,6 +20,19 @@ from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 from arkitect.types.llm.model import ArkChatParameters, ArkContextParameters
 
 
+class ToolChunk(BaseModel):
+    tool_call_id: str
+    tool_name: str
+    tool_arguments: str
+    tool_exception: Optional[Exception] = None
+    tool_response: Any | None = None
+
+    class Config:
+        """Configuration for this pydantic object."""
+
+        arbitrary_types_allowed = True
+
+
 class State(BaseModel):
     context_id: Optional[str] = Field(default=None)
     messages: List[ChatCompletionMessageParam] = Field(default_factory=list)

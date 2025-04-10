@@ -50,20 +50,7 @@ from arkitect.types.llm.model import (
 
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext
-from .model import ContextInterruption, State
-
-
-class ToolChunk(BaseModel):
-    tool_call_id: str
-    tool_name: str
-    tool_arguments: str
-    tool_exception: Optional[Exception] = None
-    tool_response: Any | None = None
-
-    class Config:
-        """Configuration for this pydantic object."""
-
-        arbitrary_types_allowed = True
+from .model import ContextInterruption, State, ToolChunk
 
 
 class _AsyncCompletions:
@@ -128,7 +115,7 @@ class _AsyncCompletions:
         **kwargs: Dict[str, Any],
     ) -> Union[
         ChatCompletion | ContextInterruption,
-        AsyncIterable[ChatCompletionChunk | ContextInterruption],
+        AsyncIterable[ChatCompletionChunk | ContextInterruption | ToolChunk],
     ]:
         self._ctx.state.messages.extend(messages)
 
