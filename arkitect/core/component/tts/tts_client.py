@@ -72,7 +72,7 @@ class AsyncTTSClient(AsyncBaseTTSClient):
     ) -> None:
         headers = self._build_http_header()
         INFO("with logID: %s , header: %s", self.log_id, headers)
-        self.conn = await websockets.connect(self.base_url, extra_headers=headers)
+        self.conn = await websockets.connect(self.base_url, additional_headers=headers)
         INFO("Dial server with LogID: %s", self.log_id)
         # Create a new message with type MsgTypeFullClient and flag MsgTypeFlagWithEvent
         msg = Message(event=EventStartConnection)

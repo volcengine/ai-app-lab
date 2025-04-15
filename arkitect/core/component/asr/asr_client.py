@@ -105,7 +105,7 @@ class AsyncASRClient(BaseAsyncASRClient, ABC):
             "X-Api-Request-Id": self.log_id,
         }
 
-        self.conn = await websockets.connect(self.base_url, extra_headers=headers)
+        self.conn = await websockets.connect(self.base_url, additional_headers=headers)
         INFO(f"Connected to {self.base_url}, log_id: {self.log_id}")
 
         # send init response

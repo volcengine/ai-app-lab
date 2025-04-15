@@ -21,10 +21,10 @@ dependencies = [
     "uvloop>=0.19.0; sys_platform != \"win32\"",
     "orjson<3.10.7",
     "aiofiles==23.2.1",
-    "websockets<=13.1",
     "tos<3.0.0,>=2.8.1",
     "mcp>=1.8.1",
     "aiohttp>=3.11.13",
+    "websockets>=14.0",
 ]
 name = "arkitect"
 version = "0.2.1"
