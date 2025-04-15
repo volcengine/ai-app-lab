@@ -590,6 +590,27 @@ class ArkChatResponse(Response):
         self.usage = total_usage
         return total_usage
 
+    def merge_bot_usages(self, others: Union[BotUsage, List[BotUsage]]) -> BotUsage:
+        if not others:
+            return self.bot_usage
+        if not isinstance(others, list):
+            others = [others]
+        total_bot_usage = BotUsage(
+            model_usage=self.bot_usage.model_usage if self.bot_usage else [],
+            action_usage=self.bot_usage.action_usage if self.bot_usage else [],
+            action_details=self.bot_usage.action_details if self.bot_usage else [],
+        )
+        for bot_usage in others:
+            if bot_usage.model_usage:
+                total_bot_usage.model_usage.extend(bot_usage.model_usage)
+            if bot_usage.action_usage:
+                total_bot_usage.action_usage.extend(bot_usage.action_usage)
+            if bot_usage.action_details:
+                total_bot_usage.action_details.extend(bot_usage.action_details)
+
+        self.bot_usage = total_bot_usage
+        return total_bot_usage
+
 
 class ArkChatCompletionChunk(Response):
     id: str

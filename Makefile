@@ -43,8 +43,8 @@ test:
 # Define a variable for Python and notebook files.
 PYTHON_FILES=.
 MYPY_CACHE=.mypy_cache
-format: PYTHON_FILES=./arkitect
-lint: PYTHON_FILES=./arkitect
+format: PYTHON_FILES=./arkitect ./examples
+lint: PYTHON_FILES=./arkitect ./examples
 lint_diff format_diff: PYTHON_FILES=$(shell git diff --relative=arkitect/ --name-only --diff-filter=d master | grep -E '\.py$$|\.ipynb$$')
 lint_package: PYTHON_FILES=arkitect
 lint_tests: PYTHON_FILES=tests
