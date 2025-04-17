@@ -1,0 +1,10 @@
+jeepney>=0.6
+openai>=1.0
+pyopenssl
+protobuf>=3.18.3
+requests>=2.25.1
+selenium
+arkitect
+gradio
+boto3
+volcengine-python-sdk[ark]
