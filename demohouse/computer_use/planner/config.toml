@@ -1,0 +1,24 @@
+[models.'doubao-1.5-ui-tars-250328']  
+base_url = "https://ark.cn-beijing.volces.com/api/v3"
+api_key = ""
+max_action = 100
+max_images = 5
+display_name = "Doubao-1.5-UI-TARS 15b"
+
+[sandbox]
+mcp_server_endpoint = ""
+sandbox_manager_endpoint = ""
+sandbox_manager_req_timeout = 10
+tool_server_endpoint_format = "http://{sandbox_primary_ip}:8102"
+
+[planner]
+step_interval = 3
+action_wait_interval = 10
+
+[log]
+env = "dev"
+filename = "/var/log/agent-planner.log"
+fmt = "%(asctime)s %(levelname)7s %(filename)s:%(lineno)s - %(name)s - %(message)s"
+backup_count = 5
+max_bytes = 104857600
+datefmt = "%Y-%m-%d %H:%M:%S"

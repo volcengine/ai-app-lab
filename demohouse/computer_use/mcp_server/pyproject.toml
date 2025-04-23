@@ -1,0 +1,21 @@
+[project]
+name = "mcp-server"
+version = "0.1.0"
+description = "MCP Server for Computer Use"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.6.0",
+    "pydantic==2.10.6",
+    "concurrent-log-handler==0.9.25",
+    "dynaconf==3.2.10",
+    "jsonref==1.1.0",
+    "tool_server_client==1.0.0rc7",
+]
+
+[project.scripts]
+mcp-server = "mcp_server.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

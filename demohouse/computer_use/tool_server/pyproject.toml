@@ -1,0 +1,17 @@
+[project]
+name = "computer-use-tool-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.12",
+    "pydantic>=2.11.1",
+    "uvicorn>=0.34.0",
+    "pyautogui>=0.9.54",
+    "pillow>=11.1.0",
+    "python-dotenv>=1.1.0",
+    "pydantic-settings>=2.8.1",
+    "asgi-correlation-id>=4.3.4",
+    "python-json-logger>=3.3.0",
+]
