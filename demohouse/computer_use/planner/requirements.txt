@@ -1,0 +1,11 @@
+fastapi>=0.115.12
+mcp>=1.6.0
+openai>=1.70.0
+requests>=2.32.3
+pydantic~=2.11.3
+pydantic-settings~=2.9.0
+python-json-logger~=3.3.0
+python-dotenv>=1.1.0
+uvicorn>=0.34.0
+anthropic>=0.49.0
+python-json-logger~=3.3.0

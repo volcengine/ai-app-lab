@@ -1,0 +1,327 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 添加淡入动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 30 95% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 30 95% 94%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 30 95% 60%;
+
+    --radius: 0.35rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 30 95% 60%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 30 95% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.font-mono {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Modern UI styles - simplified */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+.dropdown-list {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item:hover {
+  background-color: #f9fafb;
+}
+
+.active-instance {
+  position: relative;
+  padding-left: 12px;
+}
+
+.active-instance::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+}
+
+.instance-time {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.hover-transition {
+  transition: all 0.15s ease;
+}
+
+.hover-transition:hover {
+  background-color: #f9fafb;
+}
+
+/* Copy button functionality */
+.copy-success {
+  color: #10b981;
+}
+
+.orange-gradient-bg {
+  background: linear-gradient(135deg, #ff9f43, #f97316);
+}
+
+.orange-text {
+  color: #f97316;
+}
+
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: translate3d(
+        var(--tw-enter-translate-x, 0),
+        var(--tw-enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--tw-enter-scale, 1),
+        var(--tw-enter-scale, 1),
+        var(--tw-enter-scale, 1)
+      )
+      rotate(var(--tw-enter-rotate, 0));
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--tw-exit-opacity, 1);
+    transform: translate3d(
+        var(--tw-exit-translate-x, 0),
+        var(--tw-exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--tw-exit-scale, 1),
+        var(--tw-exit-scale, 1),
+        var(--tw-exit-scale, 1)
+      )
+      rotate(var(--tw-exit-rotate, 0));
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-to-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-in {
+  animation: enter 150ms ease-out;
+}
+
+.animate-out {
+  animation: exit 150ms ease-in;
+}
+
+.slide-in-from-right {
+  --tw-enter-translate-x: 100%;
+}
+
+.slide-out-to-right {
+  --tw-exit-translate-x: 100%;
+}
+
+.fade-in {
+  --tw-enter-opacity: 0;
+}
+
+.fade-out {
+  --tw-exit-opacity: 0;
+}
+
+.zoom-in {
+  --tw-enter-scale: 0.95;
+}
+
+.zoom-out {
+  --tw-exit-scale: 0.95;
+}
+
+.page .arco-tabs-header-nav-capsule .arco-tabs-header-wrapper {
+  justify-content: flex-start;
+}
+
+.login-background {
+  background: url("/images/login-bg.jpeg") no-repeat;
+  min-height: 100vh;
+  background-size: cover;
+}
+
+.page .background {
+  background: linear-gradient(
+    77.86deg,
+    rgba(235, 247, 255, 0.77) -3.23%,
+    rgba(230, 238, 255, 0.77) 51.11%,
+    rgba(248, 240, 255, 0.77) 98.65%
+  );
+}
+
+:root {
+  --scrollbar-height: 0px;
+}
+
+@media (max-width: 1200px) {
+  /* 仅当存在滚动条时应用 */
+  :root {
+    --scrollbar-height: 17px; /* 大多数系统的滚动条宽度 */
+  }
+}
+
+.instance-selector .arco-select-view-value {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.instance-selector.empty .arco-select-view-value {
+  display: none !important;
+}
+
+.tab-header-hide .arco-tabs-header-nav {
+  display: none;
+}
+
+.tab-header-hide .arco-tabs-content {
+  padding-top: 0px !important;
+}
+
+.prompt-display {
+  cursor: pointer !important;
+  height: 100% !important;
+  background: rgb(241 245 249 / var(--tw-border-opacity, 1)) !important;
+}
+
+.prompt-display:hover {
+  outline: none !important;
+}
+
+@keyframes loading {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 70%;
+  }
+  70% {
+    width: 80%;
+  }
+  90% {
+    width: 90%;
+  }
+  95% {
+    width: 95%;
+  }
+  100% {
+    width: 95%;
+  }
+}

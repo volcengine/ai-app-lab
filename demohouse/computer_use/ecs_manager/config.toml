@@ -1,0 +1,29 @@
+port = 26052
+
+[log]
+env = "dev"
+filename = "computer-use.log"
+format = "%(asctime)s %(levelname)7s %(request_id)s %(filename)s:%(lineno)s - %(name)s - %(message)s"
+datefmt = "%Y-%m-%d %H:%M:%S"
+backup_count = 5
+
+[mgr]
+access_key = ""
+secret_key = ""
+session_token = ""
+region = "cn-beijing"
+
+[instance_config]
+instance_name = "from-new-mgr"
+instance_type = "ecs.e-c1m2.large"
+zone = ""
+tag_key = "computer-use-sandbox"
+tag_value = "sandbox"
+user_data = ""
+image_id = ""
+windows_image_id = ""
+project_name = ""
+subnet_id = ""
+security_group_ids = []
+volume_size = 80
+

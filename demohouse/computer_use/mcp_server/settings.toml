@@ -1,0 +1,12 @@
+[default]
+debug = false
+
+[logging]
+level = "INFO"
+file = "/var/log/computer-use/mcp-server.log"
+max_size = 1024000
+backup_count = 10
+
+[tool_server]
+local = false
+endpoint = "127.0.0.1:8102"

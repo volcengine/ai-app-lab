@@ -1,0 +1,998 @@
+{
+    
+    "NAME" : "Catalan",
+    
+    "APP" : {
+
+        "ACTION_ACKNOWLEDGE"        : "OK",
+        "ACTION_CANCEL"             : "Cancel·lar",
+        "ACTION_CLONE"              : "Clon",
+        "ACTION_CONTINUE"           : "Continua",
+        "ACTION_DELETE"             : "Suprimeix",
+        "ACTION_DELETE_SESSIONS"    : "Mata Sessions",
+        "ACTION_DOWNLOAD"           : "Descarregar",
+        "ACTION_LOGIN"              : "Iniciar Sessió",
+        "ACTION_LOGOUT"             : "Tancar sessió",
+        "ACTION_MANAGE_CONNECTIONS" : "Connexions",
+        "ACTION_MANAGE_PREFERENCES" : "Preferències",
+        "ACTION_MANAGE_SETTINGS"    : "Configuració",
+        "ACTION_MANAGE_SESSIONS"    : "Sessions actives",
+        "ACTION_MANAGE_USERS"       : "Usuaris",
+        "ACTION_MANAGE_USER_GROUPS" : "Grups",
+        "ACTION_NAVIGATE_BACK"      : "Enrera",
+        "ACTION_NAVIGATE_HOME"      : "Inici",
+        "ACTION_SAVE"               : "Desa",
+        "ACTION_SEARCH"             : "Cerca",
+        "ACTION_SHARE"              : "Compartir",
+        "ACTION_UPDATE_PASSWORD"    : "Actualitza la contrasenya",
+        "ACTION_VIEW_HISTORY"       : "Història",
+
+        "DIALOG_HEADER_ERROR" : "Error",
+
+        "ERROR_PAGE_UNAVAILABLE"  : "S'ha produït un error i aquesta acció no es pot completar. Si el problema continua, aviseu l'administrador del sistema o comproveu els registres del vostre sistema.",
+        "ERROR_PASSWORD_BLANK"    : "La vostra contrasenya no pot estar en blanc.",
+        "ERROR_PASSWORD_MISMATCH" : "Les contrasenyes proporcionades no coincideixen.",
+        
+        "FIELD_HEADER_PASSWORD"       : "Contrasenya:",
+        "FIELD_HEADER_PASSWORD_AGAIN" : "Torna a escriure la contrasenya:",
+
+        "FIELD_PLACEHOLDER_FILTER" : "Filtre",
+
+        "FORMAT_DATE_TIME_PRECISE" : "yyyy-MM-dd HH:mm:ss",
+
+        "INFO_ACTIVE_USER_COUNT" : "Actualment en ús per {USERS} {USERS, plural, one{usuari} other{usrris}}.",
+
+        "TEXT_ANONYMOUS_USER"   : "Anònim",
+        "TEXT_HISTORY_DURATION" : "{VALUE} {UNIT, select, second{{VALUE, plural, one{segon} other{segons}}} minute{{VALUE, plural, one{minut} other{minuts}}} hour{{VALUE, plural, one{hora} other{hores}}} day{{VALUE, plural, one{dia} other{dies}}} other{}}"
+
+    },
+
+    "CLIENT" : {
+
+        "ACTION_ACKNOWLEDGE"               : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CLEAR_COMPLETED_TRANSFERS" : "Esborra",
+        "ACTION_DISCONNECT"                : "Desconnecta",
+        "ACTION_LOGOUT"                    : "@:APP.ACTION_LOGOUT",
+        "ACTION_NAVIGATE_BACK"             : "@:APP.ACTION_NAVIGATE_BACK",
+        "ACTION_NAVIGATE_HOME"             : "@:APP.ACTION_NAVIGATE_HOME",
+        "ACTION_RECONNECT"                 : "Torneu a connectar",
+        "ACTION_SAVE_FILE"                 : "@:APP.ACTION_SAVE",
+        "ACTION_SHARE"                     : "@:APP.ACTION_SHARE",
+        "ACTION_UPLOAD_FILES"              : "Carregueu fitxers",
+
+        "DIALOG_HEADER_CONNECTING"       : "Connectant",
+        "DIALOG_HEADER_CONNECTION_ERROR" : "Error de connexió",
+        "DIALOG_HEADER_DISCONNECTED"     : "Desconnectat",
+
+        "ERROR_CLIENT_201"     : "Aquesta connexió s'ha tancat perquè el servidor està ocupat. Espereu uns minuts i torna-ho a provar.",
+        "ERROR_CLIENT_202"     : "El servidor Guacamole ha tancat la connexió perquè l'escriptori remot triga massa temps a respondre. Intenteu-ho de nou o poseu-vos en contacte amb l'administrador del vostre sistema.",
+        "ERROR_CLIENT_203"     : "El servidor d'escriptori remot ha trobat un error i ha tancat la connexió. Intenteu-ho de nou o poseu-vos en contacte amb l'administrador del vostre sistema.",
+        "ERROR_CLIENT_207"     : "El servidor d'escriptori remot actualment no es pot aconseguir. Si el problema continua, aviseu l'administrador del sistema o comproveu els registres del sistema.",
+        "ERROR_CLIENT_208"     : "Actualment el servidor d'escriptori remot no està disponible. Si el problema continua, aviseu l'administrador del sistema o comproveu els registres del vostre sistema.",
+        "ERROR_CLIENT_209"     : "El servidor d'escriptori remot ha tancat la connexió perquè entra en conflicte amb una altra connexió. Torneu-ho a provar més endavant.",
+        "ERROR_CLIENT_20A"     : "El servidor d'escriptori remot ha tancat la connexió perquè sembla que no està activat. Si no és desitjat o inesperat, aviseu l'administrador del sistema o comproveu la configuració del vostre sistema.",
+        "ERROR_CLIENT_20B"     : "El servidor d'escriptori remot ha tancat força la connexió. Si aquesta no és desitjada o inesperada, notifiqueu l'administrador del sistema o comproveu els registres del sistema.",
+        "ERROR_CLIENT_301"     : "Ha fallat la sessió. Torneu-vos a connectar i torneu-ho a provar.",
+        "ERROR_CLIENT_303"     : "El servidor d'escriptori remot ha denegat l'accés a aquesta connexió. Si necessiteu accés, sol·liciteu a l'administrador del sistema que li concedeixi accés o verifiqueu la configuració del sistema.",
+        "ERROR_CLIENT_308"     : "El servidor de Guacamole ha tancat la connexió perquè no hi ha resposta del navegador durant el temps suficient perquè sembli que es trobava desconnectat. Això és generalment causat per problemes de xarxa, com ara un senyal sense fils o simplement una velocitat de xarxa molt lenta. a la xarxa i torneu-ho a provar. ",
+        "ERROR_CLIENT_31D"     : "El servidor Guacamole denega l'accés a aquesta connexió perquè heu exhaurit el límit per a l'ús de la connexió simultània per part d'un usuari individual. Tanqueu una o més connexions i torneu-ho a provar.",
+        "ERROR_CLIENT_DEFAULT" : "S'ha produït un error intern al servidor Guacamole i s'ha acabat la connexió. Si el problema continua, aviseu l'administrador del sistema o comproveu els registres del sistema.",
+
+        "ERROR_TUNNEL_201"     : "El servidor Guacamole ha rebutjat aquest intent de connexió perquè hi ha massa connexions actives. Espereu uns minuts i torna-ho a provar.",
+        "ERROR_TUNNEL_202"     : "La connexió s'ha tancat perquè el servidor triga massa temps a respondre. Això sol ser causat per problemes de xarxa, com ara un senyal sense fils o una velocitat de xarxa lenta. Comproveu la connexió de xarxa i intenteu de nou o poseu-vos en contacte amb l'administrador del sistema. ",
+        "ERROR_TUNNEL_203"     : "El servidor ha trobat un error i ha tancat la connexió. Intenteu-ho de nou o poseu-vos en contacte amb l'administrador del vostre sistema.",
+        "ERROR_TUNNEL_204"     : "La connexió sol·licitada no existeix. Comproveu el nom de la connexió i proveu-ho de nou.",
+        "ERROR_TUNNEL_205"     : "Actualment aquesta connexió està en ús i no es permet l'accés simultani a aquesta connexió. Torneu-ho a provar més endavant.",
+        "ERROR_TUNNEL_207"     : "El servidor Guacamole no es pot accedir actualment. Comproveu la vostra xarxa i torneu-ho a provar.",
+        "ERROR_TUNNEL_208"     : "El servidor Guacamole no accepta connexions. Comproveu la vostra xarxa i proveu-la de nou.",
+        "ERROR_TUNNEL_301"     : "No teniu permís per accedir a aquesta connexió perquè no esteu registrat. Inicieu la sessió i torneu-ho a provar.",
+        "ERROR_TUNNEL_303"     : "No teniu permís per accedir a aquesta connexió. Si necessiteu accés, sol·liciteu a l'administrador del sistema que us inclogui la llista d'usuaris permesos o comproveu la vostra configuració del sistema.",
+        "ERROR_TUNNEL_308"     : "El servidor de Guacamole ha tancat la connexió perquè no hi ha hagut resposta del seu navegador durant el temps suficient com perquè sembli estar desconnectat. Això generalment és causat per problemes de xarxa, com un senyal sense fils irregular o simplement velocitats de xarxa molt lentes. comprovi la seva xarxa i intenti novament .",
+        "ERROR_TUNNEL_31D"     : "El servidor Guacamole denega l'accés a aquesta connexió perquè heu exhaurit el límit per a l'ús de la connexió simultània per part d'un usuari individual. Tanqueu una o més connexions i torneu-ho a provar.",
+        "ERROR_TUNNEL_DEFAULT" : "S'ha produït un error intern al servidor Guacamole i s'ha acabat la connexió. Si el problema continua, aviseu l'administrador del sistema o comproveu els registres del sistema.",
+
+        "ERROR_UPLOAD_100"     : "La transferència de fitxers no és compatible o no està habilitada. Poseu-vos en contacte amb l'administrador del sistema o comproveu els registres del vostre sistema.",
+        "ERROR_UPLOAD_201"     : "Actualment s'estan transferint massa fitxers. Espereu que es completin les transferències existents i, després, torneu-ho a provar.",
+        "ERROR_UPLOAD_202"     : "No es pot transferir el fitxer perquè el servidor d'escriptori remot triga massa temps a respondre. Torneu-ho a provar o poseu-vos en contacte amb l'administrador del vostre sistema.",
+        "ERROR_UPLOAD_203"     : "El servidor d'escriptori remot ha trobat un error durant la transferència. Intenteu-ho de nou o poseu-vos en contacte amb l'administrador del vostre sistema.",
+        "ERROR_UPLOAD_204"     : "La destinació per a la transferència de fitxers no existeix. Comproveu que la destinació existeix i torneu-ho a provar.",
+        "ERROR_UPLOAD_205"     : "La destinació per a la transferència de fitxers està bloquejada. Espereu qualsevol finalització de les tasques en curs i torneu-ho a provar.",
+        "ERROR_UPLOAD_301"     : "No teniu permís per carregar aquest fitxer perquè no esteu registrat. Inicieu la sessió i torneu-ho a provar.",
+        "ERROR_UPLOAD_303"     : "No teniu permís per carregar aquest fitxer. Si necessiteu accés, consulteu la configuració del sistema o consulteu-lo amb l'administrador del vostre sistema.",
+        "ERROR_UPLOAD_308"     : "La transferència de fitxers s'ha aturat. Això és habitualment causat per problemes de xarxa, com ara un senyal sense fils o una velocitat de xarxa molt lenta.",
+        "ERROR_UPLOAD_31D"     : "Actualment s'estan transferint massa fitxers. Espereu que es completin les transferències existents i, després, torneu-ho a provar.",
+        "ERROR_UPLOAD_DEFAULT" : "S'ha produït un error intern al servidor Guacamole i s'ha acabat la connexió. Si el problema continua, aviseu l'administrador del sistema o comproveu els registres del sistema.",
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "HELP_CLIPBOARD"           : "Aquí apareixerà un text copiat/tallat dins de Guacamole. Els canvis al text següent afectaran el porta-retalls remot.",
+        "HELP_INPUT_METHOD_NONE"   : "No s'utilitza cap mètode d'entrada. S'accepta l'entrada de teclat des d'un teclat físic connectat.",
+        "HELP_INPUT_METHOD_OSK"    : "Mostra i accepta l'entrada del teclat integrat de Guacamole a la pantalla. El teclat a la pantalla permet escriure combinacions de tecles que, d'una altra manera, poden ser impossibles (com ara Ctrl-Alt-Del).",
+        "HELP_INPUT_METHOD_TEXT"   : "Permet escriure text i emula esdeveniments del teclat en funció del text mecanografiat. Això és necessari per a dispositius com ara telèfons mòbils que no tinguin un teclat físic.",
+        "HELP_MOUSE_MODE"          : "Determina el comportament del ratolí remot respecte als tocs.",
+        "HELP_MOUSE_MODE_ABSOLUTE" : "Toqueu per fer clic. El clic es produeix a la ubicació del toc.",
+        "HELP_MOUSE_MODE_RELATIVE" : "Arrossegueu per moure el punter del ratolí i toqueu per fer clic. El clic es produeix a la ubicació del punter.",
+        "HELP_SHARE_LINK"          : "La connexió actual s'està compartint i qualsevol usuari pot accedir amb els següents {LINKS, plural, one{enllaç} other{enllaços}}:",
+
+        "INFO_CONNECTION_SHARED" : "Aquesta connexió es comparteix ara.",
+        "INFO_NO_FILE_TRANSFERS" : "No hi ha transferències de fitxers.",
+    
+        "NAME_INPUT_METHOD_NONE"   : "Cap",
+        "NAME_INPUT_METHOD_OSK"    : "Teclat a la pantalla",
+        "NAME_INPUT_METHOD_TEXT"   : "Entrada de text",
+        "NAME_KEY_CTRL"            : "Ctrl",
+        "NAME_KEY_ALT"             : "Alt",
+        "NAME_KEY_ESC"             : "Esc",
+        "NAME_KEY_TAB"             : "Tab",
+        "NAME_MOUSE_MODE_ABSOLUTE" : "Pantalla tàctil",
+        "NAME_MOUSE_MODE_RELATIVE" : "Touchpad",
+
+        "SECTION_HEADER_CLIPBOARD"      : "Portapapers",
+        "SECTION_HEADER_DEVICES"        : "Dispositius",
+        "SECTION_HEADER_DISPLAY"        : "Pantalla",
+        "SECTION_HEADER_FILE_TRANSFERS" : "Transferències de fitxers",
+        "SECTION_HEADER_INPUT_METHOD"   : "Mètode d'entrada",
+        "SECTION_HEADER_MOUSE_MODE"     : "Mode d'emulació del ratolí",
+
+        "TEXT_ZOOM_AUTO_FIT"              : "S'adapta automàticament a la finestra del navegador",
+        "TEXT_CLIENT_STATUS_IDLE"         : "Ociós.",
+        "TEXT_CLIENT_STATUS_CONNECTING"   : "S'està connectant a Guacamole ...",
+        "TEXT_CLIENT_STATUS_DISCONNECTED" : "Heu estat desconnectats.",
+        "TEXT_CLIENT_STATUS_UNSTABLE"     : "La connexió de xarxa al servidor Guacamole sembla inestable.",
+        "TEXT_CLIENT_STATUS_WAITING"      : "Connectat a Guacamole. Esperant resposta ...",
+        "TEXT_RECONNECT_COUNTDOWN"        : "Re-conectant en {REMAINING} {REMAINING, plural, one{segon} other{segons}}...",
+        "TEXT_FILE_TRANSFER_PROGRESS"     : "{PROGRESS} {UNIT, select, b{B} kb{KB} mb{MB} gb{GB} other{}}",
+
+        "URL_OSK_LAYOUT" : "layouts/es-es-qwerty.json"
+
+    },
+
+    "COLOR_SCHEME" : {
+
+        "ACTION_CANCEL"       : "@:APP.ACTION_CANCEL",
+        "ACTION_HIDE_DETAILS" : "Amaga",
+        "ACTION_SAVE"         : "@:APP.ACTION_SAVE",
+        "ACTION_SHOW_DETAILS" : "Mostra",
+
+        "FIELD_HEADER_BACKGROUND" : "Background",
+        "FIELD_HEADER_FOREGROUND" : "Foreground",
+
+        "FIELD_OPTION_CUSTOM" : "Personalitzat ...",
+
+        "SECTION_HEADER_DETAILS" : "Detalls:"
+
+    },
+
+    "DATA_SOURCE_DEFAULT" : {
+        "NAME" : "Default (XML)"
+    },
+
+    "FORM" : {
+
+        "FIELD_PLACEHOLDER_DATE" : "YYYY-MM-DD",
+        "FIELD_PLACEHOLDER_TIME" : "HH:MM:SS",
+
+        "HELP_SHOW_PASSWORD" : "Feu clic per mostrar la contrasenya",
+        "HELP_HIDE_PASSWORD" : "Feu clic per ocultar la contrasenya"
+
+    },
+
+    "HOME" : {
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "INFO_ACTIVE_USER_COUNT" : "@:APP.INFO_ACTIVE_USER_COUNT",
+
+        "INFO_NO_RECENT_CONNECTIONS" : "No hi ha connexions recents.",
+        
+        "PASSWORD_CHANGED" : "S'ha canviat la contrasenya.",
+
+        "SECTION_HEADER_ALL_CONNECTIONS"    : "Totes les connexions",
+        "SECTION_HEADER_RECENT_CONNECTIONS" : "Connexions recents"
+
+    },
+
+    "LIST" : {
+
+        "TEXT_ANONYMOUS_USER" : "Anònim"
+
+    },
+
+    "LOGIN": {
+
+        "ACTION_ACKNOWLEDGE" : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CONTINUE"    : "@:APP.ACTION_CONTINUE",
+        "ACTION_LOGIN"       : "@:APP.ACTION_LOGIN",
+
+        "DIALOG_HEADER_ERROR" : "@:APP.DIALOG_HEADER_ERROR",
+
+        "ERROR_INVALID_LOGIN" : "Accés incorrecte",
+
+        "FIELD_HEADER_USERNAME" : "Nom d'usuari",
+        "FIELD_HEADER_PASSWORD" : "Contrasenya"
+
+    },
+
+    "MANAGE_CONNECTION" : {
+
+        "ACTION_ACKNOWLEDGE"          : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CANCEL"               : "@:APP.ACTION_CANCEL",
+        "ACTION_CLONE"                : "@:APP.ACTION_CLONE",
+        "ACTION_DELETE"               : "@:APP.ACTION_DELETE",
+        "ACTION_SAVE"                 : "@:APP.ACTION_SAVE",
+
+        "DIALOG_HEADER_CONFIRM_DELETE" : "Suprimeix la connexió",
+        "DIALOG_HEADER_ERROR"          : "@:APP.DIALOG_HEADER_ERROR",
+
+        "FIELD_HEADER_LOCATION" : "Ubicació:",
+        "FIELD_HEADER_NAME"     : "Nom:",
+        "FIELD_HEADER_PROTOCOL" : "Protocol:",
+
+        "FORMAT_HISTORY_START" : "@:APP.FORMAT_DATE_TIME_PRECISE",
+
+        "INFO_CONNECTION_DURATION_UNKNOWN" : "--",
+        "INFO_CONNECTION_ACTIVE_NOW"       : "Actiu ara",
+        "INFO_CONNECTION_NOT_USED"         : "Aquesta connexió encara no s'ha utilitzat.",
+
+        "SECTION_HEADER_EDIT_CONNECTION" : "Edita la connexió",
+        "SECTION_HEADER_HISTORY"         : "Historial d'ús",
+        "SECTION_HEADER_PARAMETERS"      : "Paràmetres",
+
+        "TABLE_HEADER_HISTORY_USERNAME"   : "Nom d'usuari",
+        "TABLE_HEADER_HISTORY_START"      : "L'hora d'inici",
+        "TABLE_HEADER_HISTORY_DURATION"   : "Durada",
+        "TABLE_HEADER_HISTORY_REMOTEHOST" : "Servidor Remot",
+
+        "TEXT_CONFIRM_DELETE"   : "No es poden restaurar les connexions un cop s'hagin suprimit. Esteu segur que voleu suprimir aquesta connexió?",
+        "TEXT_HISTORY_DURATION" : "@:APP.TEXT_HISTORY_DURATION"
+
+    },
+
+    "MANAGE_CONNECTION_GROUP" : {
+
+        "ACTION_ACKNOWLEDGE"   : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CANCEL"        : "@:APP.ACTION_CANCEL",
+        "ACTION_CLONE"         : "@:APP.ACTION_CLONE",
+        "ACTION_DELETE"        : "@:APP.ACTION_DELETE",
+        "ACTION_SAVE"          : "@:APP.ACTION_SAVE",
+
+        "DIALOG_HEADER_CONFIRM_DELETE" : "Suprimeix el grup de connexió",
+        "DIALOG_HEADER_ERROR"          : "@:APP.DIALOG_HEADER_ERROR",
+
+        "FIELD_HEADER_LOCATION" : "Ubicació:",
+        "FIELD_HEADER_NAME"     : "Nom:",
+        "FIELD_HEADER_TYPE"     : "Tipus:",
+
+        "NAME_TYPE_BALANCING"       : "Balanceig",
+        "NAME_TYPE_ORGANIZATIONAL"  : "Organitzatiu",
+
+        "SECTION_HEADER_EDIT_CONNECTION_GROUP" : "Edita el grup de connexió",
+
+        "TEXT_CONFIRM_DELETE" : "No es poden restaurar els grups de connexió un cop suprimits. Esteu segur que voleu suprimir aquest grup de connexió?"
+
+    },
+
+    "MANAGE_SHARING_PROFILE" : {
+
+        "ACTION_ACKNOWLEDGE" : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CANCEL"      : "@:APP.ACTION_CANCEL",
+        "ACTION_CLONE"       : "@:APP.ACTION_CLONE",
+        "ACTION_DELETE"      : "@:APP.ACTION_DELETE",
+        "ACTION_SAVE"        : "@:APP.ACTION_SAVE",
+
+        "DIALOG_HEADER_CONFIRM_DELETE" : "Eliminar el perfil compartit",
+        "DIALOG_HEADER_ERROR"          : "@:APP.DIALOG_HEADER_ERROR",
+
+        "FIELD_HEADER_NAME"               : "Nom:",
+        "FIELD_HEADER_PRIMARY_CONNECTION" : "Connexió primària:",
+
+        "SECTION_HEADER_EDIT_SHARING_PROFILE" : "Edita el perfil de compartir",
+        "SECTION_HEADER_PARAMETERS"           : "Paràmetres",
+
+        "TEXT_CONFIRM_DELETE" : "Els perfils per compartir no es poden restaurar un cop s'hagin suprimit. Esteu segur que voleu suprimir aquest perfil compartit?"
+
+    },
+
+    "MANAGE_USER" : {
+
+        "ACTION_ACKNOWLEDGE"   : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CANCEL"        : "@:APP.ACTION_CANCEL",
+        "ACTION_CLONE"         : "@:APP.ACTION_CLONE",
+        "ACTION_DELETE"        : "@:APP.ACTION_DELETE",
+        "ACTION_SAVE"          : "@:APP.ACTION_SAVE",
+
+        "DIALOG_HEADER_CONFIRM_DELETE" : "Eliminar l'usuari",
+        "DIALOG_HEADER_ERROR"          : "@:APP.DIALOG_HEADER_ERROR",
+
+        "ERROR_PASSWORD_MISMATCH" : "@:APP.ERROR_PASSWORD_MISMATCH",
+
+        "FIELD_HEADER_ADMINISTER_SYSTEM"             : "Administrar sistema:",
+        "FIELD_HEADER_CHANGE_OWN_PASSWORD"           : "Canvieu la contrasenya pròpia:",
+        "FIELD_HEADER_CREATE_NEW_USERS"              : "Crea usuaris nous:",
+        "FIELD_HEADER_CREATE_NEW_USER_GROUPS"        : "Creeu grups d'usuaris nous:",
+        "FIELD_HEADER_CREATE_NEW_CONNECTIONS"        : "Crear noves connexions:",
+        "FIELD_HEADER_CREATE_NEW_CONNECTION_GROUPS"  : "Crear grups de connexió nous:",
+        "FIELD_HEADER_CREATE_NEW_SHARING_PROFILES"   : "Crea nous perfils per compartir:",
+        "FIELD_HEADER_PASSWORD"                      : "@:APP.FIELD_HEADER_PASSWORD",
+        "FIELD_HEADER_PASSWORD_AGAIN"                : "@:APP.FIELD_HEADER_PASSWORD_AGAIN",
+        "FIELD_HEADER_USERNAME"                      : "Nom d'usuari:",
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "HELP_NO_USER_GROUPS" : "Actualment, aquest usuari no pertany a cap grup. Amplieu aquesta secció per afegir grups.",
+
+        "INFO_READ_ONLY"                : "Ho sentim, però aquest compte d'usuari no es pot modificar.",
+        "INFO_NO_USER_GROUPS_AVAILABLE" : "No hi ha grups disponibles.",
+
+        "SECTION_HEADER_ALL_CONNECTIONS"     : "Totes les connexions",
+        "SECTION_HEADER_CONNECTIONS"         : "Connexions",
+        "SECTION_HEADER_CURRENT_CONNECTIONS" : "Connexions actuals",
+        "SECTION_HEADER_EDIT_USER"           : "Edita l'usuari",
+        "SECTION_HEADER_PERMISSIONS"         : "Permisos",
+        "SECTION_HEADER_USER_GROUPS"         : "Grups",
+
+        "TEXT_CONFIRM_DELETE" : "Els usuaris no es poden restaurar un cop se'ls ha suprimit. Esteu segur que voleu suprimir aquest usuari?"
+
+    },
+
+    "MANAGE_USER_GROUP" : {
+
+        "ACTION_ACKNOWLEDGE"   : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CANCEL"        : "@:APP.ACTION_CANCEL",
+        "ACTION_CLONE"         : "@:APP.ACTION_CLONE",
+        "ACTION_DELETE"        : "@:APP.ACTION_DELETE",
+        "ACTION_SAVE"          : "@:APP.ACTION_SAVE",
+
+        "DIALOG_HEADER_CONFIRM_DELETE" : "Suprimeix el grup",
+        "DIALOG_HEADER_ERROR"          : "@:APP.DIALOG_HEADER_ERROR",
+
+        "FIELD_HEADER_ADMINISTER_SYSTEM"             : "@:MANAGE_USER.FIELD_HEADER_ADMINISTER_SYSTEM",
+        "FIELD_HEADER_CHANGE_OWN_PASSWORD"           : "@:MANAGE_USER.FIELD_HEADER_CHANGE_OWN_PASSWORD",
+        "FIELD_HEADER_CREATE_NEW_USERS"              : "@:MANAGE_USER.FIELD_HEADER_CREATE_NEW_USERS",
+        "FIELD_HEADER_CREATE_NEW_USER_GROUPS"        : "@:MANAGE_USER.FIELD_HEADER_CREATE_NEW_USER_GROUPS",
+        "FIELD_HEADER_CREATE_NEW_CONNECTIONS"        : "@:MANAGE_USER.FIELD_HEADER_CREATE_NEW_CONNECTIONS",
+        "FIELD_HEADER_CREATE_NEW_CONNECTION_GROUPS"  : "@:MANAGE_USER.FIELD_HEADER_CREATE_NEW_CONNECTION_GROUPS",
+        "FIELD_HEADER_CREATE_NEW_SHARING_PROFILES"   : "@:MANAGE_USER.FIELD_HEADER_CREATE_NEW_SHARING_PROFILES",
+        "FIELD_HEADER_USER_GROUP_NAME"               : "Nom del grup:",
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "HELP_NO_USER_GROUPS"        : "Actualment aquest grup no pertany a cap grup. Amplieu aquesta secció per afegir grups.",
+        "HELP_NO_MEMBER_USER_GROUPS" : "Actualment aquest grup no conté cap grup. Amplieu aquesta secció per afegir grups.",
+        "HELP_NO_MEMBER_USERS"       : "Actualment aquest grup no conté cap usuari. Amplieu aquesta secció per afegir-ne usuaris.",
+
+        "INFO_READ_ONLY"                : "Ho sentim, però no es pot editar aquest grup.",
+        "INFO_NO_USER_GROUPS_AVAILABLE" : "@:MANAGE_USER.INFO_NO_USER_GROUPS_AVAILABLE",
+        "INFO_NO_USERS_AVAILABLE"       : "No hi ha usuaris disponibles.",
+
+        "SECTION_HEADER_ALL_CONNECTIONS"     : "@:MANAGE_USER.SECTION_HEADER_ALL_CONNECTIONS",
+        "SECTION_HEADER_CONNECTIONS"         : "@:MANAGE_USER.SECTION_HEADER_CONNECTIONS",
+        "SECTION_HEADER_CURRENT_CONNECTIONS" : "@:MANAGE_USER.SECTION_HEADER_CURRENT_CONNECTIONS",
+        "SECTION_HEADER_EDIT_USER_GROUP"     : "Edita el grup",
+        "SECTION_HEADER_MEMBER_USERS"        : "Usuaris membres",
+        "SECTION_HEADER_MEMBER_USER_GROUPS"  : "Grups membres",
+        "SECTION_HEADER_PERMISSIONS"         : "@:MANAGE_USER.SECTION_HEADER_PERMISSIONS",
+        "SECTION_HEADER_USER_GROUPS"         : "Grups pare",
+
+        "TEXT_CONFIRM_DELETE" : "No es poden restaurar els grups després que se'ls hagi suprimit. Esteu segur que voleu suprimir aquest grup?"
+
+    },
+
+    "PROTOCOL_KUBERNETES" : {
+
+        "FIELD_HEADER_BACKSPACE"       : "La tecla de retrocés envia:",
+        "FIELD_HEADER_CA_CERT"         : "Certificat d'autoritat de certificació:",
+        "FIELD_HEADER_CLIENT_CERT"     : "Certificat de client:",
+        "FIELD_HEADER_CLIENT_KEY"      : "Clau del client:",
+        "FIELD_HEADER_COLOR_SCHEME"    : "Esquema de colors:",
+        "FIELD_HEADER_CONTAINER"       : "Nom del contenidor:",
+        "FIELD_HEADER_CREATE_RECORDING_PATH"  : "Crea automàticament la ruta de gravació:",
+        "FIELD_HEADER_CREATE_TYPESCRIPT_PATH" : "Crea automàticament la ruta de typescript:",
+        "FIELD_HEADER_FONT_NAME"       : "Nom del tipus de lletra:",
+        "FIELD_HEADER_FONT_SIZE"       : "Mida de la lletra:",
+        "FIELD_HEADER_HOSTNAME"        : "Nom de l'amfitrió:",
+        "FIELD_HEADER_IGNORE_CERT"     : "Ignora el certificat del servidor:",
+        "FIELD_HEADER_NAMESPACE"       : "Espai de noms:",
+        "FIELD_HEADER_POD"             : "Nom del pod:",
+        "FIELD_HEADER_PORT"            : "Port:",
+        "FIELD_HEADER_READ_ONLY"       : "Només Lectura:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_MOUSE"  : "Exclou el ratolí:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_OUTPUT" : "Exclou els gràfics/fluxos:",
+        "FIELD_HEADER_RECORDING_INCLUDE_KEYS"   : "Inclou els esdeveniments de teclat:",
+        "FIELD_HEADER_RECORDING_NAME"  : "Nom de la gravació:",
+        "FIELD_HEADER_RECORDING_PATH"  : "Ruta de gravació:",
+        "FIELD_HEADER_SCROLLBACK"      : "Mida màxima de desplaçament:",
+        "FIELD_HEADER_TYPESCRIPT_NAME" : "Nom Typescript:",
+        "FIELD_HEADER_TYPESCRIPT_PATH" : "Ruta Typescript :",
+        "FIELD_HEADER_USE_SSL"         : "Usa SSL/TLS",
+
+        "FIELD_OPTION_BACKSPACE_8"     : "Espai enrere (Ctrl-H)",
+        "FIELD_OPTION_BACKSPACE_127"   : "Eliminar (Ctrl-?)",
+
+        "FIELD_OPTION_COLOR_SCHEME_BLACK_WHITE" : "Negre sobre blanc",
+        "FIELD_OPTION_COLOR_SCHEME_GRAY_BLACK"  : "Gris sobre negre",
+        "FIELD_OPTION_COLOR_SCHEME_GREEN_BLACK" : "Verd sobre negre",
+        "FIELD_OPTION_COLOR_SCHEME_WHITE_BLACK" : "Blanc sobre negre",
+
+        "FIELD_OPTION_FONT_SIZE_8"     : "8",
+        "FIELD_OPTION_FONT_SIZE_9"     : "9",
+        "FIELD_OPTION_FONT_SIZE_10"    : "10",
+        "FIELD_OPTION_FONT_SIZE_11"    : "11",
+        "FIELD_OPTION_FONT_SIZE_12"    : "12",
+        "FIELD_OPTION_FONT_SIZE_14"    : "14",
+        "FIELD_OPTION_FONT_SIZE_18"    : "18",
+        "FIELD_OPTION_FONT_SIZE_24"    : "24",
+        "FIELD_OPTION_FONT_SIZE_30"    : "30",
+        "FIELD_OPTION_FONT_SIZE_36"    : "36",
+        "FIELD_OPTION_FONT_SIZE_48"    : "48",
+        "FIELD_OPTION_FONT_SIZE_60"    : "60",
+        "FIELD_OPTION_FONT_SIZE_72"    : "72",
+        "FIELD_OPTION_FONT_SIZE_96"    : "96",
+
+        "NAME" : "Kubernetes",
+
+        "SECTION_HEADER_AUTHENTICATION" : "Autenticació",
+        "SECTION_HEADER_BEHAVIOR"       : "Comportament del terminal",
+        "SECTION_HEADER_CONTAINER"      : "Contenidor",
+        "SECTION_HEADER_DISPLAY"        : "Pantalla",
+        "SECTION_HEADER_RECORDING"      : "Gravació de la pantalla",
+        "SECTION_HEADER_TYPESCRIPT"     : "Typescript (registre de sessió de text)",
+        "SECTION_HEADER_NETWORK"        : "Xarxa"
+
+    },
+
+    "PROTOCOL_RDP" : {
+
+        "FIELD_HEADER_CLIENT_NAME"     : "Nom del client:",
+        "FIELD_HEADER_COLOR_DEPTH"     : "Profunditat del color:",
+        "FIELD_HEADER_CONSOLE"         : "Administrador de la consola:",
+        "FIELD_HEADER_CONSOLE_AUDIO"   : "Suport de l'àudio a la consola:",
+        "FIELD_HEADER_CREATE_DRIVE_PATH" : "Crea automàticament la unitat:",
+        "FIELD_HEADER_CREATE_RECORDING_PATH" : "Crea automàticament la ruta de gravació:",
+        "FIELD_HEADER_DISABLE_AUDIO"   : "Desactiva l'àudio:",
+        "FIELD_HEADER_DISABLE_AUTH"    : "Desactiva l'autenticació:",
+        "FIELD_HEADER_DISABLE_COPY"    : "Desactiva la còpia des de l'escriptori remot:",
+        "FIELD_HEADER_DISABLE_DOWNLOAD" : "Desactiva la baixada de fitxers:",
+        "FIELD_HEADER_DISABLE_PASTE"   : "Desactiva l’enganxament del client:",
+        "FIELD_HEADER_DISABLE_UPLOAD"   : "Desactiva la càrrega de fitxers:",
+        "FIELD_HEADER_DOMAIN"          : "Domini:",
+        "FIELD_HEADER_DPI"             : "Resolució (DPI):",
+        "FIELD_HEADER_DRIVE_NAME"      : "Nom de la unitat:",
+        "FIELD_HEADER_DRIVE_PATH"      : "Ruta de la unitat:",
+        "FIELD_HEADER_ENABLE_AUDIO_INPUT"         : "Habilita l'entrada d'àudio (micròfon):",
+        "FIELD_HEADER_ENABLE_DESKTOP_COMPOSITION" : "Habilita la composició d'escriptori (Aero):",
+        "FIELD_HEADER_ENABLE_DRIVE"               : "Habilita la unitat:",
+        "FIELD_HEADER_ENABLE_FONT_SMOOTHING"      : "Habilita el suavització de tipus de lletra (ClearType):",
+        "FIELD_HEADER_ENABLE_FULL_WINDOW_DRAG"    : "Habilita l'arrossegament de la finestra completa:",
+        "FIELD_HEADER_ENABLE_MENU_ANIMATIONS"     : "Habilita animacions de menús:",
+        "FIELD_HEADER_DISABLE_BITMAP_CACHING"     : "Desactiva la memòria cau de mapa de bits:",
+        "FIELD_HEADER_DISABLE_OFFSCREEN_CACHING"  : "Desactiva la memòria cau fora de pantalla:",
+        "FIELD_HEADER_DISABLE_GLYPH_CACHING"      : "Desactiva la memòria cau del glif:",
+        "FIELD_HEADER_ENABLE_PRINTING"            : "Habilita la impressió:",
+        "FIELD_HEADER_ENABLE_SFTP"     : "Activa SFTP:",
+        "FIELD_HEADER_ENABLE_THEMING"             : "Activa temes:",
+        "FIELD_HEADER_ENABLE_WALLPAPER"           : "Habilita el fons de pantalla:",
+        "FIELD_HEADER_GATEWAY_DOMAIN"   : "Domini:",
+        "FIELD_HEADER_GATEWAY_HOSTNAME" : "Nom de l'amfitrió:",
+        "FIELD_HEADER_GATEWAY_PASSWORD" : "Contrasenya:",
+        "FIELD_HEADER_GATEWAY_PORT"     : "Port:",
+        "FIELD_HEADER_GATEWAY_USERNAME" : "Nom d'usuari:",
+        "FIELD_HEADER_HEIGHT"          : "Alçada:",
+        "FIELD_HEADER_HOSTNAME"        : "Nom de l'amfitrió:",
+        "FIELD_HEADER_IGNORE_CERT"     : "Ignora el certificat del servidor:",
+        "FIELD_HEADER_INITIAL_PROGRAM" : "Programa inicial:",
+        "FIELD_HEADER_LOAD_BALANCE_INFO" : "Informació del balanç de càrrega/cookie:",
+        "FIELD_HEADER_PASSWORD"        : "Contrasenya:",
+        "FIELD_HEADER_PORT"            : "Port:",
+        "FIELD_HEADER_PRINTER_NAME"    : "Nom de la impressora redirigit:",
+        "FIELD_HEADER_PRECONNECTION_BLOB" : "BLOB de preconnexió BLOB (VM ID):",
+        "FIELD_HEADER_PRECONNECTION_ID"   : "Identificador de font RDP: ",
+        "FIELD_HEADER_READ_ONLY"      : "Només Lectura:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_MOUSE"  : "Exclou el ratolí:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_OUTPUT" : "Exclou els gràfics/fluxos:",
+        "FIELD_HEADER_RECORDING_INCLUDE_KEYS"   : "Inclou els esdeveniments de teclat:",
+        "FIELD_HEADER_RECORDING_NAME" : "Nom de la gravació:",
+        "FIELD_HEADER_RECORDING_PATH" : "Ruta de gravaciIELD_HEADER_DISABLE_COPYó:",
+        "FIELD_HEADER_RESIZE_METHOD" : "Mètode de redimensionament:",
+        "FIELD_HEADER_REMOTE_APP_ARGS" : "Paràmetres:",
+        "FIELD_HEADER_REMOTE_APP_DIR"  : "Directori de treball:",
+        "FIELD_HEADER_REMOTE_APP"      : "Programa:",
+        "FIELD_HEADER_SECURITY"        : "Mode de seguretat:",
+        "FIELD_HEADER_SERVER_LAYOUT"   : "Disposició del teclat:",
+        "FIELD_HEADER_SFTP_DIRECTORY"             : "Directori de càrrega per defecte:",
+        "FIELD_HEADER_SFTP_DISABLE_DOWNLOAD"      : "Desactiva la baixada de fitxers:",
+        "FIELD_HEADER_SFTP_HOST_KEY"              : "Clau d'amfitrió pública (Base64):",
+        "FIELD_HEADER_SFTP_HOSTNAME"              : "Nom de l'amfitrió:",
+        "FIELD_HEADER_SFTP_SERVER_ALIVE_INTERVAL" : "Interval de manteniment SFTP:",
+        "FIELD_HEADER_SFTP_PASSPHRASE"            : "Frase d'accés:",
+        "FIELD_HEADER_SFTP_PASSWORD"              : "Contrasenya:",
+        "FIELD_HEADER_SFTP_PORT"                  : "Port:",
+        "FIELD_HEADER_SFTP_PRIVATE_KEY"           : "Clau privada:",
+        "FIELD_HEADER_SFTP_ROOT_DIRECTORY"        : "Directori arrel del navegador de fitxers:",
+        "FIELD_HEADER_SFTP_DISABLE_UPLOAD"        : "Desactiva la càrrega de fitxers:",
+        "FIELD_HEADER_SFTP_USERNAME"              : "Nom d'usuari:",
+        "FIELD_HEADER_STATIC_CHANNELS" : "Noms de canals estàtics:",
+        "FIELD_HEADER_TIMEZONE"        : "Fus horari:",
+        "FIELD_HEADER_USERNAME"        : "Nom d'usuari:",
+        "FIELD_HEADER_WIDTH"           : "Amplada:",
+        "FIELD_HEADER_WOL_BROADCAST_ADDR" : "Adreça de difusió del paquet WoL:",
+        "FIELD_HEADER_WOL_MAC_ADDR"       : "Adreça MAC de l'amfitrió remot:",
+        "FIELD_HEADER_WOL_SEND_PACKET"    : "Enviar paquet WoL:",
+        "FIELD_HEADER_WOL_WAIT_TIME"      : "Temps d'espera de l'arrencada d'amfitrió:",
+
+
+        "FIELD_OPTION_COLOR_DEPTH_16"    : "Color baix (16 bits)",
+        "FIELD_OPTION_COLOR_DEPTH_24"    : "Veritable color (24 bits)",
+        "FIELD_OPTION_COLOR_DEPTH_32"    : "Veritable color (32 bits)",
+        "FIELD_OPTION_COLOR_DEPTH_8"     : "256 colors",
+
+
+        "FIELD_OPTION_RESIZE_METHOD_DISPLAY_UPDATE" : "\"Actualizació de pantalla\" canal virtual (RDP 8.1+)",
+
+        "FIELD_OPTION_RESIZE_METHOD_RECONNECT"      : "Torna a connectar",
+
+        "FIELD_OPTION_SECURITY_ANY"   : "Qualsevol",
+
+        "FIELD_OPTION_SECURITY_NLA"   : "NLA (Network Level Authentication)",
+        "FIELD_OPTION_SECURITY_RDP"   : "RDP encryption",
+        "FIELD_OPTION_SECURITY_TLS"   : "TLS encryption",
+        "FIELD_OPTION_SECURITY_VMCONNECT" : "Hyper-V / VMConnect",
+
+        "FIELD_OPTION_SERVER_LAYOUT_DE_CH_QWERTZ" : "Suís alemany (Qwertz)",
+        "FIELD_OPTION_SERVER_LAYOUT_DE_DE_QWERTZ" : "Alemany (Qwertz)",
+
+        "FIELD_OPTION_SERVER_LAYOUT_EN_GB_QWERTY" : "Anglès del Regne Unit (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_EN_US_QWERTY" : "Anglès dels Estats Units (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_ES_ES_QWERTY" : "Espanyol (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_ES_LATAM_QWERTY" : "Latino Americano (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_FAILSAFE"     : "Unicode",
+        "FIELD_OPTION_SERVER_LAYOUT_FR_BE_AZERTY" : "Belgian French (Azerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_FR_CH_QWERTZ" : "Suís francès (Qwertz)",
+        "FIELD_OPTION_SERVER_LAYOUT_FR_FR_AZERTY" : "Francès (Azerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_HU_HU_QWERTZ" : "Hungarian (Qwertz)",        
+        "FIELD_OPTION_SERVER_LAYOUT_IT_IT_QWERTY" : "Italià (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_JA_JP_QWERTY" : "Japonès (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_PT_BR_QWERTY" : "Portuguès brasiler (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_SV_SE_QWERTY" : "Suec (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_DA_DK_QWERTY" : "Danès (Qwerty)",
+        "FIELD_OPTION_SERVER_LAYOUT_TR_TR_QWERTY" : "Q-Turc (Qwerty)",
+
+        "NAME" : "RDP",
+
+        "SECTION_HEADER_AUTHENTICATION"     : "Autenticació",
+        "SECTION_HEADER_BASIC_PARAMETERS"   : "Configuració bàsica",
+        "SECTION_HEADER_CLIPBOARD"          : "Portapapers",
+        "SECTION_HEADER_DEVICE_REDIRECTION" : "Redirecció del dispositiu",
+        "SECTION_HEADER_DISPLAY"            : "Pantalla",
+        "SECTION_HEADER_GATEWAY"            : "Passarel·la d'escriptori remota",
+        "SECTION_HEADER_LOAD_BALANCING"     : "Equilibri de càrrega",
+        "SECTION_HEADER_NETWORK"            : "Xarxa",
+        "SECTION_HEADER_PERFORMANCE"        : "Rendiment",
+        "SECTION_HEADER_PRECONNECTION_PDU"  : "Pre connexió PDU / Hyper-V",
+        "SECTION_HEADER_RECORDING"          : "Gravació de la pantalla",
+        "SECTION_HEADER_REMOTEAPP"          : "RemoteApp",
+        "SECTION_HEADER_SFTP"               : "SFTP",
+        "SECTION_HEADER_WOL"                : "Wake-on-LAN (WoL)"
+
+    },
+
+    "PROTOCOL_SSH" : {
+
+        "FIELD_HEADER_BACKSPACE"    : "La tecla de retrocés envia:",
+        "FIELD_HEADER_COLOR_SCHEME" : "Esquema de colors:",
+        "FIELD_HEADER_COMMAND"      : "Executa l'ordre:",
+        "FIELD_HEADER_CREATE_RECORDING_PATH" : "Crea automàticament la ruta de gravació:",
+        "FIELD_HEADER_CREATE_TYPESCRIPT_PATH" : "Creeu automàticament la ruta de mecanografia:",
+        "FIELD_HEADER_DISABLE_COPY"  : "Desactiva la còpia des del terminal:",
+        "FIELD_HEADER_DISABLE_PASTE" : "Desactiva l’enganxament del client:",
+        "FIELD_HEADER_FONT_NAME"     : "Nom del tipus de lletra:",
+        "FIELD_HEADER_FONT_SIZE"     : "Mida de la lletra:",
+        "FIELD_HEADER_ENABLE_SFTP"   : "Activa SFTP:",
+        "FIELD_HEADER_HOST_KEY"      : "Clau d'amfitrió pública (Base64):",
+        "FIELD_HEADER_HOSTNAME"      : "Nom de l'amfitrió:",
+        "FIELD_HEADER_LOCALE"        : "Language/Locale ($LANG):",
+        "FIELD_HEADER_USERNAME"      : "Nom d'usuari:",
+        "FIELD_HEADER_PASSWORD"      : "Contrasenya:",
+        "FIELD_HEADER_PASSPHRASE"    : "Frase d'accés:",
+        "FIELD_HEADER_PORT"          : "Port:",
+        "FIELD_HEADER_PRIVATE_KEY"   : "Clau privada:",
+        "FIELD_HEADER_SCROLLBACK"    : "Mida màxima de desplaçament:",
+        "FIELD_HEADER_READ_ONLY"     : "Només lectura:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_MOUSE"  : "Exclou el ratolí:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_OUTPUT" : "Exclou els gràfics/fluxos:",
+        "FIELD_HEADER_RECORDING_INCLUDE_KEYS"   : "Inclou els esdeveniments de teclat:",
+        "FIELD_HEADER_RECORDING_NAME" : "Nom de la gravació:",
+        "FIELD_HEADER_RECORDING_PATH" : "Ruta de gravació:",
+        "FIELD_HEADER_SERVER_ALIVE_INTERVAL" : "Interval de 'keepalive' del servidor:",
+        "FIELD_HEADER_SFTP_DISABLE_DOWNLOAD" : "Desactiva la baixada de fitxers:",
+        "FIELD_HEADER_SFTP_ROOT_DIRECTORY"   : "Directori arrel del navegador de fitxers:",
+        "FIELD_HEADER_SFTP_DISABLE_UPLOAD"   : "Desactiva la càrrega de fitxers:",
+        "FIELD_HEADER_TERMINAL_TYPE"   : "Tipus de terminal:",
+        "FIELD_HEADER_TIMEZONE"        : "Zona horària ($TZ):",
+        "FIELD_HEADER_TYPESCRIPT_NAME" : "Nom Typescript:",
+        "FIELD_HEADER_TYPESCRIPT_PATH" : "Ruta Typescript:",
+        "FIELD_HEADER_WOL_BROADCAST_ADDR" : "Adreça de difusió del paquet WoL:",
+        "FIELD_HEADER_WOL_MAC_ADDR"       : "Adreça MAC de l'amfitrió remot:",
+        "FIELD_HEADER_WOL_SEND_PACKET"    : "Enviar paquet WoL:",
+        "FIELD_HEADER_WOL_WAIT_TIME"      : "Temps d'espera de l'arrencada d'amfitrió:",
+
+
+        "FIELD_OPTION_BACKSPACE_8"     : "Backspace (Ctrl-H)",
+        "FIELD_OPTION_BACKSPACE_127"   : "Delete (Ctrl-?)",
+
+        "FIELD_OPTION_COLOR_SCHEME_BLACK_WHITE" : "Negre sobre blanc",
+        "FIELD_OPTION_COLOR_SCHEME_GRAY_BLACK"  : "Gris sobre negre",
+        "FIELD_OPTION_COLOR_SCHEME_GREEN_BLACK" : "Verd sobre negre",
+        "FIELD_OPTION_COLOR_SCHEME_WHITE_BLACK" : "Blanc sobre negre",
+
+        "FIELD_OPTION_FONT_SIZE_8"     : "8",
+        "FIELD_OPTION_FONT_SIZE_9"     : "9",
+        "FIELD_OPTION_FONT_SIZE_10"    : "10",
+        "FIELD_OPTION_FONT_SIZE_11"    : "11",
+        "FIELD_OPTION_FONT_SIZE_12"    : "12",
+        "FIELD_OPTION_FONT_SIZE_14"    : "14",
+        "FIELD_OPTION_FONT_SIZE_18"    : "18",
+        "FIELD_OPTION_FONT_SIZE_24"    : "24",
+        "FIELD_OPTION_FONT_SIZE_30"    : "30",
+        "FIELD_OPTION_FONT_SIZE_36"    : "36",
+        "FIELD_OPTION_FONT_SIZE_48"    : "48",
+        "FIELD_OPTION_FONT_SIZE_60"    : "60",
+        "FIELD_OPTION_FONT_SIZE_72"    : "72",
+        "FIELD_OPTION_FONT_SIZE_96"    : "96",
+
+
+        "FIELD_OPTION_TERMINAL_TYPE_ANSI"           : "ansi",
+
+        "FIELD_OPTION_TERMINAL_TYPE_LINUX"          : "linux",
+        "FIELD_OPTION_TERMINAL_TYPE_VT100"          : "vt100",
+        "FIELD_OPTION_TERMINAL_TYPE_VT220"          : "vt220",
+        "FIELD_OPTION_TERMINAL_TYPE_XTERM"          : "xterm",
+        "FIELD_OPTION_TERMINAL_TYPE_XTERM_256COLOR" : "xterm-256color",
+
+        "NAME" : "SSH",
+
+        "SECTION_HEADER_AUTHENTICATION" : "Autenticació",
+        "SECTION_HEADER_BEHAVIOR"       : "Comportament del terminal",
+        "SECTION_HEADER_CLIPBOARD"      : "Portapapers",
+        "SECTION_HEADER_DISPLAY"        : "Pantalla",
+        "SECTION_HEADER_NETWORK"        : "Xarxa",
+        "SECTION_HEADER_RECORDING"      : "Gravació de la pantalla",
+        "SECTION_HEADER_SESSION"        : "Sessió / Entorn",
+        "SECTION_HEADER_TYPESCRIPT"     : "Typescript (Gravació de sessió de text)",
+        "SECTION_HEADER_SFTP"           : "SFTP",
+        "SECTION_HEADER_WOL"            : "Wake-on-LAN (WoL)"
+
+    },
+
+    "PROTOCOL_TELNET" : {
+
+        "FIELD_HEADER_BACKSPACE"      : "Backspace envia tecles:",
+        "FIELD_HEADER_COLOR_SCHEME"   : "Esquema de colors:",
+        "FIELD_HEADER_CREATE_RECORDING_PATH" : "Crea automàticament la ruta de gravació:",
+        "FIELD_HEADER_CREATE_TYPESCRIPT_PATH" : "Crea automàticament la ruta del typescript:",
+        "FIELD_HEADER_DISABLE_COPY"   : "Desactiva la còpia des del terminal:",
+        "FIELD_HEADER_DISABLE_PASTE"  : "Desactiva l’enganxament del client:",
+        "FIELD_HEADER_FONT_NAME"      : "Nom del tipus de lletra:",
+        "FIELD_HEADER_FONT_SIZE"      : "Mida de la lletra:",
+        "FIELD_HEADER_HOSTNAME"       : "Nom de l'amfitrió:",
+        "FIELD_HEADER_LOGIN_FAILURE_REGEX" : "Expressió regular de fallida d'inici de sessió:",
+        "FIELD_HEADER_LOGIN_SUCCESS_REGEX" : "Expressió regular d'exit d'inici de sessió:",
+        "FIELD_HEADER_USERNAME"       : "Nom d'usuari:",
+        "FIELD_HEADER_USERNAME_REGEX" : "Expressió regular del nom d'usuari:",
+        "FIELD_HEADER_PASSWORD"       : "Contrasenya:",
+        "FIELD_HEADER_PASSWORD_REGEX" : "Expressió regular de contrasenya:",
+        "FIELD_HEADER_PORT"           : "Port:",
+        "FIELD_HEADER_READ_ONLY"      : "Només lectura:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_MOUSE"  : "Exclou el ratolí:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_OUTPUT" : "Exclou els gràfics/fluxos:",
+        "FIELD_HEADER_RECORDING_INCLUDE_KEYS"   : "Inclou els esdeveniments de teclat:",
+        "FIELD_HEADER_RECORDING_NAME" : "Nom de la gravació:",
+        "FIELD_HEADER_RECORDING_PATH" : "Ruta de gravació:",
+        "FIELD_HEADER_SCROLLBACK"     : "Mida màxima de desplaçament:",
+        "FIELD_HEADER_TERMINAL_TYPE"   : "Tipus de terminal:",
+        "FIELD_HEADER_TYPESCRIPT_NAME" : "Nom de Typescript:",
+        "FIELD_HEADER_TYPESCRIPT_PATH" : "Ruta de Typescript:",
+        "FIELD_HEADER_WOL_BROADCAST_ADDR" : "Adreça de difusió del paquet WoL:",
+        "FIELD_HEADER_WOL_MAC_ADDR"       : "Adreça MAC de l'amfitrió remot:",
+        "FIELD_HEADER_WOL_SEND_PACKET"    : "Enviar paquet WoL:",
+        "FIELD_HEADER_WOL_WAIT_TIME"      : "Temps d'espera de l'arrencada d'amfitrió:",
+
+
+        "FIELD_OPTION_BACKSPACE_8"     : "Backspace (Ctrl-H)",
+        "FIELD_OPTION_BACKSPACE_127"   : "Delete (Ctrl-?)",
+
+        "FIELD_OPTION_COLOR_SCHEME_BLACK_WHITE" : "Negre sobre blanc",
+        "FIELD_OPTION_COLOR_SCHEME_GRAY_BLACK"  : "Gris sobre negre",
+        "FIELD_OPTION_COLOR_SCHEME_GREEN_BLACK" : "Verd sobre negre",
+        "FIELD_OPTION_COLOR_SCHEME_WHITE_BLACK" : "Blanc sobre negre",
+
+        "FIELD_OPTION_FONT_SIZE_8"     : "8",
+        "FIELD_OPTION_FONT_SIZE_9"     : "9",
+        "FIELD_OPTION_FONT_SIZE_10"    : "10",
+        "FIELD_OPTION_FONT_SIZE_11"    : "11",
+        "FIELD_OPTION_FONT_SIZE_12"    : "12",
+        "FIELD_OPTION_FONT_SIZE_14"    : "14",
+        "FIELD_OPTION_FONT_SIZE_18"    : "18",
+        "FIELD_OPTION_FONT_SIZE_24"    : "24",
+        "FIELD_OPTION_FONT_SIZE_30"    : "30",
+        "FIELD_OPTION_FONT_SIZE_36"    : "36",
+        "FIELD_OPTION_FONT_SIZE_48"    : "48",
+        "FIELD_OPTION_FONT_SIZE_60"    : "60",
+        "FIELD_OPTION_FONT_SIZE_72"    : "72",
+        "FIELD_OPTION_FONT_SIZE_96"    : "96",
+
+
+        "FIELD_OPTION_TERMINAL_TYPE_ANSI"           : "ansi",
+
+        "FIELD_OPTION_TERMINAL_TYPE_LINUX"          : "linux",
+        "FIELD_OPTION_TERMINAL_TYPE_VT100"          : "vt100",
+        "FIELD_OPTION_TERMINAL_TYPE_VT220"          : "vt220",
+        "FIELD_OPTION_TERMINAL_TYPE_XTERM"          : "xterm",
+        "FIELD_OPTION_TERMINAL_TYPE_XTERM_256COLOR" : "xterm-256color",
+
+        "NAME" : "Telnet",
+
+        "SECTION_HEADER_AUTHENTICATION" : "Autenticació",
+        "SECTION_HEADER_BEHAVIOR"       : "Comportament del terminal",
+        "SECTION_HEADER_CLIPBOARD"      : "Portapapers",
+        "SECTION_HEADER_DISPLAY"        : "Pantalla",
+        "SECTION_HEADER_RECORDING"      : "Gravació de la pantalla",
+        "SECTION_HEADER_TYPESCRIPT"     : "Typescript (Gravació de sessió de text)",
+        "SECTION_HEADER_NETWORK"        : "Xarxa",
+        "SECTION_HEADER_WOL"            : "Wake-on-LAN (WoL)"
+
+    },
+
+    "PROTOCOL_VNC" : {
+
+        "FIELD_HEADER_AUDIO_SERVERNAME" : "Nom del servidor d'àudio:",
+        "FIELD_HEADER_CLIPBOARD_ENCODING" : "Codificació:",
+        "FIELD_HEADER_COLOR_DEPTH"      : "Profunditat del color:",
+        "FIELD_HEADER_CREATE_RECORDING_PATH" : "Crea automàticament la ruta de gravació:",
+        "FIELD_HEADER_CURSOR"           : "Cursor:",
+        "FIELD_HEADER_DEST_HOST"        : "Amfitrió de destinació:",
+        "FIELD_HEADER_DEST_PORT"        : "Port de destinació:",
+        "FIELD_HEADER_DISABLE_COPY"     : "Desactiva la còpia des de l'escriptori remot:",
+        "FIELD_HEADER_DISABLE_PASTE"    : "Desactiva l’enganxament del client:",
+        "FIELD_HEADER_ENABLE_AUDIO"     : "Habilita l'àudio:",
+        "FIELD_HEADER_ENABLE_SFTP"      : "Activa SFTP:",
+        "FIELD_HEADER_HOSTNAME"         : "Nom de l'amfitrió:",
+        "FIELD_HEADER_USERNAME"         : "Nom d'usuari:",
+        "FIELD_HEADER_PASSWORD"         : "Contrasenya:",
+        "FIELD_HEADER_PORT"             : "Port:",
+        "FIELD_HEADER_READ_ONLY"        : "Només lectura:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_MOUSE"  : "Exclou el ratolí:",
+        "FIELD_HEADER_RECORDING_EXCLUDE_OUTPUT" : "Exclou els gràfics/fluxos:",
+        "FIELD_HEADER_RECORDING_INCLUDE_KEYS"   : "Inclou els esdeveniments de teclat:",
+        "FIELD_HEADER_RECORDING_NAME" : "Nom de la gravació:",
+        "FIELD_HEADER_RECORDING_PATH" : "Ruta de gravació:",
+        "FIELD_HEADER_SFTP_DIRECTORY"             : "Directori de càrrega per defecte:",
+        "FIELD_HEADER_SFTP_DISABLE_DOWNLOAD"      : "Desactiva la baixada de fitxers:",
+        "FIELD_HEADER_SFTP_HOST_KEY"              : "Clau d'amfitrió pública (Base64):",
+        "FIELD_HEADER_SFTP_HOSTNAME"              : "Nom de l'amfitrió:",
+        "FIELD_HEADER_SFTP_SERVER_ALIVE_INTERVAL" : "Interval de keepalive SFTP:",
+        "FIELD_HEADER_SFTP_PASSPHRASE"            : "Frase d'accés:",
+        "FIELD_HEADER_SFTP_PASSWORD"              : "Contrasenya:",
+        "FIELD_HEADER_SFTP_PORT"                  : "Port:",
+        "FIELD_HEADER_SFTP_PRIVATE_KEY"           : "Clau privada:",
+        "FIELD_HEADER_SFTP_ROOT_DIRECTORY"        : "Directori arrel del navegador de fitxers:",
+        "FIELD_HEADER_SFTP_DISABLE_UPLOAD"        : "Desactiva la càrrega de fitxers:",
+        "FIELD_HEADER_SFTP_USERNAME"              : "Nom d'usuari:",
+        "FIELD_HEADER_SWAP_RED_BLUE"    : "Canvia components vermells/blaus:",
+        "FIELD_HEADER_WOL_BROADCAST_ADDR" : "Adreça de difusió del paquet WoL:",
+        "FIELD_HEADER_WOL_MAC_ADDR"       : "Adreça MAC de l'amfitrió remot:",
+        "FIELD_HEADER_WOL_SEND_PACKET"    : "Enviar paquet WoL:",
+        "FIELD_HEADER_WOL_WAIT_TIME"      : "Temps d'espera de l'arrencada d'amfitrió:",
+
+        "FIELD_OPTION_COLOR_DEPTH_8"     : "256 colors",
+        "FIELD_OPTION_COLOR_DEPTH_16"    : "Color baix (16 bits)",
+        "FIELD_OPTION_COLOR_DEPTH_24"    : "Veritable color (24 bits)",
+        "FIELD_OPTION_COLOR_DEPTH_32"    : "Veritable color (32 bits)",
+
+        "FIELD_OPTION_CURSOR_LOCAL"  : "Local",
+        "FIELD_OPTION_CURSOR_REMOTE" : "Remot",
+
+        "FIELD_OPTION_CLIPBOARD_ENCODING_CP1252"    : "CP1252",
+        "FIELD_OPTION_CLIPBOARD_ENCODING_ISO8859_1" : "ISO 8859-1",
+        "FIELD_OPTION_CLIPBOARD_ENCODING_UTF_8"     : "UTF-8",
+        "FIELD_OPTION_CLIPBOARD_ENCODING_UTF_16"    : "UTF-16",
+
+        "NAME" : "VNC",
+
+        "SECTION_HEADER_AUDIO"          : "Àudio",
+        "SECTION_HEADER_AUTHENTICATION" : "Autenticació",
+        "SECTION_HEADER_CLIPBOARD"      : "Portapapers",
+        "SECTION_HEADER_DISPLAY"        : "Pantalla",
+        "SECTION_HEADER_NETWORK"        : "Xarxa",
+        "SECTION_HEADER_RECORDING"      : "Gravació de la pantalla",
+        "SECTION_HEADER_REPEATER"       : "Repetidor VNC",
+        "SECTION_HEADER_SFTP"           : "SFTP",
+        "SECTION_HEADER_WOL"            : "Wake-on-LAN (WoL)"
+
+    },
+
+    "SETTINGS" : {
+
+        "SECTION_HEADER_SETTINGS" : "Configuració"
+
+    },
+
+    "SETTINGS_CONNECTION_HISTORY" : {
+
+        "ACTION_DOWNLOAD" : "@:APP.ACTION_DOWNLOAD",
+        "ACTION_SEARCH"   : "@:APP.ACTION_SEARCH",
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "FILENAME_HISTORY_CSV" : "history.csv",
+
+        "FORMAT_DATE" : "@:APP.FORMAT_DATE_TIME_PRECISE",
+
+        "HELP_CONNECTION_HISTORY" : "Aquí es llisten els registres d'historial de connexions anteriors i es poden ordenar fent clic a les capçaleres de columna. Per cercar registres específics, introduïu una cadena de filtre i feu clic a \"Cerca\". Només s'enumeraran els registres que coincideixin amb la cadena de filtre proporcionada.",
+
+        "INFO_CONNECTION_DURATION_UNKNOWN" : "--",
+        "INFO_NO_HISTORY"                  : "No hi ha registres coincidents",
+
+        "TABLE_HEADER_SESSION_CONNECTION_NAME" : "Nom de la connexió",
+        "TABLE_HEADER_SESSION_DURATION"        : "Durada",
+        "TABLE_HEADER_SESSION_REMOTEHOST"      : "Amfitrió remot",
+        "TABLE_HEADER_SESSION_STARTDATE"       : "Hora d'inici",
+        "TABLE_HEADER_SESSION_USERNAME"        : "Nom d'usuari",
+
+        "TEXT_HISTORY_DURATION" : "@:APP.TEXT_HISTORY_DURATION"
+
+    },
+
+    "SETTINGS_CONNECTIONS" : {
+
+        "ACTION_ACKNOWLEDGE"          : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_NEW_CONNECTION"       : "Nova connexió",
+        "ACTION_NEW_CONNECTION_GROUP" : "Grup nou",
+        "ACTION_NEW_SHARING_PROFILE"  : "Nou perfil per compartir",
+
+        "DIALOG_HEADER_ERROR" : "@:APP.DIALOG_HEADER_ERROR",
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "HELP_CONNECTIONS"   : "Feu clic o toqueu una connexió següent per gestionar aquesta connexió. Segons el vostre nivell d'accés, es poden afegir i suprimir connexions i es poden canviar les seves propietats (protocol, nom d'amfitrió, port, etc.).",
+        
+        "INFO_ACTIVE_USER_COUNT" : "@:APP.INFO_ACTIVE_USER_COUNT",
+
+        "SECTION_HEADER_CONNECTIONS"     : "Connexions"
+
+    },
+
+    "SETTINGS_PREFERENCES" : {
+
+        "ACTION_ACKNOWLEDGE"        : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CANCEL"             : "@:APP.ACTION_CANCEL",
+        "ACTION_UPDATE_PASSWORD"    : "@:APP.ACTION_UPDATE_PASSWORD",
+
+        "DIALOG_HEADER_ERROR"    : "@:APP.DIALOG_HEADER_ERROR",
+
+        "ERROR_PASSWORD_BLANK"    : "@:APP.ERROR_PASSWORD_BLANK",
+        "ERROR_PASSWORD_MISMATCH" : "@:APP.ERROR_PASSWORD_MISMATCH",
+
+        "FIELD_HEADER_LANGUAGE"           : "Llenguatge de visualització:",
+        "FIELD_HEADER_PASSWORD"           : "Contrasenya:",
+        "FIELD_HEADER_PASSWORD_OLD"       : "Contrasenya actual:",
+        "FIELD_HEADER_PASSWORD_NEW"       : "Nova contrasenya:",
+        "FIELD_HEADER_PASSWORD_NEW_AGAIN" : "Confirmar nova contrasenya:",
+        "FIELD_HEADER_TIMEZONE"           : "Fus horari:",
+        "FIELD_HEADER_USERNAME"           : "Nom d'usuari:",
+        
+        "HELP_DEFAULT_INPUT_METHOD" : "El mètode d'introducció predeterminat determina com Guacamole rep els esdeveniments del teclat. Canviar aquesta configuració pot ser necessària quan s'utilitza un dispositiu mòbil o quan s'escriu a través d'un IME. Aquesta configuració es pot substituir de manera per connexió dins del menú Guacamole.",
+        "HELP_DEFAULT_MOUSE_MODE"   : "El mode d'emulació predeterminat del ratolí determina com es comportarà el ratolí remot en les noves connexions pel que fa als tocs. Aquesta configuració es pot substituir de manera per connexió al menú Guacamole.",
+        "HELP_INPUT_METHOD_NONE"    : "@:CLIENT.HELP_INPUT_METHOD_NONE",
+        "HELP_INPUT_METHOD_OSK"     : "@:CLIENT.HELP_INPUT_METHOD_OSK",
+        "HELP_INPUT_METHOD_TEXT"    : "@:CLIENT.HELP_INPUT_METHOD_TEXT",
+        "HELP_LOCALE"               : "Les opcions que apareixen a continuació estan relacionades amb la configuració regional de l'usuari i tindran un impacte sobre la visualització de diverses parts de la interfície.",
+        "HELP_MOUSE_MODE_ABSOLUTE"  : "@:CLIENT.HELP_MOUSE_MODE_ABSOLUTE",
+        "HELP_MOUSE_MODE_RELATIVE"  : "@:CLIENT.HELP_MOUSE_MODE_RELATIVE",
+        "HELP_UPDATE_PASSWORD"      : "Si voleu canviar la vostra contrasenya, introduïu la vostra contrasenya actual i la contrasenya desitjada a continuació, i feu clic a \"Actualitzar la contrasenya\". El canvi entrarà en vigor immediatament.",
+
+        "INFO_PASSWORD_CHANGED" : "S'ha canviat la contrasenya.",
+
+        "NAME_INPUT_METHOD_NONE" : "@:CLIENT.NAME_INPUT_METHOD_NONE",
+        "NAME_INPUT_METHOD_OSK"  : "@:CLIENT.NAME_INPUT_METHOD_OSK",
+        "NAME_INPUT_METHOD_TEXT" : "@:CLIENT.NAME_INPUT_METHOD_TEXT",
+
+        "SECTION_HEADER_DEFAULT_INPUT_METHOD" : "Mètode d'introducció per defecte",
+        "SECTION_HEADER_DEFAULT_MOUSE_MODE"   : "Mode d'emulació del ratolí predeterminat",
+        "SECTION_HEADER_UPDATE_PASSWORD"      : "Canvia la contrasenya"
+
+    },
+
+    "SETTINGS_USERS" : {
+
+        "ACTION_ACKNOWLEDGE"   : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_NEW_USER"      : "Nou usuari",
+
+        "DIALOG_HEADER_ERROR" : "@:APP.DIALOG_HEADER_ERROR",
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "FORMAT_DATE" : "@:APP.FORMAT_DATE_TIME_PRECISE",
+
+        "HELP_USERS" : "Feu clic o toqueu un usuari per gestionar aquest usuari. En funció del vostre nivell d'accés, es poden afegir i eliminar els usuaris i es poden canviar les seves contrasenyes.",
+
+        "SECTION_HEADER_USERS"       : "Usuaris",
+
+        "TABLE_HEADER_FULL_NAME"   : "Nom complet",
+        "TABLE_HEADER_LAST_ACTIVE" : "Darrer actiu",
+        "TABLE_HEADER_ORGANIZATION" : "Organització",
+        "TABLE_HEADER_USERNAME"    : "Nom d'usuari"
+
+    },
+
+    "SETTINGS_USER_GROUPS" : {
+
+        "ACTION_ACKNOWLEDGE"    : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_NEW_USER_GROUP" : "Grup nou",
+
+        "DIALOG_HEADER_ERROR" : "@:APP.DIALOG_HEADER_ERROR",
+
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+
+        "FORMAT_DATE" : "@:APP.FORMAT_DATE_TIME_PRECISE",
+
+        "HELP_USER_GROUPS" : "Feu clic o toqueu un grup següent per gestionar aquest grup. En funció del vostre nivell d'accés, es poden afegir i suprimir grups i es poden canviar els usuaris i grups.",
+
+        "SECTION_HEADER_USER_GROUPS" : "Grups",
+
+        "TABLE_HEADER_USER_GROUP_NAME" : "Nom del grup"
+
+    },
+
+    "SETTINGS_SESSIONS" : {
+        
+        "ACTION_ACKNOWLEDGE" : "@:APP.ACTION_ACKNOWLEDGE",
+        "ACTION_CANCEL"      : "@:APP.ACTION_CANCEL",
+        "ACTION_DELETE"      : "Finalitzar Sessions",
+        
+        "DIALOG_HEADER_CONFIRM_DELETE" : "Finalitzar Sessions",
+        "DIALOG_HEADER_ERROR"          : "@:APP.DIALOG_HEADER_ERROR",
+        
+        "FIELD_PLACEHOLDER_FILTER" : "@:APP.FIELD_PLACEHOLDER_FILTER",
+        
+        "FORMAT_STARTDATE" : "@:APP.FORMAT_DATE_TIME_PRECISE",
+
+        "HELP_SESSIONS" : "Aquesta pàgina s'omple de connexions actualment actives. Les connexions enumerades i la possibilitat de destruir aquestes connexions depèn del nivell d'accés. Si voleu destruir una o més sessions, marqueu la casella que hi ha al costat de les sessions i feu clic a \"Destruir Sessions\". Destruir una sessió desconnectarà immediatament l'usuari de la connexió associada.",
+        
+        "INFO_NO_SESSIONS" : "No hi ha sessions actives",
+
+        "SECTION_HEADER_SESSIONS" : "Sessions actives",
+        
+        "TABLE_HEADER_SESSION_CONNECTION_NAME" : "Nom de la connexió",
+        "TABLE_HEADER_SESSION_REMOTEHOST"      : "Amfitrió remot",
+        "TABLE_HEADER_SESSION_STARTDATE"       : "Actiu des de",
+        "TABLE_HEADER_SESSION_USERNAME"        : "Nom d'usuari",
+        
+        "TEXT_CONFIRM_DELETE" : "Esteu segur que voleu matar totes les sessions seleccionades? Els usuaris que utilitzin aquestes sessions seran desconnectats immediatament."
+
+    },
+
+    "USER_ATTRIBUTES" : {
+
+        "FIELD_HEADER_GUAC_EMAIL_ADDRESS"       : "Correu electrònic:",
+        "FIELD_HEADER_GUAC_FULL_NAME"           : "Nom complet:",
+        "FIELD_HEADER_GUAC_ORGANIZATION"        : "Organització:",
+        "FIELD_HEADER_GUAC_ORGANIZATIONAL_ROLE" : "Role:"
+
+    },
+
+    "USER_MENU" : {
+
+        "ACTION_LOGOUT"             : "@:APP.ACTION_LOGOUT",
+        "ACTION_MANAGE_CONNECTIONS" : "@:APP.ACTION_MANAGE_CONNECTIONS",
+        "ACTION_MANAGE_PREFERENCES" : "@:APP.ACTION_MANAGE_PREFERENCES",
+        "ACTION_MANAGE_SESSIONS"    : "@:APP.ACTION_MANAGE_SESSIONS",
+        "ACTION_MANAGE_SETTINGS"    : "@:APP.ACTION_MANAGE_SETTINGS",
+        "ACTION_MANAGE_USERS"       : "@:APP.ACTION_MANAGE_USERS",
+        "ACTION_MANAGE_USER_GROUPS" : "@:APP.ACTION_MANAGE_USER_GROUPS",
+        "ACTION_NAVIGATE_HOME"      : "@:APP.ACTION_NAVIGATE_HOME",
+        "ACTION_VIEW_HISTORY"       : "@:APP.ACTION_VIEW_HISTORY"
+
+    }
+
+}
