@@ -1,0 +1,5223 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+body.client {
+    background: black;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+#preload {
+    visibility: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.client-view {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    font-size: 0px;
+
+}
+
+.client-view-content {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: column;
+    -ms-flex-pack: end;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: vertical;
+    -moz-box-pack: end;
+    
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: vertical;
+    -webkit-box-pack: end;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: column;
+    -webkit-flex-pack: end;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    flex-pack: end;
+
+    width: 100%;
+    height: 100%;
+
+    font-size: 12pt;
+
+}
+
+.client-view .client-body {
+    -ms-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    position: relative;
+}
+
+.client-view .client-bottom {
+    -ms-flex: 0 0 auto;
+    -moz-box-flex: 0;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+
+.client-view .client-body .main {
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: auto;
+    height: auto;
+
+}
+
+.client .menu .header h2 {
+    text-transform: none;
+}
+
+.client .user-menu .menu-contents li a.disconnect {
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-position: 0.75em center;
+    padding-left: 2.5em;
+    background-image: url('images/x.png');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+#guac-menu .header h2.connection-select-menu {
+    overflow: visible;
+}
+
+.connection-select-menu {
+    padding: 0;
+    min-width: 0;
+}
+
+.connection-select-menu .menu-dropdown {
+    border: none;
+}
+
+.connection-select-menu .menu-dropdown .menu-contents {
+    font-weight: normal;
+    font-size: 0.8em;
+    right: auto;
+    left: 0;
+    max-width: 100vw;
+    width: 400px;
+}
+
+.connection-select-menu .menu-dropdown .menu-contents .filter input {
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+    border-left: none;
+}
+
+.connection-select-menu .menu-dropdown .menu-contents .filter {
+    margin-bottom: 0.5em;
+    padding: 0;
+}
+
+.connection-select-menu .menu-dropdown .menu-contents .group-list .caption {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+#connection-warning {
+
+    position: absolute;
+    right: 0.25em;
+    bottom: 0.25em;
+    z-index: 20;
+
+    width: 3in;
+    max-width: 100%;
+    min-height: 1em;
+
+    border-left: 2em solid #FA0;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    background: #FFE;
+    padding: 0.5em 0.75em;
+    font-size: .8em;
+
+}
+
+#connection-warning::before {
+
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: -2em;
+    top: 0;
+
+    width: 1.25em;
+    height: 100%;
+    margin: 0 0.375em;
+
+    background: url('images/warning.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.software-cursor {
+    cursor: url('images/mouse/blank.gif'),url('images/mouse/blank.cur'),default;
+    overflow: hidden;
+    cursor: none;
+}
+
+.guac-error .software-cursor {
+    cursor: default;
+}
+
+div.main {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    font-size: 0px;
+}
+
+div.displayOuter {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: table;
+}
+
+div.displayMiddle {
+    width: 100%;
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+div.display {
+    display: inline-block;
+}
+
+div.display * {
+    position: relative;
+}
+
+div.display > * {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* Hide directory contents by default */
+
+.file-browser .directory > .children {
+    padding-left: 1em;
+    display: none;
+}
+
+.file-browser .list-item .caption {
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.file-browser .list-item.focused .caption {
+    border: 1px dotted rgba(0, 0, 0, 0.5);
+    background: rgba(204, 221, 170, 0.5);
+}
+
+/* Directory / file icons */
+
+.file-browser .normal-file > .caption .icon {
+    background-image: url('images/file.png');
+}
+
+.file-browser .directory > .caption .icon {
+    background-image: url('images/folder-closed.png');
+}
+
+.file-browser .directory.previous > .caption .icon {
+    background-image: url('images/folder-up.png');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+#file-transfer-dialog {
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+
+    font-size: 0.8em;
+
+    width: 4in;
+    max-width: 100%;
+    max-height: 3in;
+
+}
+
+#file-transfer-dialog .transfer-manager {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: column;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: vertical;
+
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: vertical;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: column;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+
+    max-width: inherit;
+    max-height: inherit;
+
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+
+}
+
+#file-transfer-dialog .transfer-manager .header {
+    -ms-flex: 0 0 auto;
+    -moz-box-flex: 0;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+
+#file-transfer-dialog .transfer-manager .transfer-manager-body {
+
+    -ms-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+
+    overflow: auto;
+
+}
+
+/*
+ * Shrink maximum height if viewport is too small for default 3in dialog.
+ */
+@media all and (max-height: 3in) {
+
+    #file-transfer-dialog {
+        max-height: 1.5in;
+    }
+
+}
+
+/*
+ * If viewport is too small for even the 1.5in dialog, fit all available space.
+ */
+@media all and (max-height: 1.5in) {
+
+    #file-transfer-dialog {
+        height: 100%;
+    }
+
+    #file-transfer-dialog .transfer-manager {
+        position: absolute;
+        left:   0.5em;
+        top:    0.5em;
+        right:  0.5em;
+        bottom: 0.5em;
+    }
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+#filesystem-menu .header h2 {
+    font-size: 1em;
+    font-weight: normal;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#filesystem-menu .header {
+    -ms-flex-align:      center;
+    -moz-box-align:      center;
+    -webkit-box-align:   center;
+    -webkit-align-items: center;
+    align-items:         center;
+}
+
+#filesystem-menu .menu-body {
+    padding: 0.25em;
+}
+
+#filesystem-menu .header.breadcrumbs {
+    display: block;
+    background: rgba(0,0,0,0.0125);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    box-shadow: none;
+    margin-top: 0;
+    border-top: none;
+}
+
+#filesystem-menu .header.breadcrumbs .breadcrumb {
+    display: inline-block;
+    padding: 0.5em;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+#filesystem-menu .header.breadcrumbs .breadcrumb:hover {
+    background-color: #CDA;
+    cursor: pointer;
+}
+
+#filesystem-menu .header.breadcrumbs .breadcrumb.root {
+    background-size:         1.5em 1.5em;
+    -moz-background-size:    1.5em 1.5em;
+    -webkit-background-size: 1.5em 1.5em;
+    -khtml-background-size:  1.5em 1.5em;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url('images/drive.png');
+    width: 2em;
+    height: 2em;
+    padding: 0;
+    vertical-align: middle;
+}
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+#guac-menu .content {
+
+    padding: 0;
+    margin: 0;
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: column;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: vertical;
+
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: vertical;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: column;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+
+}
+
+#guac-menu .content > * {
+
+    margin: 0;
+
+    -ms-flex: 0 0 auto;
+    -moz-box-flex: 0;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+
+}
+
+#guac-menu .content > * + * {
+    margin-top: 1em;
+}
+
+#guac-menu .header h2 {
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+}
+
+#guac-menu #mouse-settings .choice {
+    text-align: center;
+}
+
+#guac-menu #mouse-settings .choice .figure {
+    display: inline-block;
+    vertical-align: middle;
+    width: 75%;
+    max-width: 320px;
+}
+
+#guac-menu #keyboard-settings .caption {
+    font-size: 0.9em;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+#guac-menu #mouse-settings .figure .caption {
+    text-align: center;
+    font-size: 0.9em;
+}
+
+#guac-menu #mouse-settings .figure img {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 1em auto;
+}
+
+#guac-menu #keyboard-settings .figure {
+    float: right;
+    max-width: 30%;
+    margin: 1em;
+}
+
+#guac-menu #keyboard-settings .figure img {
+    max-width: 100%;
+}
+
+#guac-menu #zoom-settings {
+    text-align: center;
+}
+
+#guac-menu #zoom-out,
+#guac-menu #zoom-in,
+#guac-menu #zoom-state {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#guac-menu #zoom-out,
+#guac-menu #zoom-in {
+    max-width: 3em;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2em;
+    margin: 0.5em;
+    cursor: pointer;
+}
+
+#guac-menu #zoom-out img,
+#guac-menu #zoom-in img {
+    max-width: 100%;
+    opacity: 0.5;
+}
+
+#guac-menu #zoom-out:hover,
+#guac-menu #zoom-in:hover {
+    border: 1px solid rgba(0, 0, 0, 1);
+    background: #CDA;
+}
+
+#guac-menu #zoom-out:hover img,
+#guac-menu #zoom-in:hover img {
+    opacity: 1;
+}
+
+#guac-menu #zoom-state {
+    font-size: 2em;
+}
+
+#guac-menu #devices .device {
+
+    padding: 1em;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    background: rgba(0, 0, 0, 0.04);
+
+    padding-left: 3.5em;
+    background-size:         1.5em 1.5em;
+    -moz-background-size:    1.5em 1.5em;
+    -webkit-background-size: 1.5em 1.5em;
+    -khtml-background-size:  1.5em 1.5em;
+
+    background-repeat: no-repeat;
+    background-position: 1em center;
+
+}
+
+#guac-menu #devices .device:hover {
+    cursor: pointer;
+    border-color: black;
+}
+
+#guac-menu #devices .device.filesystem {
+    background-image: url('images/drive.png');
+}
+
+#guac-menu #share-links {
+
+    padding: 1em;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    background: rgba(0, 0, 0, 0.04);
+
+    font-size: 0.8em;
+
+}
+
+#guac-menu #share-links h3 {
+    padding-bottom: 0;
+}
+
+#guac-menu #share-links th {
+    white-space: nowrap;
+}
+
+#guac-menu #share-links a[href] {
+
+    display: block;
+    padding: 0 1em;
+
+    font-family: monospace;
+    font-weight: bold;
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.keyboard-container {
+
+    text-align: center;
+
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    border-top: 1px solid black;
+    background: #222;
+    opacity: 0.85;
+
+    z-index: 1;
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.menu {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    max-width: 100%;
+    width: 480px;
+    background: #EEE;
+    box-shadow: inset -1px 0 2px white, 1px 0 2px black;
+    z-index: 10;
+    -webkit-transition: left 0.125s, opacity 0.125s;
+    -moz-transition: left 0.125s, opacity 0.125s;
+    -ms-transition: left 0.125s, opacity 0.125s;
+    -o-transition: left 0.125s, opacity 0.125s;
+    transition: left 0.125s, opacity 0.125s;
+}
+
+.menu-content {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: column;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: vertical;
+    
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: vertical;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: column;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    
+    width: 100%;
+    height: 100%;
+
+}
+
+.menu-content .header {
+
+    -ms-flex: 0 0 auto;
+    -moz-box-flex: 0;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+
+    margin-bottom: 0;
+    
+}
+
+.menu-body {
+
+    -ms-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+
+    padding: 1em;
+    overflow: auto;
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: column;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: vertical;
+    
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: vertical;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: column;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+
+}
+
+.menu-body > * {
+    -ms-flex: 0 0 auto;
+    -moz-box-flex: 0;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+
+.menu-section h3 {
+    margin: 0;
+    padding: 0;
+    padding-bottom: 1em;
+}
+
+.menu-section ~ .menu-section h3 {
+    padding-top: 1em;
+}
+
+.menu-section input.zoom-ctrl {
+    width: 2em;
+    font-size: 1em;
+    padding: 0;
+    background: transparent;
+    border-color: rgba(0, 0, 0, 0.125);
+}
+
+.menu-section div.zoom-ctrl {
+    font-size: 1.5em;
+    display: inline;
+    align-content: center;
+    vertical-align: middle;
+}
+
+.menu-section .zoom-ctrl::-webkit-inner-spin-button,
+.menu-section .zoom-ctrl::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.menu,
+.menu.closed {
+    left: -480px;
+    opacity: 0;
+}
+
+.menu.open {
+    left: 0px;
+    opacity: 1;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.client .notification .parameters h3,
+.client .notification .parameters .password-field .toggle-password {
+    display: none;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+#other-connections .client-panel {
+
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.25);
+    max-width: 100%;
+    white-space: nowrap;
+    transition: max-width 0.125s, width 0.125s;
+
+    /* Render above modal status */
+    z-index: 20;
+
+}
+
+#other-connections .client-panel.has-clients {
+    display: block;
+}
+
+#other-connections .client-panel.hidden {
+    max-width: 16px;
+}
+
+#other-connections .client-panel-handle {
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    width: 16px;
+    z-index: 1;
+
+    background-color: white;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+    background-image: url(images/arrows/right.png);
+    opacity: 0.5;
+
+}
+
+#other-connections .client-panel-handle:hover {
+    opacity: 0.75;
+}
+
+#other-connections .client-panel.hidden .client-panel-handle {
+    background-image: url(images/arrows/left.png);
+}
+
+#other-connections .client-panel-connection-list {
+
+    text-align: right;
+
+    margin: 0;
+    padding: 0;
+    padding-left: 16px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+}
+
+#other-connections .client-panel-connection {
+
+    display: inline-block;
+    position: relative;
+
+    margin: 0.5em;
+    border: 1px solid white;
+    background: black;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+
+    opacity: 0.5;
+    transition: opacity 0.25s;
+
+    max-height: 128px;
+    overflow: hidden;
+    vertical-align: middle;
+
+}
+
+#other-connections .client-panel-connection .thumbnail-main img {
+    max-width: none;
+    max-height: 128px;
+}
+
+#other-connections .client-panel-connection a[href]::before {
+
+    display: block;
+    content: ' ';
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+
+    background: url('images/warning-white.png');
+    background-size: 48px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: black;
+
+    opacity: 0;
+    transition: opacity 0.25s;
+
+}
+
+#other-connections .client-panel-connection.needs-attention a[href]::before {
+    opacity: 0.75;
+}
+
+#other-connections button.close-other-connection {
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+
+    margin: 0;
+    padding: 4px;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+
+    opacity: 0.5;
+    line-height: 1;
+
+}
+
+#other-connections button.close-other-connection:hover {
+    opacity: 1;
+}
+
+#other-connections button.close-other-connection img {
+    background: #A43;
+    border-radius: 18px;
+    max-width: 18px;
+    padding: 3px;
+}
+
+#other-connections button.close-other-connection:hover img {
+    background: #C54;
+}
+
+#other-connections .client-panel.hidden .client-panel-connection-list {
+    /* Hide scrollbar when panel is hidden (will be visible through panel
+     * show/hide button otherwise) */
+    overflow-x: hidden;
+}
+
+#other-connections .client-panel.hidden .client-panel-connection {
+    /* Hide thumbnails when panel is hidden (will be visible through panel
+     * show/hide button otherwise) */
+    visibility: hidden;
+}
+
+#other-connections .client-panel-connection .name {
+
+    position: absolute;
+    padding: 0.25em 0.5em;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+
+    text-align: left;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    font-size: 0.75em;
+    font-weight: bold;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+#other-connections .client-panel-connection:hover {
+    opacity: 1;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.share-menu {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: row;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: horizontal;
+
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: horizontal;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: row;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+
+}
+
+.share-menu .menu-dropdown .menu-title {
+
+    padding-left: 2em;
+
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-position: 0.5em center;
+    background-image: url('images/share.png');
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+div.thumbnail-main {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    font-size: 0px;
+}
+
+.thumbnail-main img {
+    max-width: 100%;
+}
+
+.thumbnail-main .display {
+    position: absolute;
+    pointer-events: none;
+}
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.transfer-manager {
+    background: white;
+}
+
+.transfer-manager .header h2 {
+    font-size: 1em;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.transfer-manager .header {
+    margin: 0;
+    -ms-flex-align:      center;
+    -moz-box-align:      center;
+    -webkit-box-align:   center;
+    -webkit-align-items: center;
+    align-items:         center;
+}
+
+.transfer-manager .transfers {
+    display: table;
+    padding: 0.25em;
+    width: 100%;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.transfer {
+    display: table-row;
+}
+
+.transfer .transfer-status {
+    display: table-cell;
+    padding: 0.25em;
+    position: relative;
+}
+
+.transfer .text {
+    display: table-cell;
+    text-align: right;
+    padding: 0.25em
+}
+
+.transfer .filename {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    position: relative;
+    font-family: monospace;
+    font-weight: bold;
+    padding: 0.125em;
+}
+
+@keyframes transfer-progress {
+    from {background-position: 0px  0px;}
+    to   {background-position: 64px 0px;}
+}
+
+@-webkit-keyframes transfer-progress {
+    from {background-position: 0px  0px;}
+    to   {background-position: 64px 0px;}
+}
+
+.transfer .progress {
+
+    width: 100%;
+    padding: 0.25em;
+    
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    opacity: 0.25;
+    
+}
+
+.transfer.in-progress .progress {
+
+    background-color: #EEE;
+    background-image: url('images/progress.png');
+
+    background-size: 16px 16px;
+    -moz-background-size: 16px 16px;
+    -webkit-background-size: 16px 16px;
+    -khtml-background-size: 16px 16px;
+
+    animation-name: transfer-progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    -webkit-animation-name: transfer-progress;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+
+}
+
+.transfer .progress .bar {
+    display: none;
+    background: #A3D655;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+}
+
+.transfer.in-progress .progress .bar {
+    display: initial;
+}
+
+.transfer.savable {
+    cursor: pointer;
+}
+
+.transfer.savable .filename {
+    color: blue;
+    text-decoration: underline;
+}
+
+.transfer.error {
+    background: #FDD;
+}
+
+.transfer.error .text,
+.transfer.error .progress .bar {
+    display: none;
+}
+
+.transfer .error-text {
+    display: none;
+}
+
+.transfer.error .error-text {
+    display: block;
+    margin: 0;
+    margin-top: 0.5em;
+    width: 100%;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.viewport {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.clipboard, .clipboard-service-target {
+    background: white;
+}
+
+.clipboard  {
+    position: relative;
+    border: 1px solid #AAA;
+    -moz-border-radius: 0.25em;
+    -webkit-border-radius: 0.25em;
+    -khtml-border-radius: 0.25em;
+    border-radius: 0.25em;
+    width: 100%;
+    height: 2in;
+    white-space: pre;
+    font-size: 1em;
+    overflow: auto;
+    padding: 0.25em;
+}
+
+.clipboard p,
+.clipboard div {
+    margin: 0;
+}
+
+.clipboard img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid black;
+    background: url('images/checker.png');
+}
+
+.clipboard-service-target {
+    position: fixed;
+    left: -1em;
+    right: -1em;
+    width: 1em;
+    height: 1em;
+    white-space: pre;
+    overflow: hidden;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.resize-sensor {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    border: none;
+    opacity: 0;
+    z-index: -1;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* Keep toggle-password icon on same line */
+.form-field .password-field {
+    white-space: nowrap;
+}
+
+/* Generic 1x1em icon/button */
+.form-field .password-field .icon.toggle-password {
+
+    display: inline-block;
+    opacity: 0.5;
+    cursor: default;
+
+    background-repeat: no-repeat;
+    background-size: 1em;
+    width: 1em;
+    height: 1em;
+
+}
+
+/* Icon for unmasking passwords */
+.form-field .password-field input[type=password] ~ .icon.toggle-password {
+    background-image: url('images/action-icons/guac-show-pass.png');
+}
+
+/* Icon for masking passwords */
+.form-field .password-field input[type=text] ~ .icon.toggle-password {
+    background-image: url('images/action-icons/guac-hide-pass.png');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.form table.fields th {
+    text-align: left;
+    font-weight: normal;
+    padding-right: 1em;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.redirect-field-container {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: table;
+    background: white;
+}
+
+.redirect-field {
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.terminal-color-scheme-field {
+    max-width: 320px;
+}
+
+.terminal-color-scheme-field select {
+    width: 100%;
+}
+
+.terminal-color-scheme-field .custom-color-scheme {
+    background: #EEE;
+    padding: 0.5em;
+    border: 1px solid silver;
+    border-spacing: 0;
+    margin-top: -2px;
+    width: 100%;
+}
+
+.terminal-color-scheme-field .custom-color-scheme-section  {
+    display: -ms-flexbox;
+    display: -moz-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.terminal-color-scheme-field .guac-input-color {
+
+    display: block;
+    margin: 2px;
+    width: 1.5em;
+    height: 1.5em;
+    min-width: 1.25em;
+    border-radius: 0.15em;
+    line-height: 1.5em;
+    text-align: center;
+    font-size: 0.75em;
+    cursor: pointer;
+    color: black;
+
+    -ms-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+
+}
+
+.terminal-color-scheme-field .guac-input-color.read-only {
+    cursor: not-allowed;
+}
+
+.terminal-color-scheme-field .guac-input-color.dark {
+    color: white;
+}
+
+.terminal-color-scheme-field .palette .guac-input-color {
+    font-weight: bold;
+}
+
+/* Hide palette numbers unless color scheme details are visible */
+.terminal-color-scheme-field.custom-color-scheme-details-hidden .custom-color-scheme .palette .guac-input-color {
+    color: transparent;
+}
+
+/*
+ * Custom color scheme details header
+ */
+
+.terminal-color-scheme-field .custom-color-scheme-details-header {
+    font-size: 0.8em;
+    margin: 0.5em 0;
+    padding: 0;
+}
+
+.terminal-color-scheme-field .custom-color-scheme-details-header::before {
+    content: '▸ ';
+}
+
+.terminal-color-scheme-field.custom-color-scheme-details-visible .custom-color-scheme-details-header::before {
+    content: '▾ ';
+}
+
+/*
+ * Details show/hide link
+ */
+
+/* Render show/hide as a link */
+.terminal-color-scheme-field .custom-color-scheme-hide-details,
+.terminal-color-scheme-field .custom-color-scheme-show-details {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    margin: 0 0.25em;
+    font-weight: normal;
+}
+
+.terminal-color-scheme-field .custom-color-scheme-hide-details {
+    display: none;
+}
+
+.terminal-color-scheme-field.custom-color-scheme-details-visible .custom-color-scheme-hide-details {
+    display: inline;
+}
+
+.terminal-color-scheme-field.custom-color-scheme-details-visible .custom-color-scheme-show-details {
+    display: none;
+}
+
+/*
+ * Color scheme details
+ */
+
+.terminal-color-scheme-field .custom-color-scheme-details {
+    display: none;
+}
+
+.terminal-color-scheme-field.custom-color-scheme-details-visible .custom-color-scheme-details {
+    display: block;
+    width: 100%;
+    margin: 0.5em 0;
+}
+
+/*
+ * Color picker
+ */
+
+/* Increase width of color picker to allow two even rows of eight color
+ * swatches */
+.guac-input-color-picker[data-theme="monolith"] {
+    width: 16.25em;
+}
+
+/* Remove Guacamole-specific styles inherited from the generic button rules */
+.guac-input-color-picker[data-theme="monolith"] button {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.history-unavailable div.recent-connections {
+    display: none;
+}
+
+div.recent-connections,
+div.clipboardDiv,
+div.settings,
+div.all-connections {
+    margin: 1em;
+    padding: 0;
+}
+
+.all-connections .list-buttons {
+    text-align: center;
+    padding: 0;
+}
+
+div.recent-connections {
+    text-align: center;
+}
+
+div.recent-connections div.connection {
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -khtml-border-radius: 0.5em;
+    border-radius: 0.5em;
+    display: inline-block;
+    padding: 1em;
+    margin: 1em;
+    text-align: center;
+    max-width: 75%;
+    overflow: hidden;
+}
+
+a.home-connection, .empty.balancer a.home-connection-group {
+    display: block;
+}
+
+/* Show only expand/collapse icon for connection groups on home screen ... */
+
+.all-connections .connection-group > .caption .icon {
+    display: none;
+}
+
+.all-connections .connection-group > .caption .icon.expand {
+    display: inline-block;
+}
+
+/* ... except for empty balancing groups, which should be rendered as if they
+ * are connections. */
+
+.all-connections .connection-group.empty.balancer > .caption .icon {
+    display: inline-block;
+}
+
+.all-connections .connection-group.empty.balancer > .caption .icon.expand {
+    display: none;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/**
+ * fadein: Fade from fully transparent to fully opaque.
+ */
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/**
+ * fadeout: Fade from fully opaque to fully transparent.
+ */
+@keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+@-moz-keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+@-webkit-keyframes fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+a.button {
+    cursor: default;
+    display: inline-block;
+}
+
+input[type="submit"], button, a.button {
+    
+    -webkit-appearance: none;
+    text-decoration: none;
+
+    background-color: #3C3C3C;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+
+    color: white;
+    text-shadow: -1px -1px rgba(0, 0, 0, 0.3);
+    font-size: 1em;
+    font-weight: bold;
+    font-family: Carlito, FreeSans, Helvetica, Arial, sans-serif;
+
+    padding: 0.35em 1em;
+    min-width: 5em;
+    margin: 0.25em;
+
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+}
+
+input[type="submit"]:hover, button:hover, a.button:hover {
+    background-color: #5A5A5A;
+}
+
+input[type="submit"]:active, button:active, a.button:active {
+
+    background-color: #2C2C2C;
+    
+    box-shadow: 
+                inset 1px 1px 0.25em rgba(0, 0, 0, 0.25),
+                -1px -1px 0.25em rgba(0, 0, 0, 0.25),
+                1px 1px 0.25em rgba(255, 255, 255, 0.25);
+}
+
+button.danger, a.button.danger {
+    background: #A43;
+}
+
+button.danger:hover, a.button.danger:hover {
+    background: #C54;
+}
+
+button.danger:active, a.button.danger:active {
+    background: #932;
+}
+
+input[type="submit"]:disabled, button:disabled, button.danger:disabled {
+    background-color: #3C3C3C;
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 0.75;
+}
+
+.button.logout,          button.logout,
+.button.reconnect,       button.reconnect,
+.button.manage,          button.manage,
+.button.back,            button.back,
+.button.home,            button.home,
+.button.change-password, button.change-password {
+    position: relative;
+    padding-left: 1.8em;
+}
+
+.button.logout::before,          button.logout::before,
+.button.reconnect::before,       button.reconnect::before,
+.button.manage::before,          button.manage::before,
+.button.back::before,            button.back::before,
+.button.home::before,            button.home::before,
+.button.change-password::before, button.change-password::before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1.8em;
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-position: 0.5em 0.45em;
+}
+
+.button.logout::before,
+button.logout::before {
+    background-image: url('images/action-icons/guac-logout.png');
+}
+
+.button.reconnect::before,
+button.reconnect::before {
+    background-image: url('images/circle-arrows.png');
+}
+
+.button.manage::before,
+button.manage::before {
+    background-image: url('images/action-icons/guac-config.png');
+}
+
+.button.back::before,
+button.back::before {
+    background-image: url('images/action-icons/guac-back.png');
+}
+
+.button.home::before,
+button.home::before {
+    background-image: url('images/action-icons/guac-home.png');
+}
+
+.button.change-password::before,
+button.change-password::before {
+    background-image: url('images/action-icons/guac-key.png');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.dialog-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1em;
+}
+
+.dialog-outer {
+    display: table;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-middle {
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.dialog.edit {
+    max-height: 100%;
+}
+
+.dialog {
+
+    max-width: 100%;
+    width: 8in;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    background: #E7E7E7;
+
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
+    border-radius: 0.2em;
+
+    box-shadow: 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.6);
+    
+}
+
+.dialog > * {
+    margin: 1em;
+}
+
+.dialog .header {
+    margin: 0;
+}
+
+.dialog td {
+    position: relative;
+}
+
+.dialog .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.dialog .footer {
+    text-align: center;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.fatal-page-error-outer {
+    display: table;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 30;
+}
+
+.fatal-page-error-middle {
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.fatal-page-error {
+    display: inline-block;
+    width: 100%;
+    max-width: 5in;
+    padding: 1em;
+    text-align: left;
+}
+
+.fatal-page-error h1 {
+    text-transform: uppercase;
+    padding: 0;
+    padding-right: 1em;
+}
+
+.fatal-page-error h1::before {
+    content: ' ';
+    display: inline-block;
+    background: url('images/warning.png');
+    background-repeat: no-repeat;
+    height: 1em;
+    width: 1em;
+    background-size: contain;
+    margin: 0 0.25em;
+    margin-bottom: -0.2em;
+}
+
+/* Ensure fatal error is initially hidden, fading the error message in when
+ * needed */
+
+.fatal-page-error-outer {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity, visibility;
+    transition-duration: 0.25s;
+}
+
+.shown.fatal-page-error-outer {
+    visibility: visible;
+    opacity: 1;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+ * The Carlito font is licensed under the SIL Open Font License, and thus is
+ * freely redistributable so long as it is distributed with software.
+ *
+ * The SIL OFL license can be found at http://scripts.sil.org/OFL or in the
+ * "LICENSE" file within the same directory as the Carlito-*.woff font files.
+ */
+
+@font-face {
+    font-family: 'Carlito';
+    font-weight: normal;
+    font-style: normal;
+    src: url('fonts/carlito/Carlito-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Carlito';
+    font-weight: bold;
+    font-style: normal;
+    src: url('fonts/carlito/Carlito-Bold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Carlito';
+    font-weight: normal;
+    font-style: italic;
+    src: url('fonts/carlito/Carlito-Italic.woff') format('woff');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+h1 {
+    
+    margin: 0;
+    padding: 0.5em;
+
+    font-size: 2em;
+    vertical-align: middle;
+    text-align: center;
+
+}
+
+h2 {
+    font-size: 1.25em;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 0.5em;
+    margin: 0;
+}
+
+.header {
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.125);
+    background: rgba(0, 0, 0, 0.04);
+
+    margin-bottom: 1em;
+    margin-top: 0;
+    border-top: none;
+    width: 100%;
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: row;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: horizontal;
+    
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: horizontal;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: row;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+
+}
+
+.header.tabbed {
+    margin-bottom: 0;
+}
+
+.header ~ * .header,
+.header ~ .header {
+    margin-top: 1em;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.header h2 {
+    -ms-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+
+.header .filter {
+    margin: 0;
+    padding: 0.5em;
+}
+
+.header .filter input {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    -khtml-border-radius: 0;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.125);
+    background-color: transparent;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+input[type=checkbox], input[type=number], input[type=text], input[type=email], input[type=radio], label, textarea {
+    -webkit-tap-highlight-color: rgba(128,192,128,0.5);
+}
+
+div.location, input[type=text], input[type=email], input[type=number], input[type=password], textarea {
+    border: 1px solid #777;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
+    border-radius: 0.2em;
+    width: 100%;
+    max-width: 16em;
+    padding: 0.25em;
+    font-size: 0.8em;
+    background: white;
+    cursor: text;
+}
+
+textarea {
+    max-width: none;
+    width: 30em;
+    height: 10em;
+    white-space: pre;
+    word-wrap: normal;
+    overflow: auto;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.user,
+.user-group,
+.connection-group,
+.connection {
+    cursor: pointer;
+}
+
+.user a,
+.user-group a,
+.connection a,
+.connection-group a {
+    text-decoration:none;
+    color: black;
+}
+
+.user a:hover,
+.user-group a:hover,
+.connection a:hover,
+.connection-group a:hover {
+    text-decoration:none;
+    color: black;
+}
+
+.user a:visited,
+.user-group a:visited,
+.connection a:visited,
+.connection-group a:visited {
+    text-decoration:none;
+    color: black;
+}
+
+.recent-connections .connection:hover {
+    background: #CDA;
+}
+
+.recent-connections .connection .thumbnail {
+    display: block;
+    margin: 0.5em;
+}
+
+.recent-connections .connection .thumbnail > * {
+    border: 1px solid black;
+    background: black;
+    box-shadow: 1px 1px 5px black;
+    max-width: 75%;
+    display: inline-block;
+}
+
+.caption * {
+    vertical-align: middle;
+}
+
+.caption .choice {
+    display: inline-block;
+}
+
+.caption .name {
+    margin-left: 0.25em;
+}
+
+.placeholder {
+
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: -1px -1px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    opacity: 0.5;
+
+    font-size: 2em;
+    font-weight: bolder;
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.loading {
+    position: relative;
+    min-height: 200px;
+}
+
+.view.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.loading * {
+    visibility: hidden;
+}
+
+.loading::before {
+
+    display: block;
+    position: absolute;
+    content: '';
+    
+    /* Dictated by size of image */
+    width: 96px;
+    height: 96px;
+    margin-left: -48px;
+    margin-top: -48px;
+    
+    top: 50%;
+    left: 50%;
+    
+    background-image: url('images/cog.png');
+    background-size: 96px 96px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    
+    animation:         spinning-cog 4s linear infinite;
+    -moz-animation:    spinning-cog 4s linear infinite;
+    -webkit-animation: spinning-cog 4s linear infinite;
+    
+}
+
+@keyframes spinning-cog {
+    0%   { transform: rotate(0deg);   }
+    100% { transform: rotate(360deg); }
+}
+
+@-moz-keyframes spinning-cog {
+    0%   { -moz-transform: rotate(0deg);   }
+    100% { -moz-transform: rotate(360deg); }
+}
+
+@-webkit-keyframes spinning-cog {
+    0%   { -webkit-transform: rotate(0deg);   }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+table.sorted {
+    border-collapse: collapse;
+}
+
+table.sorted th {
+    background: rgba(0, 0, 0, 0.125);
+    font-weight: normal;
+}
+
+table.sorted th,
+table.sorted td {
+    border: 1px solid #AAA;
+    padding: 0.5em 1em;
+}
+
+table.sorted th.sortable {
+    cursor: pointer;
+}
+
+table.sorted th.sort-primary {
+    font-weight: bold;
+    padding-right: 0;
+}
+
+table.sorted th.sort-primary:after {
+
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    content: ' ';
+
+    background-size: 1em 1em;
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-image: url('images/arrows/down.png');
+
+}
+
+table.sorted th.sort-primary.sort-descending:after {
+    background-image: url('images/arrows/up.png');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.status-outer {
+    display: table;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.status-middle {
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.status-middle .notification {
+
+    width: 75%;
+    max-width: 5in;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+
+    text-align: left;
+    
+}
+
+.status-middle .notification .body {
+    margin: 1.25em;
+}
+
+.status-middle .notification .buttons {
+    margin: 1em;
+}
+
+/* Fade entire status area in/out based on shown status */
+
+.status-outer {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity, visibility;
+    transition-duration: 0.25s;
+}
+
+.shown.status-outer {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Hide dialog immediately based on status */
+
+.status-middle .notification {
+    visibility: hidden;
+}
+
+.shown .status-middle .notification {
+    visibility: visible;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    background: white;
+    font-family: Carlito, FreeSans, Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+img {
+    border: none;
+    vertical-align: middle;
+}
+
+div.section {
+    margin: 1em;
+    padding: 0;
+}
+
+/*
+ * List elements
+ */
+
+.list-item {
+
+    display: block;
+    text-align: left;
+    cursor: pointer;
+
+    position: relative;
+
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    background-size: 16px 16px;
+    -moz-background-size: 16px 16px;
+    -webkit-background-size: 16px 16px;
+    -khtml-background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.list-item * {
+    vertical-align: middle;
+}
+
+.list-item .caption {
+    padding: 0.1em;
+}
+
+.list-item .caption:after {
+    clear: right;
+    content: "";
+    display: block;
+}
+
+.list-item .name {
+    color: black;
+    font-weight: normal;
+    padding: 0.1em;
+    margin-left: 0.25em;
+}
+
+.list-item .usage {
+    float: right;
+    font-style: italic;
+    color: gray;
+}
+
+.list-item.in-use {
+    opacity: 0.5;
+}
+
+.choice .list-item.in-use {
+    opacity: 1;
+}
+
+/*
+ * List element styling
+ */
+
+.list-item.selected {
+    background: #DEB;
+}
+
+.caption.active * {
+    opacity: 0.5;
+}
+
+.caption .activeUserCount {
+    font-style: italic;
+    margin-right: 1em;
+    float: right;
+}
+
+.list-item:not(.selected) .caption:hover {
+    background: #CDA;
+}
+
+.choice .list-item {
+    display: inline-block;
+}
+
+.choice input[type='checkbox'] {
+    vertical-align: top;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+}
+
+.disabled .list-item:not(.selected) {
+    opacity: 0.25;
+}
+
+.disabled .list-item:not(.selected):hover {
+    background: inherit;
+}
+
+/*
+ * List element icons
+ */
+
+.icon.user {
+    background-image: url('images/user-icons/guac-user.png');
+}
+
+.icon.user.add {
+    background-image: url('images/action-icons/guac-user-add.png');
+}
+
+.icon.user-group {
+    background-image: url('images/user-icons/guac-user-group.png');
+}
+
+.icon.user-group.add {
+    background-image: url('images/action-icons/guac-user-group-add.png');
+}
+
+.icon.connection {
+    background-image: url('images/protocol-icons/guac-plug.png');
+}
+
+.icon.connection.add {
+    background-image: url('images/action-icons/guac-monitor-add.png');
+}
+
+.connection .icon,
+.connection-group .icon,
+.sharing-profile .icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-size: 16px 16px;
+    -moz-background-size: 16px 16px;
+    -webkit-background-size: 16px 16px;
+    -khtml-background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.connection-group > .caption .icon {
+    background-image: url('images/folder-closed.png');
+}
+
+.connection-group.expanded > .caption .icon {
+    background-image: url('images/folder-open.png');
+}
+
+.connection .icon {
+    background-image: url('images/protocol-icons/guac-plug.png');
+}
+
+.connection .icon.kubernetes,
+.connection .icon.ssh,
+.connection .icon.telnet {
+    background-image: url('images/protocol-icons/guac-text.png');
+}
+
+.connection .icon.vnc,
+.connection .icon.rdp {
+    background-image: url('images/protocol-icons/guac-monitor.png');
+}
+
+.sharing-profile .icon {
+    background-image: url('images/share.png');
+}
+
+/*
+ * Groups
+ */
+
+.expandable > .children {
+    margin-left: 13px;
+    padding-left: 13px;
+}
+ 
+.connection-group.empty.balancer .icon {
+    background-image: url('images/protocol-icons/guac-monitor.png');
+}
+
+.expandable.expanded > .children > .list-item {
+    position: relative;
+}
+
+.expandable.expanded > .children > .list-item:before,
+.expandable.expanded > .children > .list-item:after {
+    display: block;
+    content: ' ';
+    position: absolute;
+    z-index: -1;
+}
+
+.expandable.expanded > .children > .list-item:before {
+    border-left: 1px solid #BBB;
+    left: -13px;
+    top: -0.75em;
+    bottom: 0;
+}
+
+.expandable.expanded > .children > .list-item:last-child:before {
+    height: 1.5em;
+}
+
+.expandable.expanded > .children > .list-item:after {
+    display: block;
+    content: ' ';
+    border-bottom: 1px solid #BBB;
+    left: -13px;
+    width: 13px;
+    top: 0.75em;
+}
+
+.expandable > .caption .icon.expand {
+    background-image: url('images/group-icons/guac-closed.png');
+}
+
+.expandable.expanded > .caption .icon.expand {
+    background-image: url('images/group-icons/guac-open.png');
+}
+
+.expandable.empty > .caption .icon.expand {
+    opacity: 0.25;
+    background-image: url('images/group-icons/guac-open.png');
+}
+
+.history th,
+.history td {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.buttons {
+    text-align: center;
+    margin: 1em;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.filter {
+    margin: 0.5em 0;
+}
+
+.filter .search-string {
+    background-image: url('images/magnifier.png');
+    background-repeat: no-repeat;
+    background-size: 1.75em;
+    background-position: 0.25em center;
+    padding: 0.5em;
+    padding-left: 2.25em;
+    width: 100%;
+    max-width: none;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.pager {
+    text-align: center;
+    margin: 1em;
+}
+
+.pager .page-numbers {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.pager .first-page,
+.pager .prev-page,
+.pager .set-page,
+.pager .next-page,
+.pager .last-page {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.pager .first-page.disabled,
+.pager .prev-page.disabled,
+.pager .set-page.disabled,
+.pager .next-page.disabled,
+.pager .last-page.disabled {
+    cursor: auto;
+    opacity: 0.25;
+}
+
+.pager .set-page,
+.pager .more-pages {
+    display: inline-block;
+    padding: 0.25em;
+    text-align: center;
+    min-width: 1.25em;
+}
+
+.pager .set-page {
+    text-decoration: underline;
+}
+
+.pager .set-page.current {
+    cursor: auto;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
+    border-radius: 0.2em;
+}
+
+.pager .icon.first-page {
+    background-image: url('images/action-icons/guac-first-page.png');
+}
+
+.pager .icon.prev-page {
+    background-image: url('images/action-icons/guac-prev-page.png');
+}
+
+.pager .icon.next-page {
+    background-image: url('images/action-icons/guac-next-page.png');
+}
+
+.pager .icon.last-page {
+    background-image: url('images/action-icons/guac-last-page.png');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.user-item.anonymous {
+    font-style: italic;
+    opacity: 0.5;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+@keyframes shake-head {
+    0%   { margin-left:  0.25em; margin-right: -0.25em; }
+    25%  { margin-left: -0.25em; margin-right:  0.25em; }
+    50%  { margin-left:  0.25em; margin-right: -0.25em; }
+    75%  { margin-left: -0.25em; margin-right:  0.25em; }
+    100% { margin-left:  0.00em; margin-right:  0.00em; }
+}
+
+@-webkit-keyframes shake-head {
+    0%   { margin-left:  0.25em; margin-right: -0.25em; }
+    25%  { margin-left: -0.25em; margin-right:  0.25em; }
+    50%  { margin-left:  0.25em; margin-right: -0.25em; }
+    75%  { margin-left: -0.25em; margin-right:  0.25em; }
+    100% { margin-left:  0.00em; margin-right:  0.00em; }
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.login-ui {
+    animation: fadein 0.125s linear;
+    -moz-animation: fadein 0.125s linear;
+    -webkit-animation: fadein 0.125s linear;
+}
+
+.login-ui .login-dialog-middle {
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.login-ui .login-dialog {
+
+    width: 100%;
+    max-width: 3in;
+    text-align: left;
+    padding: 1em;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+    font-size: 1.25em;
+
+    display: inline-block;
+}
+
+.login-ui .login-dialog h1 {
+    margin-top: 0;
+    margin-bottom: 0em;
+    text-align: center;
+}
+
+.login-ui .login-dialog .buttons {
+    text-align: right;
+    margin: 0;
+    margin-top: 1em;
+}
+
+.login-ui .login-dialog .login-fields {
+    vertical-align: middle;
+}
+
+.login-ui .login-dialog th {
+    text-shadow: 1px 1px white;
+}
+
+.login-ui .login-dialog .version {
+    padding: 0.5em 0;
+}
+
+.login-ui .login-dialog .version .app-name {
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 1.25em;
+}
+
+.login-ui .login-dialog .version .version-number {
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    padding: 0.25em 0.75em;
+    margin: 0.25em;
+
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -khtml-border-radius: 0.5em;
+    border-radius: 0.5em;
+
+    color: white;
+    background: green;
+    font-size: 0.5em;
+    font-style: italic;
+    opacity: 0.5;
+
+}
+
+.login-ui .login-dialog .logo {
+    display: block;
+    margin: 0.5em auto;
+    width: 3em;
+    height: 3em;
+    background-size:         3em 3em;
+    -moz-background-size:    3em 3em;
+    -webkit-background-size: 3em 3em;
+    -khtml-background-size:  3em 3em;
+    background-image: url("images/guac-tricolor.png");
+}
+
+.login-ui.continuation .login-dialog {
+    border-right: none;
+    border-left: none;
+    box-shadow: none;
+    max-width: 6in;
+}
+
+.login-ui.continuation .login-dialog .logo,
+.login-ui.continuation .login-dialog .version {
+    display: none;
+}
+
+.login-ui.error .login-dialog {
+    animation-name: shake-head;
+    animation-duration: 0.25s;
+    animation-timing-function: linear;
+    -webkit-animation-name: shake-head;
+    -webkit-animation-duration: 0.25s;
+    -webkit-animation-timing-function: linear;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.login-ui .login-dialog .login-fields input {
+    display: block;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    -khtml-border-radius: 0.2em;
+    font-family: Carlito, FreeSans, Helvetica, Arial, sans-serif;
+    border-radius: 0.2em;
+    width: 100%;
+    margin: 0;
+    margin-bottom: 0.5em;
+    padding: 0.5em 0.75em;
+    max-width: none;
+}
+
+.login-ui .login-dialog .buttons input[type="submit"] {
+    width: 100%;
+    margin: 0;
+}
+
+.login-ui.continuation .login-dialog .buttons input[type="submit"] {
+    width: auto;
+}
+
+.login-ui.initial .login-dialog input.continue-login,
+.login-ui.continuation .login-dialog input.login {
+    display: none;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+div.login-ui {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: table;
+    background: white;
+    z-index: 20;
+}
+
+.login-ui p.login-error {
+    display: none;
+}
+
+.login-ui.error p.login-error {
+    display: block;
+
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+
+    padding: 1em;
+    margin: 0.2em;
+
+    background: #FDD;
+    border: 1px solid #964040;
+    -moz-border-radius: 0.25em;
+    -webkit-border-radius: 0.25em;
+    -khtml-border-radius: 0.25em;
+    text-align: center;
+    color: #964040;
+}
+
+.login-ui .login-fields .form-field .password-field .toggle-password {
+    display: none;
+}
+
+.login-ui .login-fields .labeled-field {
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.login-ui .login-fields .labeled-field .field-header {
+
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+
+  z-index: -1;
+  margin: 0.5em;
+  font-size: 0.9em;
+  opacity: 0.5;
+
+}
+
+.login-ui .login-fields .labeled-field.empty input {
+    background: transparent;
+}
+
+.login-ui .login-fields .labeled-field input:focus {
+    background: white;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* Do not stretch attributes to fit available area */
+.attributes input[type=text],
+.attributes input[type=email],
+.attributes input[type=password],
+.attributes input[type=number] {
+    width: auto;
+}
+
+.attributes .form .fields {
+    display: table;
+    margin: 1em;
+}
+
+.attributes .form .fields .labeled-field {
+    display: table-row;
+}
+
+.attributes .form .fields .field-header,
+.attributes .form .fields .form-field {
+    display: table-cell;
+    padding: 0.125em;
+    vertical-align: top;
+}
+
+.attributes .form .fields .field-header {
+    padding-right: 1em;
+}
+
+.attributes .form h3 {
+
+    font-size: 1.25em;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 0.5em;
+    margin: 1em 0;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.125);
+    background: rgba(0, 0, 0, 0.04);
+
+    width: 100%;
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* Do not stretch connection parameters to fit available area */
+.connection-parameters input[type=text],
+.connection-parameters input[type=email],
+.connection-parameters input[type=password],
+.connection-parameters input[type=number] {
+    width: auto;
+}
+
+.connection-parameters .form .fields {
+    display: table;
+    padding-left: .5em;
+    border-left: 3px solid rgba(0,0,0,0.125);
+    width: 100%;
+}
+
+.connection-parameters .form .fields .labeled-field {
+    display: table-row;
+}
+
+.connection-parameters .form .fields .field-header,
+.connection-parameters .form .fields .form-field {
+    display: table-cell;
+    padding: 0.125em;
+    vertical-align: top;
+    width: 100%;
+}
+
+.connection-parameters .form .fields .field-header {
+    padding-right: 1em;
+    width: 0;
+    white-space: nowrap;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.manage table.properties th {
+    text-align: left;
+    font-weight: normal;
+    padding-right: 1em;
+}
+
+.manage .action-buttons {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.location-chooser .dropdown {
+
+    position: absolute;
+    z-index: 2;
+    margin-top: -1px;
+
+    width: 3in;
+    max-height: 2in;
+    overflow: auto;
+
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    background: white;
+
+    font-size: 10pt;
+
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.manage-user-group .page-tabs .page-list li.read-only a[href],
+.manage-user-group .page-tabs .page-list li.unlinked  a[href],
+.manage-user-group .page-tabs .page-list li.linked    a[href] {
+    padding-right: 2.5em;
+    position: relative;
+}
+
+.manage-user-group .page-tabs .page-list li.read-only a[href]:before,
+.manage-user-group .page-tabs .page-list li.unlinked  a[href]:before,
+.manage-user-group .page-tabs .page-list li.linked    a[href]:before {
+    content: ' ';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    width: 2.5em;
+    background-size: 1.25em;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.manage-user-group .page-tabs .page-list li.read-only a[href]:before {
+    background-image: url('images/lock.png');
+}
+
+.manage-user-group .page-tabs .page-list li.unlinked a[href]:before {
+    background-image: url('images/plus.png');
+}
+
+.manage-user-group .page-tabs .page-list li.unlinked a[href] {
+    opacity: 0.5;
+}
+
+.manage-user-group .page-tabs .page-list li.unlinked a[href]:hover,
+.manage-user-group .page-tabs .page-list li.unlinked a[href].current {
+    opacity: 1;
+}
+
+.manage-user-group .page-tabs .page-list li.linked a[href]:before {
+    background-image: url('images/checkmark.png');
+}
+
+.manage-user-group .notice.read-only {
+
+    background: #FDA;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25em;
+
+    text-align: center;
+    padding: 1em;
+
+}
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.manage-user .page-tabs .page-list li.read-only a[href],
+.manage-user .page-tabs .page-list li.unlinked  a[href],
+.manage-user .page-tabs .page-list li.linked    a[href] {
+    padding-right: 2.5em;
+    position: relative;
+}
+
+.manage-user .page-tabs .page-list li.read-only a[href]:before,
+.manage-user .page-tabs .page-list li.unlinked  a[href]:before,
+.manage-user .page-tabs .page-list li.linked    a[href]:before {
+    content: ' ';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    width: 2.5em;
+    background-size: 1.25em;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.manage-user .page-tabs .page-list li.read-only a[href]:before {
+    background-image: url('images/lock.png');
+}
+
+.manage-user .page-tabs .page-list li.unlinked a[href]:before {
+    background-image: url('images/plus.png');
+}
+
+.manage-user .page-tabs .page-list li.unlinked a[href] {
+    opacity: 0.5;
+}
+
+.manage-user .page-tabs .page-list li.unlinked a[href]:hover,
+.manage-user .page-tabs .page-list li.unlinked a[href].current {
+    opacity: 1;
+}
+
+.manage-user .page-tabs .page-list li.linked a[href]:before {
+    background-image: url('images/checkmark.png');
+}
+
+.manage-user .notice.read-only {
+
+    background: #FDA;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25em;
+
+    text-align: center;
+    padding: 1em;
+
+}
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.related-objects .abbreviated-related-objects {
+    display: table;
+    margin: 1em 0;
+}
+
+.related-objects .abbreviated-related-objects ul {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.related-objects .abbreviated-related-objects ul,
+.related-objects .all-related-objects ul {
+    padding: 0;
+    list-style: none;
+}
+
+.related-objects .abbreviated-related-objects ul li {
+
+    display: inline-block;
+    margin: 0.25em;
+    padding: 0.25em;
+
+    border: 1px solid silver;
+    background: #F5F5F5;
+    -moz-border-radius: 0.25em;
+    -webkit-border-radius: 0.25em;
+    -khtml-border-radius: 0.25em;
+    border-radius: 0.25em;
+
+}
+
+.related-objects .abbreviated-related-objects ul li img.remove {
+    max-height: 0.75em;
+    max-width: 0.75em;
+    margin: 0 0.25em;
+}
+
+.related-objects .abbreviated-related-objects ul li .identifier {
+    margin: 0 0.25em;
+}
+
+.related-objects .abbreviated-related-objects img.expand,
+.related-objects .abbreviated-related-objects img.collapse {
+    display: table-cell;
+    max-height: 1.5em;
+    max-width: 1.5em;
+    margin: 0.375em 0;
+}
+
+.related-objects .all-related-objects {
+    border-top: 1px solid silver;
+}
+
+.related-objects .abbreviated-related-objects p.no-related-objects,
+.related-objects .all-related-objects p.no-objects-available {
+    font-style: italic;
+    opacity: 0.5;
+}
+
+.related-objects .abbreviated-related-objects p.no-related-objects {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.menu-dropdown {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: center;
+    -ms-flex-direction: row;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: center;
+    -moz-box-orient: horizontal;
+    
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-orient: horizontal;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: center;
+    -webkit-flex-direction: row;
+
+    /* W3C */
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+
+}
+
+.menu-dropdown {
+    position: relative;
+    border-left: 1px solid rgba(0,0,0,0.125);
+    background: rgba(0,0,0,0.04);
+}
+
+.menu-dropdown:hover {
+    background: rgba(0,0,0,0.01);
+}
+
+.menu-dropdown.open,
+.menu-dropdown.open:hover {
+    background: rgba(0,0,0,0.3);
+}
+
+.menu-dropdown .menu-title {
+
+    cursor: default;
+    margin: 0;
+    padding: 0.5em;
+    padding-right: 2em;
+
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+
+    -ms-flex: 0 0 auto;
+    -moz-box-flex: 0;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+   
+}
+
+.menu-dropdown .menu-indicator {
+
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 2em;
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-position: center center;
+    background-image: url('images/arrows/down.png');
+
+}
+
+.menu-dropdown .menu-contents {
+
+    visibility: hidden;
+
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 100%;
+    white-space: nowrap;
+
+    background: #EEE;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.125);
+    border-left: 1px solid rgba(0,0,0,0.125);
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+
+    z-index: 5;
+    
+}
+
+.menu-dropdown .menu-contents ul {
+    margin: 0;
+    padding: 0;
+}
+
+.menu-dropdown.open .menu-contents {
+    visibility: visible;
+}
+
+.menu-dropdown .menu-contents li {
+    padding: 0;
+    list-style-type: none;
+}
+
+.menu-dropdown .menu-contents li a {
+
+    display: block;
+    cursor: pointer;
+    color: black;
+    text-decoration: none;
+    padding: 0.75em;
+
+}
+
+.menu-dropdown .menu-contents li a:hover {
+    background-color: #CDA;
+}
+
+.menu-dropdown .menu-contents li a.current,
+.menu-dropdown .menu-contents li a.current:hover {
+    background-color: transparent;
+    cursor: default;
+    opacity: 0.25;
+}
+
+.menu-dropdown .menu-contents li a.danger {
+    color: white;
+    font-weight: bold;
+    background-color: #A43;
+}
+
+.menu-dropdown .menu-contents li a.danger:hover {
+    background-color: #C54;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.page-tabs .page-list ul,
+.section-tabs ul {
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.0125);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.page-tabs .page-list ul + ul,
+.section-tabs ul + ul {
+    font-size: 0.75em;
+}
+
+.page-tabs .page-list li,
+.section-tabs li {
+    display: inline-block;
+    list-style: none;
+}
+
+.page-tabs .page-list li a[href],
+.section-tabs li a {
+    display: block;
+    color: black;
+    text-decoration: none;
+    padding: 0.75em 1em;
+}
+
+.page-tabs .page-list li a[href]:visited {
+    color: black;
+}
+
+.page-tabs .page-list li a[href]:hover,
+.section-tabs li a:hover {
+    background-color: #CDA;
+    cursor: pointer;
+}
+
+.page-tabs .page-list li a[href].current,
+.page-tabs .page-list li a[href].current:hover,
+.section-tabs li a.current,
+.section-tabs li a.current:hover {
+    background: rgba(0,0,0,0.3);
+    cursor: default;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.user-menu {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: row;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: horizontal;
+    
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: horizontal;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: row;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+
+}
+
+.user-menu .menu-dropdown .menu-title {
+
+    font-weight: bold;
+    padding-left: 2em;
+
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-position: 0.5em center;
+    background-image: url('images/user-icons/guac-user.png');
+
+}
+
+.user-menu .menu-dropdown .menu-contents li a {
+
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-position: 0.75em center;
+    padding-left: 2.5em;
+    background-image: url('images/protocol-icons/guac-monitor.png');
+
+}
+
+.user-menu .menu-dropdown .menu-contents li a[href="#/"] {
+    background-image: url('images/action-icons/guac-home-dark.png');
+}
+
+.user-menu .menu-dropdown .menu-contents li a[href="#/settings/users"],
+.user-menu .menu-dropdown .menu-contents li a[href="#/settings/connections"],
+.user-menu .menu-dropdown .menu-contents li a[href="#/settings/sessions"],
+.user-menu .menu-dropdown .menu-contents li a[href="#/settings/preferences"] {
+    background-image: url('images/action-icons/guac-config-dark.png');
+}
+
+.user-menu .menu-dropdown .menu-contents li a.logout {
+    background-image: url('images/action-icons/guac-logout-dark.png');
+}
+
+.user-menu .menu-dropdown .menu-contents .profile {
+    margin: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    width: 2in;
+}
+
+.user-menu .menu-dropdown .menu-contents .profile .full-name {
+    font-weight: bold;
+}
+.user-menu .menu-dropdown .menu-contents .profile .organization,
+.user-menu .menu-dropdown .menu-contents .profile .organizational-role {
+    font-size: 0.8em;
+}
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.notification {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.125);
+    background: white;
+    color: black;
+}
+
+.notification.error {
+    background: #FDD;
+}
+
+.notification .body {
+    margin: 0.5em;
+}
+
+.notification .buttons {
+    margin: 0.5em;
+}
+
+@keyframes notification-progress {
+    from {background-position: 0px  0px;}
+    to   {background-position: 64px 0px;}
+}
+
+@-webkit-keyframes notification-progress {
+    from {background-position: 0px  0px;}
+    to   {background-position: 64px 0px;}
+}
+
+.notification .title-bar {
+    font-size: 1.25em;
+    font-weight: bold;
+
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.125);
+    background: rgba(0, 0, 0, 0.04);
+
+    padding: 0.5em;
+    margin-bottom: 1em;
+}
+
+.notification .progress .bar {
+    background: #A3D655;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    box-shadow: inset  1px  1px 0 rgba(255, 255, 255, 0.5),
+                inset -1px -1px 0 rgba(  0,   0,   0, 0.1),
+                       1px 1px  0 gray;
+}
+
+.notification .progress {
+
+    width: 100%;
+    background: #C2C2C2 url('images/progress.png');
+    background-size: 16px 16px;
+    -moz-background-size: 16px 16px;
+    -webkit-background-size: 16px 16px;
+    -khtml-background-size: 16px 16px;
+
+    animation-name: notification-progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    -webkit-animation-name: notification-progress;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+
+    padding: 0.25em;
+    
+    border: 1px solid gray;
+
+    position: relative;
+    
+}
+
+.notification .progress .text {
+    position: relative;
+}
+
+.notification .parameters {
+    width: 100%;
+}
+
+.notification .parameters .fields {
+    display: table;
+    width: 100%;
+}
+
+.notification .parameters .fields .labeled-field {
+    display: table-row;
+}
+
+.notification .parameters .fields .field-header,
+.notification .parameters .fields .form-field {
+    text-align: left;
+    display: table-cell;
+    padding: .125em;
+    vertical-align: top;
+}
+
+.notification .parameters .fields .field-header {
+    padding-right: 1em;
+}
+
+.notification .parameters .fields .field-header {
+    width: 0;
+}
+
+.notification .parameters .fields .form-field {
+    width: 100%;
+}
+
+.notification .parameters input[type=text],
+.notification .parameters input[type=email],
+.notification .parameters input[type=number],
+.notification .parameters input[type=password],
+.notification .parameters textarea {
+    max-width: 100%;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.osk {
+    position: relative;
+}
+
+.guac-keyboard {
+    display: inline-block;
+    width: 100%;
+    
+    margin: 0;
+    padding: 0;
+    cursor: default;
+
+    text-align: left;
+    vertical-align: middle;
+}
+
+.guac-keyboard,
+.guac-keyboard * {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.guac-keyboard .guac-keyboard-key-container {
+    display: inline-block;
+    margin: 0.05em;
+    position: relative;
+}
+
+.guac-keyboard .guac-keyboard-key {
+
+    position: absolute;
+    left:   0;
+    right:  0;
+    top:    0;
+    bottom: 0;
+
+    background: #444;
+
+    border: 0.125em solid #666;
+    -moz-border-radius:    0.25em;
+    -webkit-border-radius: 0.25em;
+    -khtml-border-radius:  0.25em;
+    border-radius:         0.25em;
+
+    color: white;
+    font-size: 40%;
+    font-weight: lighter;
+    text-align: center;
+    white-space: pre;
+
+    text-shadow:  1px  1px 0 rgba(0, 0, 0, 0.25),
+                  1px -1px 0 rgba(0, 0, 0, 0.25),
+                 -1px  1px 0 rgba(0, 0, 0, 0.25),
+                 -1px -1px 0 rgba(0, 0, 0, 0.25);
+
+}
+
+.guac-keyboard .guac-keyboard-key:hover {
+    cursor: pointer;
+}
+
+.guac-keyboard .guac-keyboard-key.highlight {
+    background: #666;
+    border-color: #666;
+}
+
+/* Align some keys to the left */
+.guac-keyboard .guac-keyboard-key-caps,
+.guac-keyboard .guac-keyboard-key-enter,
+.guac-keyboard .guac-keyboard-key-tab,
+.guac-keyboard .guac-keyboard-key-lalt,
+.guac-keyboard .guac-keyboard-key-ralt,
+.guac-keyboard .guac-keyboard-key-alt-gr,
+.guac-keyboard .guac-keyboard-key-lctrl,
+.guac-keyboard .guac-keyboard-key-rctrl,
+.guac-keyboard .guac-keyboard-key-lshift,
+.guac-keyboard .guac-keyboard-key-rshift {
+    text-align: left;
+    padding-left: 0.75em;
+}
+
+/* Active shift */
+.guac-keyboard.guac-keyboard-modifier-shift .guac-keyboard-key-rshift,
+.guac-keyboard.guac-keyboard-modifier-shift .guac-keyboard-key-lshift,
+
+/* Active ctrl */
+.guac-keyboard.guac-keyboard-modifier-control .guac-keyboard-key-rctrl,
+.guac-keyboard.guac-keyboard-modifier-control .guac-keyboard-key-lctrl,
+
+/* Active alt */
+.guac-keyboard.guac-keyboard-modifier-alt .guac-keyboard-key-ralt,
+.guac-keyboard.guac-keyboard-modifier-alt .guac-keyboard-key-lalt,
+
+/* Active alt-gr */
+.guac-keyboard.guac-keyboard-modifier-alt-gr .guac-keyboard-key-alt-gr,
+
+/* Active caps */
+.guac-keyboard.guac-keyboard-modifier-caps .guac-keyboard-key-caps,
+
+/* Active super */
+.guac-keyboard.guac-keyboard-modifier-super .guac-keyboard-key-super {
+    background: #882;
+    border-color: #DD4;
+}
+
+.guac-keyboard .guac-keyboard-key.guac-keyboard-pressed {
+    background: #822;
+    border-color: #D44;
+}
+
+.guac-keyboard .guac-keyboard-group {
+    line-height: 0;
+}
+
+.guac-keyboard .guac-keyboard-group.guac-keyboard-alpha,
+.guac-keyboard .guac-keyboard-group.guac-keyboard-movement {
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+}
+
+.guac-keyboard .guac-keyboard-group.guac-keyboard-main {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: row;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: horizontal;
+    
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: horizontal;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: row;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+
+}
+
+.guac-keyboard .guac-keyboard-group.guac-keyboard-movement {
+    -ms-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+
+.guac-keyboard .guac-keyboard-gap {
+    display: inline-block;
+}
+
+/* Hide keycaps requiring modifiers which are NOT currently active. */
+.guac-keyboard:not(.guac-keyboard-modifier-caps)
+.guac-keyboard-cap.guac-keyboard-requires-caps,
+
+.guac-keyboard:not(.guac-keyboard-modifier-shift)
+.guac-keyboard-cap.guac-keyboard-requires-shift,
+
+.guac-keyboard:not(.guac-keyboard-modifier-alt-gr)
+.guac-keyboard-cap.guac-keyboard-requires-alt-gr,
+
+/* Hide keycaps NOT requiring modifiers which ARE currently active, where that
+   modifier is used to determine which cap is displayed for the current key. */
+.guac-keyboard.guac-keyboard-modifier-shift
+.guac-keyboard-key.guac-keyboard-uses-shift
+.guac-keyboard-cap:not(.guac-keyboard-requires-shift),
+
+.guac-keyboard.guac-keyboard-modifier-caps
+.guac-keyboard-key.guac-keyboard-uses-caps
+.guac-keyboard-cap:not(.guac-keyboard-requires-caps),
+
+.guac-keyboard.guac-keyboard-modifier-alt-gr
+.guac-keyboard-key.guac-keyboard-uses-alt-gr
+.guac-keyboard-cap:not(.guac-keyboard-requires-alt-gr) {
+
+    display: none;
+    
+}
+
+/* Fade out keys which do not use AltGr if AltGr is active */
+.guac-keyboard.guac-keyboard-modifier-alt-gr
+.guac-keyboard-key:not(.guac-keyboard-uses-alt-gr):not(.guac-keyboard-key-alt-gr) {
+    opacity: 0.5;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+a.button.add-user,
+a.button.add-user-group,
+a.button.add-connection,
+a.button.add-connection-group {
+    font-size: 0.8em;
+    padding-left: 1.8em;
+    position: relative;
+}
+
+a.button.add-user::before,
+a.button.add-user-group::before,
+a.button.add-connection::before,
+a.button.add-connection-group::before {
+
+    content: ' ';
+    position: absolute;
+    width: 1.8em;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    background-repeat: no-repeat;
+    background-size: 1em;
+    background-position: 0.5em 0.45em;
+
+}
+
+a.button.add-user::before {
+    background-image: url('images/action-icons/guac-user-add.png');
+}
+
+a.button.add-user-group::before {
+    background-image: url('images/action-icons/guac-user-group-add.png');
+}
+
+a.button.add-connection::before {
+    background-image: url('images/action-icons/guac-monitor-add.png');
+}
+
+a.button.add-connection-group::before {
+    background-image: url('images/action-icons/guac-group-add.png');
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.settings.connections .connection-list .new-connection,
+.settings.connections .connection-list .new-connection-group,
+.settings.connections .connection-list .new-sharing-profile {
+    opacity: 0.5;
+    font-style: italic;
+}
+
+.settings.connections .connection-list .new-connection a,
+.settings.connections .connection-list .new-connection a:hover,
+.settings.connections .connection-list .new-connection a:visited,
+.settings.connections .connection-list .new-connection-group a,
+.settings.connections .connection-list .new-connection-group a:hover,
+.settings.connections .connection-list .new-connection-group a:visited,
+.settings.connections .connection-list .new-sharing-profile a,
+.settings.connections .connection-list .new-sharing-profile a:hover,
+.settings.connections .connection-list .new-sharing-profile a:visited {
+    text-decoration:none;
+    color: black;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.settings.connectionHistory .filter {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: stretch;
+    -ms-flex-direction: row;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: stretch;
+    -moz-box-orient: horizontal;
+
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: stretch;
+    -webkit-box-orient: horizontal;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: row;
+
+    /* W3C */
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+
+}
+
+.settings.connectionHistory .filter .search-string {
+    -ms-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+
+.settings.connectionHistory .filter .search-button,
+.settings.connectionHistory .filter button {
+
+    -ms-flex: 0 0 auto;
+    -moz-box-flex: 0;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+
+    margin-top: 0;
+    margin-bottom: 0;
+
+}
+
+.settings.connectionHistory .history-list {
+    width: 100%;
+}
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.preferences .input-method .caption {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.preferences .mouse-mode .choices {
+    text-align: center;
+}
+
+.preferences .mouse-mode .choice {
+    display: inline-block;
+}
+
+.preferences .mouse-mode .choice .figure {
+    display: inline-block;
+    vertical-align: middle;
+    width: 75%;
+    max-width: 320px;
+}
+
+.preferences .mouse-mode .figure img {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 1em auto;
+}
+
+.preferences .mouse-mode .caption {
+    text-align: left;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.preferences .form .fields {
+    display: table;
+    padding-left: 0.5em;
+    border-left: 3px solid rgba(0,0,0,0.125);
+}
+
+.preferences .form .fields .labeled-field {
+    display: table-row;
+}
+
+.preferences .form .fields .field-header,
+.preferences .form .fields .form-field {
+    display: table-cell;
+    padding: 0.125em;
+    vertical-align: top;
+}
+
+.preferences .form .fields .field-header {
+    padding-right: 1em;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.settings table.session-list {
+    width: 100%;
+}
+
+.settings table.session-list tr.session:hover {
+    background: #CDA;
+}
+
+.settings table.session-list .select-session {
+    min-width: 2em;
+    text-align: center;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.settings table.properties th {
+    text-align: left;
+    font-weight: normal;
+    padding-right: 1em;
+}
+
+.settings .action-buttons {
+    text-align: center;
+    margin: 1em 0;
+}
+
+.settings .toolbar {
+
+    /* IE10 */
+    display: -ms-flexbox;
+    -ms-flex-align: center;
+    -ms-flex-direction: row;
+
+    /* Ancient Mozilla */
+    display: -moz-box;
+    -moz-box-align: center;
+    -moz-box-orient: horizontal;
+
+    /* Ancient WebKit */
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-orient: horizontal;
+
+    /* Old WebKit */
+    display: -webkit-flex;
+    -webkit-align-items: center;
+    -webkit-flex-direction: row;
+
+    /* W3C */
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+
+}
+
+.settings .toolbar .action-buttons {
+    margin-right: 0.25em;
+}
+
+.settings .toolbar .filter {
+    -ms-flex: 1 1 auto;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.settings.user-groups table.user-group-list {
+    width: 100%;
+}
+
+.settings.user-groups table.user-group-list th.user-group-name,
+.settings.user-groups table.user-group-list td.user-group-name {
+    width: 100%;
+}
+
+.settings.user-groups table.user-group-list tr.user td.user-group-name a[href] {
+    display: block;
+    padding: .5em 1em;
+}
+
+.settings.user-groups table.user-group-list tr.user td.user-group-name {
+    padding: 0;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.settings.users table.user-list {
+    width: 100%;
+}
+
+.settings.users table.user-list th.last-active,
+.settings.users table.user-list td.last-active {
+    white-space: nowrap;
+}
+
+.settings.users table.user-list th,
+.settings.users table.user-list td {
+    width: 25%;
+}
+
+.settings.users table.user-list tr.user td.username a[href] {
+    display: block;
+    padding: .5em 1em;
+}
+
+.settings.users table.user-list tr.user td.username {
+    padding: 0;
+}
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.text-input {
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+
+    width: 100%;
+    background: #222;
+    color: white;
+
+}
+
+.text-input .text-input-field {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.text-input .text-input-field {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.text-input .target {
+
+    border: none;
+    border-radius: 0;
+
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+    font-size: 12pt;
+    width: 100%;
+    height: auto;
+    resize: none;
+    outline: none;
+
+    margin: 0;
+    padding: 0.25em;
+    padding-left: 0;
+    background: transparent;
+    overflow: hidden;
+
+}
+
+.text-input .sent-history {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0.25em;
+    padding-right: 0;
+}
+
+.text-input .sent-history .sent-text {
+    display: inline-block;
+    vertical-align: baseline;
+    white-space: pre;
+    font-size: 12pt;
+
+    animation: fadeout 1s linear;
+    -webkit-animation: fadeout 1s linear;
+    opacity: 0;
+}
+
+.text-input .text-input-buttons button {
+
+    box-shadow: none;
+    padding: 0.25em;
+    max-width: 20%;
+    margin: 0.1em;
+    min-width: 3em;
+
+    background: #444;
+
+    border: 0.125em solid #666;
+    -moz-border-radius:    0.25em;
+    -webkit-border-radius: 0.25em;
+    -khtml-border-radius:  0.25em;
+    border-radius:         0.25em;
+
+    color: white;
+    font-weight: lighter;
+    text-align: center;
+
+    text-shadow:  1px  1px 0 rgba(0, 0, 0, 0.25),
+                  1px -1px 0 rgba(0, 0, 0, 0.25),
+                 -1px  1px 0 rgba(0, 0, 0, 0.25),
+                 -1px -1px 0 rgba(0, 0, 0, 0.25);
+
+}
+
+.text-input .text-input-buttons button:active {
+    background: #822;
+    border-color: #D44;
+}
+
+.text-input .text-input-buttons button.pressed {
+    background: #882;
+    border-color: #DD4;
+}
