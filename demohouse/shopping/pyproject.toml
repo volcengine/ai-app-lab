@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "shopping"
+version = "0.1.0"
+description = ""
+authors = ["LiYuxuan <liyuxuan.89@bytedance.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12.0"
+arkitect = "0.2.0.dev0"
+volcengine-python-sdk = ">=1.0.123"
+volcengine = "^1.0.173"
+tos = "2.8.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
