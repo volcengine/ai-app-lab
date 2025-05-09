@@ -109,7 +109,7 @@ async def custom_support_chat(
 
 class Product(BaseModel):
     name: str
-    description: str = Field(..., max_length=100)
+    description: str
     cover_image: str
 
 
