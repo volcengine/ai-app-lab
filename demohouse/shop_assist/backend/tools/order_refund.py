@@ -18,24 +18,28 @@ from pydantic import Field
 
 def get_order_refund_fn(account_id: str) -> Callable:
     async def order_refund(
-        order_id: str = Field(description="订单号，需要用户提供", default=""),
-        reason: str = Field(description="退款原因，由上下文总结", default=""),
+        order_id: str = Field(
+            description="Order ID, must be provided by user", default=""
+        ),
+        reason: str = Field(
+            description="Refund reason, summarized from context", default=""
+        ),
     ):
         """
-        需要退款的时候使用本函数，需要用户提供订单号
+        Use this function when a refund is needed. User must provide the order ID.
         """
         order = await orders.get_order(account_id, order_id)
         if not order:
-            return "订单不存在"
+            return "Order does not exist"
 
         if order["status"] == OrderStatus.REFUNDED.value:
-            return "订单已退款，不可重复退款"
+            return "Order has already been refunded, cannot refund again"
 
         success = await orders.update_order_status(
             account_id, order_id, OrderStatus.REFUNDED, reason
         )
         if not success:
-            return "退款失败"
-        return "退款成功"
+            return "Refund failed"
+        return "Refund successful"
 
     return order_refund

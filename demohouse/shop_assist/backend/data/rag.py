@@ -130,7 +130,7 @@ def retrieval_knowledge(
     )
     return (
         f"""
-# 参考资料
+# {"参考资料" if config.language == "zh" else "References"}
 <context>
 {res["result_list"]}
 {faq_res["result_list"]}
