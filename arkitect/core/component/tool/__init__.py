@@ -17,6 +17,7 @@ from .builtin_tools import calculator, link_reader
 from .mcp_client import MCPClient
 from .mcp_server import ArkFastMCP
 from .tool_pool import ToolPool, build_tool_pool
+from .builtin_tools import link_reader, calculator
 
 __all__ = [
     "MCPClient",
