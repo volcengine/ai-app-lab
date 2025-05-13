@@ -36,9 +36,18 @@ Please identify the user’s profile and other key information from
 past interactions to help answer the user’s new question.
 """
 
+DEFAULT_SEARCH_LLM_MODEL = "doubao-1-5-pro-32k-250115"
+
 
 class InMemoryMemoryService(BaseMemoryService):
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        default_search_model: str = DEFAULT_SEARCH_LLM_MODEL,
+        default_search_prompt: str = DEFAULT_SEARCH_MEM_PROMPT,
+    ) -> None:
+        self.default_search_model = default_search_model
+        self.default_search_prompt = default_search_prompt
+
         self.memory: dict = {}
         self._cached_query: dict = {}
         self._llm = AsyncArk()
@@ -80,11 +89,11 @@ class InMemoryMemoryService(BaseMemoryService):
             content = format_ark_message_as_string(memory)
             results += content
         summary = await self._llm.chat.completions.create(
-            model="doubao-1-5-pro-32k-250115",
+            model=self.default_search_model,
             messages=[
                 {
                     "role": "system",
-                    "content": DEFAULT_SEARCH_MEM_PROMPT,
+                    "content": self.default_search_prompt,
                 },
                 {
                     "role": "user",

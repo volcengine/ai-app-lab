@@ -26,7 +26,6 @@ def make_classify_request(property_file_path: str, user_id: str) -> dict:
 def make_inital_user_profile_setup(user_feedback: str, user_id: str) -> dict:
     return {
         "messages": [
-            {"role": "user", "content": "initial setup"},
             {"role": "user", "content": user_feedback},
         ],
         "model": "abc",
@@ -36,7 +35,7 @@ def make_inital_user_profile_setup(user_feedback: str, user_id: str) -> dict:
 
 
 def make_user_feedback_request(
-    property_file_path: str, user_comment: str, user_id: str
+    property_file_path: str, user_comment: str, user_id: str, previous_response_id: str
 ) -> dict:
     with open(property_file_path, "r") as f:
         property_listing = f.read()
@@ -47,7 +46,7 @@ def make_user_feedback_request(
         ],
         "model": "abc",
         "stream": True,
-        "metadata": {"user_id": user_id},
+        "metadata": {"user_id": user_id, "previous_response_id": previous_response_id},
     }
 
 
@@ -65,22 +64,12 @@ async def classify_and_recommend(
     thinking = False
     reasoning_ouput = ""
     output = ""
+    response = None
     async for chunk in stream_resp:
+        print(chunk)
         if len(chunk.choices) == 0:
-            if chunk.model_extra.get("bot_usage").get("action_details"):
-                actions_detail = chunk.model_extra.get("bot_usage").get(
-                    "action_details"
-                )
-                for action in actions_detail:
-                    tool_details = action.get("tool_details")[0]
-                    print(
-                        f"\nCalling Tool {tool_details.get('name')} with input {tool_details.get('input')}"
-                    )
-                    if tool_details.get("output"):
-                        print(
-                            f"Tool {tool_details.get('name')} with output {tool_details.get('output')}"
-                        )
-
+            if chunk.metadata.get("response"):
+                response = chunk.metadata.get("response")
         elif chunk.choices[0].delta.model_extra.get("reasoning_content"):
             if not thinking:
                 print("\n----思考过程----\n")
@@ -102,11 +91,14 @@ async def classify_and_recommend(
             print("\n")
             break
     print("\n\n" + "=" * 40)
-    return reasoning_ouput, output
+    return reasoning_ouput, output, response
 
 
 async def update_user_profile(
-    property_file_path: str | None, user_feedback: str, user_id: str
+    property_file_path: str | None,
+    user_feedback: str,
+    user_id: str,
+    previous_response_id: str | None = None,
 ) -> None:
     client = AsyncOpenAI(
         # base_url="URL_ADDRESSx9hr6ko.fn.bytedance.net/api/v3/bots",  # remote
@@ -119,7 +111,10 @@ async def update_user_profile(
         )
     else:
         request_payload = make_user_feedback_request(
-            property_file_path, user_feedback, user_id=user_id
+            property_file_path,
+            user_feedback,
+            user_id=user_id,
+            previous_response_id=previous_response_id,
         )
     stream_resp = await client.chat.completions.create(**request_payload)
     async for chunk in stream_resp:
@@ -170,9 +165,14 @@ async def main():
             f"\n[Property {idx + 1}/{len(property_files)}: {property_file_path.name}]"
         )
 
-        reasoning, output = await classify_and_recommend(property_file_path, USER_ID)
+        reasoning, output, response = await classify_and_recommend(
+            property_file_path, USER_ID
+        )
+        previous_response_id = response.get("id", None)
         store_to_file(
-            f"output/openai-responses/{property_file_path.name}.json", output, reasoning
+            f"{property_file_path.name}.json",
+            output,
+            reasoning,
         )
         print(
             f"\nGet User feedback on this recommendation for {property_file_path.name}?"
@@ -183,7 +183,9 @@ async def main():
         else:
             user_feedback = "no change"
         if user_feedback != "no change":
-            await update_user_profile(property_file_path, user_feedback, USER_ID)
+            await update_user_profile(
+                property_file_path, user_feedback, USER_ID, previous_response_id
+            )
         else:
             print("No change to user profile")
         print("\n\n" + "=" * 40)
