@@ -2,8 +2,9 @@ import json
 import os
 import re
 import time
-from firecrawl import FirecrawlApp, ScrapeOptions
+
 from dotenv import load_dotenv
+from firecrawl import FirecrawlApp
 
 
 def extract_listing_id(url):
@@ -61,13 +62,6 @@ def crawl_and_save_listings(
         print(f"Crawling ({i+1}/{len(listings)}): {url} (ID: {listing_id})")
 
         try:
-            # Crawl the URL
-            # Note: Firecrawl's crawl_url returns a dictionary.
-            # The markdown content is usually in response['markdown']
-            # or response['data']['content'] if using older versions or different params.
-            # Checking documentation for the exact key.
-            # Based on common usage, it's often `response.markdown` or `response['markdown']`
-            # For firecrawl-py, it's `crawl_result.markdown`
             crawl_result = app.scrape_url(
                 url,
                 formats=["markdown"],

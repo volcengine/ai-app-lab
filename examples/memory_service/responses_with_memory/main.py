@@ -1,20 +1,16 @@
 import logging
 import os
 import re
-from typing import AsyncIterable
 import time
+from typing import AsyncIterable
+
+import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 from openai import OpenAI
 from openai.types.responses.response_stream_event import (
     ResponseStreamEvent,
     ResponseTextDeltaEvent,
-    ResponseCompletedEvent,
 )
-import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
 from volcenginesdkarkruntime.types.chat.chat_completion import (
-    ChatCompletionMessage,
-    Choice,
-)
-from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
 
@@ -24,6 +20,8 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
 # from arkitect.core.component.memory import Mem0MemoryServiceSingleton
 from arkitect.core.component.memory import (
     InMemoryMemoryService as MemoryService,
+)
+from arkitect.core.component.memory import (
     InMemoryMemoryServiceSingleton,
 )
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
@@ -42,12 +40,15 @@ async def get_instructions(user_id: str, memory_service: BaseMemoryService) -> s
     if len(memory.memories) == 0:
         user_preference = "No user preferences found."
     base_instruction = f"""
-You are a helpful assistant that helps evaluate housing rentals for users based on their preferences.
+You are a helpful assistant that helps evaluate housing rentals for users based on
+their preferences.
 
 User's preferences:
 {user_preference}
 
-Below is a new housing rental listing. Determine whether it matches the user's preferences. If you think there is insufficient information,
+Below is a new housing rental listing. 
+Determine whether it matches the user's preferences. 
+If you think there is insufficient information,
 You can use tools like web_search and maps to find our more information.
 
 If it does, explain briefly why. If it doesn't, explain what does not match.

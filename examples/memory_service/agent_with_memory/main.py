@@ -9,37 +9,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
+import re
 import uuid
-
 from typing import AsyncIterable
 
-from arkitect.types.llm.model import ArkChatRequest, ArkMessage
-from arkitect.core.component.runner import Runner
-from arkitect.types.responses.utils import event_to_ark_chat_completion_chunks
+from tools import get_commute_duration, get_instructions, web_search
 
-from arkitect.core.component.agent import DefaultAgent
-from arkitect.core.component.checkpoint import (
-    InMemoryCheckpointStoreSingleton,
-    InMemoryCheckpointStore,
-)
-from arkitect.launcher.local.serve import launch_serve
-from arkitect.telemetry.trace import task
-from arkitect.types.llm.model import ArkChatCompletionChunk
-
-from arkitect.core.component.memory import (
-    Mem0MemoryServiceSingleton,
-    Mem0MemoryService as MemoryService,
-    # InMemoryMemoryServiceSingleton,
-    # InMemoryMemoryService as MemoryService,
-)
+# InMemoryMemoryServiceSingleton,
+# InMemoryMemoryService as MemoryService,
 from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
-from tools import get_commute_duration, get_instructions, web_search
-import re
 
-import logging
+from arkitect.core.component.agent import DefaultAgent
+from arkitect.core.component.checkpoint import (
+    InMemoryCheckpointStore,
+    InMemoryCheckpointStoreSingleton,
+)
+from arkitect.core.component.memory import (
+    Mem0MemoryService as MemoryService,
+)
+from arkitect.core.component.memory import (
+    Mem0MemoryServiceSingleton,
+)
+from arkitect.core.component.runner import Runner
+from arkitect.launcher.local.serve import launch_serve
+from arkitect.telemetry.trace import task
+from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatRequest, ArkMessage
+from arkitect.types.responses.utils import event_to_ark_chat_completion_chunks
 
 MODELS = {
     # "default": "doubao-1-5-vision-pro-32k-250115",

@@ -17,7 +17,7 @@ import os
 from typing import Any
 
 from mem0 import AsyncMemory as Mem0Memory
-from mem0.configs.base import MemoryConfig
+from mem0.configs.base import MemoryConfig as Mem0Config
 from mem0.embeddings.configs import EmbedderConfig
 from mem0.llms.configs import LlmConfig
 from mem0.vector_stores.configs import VectorStoreConfig
@@ -39,52 +39,39 @@ from arkitect.telemetry.logger import ERROR, INFO
 from arkitect.types.llm.model import ArkMessage
 from arkitect.utils.common import Singleton
 
+DEFAULT_EMBEDDING_MODEL = "doubao-embedding-text-240715"
+DEFAULT_LLM_MODEL = "doubao-1-5-vision-pro-32k-250115"
+DEFAULT_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
 
-class Mem0MemoryServiceConfig(BaseModel):
-    mem0_config: MemoryConfig | None = None
-    embedding_model: str = "doubao-embedding-text-240715"
-    llm_model: str = "doubao-1-5-vision-pro-32k-250115"
-    base_url: str = "https://ark.cn-beijing.volces.com/api/v3"
-    api_key: str | None = None
+
+default_ark_config = Mem0Config(
+    embedder=EmbedderConfig(
+        provider="openai",
+        config={
+            "model": DEFAULT_EMBEDDING_MODEL,
+            "openai_base_url": DEFAULT_BASE_URL,
+            "api_key": os.getenv("ARK_API_KEY"),
+            "embedding_dims": 2560,
+        },
+    ),
+    llm=LlmConfig(
+        provider="openai",
+        config={
+            "model": DEFAULT_LLM_MODEL,
+            "openai_base_url": DEFAULT_BASE_URL,
+            "api_key": os.getenv("ARK_API_KEY"),
+        },
+    ),
+    vector_store=VectorStoreConfig(config={"embedding_model_dims": 2560}),
+)
 
 
 class Mem0MemoryService(BaseMemoryService):
-    def __init__(self, config: Mem0MemoryServiceConfig | None = None) -> None:
-        self.config = config if config else Mem0MemoryServiceConfig()
-        self.base_url = self.config.base_url
-        self.api_key = self.config.api_key
-        self.llm_model = self.config.llm_model
-        self.embedding_model = self.config.embedding_model
 
+    def __init__(self, config: Mem0Config = default_ark_config) -> None:
+        self.mem0_config = config if config else Mem0Config()
         self._llm = AsyncArk()
-
-        self.memory = Mem0Memory(
-            config=MemoryConfig(
-                embedder=EmbedderConfig(
-                    provider="openai",
-                    config={
-                        "model": self.embedding_model,
-                        "openai_base_url": self.base_url,
-                        "api_key": (
-                            self.api_key if self.api_key else os.getenv("ARK_API_KEY")
-                        ),
-                        "embedding_dims": 2560,
-                    },
-                ),
-                llm=LlmConfig(
-                    provider="openai",
-                    config={
-                        "model": self.llm_model,
-                        "openai_base_url": self.base_url,
-                        "api_key": (
-                            self.api_key if self.api_key else os.getenv("ARK_API_KEY")
-                        ),
-                    },
-                ),
-                vector_store=VectorStoreConfig(config={"embedding_model_dims": 2560}),
-            )
-        )
-
+        self.memory = Mem0Memory(config=self.mem0_config)
         self._task_queue: asyncio.Queue = asyncio.Queue()
 
     @override

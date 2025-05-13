@@ -1,4 +1,5 @@
 from typing import Any
+
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
 
 MODELS = {
@@ -26,9 +27,7 @@ def get_commute_duration(
     Returns:
         dict: A dictionary containing commute duration and distance.
     """
-    print(
-        f"Tool: get_commute_duration called for {start_address} to {end_address} via {mode}"
-    )
+    print(f"Tool: get_commute_duration called for {start_address} to {end_address}")
     # Simulate API call
     if "tanjong pagar" in end_address.lower():
         return {"duration": "30 mins", "distance": "15 km"}
@@ -47,9 +46,7 @@ def web_search(key_words: str) -> dict[str, Any]:
     print(f"Tool: search_property_comments called for {key_words}")
     # Simulate web search
     if "Starville" in key_words:
-        return {
-            "summary": "Generally positive reviews, noted for good amenities but can be pricey."
-        }
+        return {"summary": "Generally positive reviews"}
     return {"summary": "No specific comments found."}
 
 

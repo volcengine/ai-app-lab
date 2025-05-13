@@ -1,8 +1,7 @@
 import asyncio
 import json
-import os
 from pathlib import Path
-import httpx  # HTTP client library
+
 from openai import AsyncOpenAI
 
 # --- Configuration ---
