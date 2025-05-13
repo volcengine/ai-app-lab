@@ -17,7 +17,7 @@ from redis.asyncio.retry import Retry
 from redis.backoff import ExponentialBackoff
 from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
 
-from arkitect.core.client.base import Client, ClientPool
+from arkitect.core.client.base import Client
 
 
 class RedisClient(Client):
@@ -58,11 +58,13 @@ class RedisClient(Client):
 
     async def get_with_prefix(self, prefix: str) -> tuple[list[str], list[str]]:
         """
-        Asynchronous method to obtain all keys and values from the Redis database that match the specified prefix
+        Asynchronous method to obtain all keys and values from the
+        Redis database that match the specified prefix
 
         :param prefix: The specified prefix
 
-        :return: A list of tuples containing matching keys and their corresponding values
+        :return: A list of tuples containing matching keys
+            and their corresponding values
         """
 
         cursor = 0

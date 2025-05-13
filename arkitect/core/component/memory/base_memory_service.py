@@ -32,10 +32,11 @@ class Memory(BaseModel):
 
 class SearchMemoryResponse(BaseModel):
     memories: list[Memory]
-    
+
     @property
-    def content(self):
+    def content(self) -> str:
         return "\n".join([m.memory_content for m in self.memories])
+
 
 class BaseMemoryService(ABC):
     @abstractmethod
@@ -46,26 +47,6 @@ class BaseMemoryService(ABC):
         **kwargs: Any,
     ) -> None:
         pass
-    @abstractmethod
-    async def search_memory(
-        self,
-        user_id: str,
-        query: str,
-        **kwargs: Any,
-    ) -> SearchMemoryResponse:
-        pass
-
-
-class BaseMemoryService(ABC):
-    @abstractmethod
-    async def add_or_update_memory(
-        self,
-        user_id: str,
-        user_input: list[ArkMessage | dict],
-        assistant_response: Response | list[ChatCompletionMessage],
-        **kwargs: Any,
-    ) -> None:
-        pass
 
     @abstractmethod
     async def search_memory(
@@ -74,8 +55,4 @@ class BaseMemoryService(ABC):
         query: str,
         **kwargs: Any,
     ) -> SearchMemoryResponse:
-        pass
-
-    @abstractmethod
-    async def delete_user(self, user_id: str) -> None:
         pass

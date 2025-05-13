@@ -33,7 +33,6 @@ from arkitect.types.llm.model import (
     BotUsage,
     ToolDetail,
 )
-
 from arkitect.types.responses.event import (
     BaseEvent,
     ErrorEvent,
@@ -58,6 +57,7 @@ def convert_chat_to_event(chat_chunk: ChatCompletionChunk) -> BaseEvent | None:
                 id=chat_chunk.id,
                 delta=delta.reasoning_content,
             )
+    return None
 
 
 def convert_tool_chunk_to_event(chunk: ToolChunk) -> BaseEvent:
@@ -68,12 +68,11 @@ def convert_tool_chunk_to_event(chunk: ToolChunk) -> BaseEvent:
             tool_arguments=chunk.tool_arguments,
             tool_response=chunk.tool_response,
         )
-    else:
-        return ToolCallEvent(
-            tool_call_id=chunk.tool_call_id,
-            tool_name=chunk.tool_name,
-            tool_arguments=chunk.tool_arguments,
-        )
+    return ToolCallEvent(
+        tool_call_id=chunk.tool_call_id,
+        tool_name=chunk.tool_name,
+        tool_arguments=chunk.tool_arguments,
+    )
 
 
 def event_to_ark_chat_completion_chunks(event: BaseEvent) -> ArkChatCompletionChunk:

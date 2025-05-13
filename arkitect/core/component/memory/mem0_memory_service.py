@@ -28,7 +28,6 @@ from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
-from arkitect.telemetry.logger import INFO, ERROR
 
 from arkitect.core.component.memory.base_memory_service import (
     BaseMemoryService,
@@ -36,6 +35,7 @@ from arkitect.core.component.memory.base_memory_service import (
     SearchMemoryResponse,
 )
 from arkitect.core.component.memory.utils import format_ark_message_as_dict
+from arkitect.telemetry.logger import ERROR, INFO
 from arkitect.types.llm.model import ArkMessage
 from arkitect.utils.common import Singleton
 
@@ -110,7 +110,7 @@ class Mem0MemoryService(BaseMemoryService):
         await self.memory.add(conversation, user_id=user_id)
         INFO("Memory update completed")
 
-    async def _background_processor(self):
+    async def _background_processor(self) -> None:
         while True:
             task = await self._task_queue.get()
             try:
@@ -143,7 +143,6 @@ class Mem0MemoryService(BaseMemoryService):
             ]
         )
 
-    @override
     async def delete_user(self, user_id: str) -> None:
         await self.memory.delete_all(user_id=user_id)
 

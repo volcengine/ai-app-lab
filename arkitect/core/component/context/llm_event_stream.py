@@ -19,7 +19,6 @@ from typing import (
     Callable,
     Dict,
     List,
-    Literal,
     Optional,
 )
 
@@ -30,6 +29,7 @@ from volcenginesdkarkruntime.types.chat import (
 from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
+from arkitect.core.component.agent import BaseAgent
 from arkitect.core.component.context.hooks import (
     HookInterruptException,
     PostLLMCallHook,
@@ -50,7 +50,7 @@ from arkitect.types.responses.event import (
     ToolCallEvent,
     ToolCompletedEvent,
 )
-from arkitect.core.component.agent import BaseAgent
+
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext
 from .model import ContextInterruption, State
@@ -66,7 +66,6 @@ class _AsyncCompletionsEventStream:
         messages: List[ChatCompletionMessageParam],
         **kwargs: Dict[str, Any],
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
-
         async def iterator(
             messages: List[ChatCompletionMessageParam],
         ) -> AsyncIterable[BaseEvent | ContextInterruption]:
@@ -273,7 +272,6 @@ class _AsyncCompletionsEventStream:
 
 
 def build_switch_agent(agents: list[BaseAgent]):
-
     def switch_agent(agent_name: str):
         return agent_name
 
@@ -287,7 +285,8 @@ def build_switch_agent(agents: list[BaseAgent]):
     agent_name列表及其功能如下所述：
     {agents_desc}
     
-    请你根据上面这些agent的描述和目前所在的任务，调用switch_agent 这个方法来决定要切换到哪个Agent。不要输出任何其他内容。
+    请你根据上面这些agent的描述和目前所在的任务，调用switch_agent 这个方法
+    来决定要切换到哪个Agent。不要输出任何其他内容。
 
     参数说明：
         •	agent_name(str)：要切换到的Agent名称。
@@ -362,8 +361,8 @@ class LLMEventStream:
         if self.instruction:
             messages = [
                 {
-                    "role":"system",
-                    "content":self.instruction,
+                    "role": "system",
+                    "content": self.instruction,
                 }
             ]
         else:
@@ -398,7 +397,7 @@ def get_role(role: str, agent_name: str, author_name: str) -> str:
     return "user"
 
 
-def get_message(message: ArkMessage, agent_name: str, author_name: str):
+def get_message(message: ArkMessage, agent_name: str, author_name: str) -> dict:
     msg = message.model_dump()
     if message.role == "assistant":
         role = get_role(message.role, agent_name, author_name)

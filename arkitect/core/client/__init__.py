@@ -14,8 +14,8 @@
 
 from .base import Client, ClientPool, get_client_pool
 from .http import default_ark_client, load_request
-from .sse import AsyncSSEDecoder
 from .redis import RedisClient
+from .sse import AsyncSSEDecoder
 
 __all__ = [
     "Client",

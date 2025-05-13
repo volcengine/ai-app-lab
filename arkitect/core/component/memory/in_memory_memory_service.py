@@ -32,7 +32,8 @@ from arkitect.utils.common import Singleton
 
 DEFAULT_SEARCH_MEM_PROMPT = """
 You have obtained a series of interactions between a user and an AI assistant.
-Please identify the user’s profile and other key information from past interactions to help answer the user’s new question.
+Please identify the user’s profile and other key information from
+past interactions to help answer the user’s new question.
 """
 
 

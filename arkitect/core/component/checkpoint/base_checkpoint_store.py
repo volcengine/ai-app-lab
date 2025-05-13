@@ -18,7 +18,6 @@ from arkitect.core.component.checkpoint.checkpoint import Checkpoint
 
 
 class BaseCheckpointStore(ABC):
-
     @abstractmethod
     def create_checkpoint(
         self,

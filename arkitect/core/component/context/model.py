@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import copy
 from typing import Any, List, Literal, Optional
 
 from pydantic import BaseModel, Field
@@ -30,9 +29,6 @@ class State(BaseModel):
     context_parameters: Optional[ArkContextParameters] = Field(default=None)
     details: dict = {}
     events: List[StateUpdateEvent] = Field(default_factory=list)
-
-    def copy(self) -> "State":
-        return copy.deepcopy(self)
 
 
 class ContextInterruption(BaseModel):

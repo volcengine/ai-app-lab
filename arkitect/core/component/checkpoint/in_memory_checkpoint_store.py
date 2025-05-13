@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from datetime import datetime
+
 from arkitect.core.component.checkpoint.base_checkpoint_store import BaseCheckpointStore
 from arkitect.core.component.checkpoint.checkpoint import Checkpoint
 from arkitect.core.component.context.model import State
@@ -30,7 +31,6 @@ class InMemoryCheckpointStore(BaseCheckpointStore):
         checkpoint_id: str,
         checkpoint: Checkpoint | None = None,
     ) -> Checkpoint:
-
         checkpoint = (
             Checkpoint(
                 id=checkpoint_id,

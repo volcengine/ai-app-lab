@@ -26,14 +26,12 @@
 from typing import AsyncIterable
 
 from arkitect.core.component.agent import BaseAgent
-
 from arkitect.core.component.checkpoint import BaseCheckpointStore
 from arkitect.core.component.checkpoint.checkpoint import Checkpoint
+from arkitect.core.component.context.model import State
 from arkitect.telemetry.logger import ERROR
 from arkitect.types.llm.model import ArkMessage
 from arkitect.types.responses.event import BaseEvent, StateUpdateEvent
-
-from arkitect.core.component.context.model import State
 
 
 class Runner:
@@ -52,6 +50,7 @@ class Runner:
             checkpoint_id=checkpoint_id
         )
         state = checkpoint.state
+        assert state
         async for chunk in self.__run(state, checkpoint, messages):
             if isinstance(chunk, BaseEvent):
                 yield chunk
@@ -76,7 +75,7 @@ class Runner:
         state: State,
         checkpoint: Checkpoint,
         messages: list[ArkMessage] | None = None,
-    ):
+    ) -> AsyncIterable[BaseEvent]:
         if messages is not None:
             append_messages = StateUpdateEvent(
                 author="user",

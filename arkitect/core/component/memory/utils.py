@@ -30,33 +30,31 @@ def _ark_message_to_string(messages: list[ArkMessage | dict]) -> str:
     return content
 
 
-def format_ark_message_as_string(message: ArkMessage | dict | Response | ChatCompletionMessage) -> str:
+def format_ark_message_as_string(
+    message: ArkMessage | dict | Response | ChatCompletionMessage,
+) -> str:
     if isinstance(message, ArkMessage):
         return f"{message.role}: {message.content}\n"
     elif isinstance(message, dict):
         return f"{message['role']}: {message['content']}\n"
     elif isinstance(message, Response):
-        return f"assistant: {message.choices[0].message.content}"
+        return f"assistant: {message.output_text}"
     elif isinstance(message, ChatCompletionMessage):
         return f"assistant: {message.content}"
     else:
         raise ValueError("Invalid message type")
-    
 
-def format_ark_message_as_dict(message: ArkMessage | dict | Response | ChatCompletionMessage) -> dict:
+
+def format_ark_message_as_dict(
+    message: ArkMessage | dict | Response | ChatCompletionMessage,
+) -> dict:
     if isinstance(message, ArkMessage):
         return message.model_dump()
     elif isinstance(message, dict):
         return message
     elif isinstance(message, Response):
-        return {
-            "role": "assistant",
-            "content": message.output_text
-        }
+        return {"role": "assistant", "content": message.output_text}
     elif isinstance(message, ChatCompletionMessage):
-        return {
-            "role": "assistant",
-            "content": message.content
-        }
+        return {"role": "assistant", "content": message.content}
     else:
         raise ValueError("Invalid message type")

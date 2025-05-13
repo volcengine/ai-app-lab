@@ -26,10 +26,9 @@
 import asyncio
 from typing import AsyncIterable
 
+from arkitect.core.component.agent.base_agent import BaseAgent
 from arkitect.core.component.context.model import State
 from arkitect.types.responses.event import BaseEvent
-from arkitect.core.component.agent.base_agent import BaseAgent
-
 
 """
 ParallelAgent is the core interface for all runnable agents
@@ -77,7 +76,6 @@ async def _merge_agent_run(
 
 
 class ParallelAgent(BaseAgent):
-
     # stream run step
     async def _astream(self, state: State, **kwargs) -> AsyncIterable[BaseEvent]:
         agent_runs = [agent(state) for agent in self.sub_agents]

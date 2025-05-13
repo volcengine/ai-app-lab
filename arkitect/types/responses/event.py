@@ -23,14 +23,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Any, Optional
+
 from pydantic import BaseModel
 
 from arkitect.types.llm.model import ArkMessage
-
-
-# `Events` and `ArkChatCompletionChunk` are for external use (for bot chat api and responses api each)
-# `ChatCompletionChunk` and `ToolChunk` are for internal use
-# Use methods provided in util to convert between them
 
 
 class ToolChunk(BaseModel):

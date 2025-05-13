@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from arkitect.core.component.agent.base_agent import BaseAgent
-from arkitect.core.component.agent.parallel_agent import ParallelAgent
 from arkitect.core.component.agent.default_agent import DefaultAgent
+from arkitect.core.component.agent.parallel_agent import ParallelAgent
 
 __all__ = ["BaseAgent", "ParallelAgent", "DefaultAgent"]
