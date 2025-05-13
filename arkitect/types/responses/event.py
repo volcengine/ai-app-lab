@@ -24,7 +24,6 @@
 # limitations under the License.
 from typing import Any, Optional
 from pydantic import BaseModel
-from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 
 from arkitect.types.llm.model import ArkMessage
 

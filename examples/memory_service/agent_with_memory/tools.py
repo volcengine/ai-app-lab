@@ -1,4 +1,3 @@
-
 from typing import Any
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
 
@@ -31,7 +30,7 @@ def get_commute_duration(
         f"Tool: get_commute_duration called for {start_address} to {end_address} via {mode}"
     )
     # Simulate API call
-    if "Tanjong Pagar" in end_address.lower():
+    if "tanjong pagar" in end_address.lower():
         return {"duration": "30 mins", "distance": "15 km"}
     return {"duration": "unknown", "distance": "unknown"}
 
@@ -55,7 +54,9 @@ def web_search(key_words: str) -> dict[str, Any]:
 
 
 async def get_instructions(user_id: str, memory_service: BaseMemoryService) -> str:
-    memory = await memory_service.search_memory(user_id, query="Details of room preferences for this user.")
+    memory = await memory_service.search_memory(
+        user_id, query="Details of room preferences for this user."
+    )
     user_preference = memory.content
     if len(memory.memories) == 0:
         user_preference = "No user preferences found."
@@ -66,7 +67,7 @@ User's preferences:
 {user_preference}
 
 Below is a new housing rental listing. Determine whether it matches the user's preferences. If you think there is insufficient information,
-You can use tools like web_search and maps to find our more information.
+You can use tools like web_search and get_commute_duration to find our more information.
 
 If it does, explain briefly why. If it doesn't, explain what does not match.
 

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
+import asyncio
 import os
 from typing import Any
 
@@ -21,7 +21,6 @@ from mem0.configs.base import MemoryConfig
 from mem0.embeddings.configs import EmbedderConfig
 from mem0.llms.configs import LlmConfig
 from mem0.vector_stores.configs import VectorStoreConfig
-from openai import OpenAI
 from openai.types.responses import Response
 from pydantic import BaseModel
 from typing_extensions import override
@@ -29,6 +28,7 @@ from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
+from arkitect.telemetry.logger import INFO, ERROR
 
 from arkitect.core.component.memory.base_memory_service import (
     BaseMemoryService,
@@ -40,8 +40,8 @@ from arkitect.types.llm.model import ArkMessage
 from arkitect.utils.common import Singleton
 
 
-class Mem0ServiceConfig(BaseModel):
-    mem0_config: MemoryConfig | None
+class Mem0MemoryServiceConfig(BaseModel):
+    mem0_config: MemoryConfig | None = None
     embedding_model: str = "doubao-embedding-text-240715"
     llm_model: str = "doubao-1-5-vision-pro-32k-250115"
     base_url: str = "https://ark.cn-beijing.volces.com/api/v3"
@@ -49,8 +49,8 @@ class Mem0ServiceConfig(BaseModel):
 
 
 class Mem0MemoryService(BaseMemoryService):
-    def __init__(self, config: Mem0ServiceConfig | None = None) -> None:
-        self.config = config if config else Mem0ServiceConfig()
+    def __init__(self, config: Mem0MemoryServiceConfig | None = None) -> None:
+        self.config = config if config else Mem0MemoryServiceConfig()
         self.base_url = self.config.base_url
         self.api_key = self.config.api_key
         self.llm_model = self.config.llm_model
@@ -85,17 +85,39 @@ class Mem0MemoryService(BaseMemoryService):
             )
         )
 
+        self._task_queue: asyncio.Queue = asyncio.Queue()
+
     @override
     async def add_or_update_memory(
         self,
         user_id: str,
         new_messages: list[ArkMessage | dict | Response | ChatCompletionMessage],
+        blocking: bool = False,
         **kwargs: Any,
     ) -> None:
         conversation = []
         for item in new_messages:
             conversation.append(format_ark_message_as_dict(item))
+        if blocking:
+            await self._add_memory(conversation, user_id)
+        else:
+            await self._task_queue.put(
+                asyncio.create_task(self._add_memory(conversation, user_id))
+            )
+            INFO("Memory update submitted")
+
+    async def _add_memory(self, conversation, user_id):
         await self.memory.add(conversation, user_id=user_id)
+        INFO("Memory update completed")
+
+    async def _background_processor(self):
+        while True:
+            task = await self._task_queue.get()
+            try:
+                await task
+            except Exception as e:
+                ERROR(f"Memory update failed: {e}")
+            self._task_queue.task_done()
 
     @override
     async def search_memory(

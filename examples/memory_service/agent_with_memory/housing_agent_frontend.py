@@ -20,9 +20,7 @@ def make_classify_request(property_file_path: str, user_id: str) -> dict:
         "messages": [{"role": "user", "content": property_listing}],
         "model": "abc",
         "stream": True,
-        "metadata": {
-            "user_id": user_id
-        }
+        "metadata": {"user_id": user_id},
     }
 
 
@@ -34,13 +32,13 @@ def make_inital_user_profile_setup(user_feedback: str, user_id: str) -> dict:
         ],
         "model": "abc",
         "stream": True,
-        "metadata": {
-            "user_id": user_id
-        }
+        "metadata": {"user_id": user_id},
     }
 
 
-def make_user_feedback_request(property_file_path: str, user_comment: str, user_id: str) -> dict:
+def make_user_feedback_request(
+    property_file_path: str, user_comment: str, user_id: str
+) -> dict:
     with open(property_file_path, "r") as f:
         property_listing = f.read()
     return {
@@ -50,13 +48,13 @@ def make_user_feedback_request(property_file_path: str, user_comment: str, user_
         ],
         "model": "abc",
         "stream": True,
-        "metadata": {
-            "user_id": user_id
-        }
+        "metadata": {"user_id": user_id},
     }
 
 
-async def classify_and_recommend(property_file_path: str, user_id: str) -> tuple[str, str]:
+async def classify_and_recommend(
+    property_file_path: str, user_id: str
+) -> tuple[str, str]:
     client = AsyncOpenAI(
         # base_url="https://0x9hr6ko.fn.bytedance.net/api/v3/bots",  # remote
         base_url=BACKEND_AGENT_URL,
@@ -108,16 +106,22 @@ async def classify_and_recommend(property_file_path: str, user_id: str) -> tuple
     return reasoning_ouput, output
 
 
-async def update_user_profile(property_file_path: str | None, user_feedback: str, user_id: str) -> None:
+async def update_user_profile(
+    property_file_path: str | None, user_feedback: str, user_id: str
+) -> None:
     client = AsyncOpenAI(
         # base_url="URL_ADDRESSx9hr6ko.fn.bytedance.net/api/v3/bots",  # remote
         base_url=BACKEND_AGENT_URL,
         api_key="{API_KEY}",
     )
     if property_file_path is None:
-        request_payload = make_inital_user_profile_setup(user_feedback=user_feedback, user_id=user_id)
+        request_payload = make_inital_user_profile_setup(
+            user_feedback=user_feedback, user_id=user_id
+        )
     else:
-        request_payload = make_user_feedback_request(property_file_path, user_feedback, user_id=user_id)
+        request_payload = make_user_feedback_request(
+            property_file_path, user_feedback, user_id=user_id
+        )
     stream_resp = await client.chat.completions.create(**request_payload)
     async for chunk in stream_resp:
         continue
@@ -125,13 +129,11 @@ async def update_user_profile(property_file_path: str | None, user_feedback: str
 
 def store_to_file(file_path, output, reasoning_output):
     print("dumping file", file_path)
-    o = {
-        "reasoning_output": reasoning_output,
-        "output": output
-    }
+    o = {"reasoning_output": reasoning_output, "output": output}
     with open(file_path, "w") as f:
         json.dump(o, f)
     print("dumped file", file_path)
+
 
 async def main():
     if not PROPERTY_LISTINGS_DIR.exists() or not PROPERTY_LISTINGS_DIR.is_dir():
@@ -158,9 +160,11 @@ async def main():
     initial_preference = "I want to rent a place near my office at Tanjong Pagar MRT."
     other_preferences = [
         "It need to be below 5000 budget per month and have 3 rooms.",
-        "It would be great if it has a tennis court"
+        "It would be great if it has a tennis court",
     ]
-    await update_user_profile(property_file_path=None, user_feedback=initial_preference, user_id=USER_ID)
+    await update_user_profile(
+        property_file_path=None, user_feedback=initial_preference, user_id=USER_ID
+    )
 
     for idx, property_file_path in enumerate(property_files):
         print(
@@ -168,7 +172,9 @@ async def main():
         )
 
         reasoning, output = await classify_and_recommend(property_file_path, USER_ID)
-        store_to_file(f"output/doubao-thinking/{property_file_path.name}.json", output, reasoning)
+        store_to_file(
+            f"output/openai-responses/{property_file_path.name}.json", output, reasoning
+        )
         print(
             f"\nGet User feedback on this recommendation for {property_file_path.name}?"
         )

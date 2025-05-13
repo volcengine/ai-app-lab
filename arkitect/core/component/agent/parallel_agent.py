@@ -25,7 +25,6 @@
 
 import asyncio
 from typing import AsyncIterable
-from pydantic import BaseModel
 
 from arkitect.core.component.context.model import State
 from arkitect.types.responses.event import BaseEvent

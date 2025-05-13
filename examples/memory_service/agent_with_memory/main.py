@@ -14,7 +14,6 @@ import uuid
 
 from typing import AsyncIterable
 
-
 from arkitect.types.llm.model import ArkChatRequest, ArkMessage
 from arkitect.core.component.runner import Runner
 from arkitect.types.responses.utils import event_to_ark_chat_completion_chunks
@@ -113,7 +112,8 @@ async def update_memory(
     user_id: str, messages: list[ChatCompletionMessage], mem_service: MemoryService
 ) -> None:
     return await mem_service.add_or_update_memory(
-        user_id=user_id, new_messages=messages
+        user_id=user_id,
+        new_messages=messages,
     )
 
 
