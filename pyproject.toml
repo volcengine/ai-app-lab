@@ -25,6 +25,7 @@ dependencies = [
     "tos<3.0.0,>=2.8.1",
     "mcp>=1.3.0",
     "aiohttp>=3.11.13",
+    "mem0ai>=0.0.9",
 ]
 name = "arkitect"
 version = "0.2.1"
