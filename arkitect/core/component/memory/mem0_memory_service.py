@@ -34,7 +34,7 @@ from arkitect.core.component.memory.base_memory_service import (
     Memory,
     SearchMemoryResponse,
 )
-from arkitect.core.component.memory.utils import format_ark_message_as_dict
+from arkitect.core.component.memory.utils import format_message_as_dict
 from arkitect.telemetry.logger import ERROR, INFO
 from arkitect.types.llm.model import ArkMessage
 from arkitect.utils.common import Singleton
@@ -75,7 +75,7 @@ class Mem0MemoryService(BaseMemoryService):
         self._task_queue: asyncio.Queue = asyncio.Queue()
 
     @override
-    async def add_or_update_memory(
+    async def update_memory(
         self,
         user_id: str,
         new_messages: list[ArkMessage | dict | Response | ChatCompletionMessage],
@@ -84,7 +84,7 @@ class Mem0MemoryService(BaseMemoryService):
     ) -> None:
         conversation = []
         for item in new_messages:
-            conversation.append(format_ark_message_as_dict(item))
+            conversation.append(format_message_as_dict(item))
         if blocking:
             await self._add_memory(conversation, user_id)
         else:

@@ -30,7 +30,7 @@ def _ark_message_to_string(messages: list[ArkMessage | dict]) -> str:
     return content
 
 
-def format_ark_message_as_string(
+def format_message_as_string(
     message: ArkMessage | dict | Response | ChatCompletionMessage,
 ) -> str:
     if isinstance(message, ArkMessage):
@@ -45,7 +45,7 @@ def format_ark_message_as_string(
         raise ValueError("Invalid message type")
 
 
-def format_ark_message_as_dict(
+def format_message_as_dict(
     message: ArkMessage | dict | Response | ChatCompletionMessage,
 ) -> dict:
     if isinstance(message, ArkMessage):

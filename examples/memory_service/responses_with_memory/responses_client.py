@@ -5,12 +5,10 @@ from openai import NOT_GIVEN, OpenAI
 from openai.types.responses.response_input_param import ResponseInputParam
 from openai.types.responses.response_stream_event import ResponseCompletedEvent
 
-# from arkitect.core.component.memory import (
-#     Mem0MemoryService as MemoryService,
-# )  # InMemoryMemoryServiceSingleton,; InMemoryMemoryService as MemoryService,
-# from arkitect.core.component.memory import Mem0MemoryServiceSingleton
+
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
 from arkitect.types.llm.model import ArkMessage
+from arkitect.telemetry.logger import INFO
 
 
 class MemoryUpdateBehaviour(str, Enum):
@@ -77,7 +75,7 @@ class ResponsesClientWithLongTermMemory:
                     previous_response_id if previous_response_id else NOT_GIVEN
                 ),
                 tools=[{"type": "web_search_preview"}] if use_tool else None,
-                instructions=await self.get_instructions(user_id=user_id),
+                instructions=await self.get_user_profile(user_id=user_id),
             )
             print("\n--- Streaming Response Chunk Details ---")
             last_chunk = None
@@ -93,7 +91,7 @@ class ResponsesClientWithLongTermMemory:
 
         if memory_update_behavior != MemoryUpdateBehaviour.NO_AUTO_UPDATE:
             messages.append(last_chunk.response)
-            await self.memory_service.add_or_update_memory(
+            await self.memory_service.update_memory(
                 user_id=user_id,
                 new_messages=messages,
                 blocking=(
@@ -103,11 +101,11 @@ class ResponsesClientWithLongTermMemory:
                 ),
             )
         else:
-            print("No memory update")
+            INFO("No memory update")
         print("--- End of Streaming Response ---")
         return
 
-    async def get_instructions(self, user_id: str) -> str:
+    async def get_user_profile(self, user_id: str) -> str:
         memory = await self.memory_service.search_memory(
             user_id, query="Details of room preferences for this user."
         )

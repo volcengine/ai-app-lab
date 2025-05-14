@@ -40,7 +40,7 @@ class SearchMemoryResponse(BaseModel):
 
 class BaseMemoryService(ABC):
     @abstractmethod
-    async def add_or_update_memory(
+    async def update_memory(
         self,
         user_id: str,
         new_messages: list[ArkMessage | dict | Response | ChatCompletionMessage],

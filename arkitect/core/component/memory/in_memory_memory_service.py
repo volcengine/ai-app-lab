@@ -26,7 +26,7 @@ from arkitect.core.component.memory.base_memory_service import (
     Memory,
     SearchMemoryResponse,
 )
-from arkitect.core.component.memory.utils import format_ark_message_as_string
+from arkitect.core.component.memory.utils import format_message_as_string
 from arkitect.types.llm.model import ArkMessage
 from arkitect.utils.common import Singleton
 
@@ -53,7 +53,7 @@ class InMemoryMemoryService(BaseMemoryService):
         self._llm = AsyncArk()
 
     @override
-    async def add_or_update_memory(
+    async def update_memory(
         self,
         user_id: str,
         new_messages: list[ArkMessage | dict | Response | ChatCompletionMessage],
@@ -86,7 +86,7 @@ class InMemoryMemoryService(BaseMemoryService):
         memories = self.memory[user_id]
         results = "用户过去的交互记录\n\n"
         for memory in memories:
-            content = format_ark_message_as_string(memory)
+            content = format_message_as_string(memory)
             results += content
         summary = await self._llm.chat.completions.create(
             model=self.default_search_model,
