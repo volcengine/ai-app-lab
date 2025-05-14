@@ -70,42 +70,42 @@ PRODUCTS_EN = {
     "Women's Floral Graphic T-Shirts": {
         "name": "Women's Floral Graphic T-Shirts",
         "description": "Women's Floral Graphic T-Shirts is a soft, breathable, and easy-to-style top featuring a charming wildflower design, perfect for everyday wear and any casual occasion",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Womens_Floral_Graphic_T-Shirts.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Women's Floral Graphic T-Shirts.png",
     },
     "Men's Straight Cut Pants": {
         "name": "Men's Straight Cut Pants",
         "description": "Men's Straight Cut Pants is a comfortable, all-season essential, featuring a timeless fit and easy machine-wash care.",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Mens_Straight_Cut_Pants.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Men's Straight Cut Pants.png",
     },
     "Long Sleeve V Neck Blouses": {
         "name": "Long Sleeve V Neck Blouses",
         "description": "Long Sleeve V Neck Blouses is a breathable and stylish blouse, perfect for versatile, year-round wear",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Long_Sleeve_V_Neck_Blouses.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Long Sleeve V Neck Blouses.png",
     },
     "Women's Strap Flounce Long Dress": {
         "name": "Women's Strap Flounce Long Dress",
         "description": "Women's Strap Flounce Long Dress is a flowing, boho-inspired piece that blends effortless beauty with a flattering design for any occasion",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Womens_Strap_Flounce_Long_Dress.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Women's Strap Flounce Long Dress.png",
     },
     "Adult Unisex T-Shirt": {
         "name": "Adult Unisex T-Shirt",
         "description": "Adult Unisex T-Shirt is a durable, heavyweight essential offering all-day comfort and timeless style for everyday wear or work",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Adult_Unisex_T-Shirt.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Adult Unisex T-Shirt.png",
     },
     "Unisex Vintage Baseball Cap": {
         "name": "Unisex Vintage Baseball Cap",
         "description": "Unisex Vintage Baseball Cap is a relaxed, vintage-washed essential with an unstructured crown, available in 10 colors to match any style effortlessly",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Unisex_Vintage_Baseball_Cap.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Unisex Vintage Baseball Cap.png",
     },
     "Pink Large Shoulder Tote Bag": {
         "name": "Pink Large Shoulder Tote Bag",
         "description": "Pink Large Shoulder Tote Bag is a stylish and spacious everyday essential, crafted from soft, durable material with a charming bow accent for a perfect blend of fashion and function",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Pink_Large_Shoulder_Tote_Bag.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Pink Large Shoulder Tote Bag.png",
     },
     "Ballet Flat": {
         "name": "Ballet Flat",
         "description": "Ballet Flat is an elegant shoe featuring a sweet bow detail and a comfortable low heel for effortless style and comfort",
-        "cover_image": "tos://bp-custom-support-product/custom_support/product/Ballet_Flat.png",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Ballet Flat.png",
     },
 }
 
