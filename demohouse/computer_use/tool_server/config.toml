@@ -1,0 +1,5 @@
+port = 8102
+display = ":5"
+[log]
+env = "dev"
+format = "%(asctime)s %(levelname)7s %(request_id)s %(filename)s:%(lineno)s - %(name)s - %(message)s"
