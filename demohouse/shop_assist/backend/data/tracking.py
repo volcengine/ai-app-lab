@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,19 +13,20 @@ import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Dict
+from typing import Dict, List
 
 from .cache import LRUCache
+from config import language
 
 
 class TrackingStatus(str, Enum):
     """Tracking status enumeration"""
 
-    PENDING = "待揽收"
-    PICKED_UP = "已揽收"
-    IN_TRANSIT = "运输中"
-    DELIVERING = "派送中"
-    DELIVERED = "已签收"
+    PENDING = "待揽收" if language == "zh" else "Waiting for pickup"
+    PICKED_UP = "已揽收" if language == "zh" else "Picked Up"
+    IN_TRANSIT = "运输中" if language == "zh" else "In transit"
+    DELIVERING = "派送中" if language == "zh" else "Out for delivery"
+    DELIVERED = "已签收" if language == "zh" else "Delivered"
 
 
 @dataclass
@@ -54,11 +55,11 @@ def _generate_tracking_info(tracking_number: str) -> Dict:
     """
     # Random locations for demo
     locations = [
-        "上海转运中心",
-        "杭州转运中心",
-        "北京转运中心",
-        "广州转运中心",
-        "深圳转运中心",
+        "上海转运中心" if language == "zh" else "Shanghai Transit Center",
+        "杭州转运中心" if language == "zh" else "Hangzhou Transit Center",
+        "北京转运中心" if language == "zh" else "Beijing Transit Center",
+        "广州转运中心" if language == "zh" else "Guangzhou Transit Center",
+        "深圳转运中心" if language == "zh" else "Shenzhen Transit Center",
     ]
 
     # Base time for events (now - 3 days)
@@ -73,13 +74,22 @@ def _generate_tracking_info(tracking_number: str) -> Dict:
         event_time = base_time + timedelta(hours=i * 8)  # 8 hours between events
         location = random.choice(locations)
 
-        description = {
-            TrackingStatus.PENDING: f"包裹在{location}等待揽收",
-            TrackingStatus.PICKED_UP: f"快递员已在{location}揽收",
-            TrackingStatus.IN_TRANSIT: f"包裹已到达{location}",
-            TrackingStatus.DELIVERING: f"包裹已到达{location}，正在派送",
-            TrackingStatus.DELIVERED: f"包裹已在{location}签收",
-        }[status]
+        if language == "zh":
+            description = {
+                TrackingStatus.PENDING: f"包裹在{location}等待揽收",
+                TrackingStatus.PICKED_UP: f"快递员已在{location}揽收",
+                TrackingStatus.IN_TRANSIT: f"包裹已到达{location}",
+                TrackingStatus.DELIVERING: f"包裹已到达{location}，正在派送",
+                TrackingStatus.DELIVERED: f"包裹已在{location}签收",
+            }[status]
+        else:
+            description = {
+                TrackingStatus.PENDING: f"The package is waiting for pickup at {location}",
+                TrackingStatus.PICKED_UP: f"The courier has picked up the package at {location}",
+                TrackingStatus.IN_TRANSIT: f"The package has arrived at {location}",
+                TrackingStatus.DELIVERING: f"The package has arrived at {location} and is out for delivery",
+                TrackingStatus.DELIVERED: f"The package has been delivered and signed for at {location}",
+            }[status]
 
         events.append(
             {

@@ -18,24 +18,31 @@ from pydantic import Field
 
 def get_pack_track_fn(account_id: str) -> Callable:
     async def pack_track(
-        order_id: str = Field(description="订单号, 需要用户提供", default=""),
-        tracking_number: str = Field(description="物流单号, 需要用户提供", default=""),
+        order_id: str = Field(
+            description="Order ID, must be provided by user", default=""
+        ),
+        tracking_number: str = Field(
+            description="Tracking number, must be provided by user", default=""
+        ),
     ):
         """
-        需要查询物流快递信息的时候使用本函数，返回物流信息, 订单号和物流单号二选一
+        Use this function to query shipping information. Returns tracking information.
+        Either order ID or tracking number must be provided.
         """
         if order_id:
             order = await orders.get_order(account_id, order_id)
             if not order:
-                return "未查询到订单信息"
+                return "Order information not found"
             if order["status"] == OrderStatus.REFUNDED.value:
-                return "订单已退款，无快递信息"
+                return "Order has been refunded, no shipping information available"
             if order["status"] == OrderStatus.PENDING.value:
-                return "订单未发货，暂无物流信息"
+                return (
+                    "Order has not been shipped yet, no tracking information available"
+                )
             tracking_number = order.get("tracking_number")
 
         if not tracking_number:
-            return "订单无物流单号"
+            return "Order has no tracking number"
 
         tracking_info = tracking.get_tracking_info(tracking_number)
 
