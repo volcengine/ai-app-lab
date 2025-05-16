@@ -11,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import sys
 import asyncio
 import datetime
 from datetime import timedelta
 import logging
 from contextlib import AsyncExitStack
-from typing import Any, Dict
+from typing import Any, Dict, TextIO
 
 from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
 
@@ -54,6 +54,7 @@ class MCPClient:
         sse_read_timeout: float = 60 * 5,
         exit_stack: AsyncExitStack | None = None,
         transport: str | None = None,
+        errlog: TextIO | None = sys.stderr,
     ) -> None:
         self.command = command
         self.arguments = arguments
@@ -63,6 +64,7 @@ class MCPClient:
         self.timeout: float = timeout
         self.sse_read_timeout = sse_read_timeout
         self.transport = transport
+        self.errlog = errlog
 
         # Initialize session and client objects
         self.session: ClientSession = None  # type: ignore
@@ -113,7 +115,7 @@ class MCPClient:
         )
 
         stdio_transport = await self.exit_stack.enter_async_context(
-            stdio_client(server_params)
+            stdio_client(server_params, self.errlog)
         )
         stdio_read, stdio_write = stdio_transport
         self.session = await self.exit_stack.enter_async_context(
