@@ -83,6 +83,8 @@
     - 语音技术-音频生成-语音合成 Voice_type  
     - 火山方舟大模型 EndPointId  
 
+- 前往<a target="_blank" href="https://console.volcengine.com/rtc/aigc/cloudRTC?from=doc">控制台</a>启用硬件场景配置。
+
 - 演示示例需要申请加入策略组。Demo目前仅支持G711A编码，需要发送邮件到[Conversational_AI@bytedance.com]，主题：“申请加入LLM策略组”内容：您的RTC_APP_ID。可申请多个RTC_APP_ID。  
 
 ## 快速入门
@@ -267,20 +269,42 @@ python3 RtcAigcService.py
 
 #### 编译固件
 
-1. 打开 `esp-adf/examples/rtc-aigc-embedded-demo/client/espressif/esp32s3_demo/sdkconfig`文件，在`CONFIG_EXAMPLE_WIFI_SSID`及`CONFIG_EXAMPLE_WIFI_PASSWORD`中填入你的 WIFI 账号和密码  
+进入`esp-adf/examples/rtc-aigc-embedded-demo/client/espressif/esp32s3_demo` 目录下编译固件  
 
-2. 进入`esp-adf/examples/rtc-aigc-embedded-demo/client/espressif/esp32s3_demo` 目录下编译固件  
-    1. 进入 esp32s3_demo 目录  
+1. 进入 esp32s3_demo 目录  
 
     ```shell
     cd $ADF_PATH/examples/rtc-aigc-embedded-demo/client/espressif/esp32s3_demo
     ```
-    2. 设置编译目标平台  
+2. 设置编译目标平台  
 
     ```shell
     idf.py set-target esp32s3
     ```
-    3. 编译固件  
+    
+3. 设置WIFI账号密码  
+
+    ```shell
+    idf.py menuconfig
+    ```
+
+  进入 `Example Connection Configuration` 菜单，在 `WiFi SSID` 及 `WiFi Password` 中填入你的 WIFI 账号和密码，保存并退出配置菜单。
+
+4. 设置开发版型号
+
+    ```shell
+    idf.py menuconfig
+    ```
+  进入 `Audio HAL` 菜单，在 `Audio board` 中选择你的开发板型号。(例如: 方舟开发板选择 `M5STACK-ATOMS3R`)保存并退出配置菜单
+
+5. 设置底层网络缓存大小
+
+    ```shell
+    idf.py menuconfig
+    ```
+  进入  `Component config->LWIP->UDP` 菜单，设置 `Default UDP receive mail box size`大小为 64
+
+6. 编译固件
 
     ```shell
     idf.py build
