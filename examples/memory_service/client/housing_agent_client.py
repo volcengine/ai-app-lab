@@ -1,15 +1,16 @@
 import asyncio
+import os
 import json
 from pathlib import Path
 
 from openai import AsyncOpenAI
 
 # --- Configuration ---
-BACKEND_AGENT_URL = (
-    "http://localhost:10888/api/v3/bots"  # Matches the FastAPI server port
-)
+# BACKEND_AGENT_URL = "https://sd0mptkvvqvi36d0fkq80.apigateway-ap-southeast-1.volceapi.com/api/v3/bots/"  # Matches the FastAPI server port
+BACKEND_AGENT_URL = "https://ark.cn-beijing.volces.com/api/v3/bots/"
 PROPERTY_LISTINGS_DIR = Path(__file__).parent / "data" / "crawled_listings"
 USER_ID = "test_user_frontend"  # A unique ID for the frontend user
+API_KEY = os.environ.get("ARK_API_KEY")
 
 
 def make_classify_request(property_file_path: str, user_id: str) -> dict:
@@ -17,9 +18,9 @@ def make_classify_request(property_file_path: str, user_id: str) -> dict:
         property_listing = f.read()
     return {
         "messages": [{"role": "user", "content": property_listing}],
-        "model": "abc",
+        "model": "bot-20250521181749-2hzm5",
         "stream": True,
-        "metadata": {"user_id": user_id},
+        "metadata": {"user_id": user_id, "update_memory": False},
     }
 
 
@@ -29,7 +30,7 @@ def make_inital_user_profile_setup(user_feedback: str, user_id: str) -> dict:
             {"role": "user", "content": user_feedback},
             {"role": "user", "content": user_feedback},
         ],
-        "model": "bot-20250519111009-c55xb",
+        "model": "bot-20250521181749-2hzm5",
         "stream": True,
         "metadata": {"user_id": user_id, "update_memory": "true"},
     }
@@ -45,9 +46,9 @@ def make_user_feedback_request(
             {"role": "user", "content": property_listing},
             {"role": "user", "content": user_comment},
         ],
-        "model": "abc",
+        "model": "bot-20250521181749-2hzm5",
         "stream": True,
-        "metadata": {"user_id": user_id, "previous_response_id": previous_response_id},
+        "metadata": {"user_id": user_id, "update_memory": "true"},
     }
 
 
@@ -57,7 +58,7 @@ async def classify_and_recommend(
     client = AsyncOpenAI(
         # base_url="https://0x9hr6ko.fn.bytedance.net/api/v3/bots",  # remote
         base_url=BACKEND_AGENT_URL,
-        api_key="{API_KEY}",
+        api_key=f"{API_KEY}",
     )
     request_payload = make_classify_request(property_file_path, user_id=user_id)
     print(f"Querying agent for: {property_file_path.name}...")
@@ -106,7 +107,7 @@ async def update_user_profile(
     client = AsyncOpenAI(
         # base_url="URL_ADDRESSx9hr6ko.fn.bytedance.net/api/v3/bots",  # remote
         base_url=BACKEND_AGENT_URL,
-        api_key="{API_KEY}",
+        api_key=f"{API_KEY}",
     )
     if property_file_path is None:
         request_payload = make_inital_user_profile_setup(

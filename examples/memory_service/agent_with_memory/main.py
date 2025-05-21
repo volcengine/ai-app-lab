@@ -44,14 +44,8 @@ DEFAULT_EMBEDDING_MODEL = "doubao-embedding-text-240715"
 DEFAULT_LLM_MODEL = "doubao-1-5-vision-pro-32k-250115"
 DEFAULT_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
 LONG_TERM_MEMORY_VDB = "mem0_test"
-MILVUS_URL = os.getenv(
-    "MILVUS_URL",
-    "https://in03-d1b5698029a008d.serverless.gcp-us-west1.cloud.zilliz.com",
-)
-MILVUS_TOKEN = os.getenv(
-    "MILVUS_TOKEN",
-    "94bf84637431db36f7c589dcf76c0406128e30c52d94fda5a3793d4bf034c57f6c6889b30e98aa643822fed99cb79413fd644726",
-)
+MILVUS_URL = os.getenv("MILVUS_URL")
+MILVUS_TOKEN = os.getenv("MILVUS_TOKEN")
 
 APP_NAME = "property_agent"
 
@@ -154,7 +148,7 @@ async def main(request: ArkChatRequest) -> AsyncIterable[ArkChatCompletionChunk]
         agent=house_agent,
         memory_service=mem_service,
         config=RunnerConfig(
-            memory_update_behavior=MemoryUpdateSetting.NON_BLOCKING,
+            memory_update_behavior=MemoryUpdateSetting.NO_AUTO_UPDATE,
         ),
     )
     messages = preprocess_reqeusts(request.messages)
