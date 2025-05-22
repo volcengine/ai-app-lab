@@ -24,7 +24,6 @@
 # limitations under the License.
 
 import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
-from volcenginesdkarkruntime.types.chat import ChatCompletionChunk
 
 from arkitect.core.errors.exceptions import APIException
 from arkitect.types.llm.model import (
@@ -36,30 +35,11 @@ from arkitect.types.llm.model import (
 from arkitect.types.responses.event import (
     BaseEvent,
     ErrorEvent,
-    OutputTextEvent,
-    ReasoningEvent,
+    MessageEvent,
     ToolCallEvent,
     ToolChunk,
     ToolCompletedEvent,
 )
-
-
-def convert_chat_to_event(chat_chunk: ChatCompletionChunk) -> BaseEvent | None:
-    if chat_chunk.choices and chat_chunk.choices[0].delta:
-        delta = chat_chunk.choices[0].delta
-        if delta.content:
-            return OutputTextEvent(
-                id=chat_chunk.id,
-                delta=delta.content,
-                created=chat_chunk.created,
-            )
-        elif delta.reasoning_content:
-            return ReasoningEvent(
-                id=chat_chunk.id,
-                delta=delta.reasoning_content,
-                created=chat_chunk.created,
-            )
-    return None
 
 
 def convert_tool_chunk_to_event(chunk: ToolChunk) -> BaseEvent:
@@ -75,87 +55,3 @@ def convert_tool_chunk_to_event(chunk: ToolChunk) -> BaseEvent:
         tool_name=chunk.tool_name,
         tool_arguments=chunk.tool_arguments,
     )
-
-
-def event_to_ark_chat_completion_chunks(event: BaseEvent) -> ArkChatCompletionChunk:
-    if isinstance(event, OutputTextEvent):
-        return ArkChatCompletionChunk(
-            id=event.id,
-            choices=[
-                completion_chunk.Choice(
-                    delta=completion_chunk.ChoiceDelta(
-                        content=event.delta,
-                        role="assistant",
-                    ),
-                    index=0,
-                )
-            ],
-            created=event.created,
-            model="default",
-            object="chat.completion.chunk",
-        )
-    elif isinstance(event, ReasoningEvent):
-        return ArkChatCompletionChunk(
-            id=event.id,
-            choices=[
-                completion_chunk.Choice(
-                    delta=completion_chunk.ChoiceDelta(
-                        reasoning_content=event.delta,
-                        role="assistant",
-                    ),
-                    index=0,
-                )
-            ],
-            created=event.created,
-            model="default",
-            object="chat.completion.chunk",
-        )
-    elif isinstance(event, ToolCompletedEvent):
-        return ArkChatCompletionChunk(
-            id=event.id,
-            choices=[],
-            created=event.created,
-            model="default",
-            object="chat.completion.chunk",
-            bot_usage=BotUsage(
-                action_details=[
-                    ActionDetail(
-                        name=event.tool_name,
-                        tool_details=[
-                            ToolDetail(
-                                name=event.tool_name,
-                                input=event.tool_arguments,
-                                output=event.tool_response,
-                            )
-                        ],
-                    )
-                ]
-            ),
-        )
-    elif isinstance(event, ToolCallEvent):
-        return ArkChatCompletionChunk(
-            id=event.id,
-            choices=[],
-            created=event.created,
-            model="default",
-            object="chat.completion.chunk",
-            bot_usage=BotUsage(
-                action_details=[
-                    ActionDetail(
-                        name=event.tool_name,
-                        tool_details=[
-                            ToolDetail(
-                                name=event.tool_name,
-                                input=event.tool_arguments,
-                                output=None,
-                            )
-                        ],
-                    )
-                ]
-            ),
-        )
-    elif isinstance(event, ErrorEvent):
-        if event.exception:
-            raise event.exception
-        else:
-            raise APIException(message=event.error_msg, code=event.error_code)

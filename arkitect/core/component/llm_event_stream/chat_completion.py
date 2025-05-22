@@ -17,23 +17,14 @@ from typing import Any, AsyncIterable, Dict, List
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.resources.chat import AsyncChat
 from volcenginesdkarkruntime.resources.chat.completions import AsyncCompletions
-from volcenginesdkarkruntime.types.chat import (
-    ChatCompletionChunk,
-    ChatCompletionMessageParam,
-)
+from volcenginesdkarkruntime.types.chat import ChatCompletionMessageParam
 from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
 
 from arkitect.core.component.tool.tool_pool import ToolPool
 from arkitect.types.llm.model import ArkMessage
-from arkitect.types.responses.event import (
-    BaseEvent,
-    OutputTextEvent,
-    ReasoningEvent,
-    StateUpdateEvent,
-)
-from arkitect.types.responses.utils import convert_chat_to_event
+from arkitect.types.responses.event import BaseEvent, StateUpdateEvent
 
 from .model import NewState
 
@@ -88,8 +79,7 @@ class _AsyncCompletions(AsyncCompletions):
                                 final_tool_calls[
                                     index
                                 ].function.arguments += tool_call.function.arguments
-                if converted_chunk := convert_chat_to_event(chunk):
-                    yield converted_chunk
+                yield chunk
             chat_completion_messages.tool_calls = [
                 v.model_dump() for v in final_tool_calls.values()
             ]

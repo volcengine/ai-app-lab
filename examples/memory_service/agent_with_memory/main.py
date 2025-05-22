@@ -31,7 +31,6 @@ from arkitect.core.component.runner import Runner
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatRequest, ArkMessage
-from arkitect.types.responses.utils import event_to_ark_chat_completion_chunks
 
 MODELS = {
     # "default": "doubao-1-5-vision-pro-32k-250115",
@@ -153,7 +152,7 @@ async def main(request: ArkChatRequest) -> AsyncIterable[ArkChatCompletionChunk]
     )
     messages = preprocess_reqeusts(request.messages)
     async for resp in runner.run(messages=messages, user_id=user_id):
-        yield event_to_ark_chat_completion_chunks(resp)
+        yield resp.to_chunk()
 
 
 if __name__ == "__main__":
