@@ -22,6 +22,9 @@ from volcenginesdkarkruntime.types.chat import (
 )
 
 from arkitect.core.component.tool.tool_pool import ToolPool
+from arkitect.core.component.tool.utils import (
+    convert_to_chat_completion_content_part_param,
+)
 from arkitect.telemetry.logger import INFO, WARN
 from arkitect.telemetry.trace import task
 from arkitect.utils import dump_json_str
@@ -88,6 +91,7 @@ async def handle_function_call(
                 tool_name=tool_name,
                 parameters=parameters,
             )
+            resp = convert_to_chat_completion_content_part_param(resp)
             INFO(
                 f"Function {tool_name} called with parameters:"
                 + dump_json_str(parameters)

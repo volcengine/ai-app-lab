@@ -19,10 +19,8 @@ import logging
 from contextlib import AsyncExitStack
 from typing import Any, Dict, TextIO
 
-from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
 
 from arkitect.core.component.tool.utils import (
-    convert_to_chat_completion_content_part_param,
     mcp_to_chat_completion_tool,
 )
 from arkitect.telemetry.trace import task
@@ -36,6 +34,7 @@ from mcp import (
 from mcp.client.sse import sse_client
 from mcp.client.stdio import get_default_environment
 from mcp.client.streamable_http import streamablehttp_client
+from mcp.types import CallToolResult
 
 
 logger = logging.getLogger(__name__)
@@ -231,7 +230,7 @@ class MCPClient:
         self,
         tool_name: str,
         parameters: dict[str, Any],
-    ) -> str | list[ChatCompletionContentPartParam]:
+    ) -> CallToolResult:
         async with self._lock:
             if self.session is None:
                 logger.warning(
@@ -239,7 +238,7 @@ class MCPClient:
                 )
                 await self.connect_to_server()
             result = await self.session.call_tool(tool_name, parameters)
-            return convert_to_chat_completion_content_part_param(result)
+            return result
 
     @task()
     async def get_tool(self, tool_name: str, use_cache: bool = True) -> Tool | None:
