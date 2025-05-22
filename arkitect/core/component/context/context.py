@@ -46,6 +46,7 @@ from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
 from arkitect.core.component.tool.utils import (
     convert_to_chat_completion_content_part_param,
 )
+from arkitect.telemetry.trace.wrapper import task
 from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
