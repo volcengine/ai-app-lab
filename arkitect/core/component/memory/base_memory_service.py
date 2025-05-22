@@ -21,7 +21,7 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
     ChatCompletionMessage,
 )
 
-from arkitect.types.llm.model import ArkMessage
+from arkitect.types.llm.model import Message
 
 
 class Memory(BaseModel):
@@ -43,7 +43,7 @@ class BaseMemoryService(ABC):
     async def update_memory(
         self,
         user_id: str,
-        new_messages: list[ArkMessage | dict | Response | ChatCompletionMessage],
+        new_messages: list[Message | dict | Response | ChatCompletionMessage],
         **kwargs: Any,
     ) -> None:
         pass

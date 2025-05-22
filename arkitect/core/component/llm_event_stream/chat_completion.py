@@ -23,7 +23,7 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
 )
 
 from arkitect.core.component.tool.tool_pool import ToolPool
-from arkitect.types.llm.model import ArkMessage
+from arkitect.types.llm.model import Message
 from arkitect.types.responses.event import BaseEvent, MessageEvent, StateUpdateEvent
 
 from .model import NewState
@@ -62,6 +62,7 @@ class _AsyncCompletions(AsyncCompletions):
             chat_completion_messages = ChatCompletionMessage(
                 role="assistant",
                 content="",
+                reasoning_content="",
                 tool_calls=[],
             )
             async for chunk in resp:
@@ -70,6 +71,10 @@ class _AsyncCompletions(AsyncCompletions):
                         chat_completion_messages.content += chunk.choices[
                             0
                         ].delta.content
+                    if chunk.choices[0].delta.reasoning_content:
+                        chat_completion_messages.reasoning_content += chunk.choices[
+                            0
+                        ].delta.reasoning_content
                     if chunk.choices[0].delta.tool_calls:
                         for tool_call in chunk.choices[0].delta.tool_calls:
                             index = tool_call.index
@@ -85,8 +90,9 @@ class _AsyncCompletions(AsyncCompletions):
             ]
             yield StateUpdateEvent(
                 message_delta=[
-                    ArkMessage(
+                    Message(
                         content=chat_completion_messages.content,
+                        reasoning_content=chat_completion_messages.reasoning_content,
                         role=chat_completion_messages.role,
                         tool_calls=chat_completion_messages.tool_calls,
                     )

@@ -16,7 +16,7 @@ from typing import Any, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-from arkitect.types.llm.model import ArkChatParameters, ArkContextParameters, ArkMessage
+from arkitect.types.llm.model import ArkChatParameters, ArkContextParameters, Message
 from arkitect.types.responses.event import StateUpdateEvent
 
 
@@ -24,7 +24,7 @@ class State(BaseModel):
     checkpoint_id: str = ""
 
     context_id: Optional[str] = Field(default=None)
-    messages: List[ArkMessage] = Field(default_factory=list)
+    messages: List[Message] = Field(default_factory=list)
     parameters: Optional[ArkChatParameters] = Field(default=None)
     context_parameters: Optional[ArkContextParameters] = Field(default=None)
     details: dict = {}

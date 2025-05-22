@@ -278,6 +278,10 @@ class ArkMessage(BaseModel):
         return v
 
 
+# Alias
+Message = ArkMessage
+
+
 class ArkChatRequest(Request):
     messages: List[ArkMessage]
     """

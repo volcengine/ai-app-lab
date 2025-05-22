@@ -32,7 +32,7 @@ from arkitect.core.component.llm_event_stream.model import NewState
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
 from arkitect.core.component.runner.config import RunnerConfig, MemoryUpdateSetting
 from arkitect.telemetry.logger import ERROR
-from arkitect.types.llm.model import ArkMessage
+from arkitect.types.llm.model import Message
 from arkitect.types.responses.event import BaseEvent, StateUpdateEvent
 
 
@@ -53,7 +53,7 @@ class Runner:
 
     async def run(
         self,
-        messages: list[ArkMessage] | None = None,
+        messages: list[Message] | None = None,
         checkpoint_id: str | None = None,
         state: NewState | None = None,
         user_id: str = "",
@@ -101,7 +101,7 @@ class Runner:
         self,
         state: NewState,
         checkpoint: Checkpoint,
-        messages: list[ArkMessage] | None = None,
+        messages: list[Message] | None = None,
     ) -> AsyncIterable[BaseEvent]:
         if messages is not None:
             append_messages = StateUpdateEvent(

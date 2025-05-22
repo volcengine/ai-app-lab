@@ -27,7 +27,7 @@ from arkitect.core.component.memory.base_memory_service import (
     SearchMemoryResponse,
 )
 from arkitect.core.component.memory.utils import format_message_as_string
-from arkitect.types.llm.model import ArkMessage
+from arkitect.types.llm.model import Message
 from arkitect.utils.common import Singleton
 
 DEFAULT_SEARCH_MEM_PROMPT = """
@@ -56,7 +56,7 @@ class InMemoryMemoryService(BaseMemoryService):
     async def update_memory(
         self,
         user_id: str,
-        new_messages: list[ArkMessage | dict | Response | ChatCompletionMessage],
+        new_messages: list[Message | dict | Response | ChatCompletionMessage],
         **kwargs: Any,
     ) -> None:
         if user_id not in self.memory:

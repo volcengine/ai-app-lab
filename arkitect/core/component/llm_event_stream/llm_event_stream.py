@@ -39,7 +39,7 @@ from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
 from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
-    ArkMessage,
+    Message,
 )
 from arkitect.types.responses.event import (
     BaseEvent,
@@ -72,7 +72,7 @@ class _AsyncCompletionsEventStream:
         async def iterator(
             messages: List[ChatCompletionMessageParam],
         ) -> AsyncIterable[BaseEvent | ContextInterruption]:
-            yield StateUpdateEvent(message_delta=[ArkMessage(**m) for m in messages])
+            yield StateUpdateEvent(message_delta=[Message(**m) for m in messages])
             if self.need_tool_call():
                 try:
                     async for event in self.tool_call_stream():
@@ -214,7 +214,7 @@ class _AsyncCompletionsEventStream:
             )
             yield StateUpdateEvent(
                 message_delta=[
-                    ArkMessage(
+                    Message(
                         **{
                             "role": "tool",
                             "tool_call_id": tool_call.id,
@@ -253,7 +253,7 @@ class _AsyncCompletionsEventStream:
             raise Exception(f"Agent {agent_name} not found")
         yield StateUpdateEvent(
             message_delta=[
-                ArkMessage(
+                Message(
                     **{
                         "role": "tool",
                         "tool_call_id": agent_call.id,
@@ -356,9 +356,7 @@ class LLMEventStream:
             await self.tool_pool.refresh_tool_list()
         return
 
-    def get_latest_message(
-        self, role: str | None = "assistant"
-    ) -> Optional[ArkMessage]:
+    def get_latest_message(self, role: str | None = "assistant") -> Optional[Message]:
         for evt in reversed(self.state.events):
             if evt.message_delta:
                 for m in evt.message_delta:
@@ -408,7 +406,7 @@ def get_role(role: str, agent_name: str, author_name: str) -> str:
     return "user"
 
 
-def get_message(message: ArkMessage, agent_name: str, author_name: str) -> dict:
+def get_message(message: Message, agent_name: str, author_name: str) -> dict:
     msg = message.model_dump()
     if message.role == "assistant":
         role = get_role(message.role, agent_name, author_name)

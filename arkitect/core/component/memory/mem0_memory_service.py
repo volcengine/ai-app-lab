@@ -42,7 +42,7 @@ from arkitect.core.component.memory.base_memory_service import (
 )
 from arkitect.core.component.memory.utils import format_message_as_dict
 from arkitect.telemetry.logger import ERROR, INFO
-from arkitect.types.llm.model import ArkMessage
+from arkitect.types.llm.model import Message
 from arkitect.utils.common import Singleton
 
 DEFAULT_EMBEDDING_MODEL = "doubao-embedding-text-240715"
@@ -85,7 +85,7 @@ class Mem0MemoryService(BaseMemoryService):
     async def update_memory(
         self,
         user_id: str,
-        new_messages: list[ArkMessage | dict | Response | ChatCompletionMessage],
+        new_messages: list[Message | dict | Response | ChatCompletionMessage],
         blocking: bool = False,
         **kwargs: Any,
     ) -> None:

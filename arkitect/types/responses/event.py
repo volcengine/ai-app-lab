@@ -30,7 +30,7 @@ from arkitect.core.errors.exceptions import APIException
 from arkitect.types.llm.model import (
     ActionDetail,
     ArkChatCompletionChunk,
-    ArkMessage,
+    Message,
     BotUsage,
     ToolDetail,
 )
@@ -176,4 +176,4 @@ class EOFEvent(BaseEvent):
 
 class StateUpdateEvent(BaseEvent):
     details_delta: dict | None = None
-    message_delta: list[ArkMessage] | None = None
+    message_delta: list[Message] | None = None
