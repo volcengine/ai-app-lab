@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -9,7 +9,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-PRODUCTS = {
+from config import language
+
+# Chinese products
+PRODUCTS_ZH = {
     "栀子花车载香薰": {
         "name": "栀子花车载香薰",
         "description": "栀子花车载香薰是一款为汽车提供舒适和放松的香薰产品。它可以帮助用户缓解疲劳、缓解压力，提升驾驶体验。",
@@ -61,3 +64,56 @@ PRODUCTS = {
         "cover_image": "tos://xiangyuxuan-test/custom_support/product/折叠旋转电动无线充车载支架.PNG",
     },
 }
+
+# English products
+PRODUCTS_EN = {
+    "Women's Floral Graphic T-Shirts": {
+        "name": "Women's Floral Graphic T-Shirts",
+        "description": "Women's Floral Graphic T-Shirts is a soft, breathable, and easy-to-style top featuring a charming wildflower design, perfect for everyday wear and any casual occasion",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Women's Floral Graphic T-Shirts.png",
+    },
+    "Men's Straight Cut Pants": {
+        "name": "Men's Straight Cut Pants",
+        "description": "Men's Straight Cut Pants is a comfortable, all-season essential, featuring a timeless fit and easy machine-wash care.",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Men's Straight Cut Pants.png",
+    },
+    "Long Sleeve V Neck Blouses": {
+        "name": "Long Sleeve V Neck Blouses",
+        "description": "Long Sleeve V Neck Blouses is a breathable and stylish blouse, perfect for versatile, year-round wear",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Long Sleeve V Neck Blouses.png",
+    },
+    "Women's Strap Flounce Long Dress": {
+        "name": "Women's Strap Flounce Long Dress",
+        "description": "Women's Strap Flounce Long Dress is a flowing, boho-inspired piece that blends effortless beauty with a flattering design for any occasion",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Women's Strap Flounce Long Dress.png",
+    },
+    "Adult Unisex T-Shirt": {
+        "name": "Adult Unisex T-Shirt",
+        "description": "Adult Unisex T-Shirt is a durable, heavyweight essential offering all-day comfort and timeless style for everyday wear or work",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Adult Unisex T-Shirt.png",
+    },
+    "Unisex Vintage Baseball Cap": {
+        "name": "Unisex Vintage Baseball Cap",
+        "description": "Unisex Vintage Baseball Cap is a relaxed, vintage-washed essential with an unstructured crown, available in 10 colors to match any style effortlessly",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Unisex Vintage Baseball Cap.png",
+    },
+    "Pink Large Shoulder Tote Bag": {
+        "name": "Pink Large Shoulder Tote Bag",
+        "description": "Pink Large Shoulder Tote Bag is a stylish and spacious everyday essential, crafted from soft, durable material with a charming bow accent for a perfect blend of fashion and function",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Pink Large Shoulder Tote Bag.png",
+    },
+    "Ballet Flat": {
+        "name": "Ballet Flat",
+        "description": "Ballet Flat is an elegant shoe featuring a sweet bow detail and a comfortable low heel for effortless style and comfort",
+        "cover_image": "https://sf16-sg.tiktokcdn.com/obj/eden-sg/lm_sth/ljhwZthlaukjlkulzlp/ark/application/demo/shop_guide/product/Ballet Flat.png",
+    },
+}
+
+
+# Get products based on language configuration
+def get_products():
+    return PRODUCTS_ZH if language == "zh" else PRODUCTS_EN
+
+
+# For backward compatibility
+PRODUCTS = get_products()

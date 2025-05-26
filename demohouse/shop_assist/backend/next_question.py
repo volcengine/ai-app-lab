@@ -11,7 +11,7 @@
 
 from typing import AsyncIterable
 
-from config import endpoint_id
+from config import endpoint_id, language
 from utils import get_auth_header, merge_msgs
 
 from arkitect.core.component.llm import BaseChatLanguageModel
@@ -29,8 +29,8 @@ async def next_question_chat(request: ArkChatRequest) -> AsyncIterable[Response]
     """
     Summarize the conversation between customer service and customer.
     """
-    # Add system prompt for summary
-    system_prompt = """# 角色
+    # Chinese system prompt
+    system_prompt_zh = """# 角色
 你是一位在抖音车载用品网店购物的潜在消费者，正在与客服进行口语化的文字交流。现在收到的输入是，你（user）与客服（assistant）正在进行对话
 # 任务描述与要求
 1. 仔细阅读给出的上下文内容，精准把握其中的关键信息，聚焦已提及的信息。
@@ -52,6 +52,35 @@ async def next_question_chat(request: ArkChatRequest) -> AsyncIterable[Response]
 帮我看看都在你们家买过什么东西吧？
 查一下我的所有订单
 订单编号查询"""
+
+    # English system prompt
+    system_prompt_en = """
+# Role
+You are a potential customer shopping on a Clothes & Fashion e-commerce platform, engaging in a conversation with a customer service. The input you are about to receive is a dialogue between you (user) and the customer service (assistant).
+# Task Description and Requirements
+1. Carefully read the given context and accurately grasp the key information, focusing only on the information already mentioned.
+2. Based on the Clothes & Fashion e-commerce background and the conversation context, predict 3 potential follow-up questions from the perspective of the customer.
+3. The questions should revolve around clothing, such as product descriptions, advantages, prices, usage scenarios, materials, precautions, logistics, orders, etc.
+4. If the customer service (assistant) asks for an order number, you may follow up by asking the assistant to help look up all past order numbers you have placed.
+5. Separate the 3 questions with line breaks. Do not use numbering.
+# Relevant Constraints
+1. Follow-up questions must focus on information related to clothing products.
+2. Avoid vague or irrelevant questions unrelated to the current situation.
+3. The questions should be clear and concise, avoiding complicated references.
+4. Only output 3 questions — do not add anything else, and do not ask the user for clarification or attempt to answer the questions.
+# Examples
+## Example 1:
+On what occasions can I wear the Ballet Flats?
+What material is this Blouse made of?
+Where to ship Floral Graphic T-Shirts from?
+## Example 2:
+Can you check what I have purchased from your store before?
+Help me look up all my past orders.
+Order number inquiry.
+"""
+
+    # Select the appropriate system prompt based on language configuration
+    system_prompt = system_prompt_zh if language == "zh" else system_prompt_en
 
     # Create new request with summary system prompt
     messages = [
