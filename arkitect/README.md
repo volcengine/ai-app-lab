@@ -61,11 +61,11 @@
    pip install arkitect --index-url https://pypi.org/simple
    ```
 
-2. 登录[方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint?projectName=default)，创建一个推理接入点（Endpoint），推荐使用Doubao-pro-32k [参考文档](https://www.volcengine.com/docs/82379/1399008#_2-%E5%88%9B%E5%BB%BA%E5%9C%A8%E7%BA%BF%E6%8E%A8%E7%90%86%E6%8E%A5%E5%85%A5%E7%82%B9%EF%BC%88endpoint%EF%BC%89)
+2. 登录[方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint?projectName=default)，点击开通管理，推荐使用Doubao-pro-32k [参考文档](https://www.volcengine.com/docs/82379/1399008#_2-%E5%88%9B%E5%BB%BA%E5%9C%A8%E7%BA%BF%E6%8E%A8%E7%90%86%E6%8E%A5%E5%85%A5%E7%82%B9%EF%BC%88endpoint%EF%BC%89)
 
 3. 登录[方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint?projectName=default)，创建一个 API KEY [参考文档](https://www.volcengine.com/docs/82379/1399008#_1-%E8%8E%B7%E5%8F%96%E5%B9%B6%E9%85%8D%E7%BD%AE-api-key)
 
-4. 创建`main.py`，修改文件中的 endpoint_id 为您新创建的推理接入点 ID。
+4. 创建`main.py`，修改文件中的 model 部分，示例中为 `doubao-1.5-pro-32k-250115` 你可以替换成其它的模型 ID。(Model ID 获取方式, 在火山方舟->开通管理 开通指定大模型之后, 点进详情页即可获取到)
 
 ```python
 """
@@ -194,7 +194,7 @@ curl --location 'http://localhost:8080/api/v3/bots/chat/completions' \
 
 3. 登录[方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint?projectName=default)，创建一个 API KEY [参考文档](https://www.volcengine.com/docs/82379/1399008#_1-%E8%8E%B7%E5%8F%96%E5%B9%B6%E9%85%8D%E7%BD%AE-api-key)
 
-4. 创建`main.py`，修改文件中的 endpoint_id 为您新创建的推理接入点 ID。
+4. 创建`main.py`，修改文件中的 model 部分，示例中为 `deepseek-v3-241226` 你可以替换成其它的模型 ID。(Model ID 获取方式, 在火山方舟->开通管理 开通指定大模型之后, 点进详情页即可获取到)
 
 ```python
 """
