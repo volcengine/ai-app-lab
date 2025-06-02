@@ -53,7 +53,7 @@
 
 2. **Create an Inference** **Endpoint**: Log in to the [Ark Console](https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint?projectName=default) and create an endpoint. 
 3. **Generate an API Key:** Follow the [API Key guide](https://www.volcengine.com/docs/82379/1399008#_1-获取并配置-api-key). 
-4. **Create** **`main.py`**: Replace `endpoint_id` with your newly created endpoint ID.
+4. **Create main.py**: Replace the model part in the file. The example uses `doubao-1.5-pro-32k-250115`, which you can replace with other model ID.
 
 ```Python
 import os
@@ -136,7 +136,7 @@ pip install arkitect --index-url https://pypi.org/simple
 
 2. **Create an Inference** **Endpoint**: Log in to the [Ark Console](https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint?projectName=default) and create an endpoint OR using a function-call model (e.g., Doubao-pro-32k-functioncall-241028). (For BytePlus users, please refer to [ModelArk Console](https://console.byteplus.com/ark/region:ark-stg+ap-southeast-1/endpoint?projectName=default) to create an endpoint.)
 3. **Generate an API Key:** Follow the [API Key guide](https://www.volcengine.com/docs/82379/1399008#_1-获取并配置-api-key). (For BytePlus users, please refer to the  [Obtaining API Key](https://docs.byteplus.com/en/docs/ModelArk/1399008#_1-obtaining-and-configuring-api-key))
-4. **Create** **`main.py`**: Replace `endpoint_id` with your newly created endpoint ID.
+4. **Create main.py**: Replace the model part in the file. The example uses `doubao-1.5-pro-32k-250115`, which you can replace with other model ID.
 
 ```Python
 """
