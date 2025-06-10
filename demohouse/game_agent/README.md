@@ -47,7 +47,7 @@ npm install
 
 ## 启动服务
 
-运行如下命令启动服务：
+运行如下命令启动服务，命令行中会显示Localhost的url：
 
 ```shell
 bash script/run_final_demo.sh
