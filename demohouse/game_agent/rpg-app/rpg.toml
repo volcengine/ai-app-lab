@@ -1,0 +1,52 @@
+name = 'My Game'
+
+modules = [
+    './main',
+    '@rpgjs/mobile-gui',
+    '@rpgjs/default-gui',
+    '@rpgjs/gamepad'
+]
+
+
+[start]
+    map = 'samplemap'
+    graphic = 'main_char_walk'
+    hitbox = [16, 16]
+
+[inputs.up]
+    name = "up"
+    repeat = true
+    bind = ["up", "w"]
+
+[inputs.down]
+    name = "down"
+    repeat = true
+    bind = ["down", "s"]
+
+[inputs.right]
+    name = "right"
+    repeat = true
+    bind = ["right", "d"]
+
+[inputs.left]
+    name = "left"
+    repeat = true
+    bind = ["left", "a"]
+
+[inputs.action]
+    name = "action"
+    bind = ["space", "enter"]
+
+[inputs.back]
+    name = "back"
+    bind = "escape"
+
+[inputs.z]
+    name = "z"
+    bind = ["z", "Z"]
+
+[inputs.attack]
+    name = "attack"
+    repeat = true
+    bind = "j"
+    delay = { duration = 200 }

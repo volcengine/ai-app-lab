@@ -1,0 +1,130 @@
+- type: function
+  function:
+    name: make_plan
+    description: 根据已有的剧情以及玩家和角色的聊天记录，制定出完整的游戏开发计划列表，该计划列表能够被顺序执行，每个计划要求包含需要调用的游戏工具，游戏工具有以下：`choose_basic_map`、`add_material_basic`、`add_npc`。
+    parameters:
+      type: object
+      properties:
+        plan_list:
+          type: array
+          items:
+            type: string
+          description: 完成任务的步骤计划（2-10个，无需添加序号），每个计划描述了完成游戏开发的一个关键步骤，要求要求包含需要调用的游戏工具（游戏工具有：`choose_basic_map`、`add_material_basic`、`add_npc`）并且应该按照顺序完成。
+      required: [final_plan]
+
+
+- type: function
+  function:
+    name: attempt_completion
+    description: 当所有任务都完成后，调用该工具表示游戏开发任务已经完成
+    parameters:
+      type: object
+      properties: {}
+      required: []
+
+
+- type: function
+  function:
+    name: add_material_basic
+    description: 在指定的地图中添加基础材质。可以指定材质的类型以及在地图上的坐标。如果坐标未提供，则会进行随机分配。**注意**：只有调用了`choose_basic_map` 工具后才能调用该参数。
+    parameters:
+      type: object
+      properties:
+        map_id:
+          type: string
+          description: 对应的地图的ID，可以根据 `choose_basic_map` 工具的入参或者返回的信息获取。
+        material_type:
+          type: string
+          description: |
+            要添加的材质的类型。枚举值有：["axe", "sword", "food", "sheild", "portion"]：
+            1. axe: 斧头
+            2. sword: 长剑（重要物品！）
+            3. food: 食物（重要物品！）
+            4. sheild: 盾牌
+            5. portion: 药水
+        x:
+          type: integer
+          description: 材质在地图上的X坐标。
+        y:
+          type: integer
+          description: 材质在地图上的Y坐标。
+      required:
+        - map_id
+        - material_type
+        - x
+        - y
+
+- type: function
+  function:
+    name: choose_basic_map
+    description: "根据提供的地图ID加载基础地图，并将地图配置写入 'myword.world' 文件中。函数返回加载成功的信息，包括地图描述、宽度和高度。"
+    parameters:
+      type: object
+      properties:
+        map_id:
+          type: string
+          description: |
+            要加载的地图的ID。枚举值有：["grass_map_v1", "grass_map_v2", "snow_map", "village_map", "mountain_map"]，具体的地图信息如下：
+            1. grass_map_v1: 草地地图，有少量树
+            2. grass_map_v2: 丘陵地图，并且有大量树与草地
+            3. snow_map：雪地地图，长1600px，宽1600px，比较复杂
+            4. village_map：村庄地图，长1600px，宽1600px
+            5. mountain_map：山地地图，长1600px，宽1600px
+      required:
+        - map_id
+
+
+- type: function
+  function:
+    name: add_npc
+    description: 在指定的地图中添加一个NPC。可以指定NPC的类型、名称以及在地图上的坐标。如果名称或坐标未提供，则会进行随机分配。**注意**：只有调用了`choose_basic_map` 工具后才能调用该参数，
+    parameters:
+      type: object
+      properties:
+        map_id:
+          type: string
+          description: 对应的地图的ID，可以根据 `choose_basic_map` 工具的入参或者返回的信息获取。
+        npc_template:
+          type: string
+          description: |
+            要添加的NPC的模板。枚举值有：["hero_attack", "hero_no_move", "enemy_attack", "villager"]：
+            1. hero_attack: 英雄模版，可以移动，可以攻击，并且会跟随玩家，常用于同玩家一起战斗
+            2. hero_no_move: 英雄模版，不可移动型，不具备攻击能力，常用于在某个关卡内的引导，推动玩家完成剧情
+            3. enemy_attack: 敌人模版，可攻击，可移动
+            4. villager: 村民模版，可移动，不可攻击，属于路人甲的角色，与游戏剧情无关
+        npc_type:
+          type: string
+          description: |
+            要添加的NPC的类型。枚举值有：["enemy_1", "enemy_2", "enemy_3", "hero_1", "hero_2", "hero_3", "villager_1", "villager_2", "villager_3", "villager_4"]，
+            你需要根据游戏剧情合理选择NPC的类型以匹配剧情中的人物：
+            1. enemy_1，（敌人/反派角色）外表：银色翅膀、褐色尾巴、金色头发；衣着：红色铠甲；武器：龙型魔杖
+            2. enemy_2，（敌人/反派角色）外表：红色头发、灰色皮肤；衣着：百色铠甲；武器：砍刀，
+            3. enemy_3，（敌人/反派角色）外表：紫色头发、绿色皮肤；衣着：赤裸上身、黑色裤子；武器：斧头与盾牌
+            4. hero_1，（英雄/正派角色）外表：淡紫色长发，皮肤呈浅肤色；衣着：身着深紫色短袖上衣，搭配深色下装；武器：武器：长剑
+            5. hero_2，（英雄/正派角色）外表：光头，浅棕色皮肤；衣着：深色短袖上衣，棕色下装；武器：长棍
+            6. hero_3，（英雄/正派角色）外表：棕色长发（长度垂至背部），浅肤色；衣着：白色无袖上衣，深色下装；武器：长剑
+            7. villager_1，（村民）外表：黑长发，女性；衣着：有白色披风，带了红色头巾
+            8. villager_2，（村民）外表：黑头发，女性，高马尾；衣着：黑色上衣红裙子
+            9. villager_3，（村民）外表：黑短发，男性；衣着：有白色披风，
+            10. villager_4，（村民）外表：黑短直，男性；衣着：身穿铠甲
+            **注：villager与游戏剧情无关，属于路人甲的角色**
+        npc_name:
+          type: string
+          description: NPC的名称，必须要符合符合游戏剧情的角色名称，例如：“易斩羽”、“无镜和尚”、“东方御尊”
+        npc_speak:
+          type: string
+          description: NPC的对话内容，要符合游戏剧情的角色形象，不超过2句话，40字以内，要求按照「角色名称：对话内容」这样的格式，例如：“易斩羽：我与东风御尊有世仇”、“东方御尊：你们都是蝼蚁，怎么与我抗衡”
+        x:
+          type: float
+          description: NPC在地图上的X坐标。
+        y:
+          type: float
+          description: NPC在地图上的Y坐标。
+      required:
+        - map_id
+        - npc_template
+        - npc_type
+        - npc_name
+        - npc_speak
+        - x
+        - y

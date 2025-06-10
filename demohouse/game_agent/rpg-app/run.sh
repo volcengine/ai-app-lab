@@ -1,0 +1,1 @@
+RPG_TYPE=rpg npm run dev -- --host

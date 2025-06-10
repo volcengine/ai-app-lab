@@ -1,0 +1,48 @@
+{
+    "maps": [
+        {
+            "fileName": "snow_maps/snow_map_mock.tmx",
+            "height": 640,
+            "width": 800,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "snow_maps/snow_map.tmx",
+            "height": 1600,
+            "width": 1600,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "grass_maps/grass_map_v1.tmx",
+            "height": 640,
+            "width": 800,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "grass_maps/grass_map_v2.tmx",
+            "height": 640,
+            "width": 640,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "mountain_maps/mountain_map.tmx",
+            "height": 640,
+            "width": 640,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "village_maps/samplemap.tmx",
+            "height": 1920,
+            "width": 1920,
+            "x": 0,
+            "y": 0
+        }
+    ],
+    "onlyShowAdjacentMaps": false,
+    "type": "world"
+}
