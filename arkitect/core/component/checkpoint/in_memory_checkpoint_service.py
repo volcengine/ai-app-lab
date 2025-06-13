@@ -18,7 +18,7 @@ from arkitect.core.component.checkpoint.base_checkpoint_service import (
     BaseCheckpointService,
 )
 from arkitect.core.component.checkpoint.checkpoint import Checkpoint
-from arkitect.core.component.llm_event_stream.model import NewState
+from arkitect.core.component.llm_event_stream.model import State
 from arkitect.utils.common import Singleton
 
 
@@ -39,7 +39,7 @@ class InMemoryCheckpointService(BaseCheckpointService):
                 id=checkpoint_id,
                 app_name=app_name,
                 user_id=user_id,
-                state=NewState(),
+                state=State(),
                 last_update_time=datetime.now().timestamp(),
                 create_time=datetime.now().timestamp(),
             )

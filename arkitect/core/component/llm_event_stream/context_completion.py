@@ -29,11 +29,11 @@ from volcenginesdkarkruntime.types.context import (
 from arkitect.core.component.tool.tool_pool import ToolPool
 from arkitect.types.responses.event import BaseEvent
 
-from .model import NewState
+from .model import State
 
 
 class _AsyncCompletions(AsyncCompletions):
-    def __init__(self, client: AsyncArk, state: NewState):
+    def __init__(self, client: AsyncArk, state: State):
         self._state = state
         super().__init__(client)
 
@@ -89,7 +89,7 @@ class _AsyncCompletions(AsyncCompletions):
 
 
 class _AsyncContext(AsyncContext):
-    def __init__(self, client: AsyncArk, state: NewState):
+    def __init__(self, client: AsyncArk, state: State):
         self._state = state
         super().__init__(client)
 

@@ -14,7 +14,7 @@
 import uuid
 from pydantic import BaseModel, ConfigDict, Field
 
-from arkitect.core.component.llm_event_stream.model import NewState
+from arkitect.core.component.llm_event_stream.model import State
 
 
 class Checkpoint(BaseModel):
@@ -39,7 +39,7 @@ class Checkpoint(BaseModel):
     """The name of the app."""
     user_id: str
     """The user id of the checkpoint."""
-    state: NewState = Field(default_factory=NewState)
+    state: State = Field(default_factory=State)
     """The state of the checkpoint."""
     last_update_time: float = 0.0
     """The last update time of the checkpoint."""

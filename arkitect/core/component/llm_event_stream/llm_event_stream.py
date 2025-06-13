@@ -56,7 +56,7 @@ from .hooks import (
 )
 from .chat_completion import _AsyncChat
 from .context_completion import _AsyncContext
-from .model import ContextInterruption, NewState
+from .model import ContextInterruption, State
 
 
 class _AsyncCompletionsEventStream:
@@ -89,7 +89,7 @@ class _AsyncCompletionsEventStream:
             while True:
                 try:
                     if self._ctx.pre_llm_call_hook:
-                        for event in self._ctx.pre_llm_call_hook.pre_llm_call(
+                        async for event in self._ctx.pre_llm_call_hook.pre_llm_call(
                             self._ctx.state
                         ):
                             yield event
@@ -101,20 +101,11 @@ class _AsyncCompletionsEventStream:
                         details=he.details,
                     )
                     return
-                resp = (
-                    await self._ctx.chat_service.completions.create_event_stream(
-                        model=self.model,
-                        messages=self._ctx.build_chat_message(),
-                        tool_pool=self._ctx.tool_pool,
-                        **kwargs,
-                    )
-                    if not self._ctx.state.context_id
-                    else await self._ctx.context_chat_service.completions.create(
-                        model=self.model,
-                        messages=messages,
-                        stream=True,
-                        **kwargs,
-                    )
+                resp = await self._ctx.chat_service.completions.create_event_stream(
+                    model=self.model,
+                    messages=self._ctx.build_chat_message(),
+                    tool_pool=self._ctx.tool_pool,
+                    **kwargs,
                 )
                 assert isinstance(resp, AsyncIterable)
                 async for chunk in resp:
@@ -123,7 +114,7 @@ class _AsyncCompletionsEventStream:
 
                 try:
                     if self._ctx.post_llm_call_hook:
-                        for event in self._ctx.post_llm_call_hook.post_llm_call(
+                        async for event in self._ctx.post_llm_call_hook.post_llm_call(
                             self._ctx.state
                         ):
                             yield event
@@ -193,8 +184,10 @@ class _AsyncCompletionsEventStream:
         for tool_call in tool_calls:
             tool_name = tool_call.function.name
             if self._ctx.pre_tool_call_hook:
-                for event in self._ctx.pre_tool_call_hook.pre_tool_call(
-                    self._ctx.state
+                async for event in self._ctx.pre_tool_call_hook.pre_tool_call(
+                    name=tool_name,
+                    arguments=tool_call.function.arguments,
+                    state=self._ctx.state,
                 ):
                     yield event
             updated_arguments = tool_call.function.arguments
@@ -224,8 +217,12 @@ class _AsyncCompletionsEventStream:
                 ]
             )
             if self._ctx.post_tool_call_hook:
-                for event in self._ctx.post_tool_call_hook.post_tool_call(
-                    self._ctx.state
+                async for event in self._ctx.post_tool_call_hook.post_tool_call(
+                    name=tool_name,
+                    arguments=updated_arguments,
+                    response=resp,
+                    exception=exceptions,
+                    state=self._ctx.state,
                 ):
                     yield event
 
@@ -304,27 +301,26 @@ class LLMEventStream:
         *,
         model: str,
         agent_name: str,
-        state: NewState | None = None,
+        state: State | None = None,
         tools: list[MCPClient | Callable] | ToolPool | None = None,
         sub_agents: list["BaseAgent"] | None = None,
         parameters: Optional[ArkChatParameters] = None,
         context_parameters: Optional[ArkContextParameters] = None,
         client: Optional[AsyncArk] = None,
+        pre_tool_call_hook: PreToolCallHook | None = None,
+        post_tool_call_hook: PostToolCallHook | None = None,
+        pre_llm_call_hook: PreLLMCallHook | None = None,
+        post_llm_call_hook: PostLLMCallHook | None = None,
         instruction: str | None = None,
     ):
         self.model = model
         self.agent_name = agent_name
-        self.state = (
-            state
-            if state
-            else NewState(
-                context_id="",
-                parameters=parameters,
-                context_parameters=context_parameters,
-            )
-        )
+        self.state = state if state else State()
+        self.parameters = parameters
         self.client = default_ark_client() if client is None else client
-        self.chat_service = _AsyncChat(client=self.client, state=self.state)
+        self.chat_service = _AsyncChat(
+            client=self.client, state=self.state, parameters=self.parameters
+        )
         if context_parameters is not None:
             self.context_chat_service = _AsyncContext(
                 client=self.client, state=self.state
@@ -336,22 +332,13 @@ class LLMEventStream:
         if tools and len(tools) > 0:
             full_tools.extend(tools)
         self.tool_pool = build_tool_pool(full_tools)
-        self.pre_tool_call_hook: PreToolCallHook | None = None
-        self.post_tool_call_hook: PostToolCallHook | None = None
-        self.pre_llm_call_hook: PreLLMCallHook | None = None
-        self.post_llm_call_hook: PostLLMCallHook | None = None
+        self.pre_tool_call_hook: PreToolCallHook | None = pre_tool_call_hook
+        self.post_tool_call_hook: PostToolCallHook | None = post_tool_call_hook
+        self.pre_llm_call_hook: PreLLMCallHook | None = pre_llm_call_hook
+        self.post_llm_call_hook: PostLLMCallHook | None = post_llm_call_hook
         self.instruction = instruction
 
     async def init(self) -> None:
-        if self.state.context_parameters is not None:
-            resp: CreateContextResponse = await self.context_chat_service.create(
-                model=self.model,
-                mode=self.state.context_parameters.mode,
-                messages=self.state.context_parameters.messages,
-                ttl=self.state.context_parameters.ttl,
-                truncation_strategy=self.state.context_parameters.truncation_strategy,
-            )
-            self.state.context_id = resp.id
         if self.tool_pool:
             await self.tool_pool.refresh_tool_list()
         return

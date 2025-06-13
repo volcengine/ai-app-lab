@@ -27,7 +27,7 @@ import asyncio
 from typing import AsyncIterable
 
 from arkitect.core.component.agent.base_agent import BaseAgent
-from arkitect.core.component.llm_event_stream.model import NewState
+from arkitect.core.component.llm_event_stream.model import State
 from arkitect.types.responses.event import BaseEvent
 
 """
@@ -77,7 +77,7 @@ async def _merge_agent_run(
 
 class ParallelAgent(BaseAgent):
     # stream run step
-    async def _astream(self, state: NewState, **kwargs) -> AsyncIterable[BaseEvent]:
+    async def _astream(self, state: State, **kwargs) -> AsyncIterable[BaseEvent]:
         agent_runs = [agent(state) for agent in self.sub_agents]
         async for event in _merge_agent_run(agent_runs):
             yield event

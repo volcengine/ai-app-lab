@@ -16,9 +16,11 @@ import abc
 from typing import Any, AsyncIterable, Callable, Union
 
 from pydantic import BaseModel
+from volcenginesdkarkruntime import AsyncArk
 
-from arkitect.core.component.llm_event_stream.model import ContextInterruption, NewState
+from arkitect.core.component.llm_event_stream.model import ContextInterruption, State
 from arkitect.core.component.tool import MCPClient
+from arkitect.types.llm.model import ArkChatParameters
 from arkitect.types.responses.event import BaseEvent
 
 """
@@ -30,7 +32,7 @@ class PreAgentCallHook(abc.ABC):
     @abc.abstractmethod
     async def pre_agent_call(
         self,
-        state: NewState,
+        state: State,
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
         pass
 
@@ -39,7 +41,7 @@ class PostAgentCallHook(abc.ABC):
     @abc.abstractmethod
     async def post_agent_call(
         self,
-        state: NewState,
+        state: State,
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
         pass
 
@@ -51,6 +53,8 @@ class BaseAgent(abc.ABC, BaseModel):
     tools: list[Union[MCPClient | Callable]] = []
     sub_agents: list["BaseAgent"] = []
     instruction: str | None = None
+    parameters: ArkChatParameters | None = None
+    client: AsyncArk | None = None
 
     pre_agent_call_hook: PreAgentCallHook | None = None
     post_agent_call_hook: PostAgentCallHook | None = None
@@ -61,12 +65,10 @@ class BaseAgent(abc.ABC, BaseModel):
 
     # stream run step
     @abc.abstractmethod
-    async def _astream(
-        self, state: NewState, **kwargs: Any
-    ) -> AsyncIterable[BaseEvent]:
+    async def _astream(self, state: State, **kwargs: Any) -> AsyncIterable[BaseEvent]:
         pass
 
-    async def astream(self, state: NewState, **kwargs: Any) -> AsyncIterable[BaseEvent]:
+    async def astream(self, state: State, **kwargs: Any) -> AsyncIterable[BaseEvent]:
 
         if self.pre_agent_call_hook:
             async for event in self.pre_agent_call_hook.pre_agent_call(state):
@@ -81,9 +83,7 @@ class BaseAgent(abc.ABC, BaseModel):
             async for event in self.post_agent_call_hook.post_agent_call(state):
                 yield event
 
-    async def __call__(
-        self, state: NewState, **kwargs: Any
-    ) -> AsyncIterable[BaseEvent]:
+    async def __call__(self, state: State, **kwargs: Any) -> AsyncIterable[BaseEvent]:
         async for event in self.astream(state, **kwargs):
             yield event
 
