@@ -17,14 +17,13 @@ from typing import Any, AsyncIterable
 from pydantic import BaseModel
 
 from arkitect.core.component.agent import BaseAgent
-from arkitect.core.component.llm_event_stream.llm_event_stream import LLMEventStream
-
 from arkitect.core.component.llm_event_stream.hooks import (
     PostLLMCallHook,
     PostToolCallHook,
     PreLLMCallHook,
     PreToolCallHook,
 )
+from arkitect.core.component.llm_event_stream.llm_event_stream import LLMEventStream
 from arkitect.core.component.llm_event_stream.model import State
 from arkitect.types.responses.event import BaseEvent
 

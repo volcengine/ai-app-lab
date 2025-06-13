@@ -14,14 +14,11 @@
 import abc
 from typing import Any, AsyncIterable, Optional, Union
 
-
 from arkitect.types.responses.event import (
     BaseEvent,
 )
 
 from .model import ContextInterruption, State
-
-from .model import State
 
 
 class HookInterruptException(Exception):

@@ -30,7 +30,7 @@ from arkitect.core.component.checkpoint import BaseCheckpointService
 from arkitect.core.component.checkpoint.checkpoint import Checkpoint
 from arkitect.core.component.llm_event_stream.model import State
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
-from arkitect.core.component.runner.config import RunnerConfig, MemoryUpdateSetting
+from arkitect.core.component.runner.config import MemoryUpdateSetting, RunnerConfig
 from arkitect.telemetry.logger import ERROR
 from arkitect.types.llm.model import Message
 from arkitect.types.responses.event import BaseEvent, StateUpdateEvent

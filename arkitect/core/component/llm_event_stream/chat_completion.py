@@ -23,7 +23,7 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
 )
 
 from arkitect.core.component.tool.tool_pool import ToolPool
-from arkitect.types.llm.model import Message, ArkChatParameters
+from arkitect.types.llm.model import ArkChatParameters, Message
 from arkitect.types.responses.event import BaseEvent, MessageEvent, StateUpdateEvent
 
 from .model import State

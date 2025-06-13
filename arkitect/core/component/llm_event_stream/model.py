@@ -16,12 +16,10 @@ from typing import Any, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-from arkitect.types.llm.model import ArkChatParameters, ArkContextParameters
 from arkitect.types.responses.event import StateUpdateEvent
 
 
 class State(BaseModel):
-
     details: dict = {}
     events: List[StateUpdateEvent] = Field(default_factory=list)
 

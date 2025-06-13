@@ -69,7 +69,6 @@ class BaseAgent(abc.ABC, BaseModel):
         pass
 
     async def astream(self, state: State, **kwargs: Any) -> AsyncIterable[BaseEvent]:
-
         if self.pre_agent_call_hook:
             async for event in self.pre_agent_call_hook.pre_agent_call(state):
                 yield event

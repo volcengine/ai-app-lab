@@ -11,14 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
 import asyncio
 import datetime
-from datetime import timedelta
 import logging
+import sys
 from contextlib import AsyncExitStack
+from datetime import timedelta
 from typing import Any, Dict, TextIO
-
 
 from arkitect.core.component.tool.utils import (
     mcp_to_chat_completion_tool,
@@ -35,7 +34,6 @@ from mcp.client.sse import sse_client
 from mcp.client.stdio import get_default_environment
 from mcp.client.streamable_http import streamablehttp_client
 from mcp.types import CallToolResult
-
 
 logger = logging.getLogger(__name__)
 

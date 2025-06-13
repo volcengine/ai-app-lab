@@ -22,16 +22,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any, Optional
 import time
+from typing import Any, Optional
+
 from pydantic import BaseModel, Field
 
 from arkitect.core.errors.exceptions import APIException
 from arkitect.types.llm.model import (
     ActionDetail,
     ArkChatCompletionChunk,
-    Message,
     BotUsage,
+    Message,
     ToolDetail,
 )
 
@@ -98,7 +99,6 @@ Messages
 
 
 class MessageEvent(BaseEvent, ArkChatCompletionChunk):
-
     def to_chunk(self) -> ArkChatCompletionChunk:
         return self
 

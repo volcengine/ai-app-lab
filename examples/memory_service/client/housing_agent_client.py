@@ -1,6 +1,6 @@
 import asyncio
-import os
 import json
+import os
 from pathlib import Path
 
 from openai import AsyncOpenAI

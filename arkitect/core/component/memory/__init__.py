@@ -18,7 +18,6 @@ from .in_memory_memory_service import (
     InMemoryMemoryServiceSingleton,
 )
 
-
 __all__ = [
     "BaseMemoryService",
     "InMemoryMemoryService",
