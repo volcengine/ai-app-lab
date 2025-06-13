@@ -14,11 +14,8 @@
 
 from typing import Any, Callable, Dict
 
-from volcenginesdkarkruntime.types.chat import ChatCompletionContentPartParam
-
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.utils import (
-    convert_to_chat_completion_content_part_param,
     find_duplicate_tools,
     mcp_to_chat_completion_tool,
 )
@@ -89,13 +86,11 @@ class ToolPool:
         self,
         tool_name: str,
         parameters: dict[str, Any],
-    ) -> str | list[ChatCompletionContentPartParam]:
+    ) -> CallToolResult:
         available_tool_names = [t.name for t in await self.session.list_tools()]
         if tool_name in available_tool_names:
             result = await self.session.call_tool(tool_name, parameters)
-            return convert_to_chat_completion_content_part_param(
-                CallToolResult(content=list(result), isError=False)
-            )
+            return CallToolResult(content=list(result), isError=False)
         else:
             for client in self.mcp_clients.values():
                 if await client.get_tool(tool_name):

@@ -42,6 +42,9 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message_param import (
 from volcenginesdkarkruntime.types.chat.chat_completion_stream_options_param import (
     ChatCompletionStreamOptionsParam,
 )
+from volcenginesdkarkruntime.types.chat.completion_create_params import (
+    Thinking,
+)
 from volcenginesdkarkruntime.types.completion_usage import CompletionUsage
 from volcenginesdkarkruntime.types.context.context_chat_completion import (
     ContextChatCompletion,
@@ -171,6 +174,7 @@ class ArkChatParameters(BaseModel):
     tools: Optional[List[ChatCompletionTool]] = None
     top_logprobs: Optional[int] = None
     top_p: Optional[float] = None
+    thinking: Optional[Thinking] = None
 
     n: Optional[int] = Field(default=1, ge=1, le=5)
     """
@@ -254,6 +258,7 @@ class ChatCompletionMessageToolCallParam(BaseModel):
 class ArkMessage(BaseModel):
     role: Literal["user", "system", "assistant", "tool"]
     content: Optional[Union[str, List[ChatCompletionContentPartParam]]] = None
+    reasoning_content: Optional[str] = None
     name: Optional[str] = None
     tool_call_id: Optional[str] = None
     tool_calls: Optional[List[ChatCompletionMessageToolCallParam]] = None
@@ -276,6 +281,10 @@ class ArkMessage(BaseModel):
                 cause=f"tool_calls must be None when role is {role}",
             )
         return v
+
+
+# Alias
+Message = ArkMessage
 
 
 class ArkChatRequest(Request):
@@ -308,6 +317,7 @@ class ArkChatRequest(Request):
     top_logprobs: Optional[int] = None
     top_p: Optional[float] = None
     user: Optional[str] = None
+    thinking: Optional[Thinking] = None
     metadata: Optional[Dict[str, Any]] = None
 
     n: Optional[int] = Field(default=1, ge=1, le=5)
@@ -589,6 +599,27 @@ class ArkChatResponse(Response):
 
         self.usage = total_usage
         return total_usage
+
+    def merge_bot_usages(self, others: Union[BotUsage, List[BotUsage]]) -> BotUsage:
+        if not others:
+            return self.bot_usage
+        if not isinstance(others, list):
+            others = [others]
+        total_bot_usage = BotUsage(
+            model_usage=self.bot_usage.model_usage if self.bot_usage else [],
+            action_usage=self.bot_usage.action_usage if self.bot_usage else [],
+            action_details=self.bot_usage.action_details if self.bot_usage else [],
+        )
+        for bot_usage in others:
+            if bot_usage.model_usage:
+                total_bot_usage.model_usage.extend(bot_usage.model_usage)
+            if bot_usage.action_usage:
+                total_bot_usage.action_usage.extend(bot_usage.action_usage)
+            if bot_usage.action_details:
+                total_bot_usage.action_details.extend(bot_usage.action_details)
+
+        self.bot_usage = total_bot_usage
+        return total_bot_usage
 
 
 class ArkChatCompletionChunk(Response):

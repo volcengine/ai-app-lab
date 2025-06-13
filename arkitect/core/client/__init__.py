@@ -14,6 +14,7 @@
 
 from .base import Client, ClientPool, get_client_pool
 from .http import default_ark_client, load_request
+from .redis import RedisClient
 from .sse import AsyncSSEDecoder
 
 __all__ = [
@@ -23,4 +24,5 @@ __all__ = [
     "default_ark_client",
     "load_request",
     "get_client_pool",
+    "RedisClient",
 ]

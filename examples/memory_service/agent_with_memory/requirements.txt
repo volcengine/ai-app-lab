@@ -1,0 +1,3 @@
+mem0ai>=0.1.101
+arkitect-0.2.1-py3-none-any.whl
+pymilvus>=2.5.9

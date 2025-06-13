@@ -326,9 +326,7 @@ if __name__ == "__main__":
     async def main():
 
         global_state = GlobalState(
-            custom_state=DeepSearchState(
-                root_task="判断(1+20) 和 (22 + 23) 哪个结果大"
-            )
+            custom_state=DeepSearchState(root_task="判断(1+20) 和 (22 + 23) 哪个结果大")
         )
 
         supervisor = Supervisor(

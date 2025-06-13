@@ -88,13 +88,13 @@ class ApprovalHook(PreToolCallHook):
         if len(state.messages) == 0:
             return state
         last_message = state.messages[-1]
-        if not last_message.get("tool_calls"):
+        if not last_message.tool_calls:
             return state
 
         formated_output = []
-        for tool_call in last_message.get("tool_calls"):
-            tool_name = tool_call.get("function", {}).get("name")
-            tool_call_param = tool_call.get("function", {}).get("arguments", "{}")
+        for tool_call in last_message.tool_calls:
+            tool_name = tool_call.function.name
+            tool_call_param = tool_call.function.arguments
             formated_output.append(
                 f"tool_name: {tool_name}\ntool_call_param: {tool_call_param}\n"
             )
