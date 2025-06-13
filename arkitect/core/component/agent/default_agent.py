@@ -18,7 +18,14 @@ from pydantic import BaseModel
 
 from arkitect.core.component.agent import BaseAgent
 from arkitect.core.component.llm_event_stream.llm_event_stream import LLMEventStream
-from arkitect.core.component.llm_event_stream.model import NewState
+
+from arkitect.core.component.llm_event_stream.hooks import (
+    PostLLMCallHook,
+    PostToolCallHook,
+    PreLLMCallHook,
+    PreToolCallHook,
+)
+from arkitect.core.component.llm_event_stream.model import State
 from arkitect.types.responses.event import BaseEvent
 
 """
@@ -31,10 +38,13 @@ class DefaultAgent(BaseAgent):
         "arbitrary_types_allowed": True,
     }
 
+    pre_tool_call_hook: PreToolCallHook | None = None
+    post_tool_call_hook: PostToolCallHook | None = None
+    pre_llm_call_hook: PreLLMCallHook | None = None
+    post_llm_call_hook: PostLLMCallHook | None = None
+
     # stream run step
-    async def _astream(
-        self, state: NewState, **kwargs: Any
-    ) -> AsyncIterable[BaseEvent]:
+    async def _astream(self, state: State, **kwargs: Any) -> AsyncIterable[BaseEvent]:
         event_stream = LLMEventStream(
             model=self.model,
             agent_name=self.name,
@@ -42,6 +52,12 @@ class DefaultAgent(BaseAgent):
             sub_agents=self.sub_agents,
             state=state,
             instruction=self.instruction,
+            pre_tool_call_hook=self.pre_tool_call_hook,
+            post_tool_call_hook=self.post_tool_call_hook,
+            pre_llm_call_hook=self.pre_llm_call_hook,
+            post_llm_call_hook=self.post_llm_call_hook,
+            parameters=self.parameters,
+            client=self.client,
         )
         await event_stream.init()
         resp_stream = await event_stream.completions.create(

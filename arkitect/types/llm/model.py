@@ -42,6 +42,9 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message_param import (
 from volcenginesdkarkruntime.types.chat.chat_completion_stream_options_param import (
     ChatCompletionStreamOptionsParam,
 )
+from volcenginesdkarkruntime.types.chat.completion_create_params import (
+    Thinking,
+)
 from volcenginesdkarkruntime.types.completion_usage import CompletionUsage
 from volcenginesdkarkruntime.types.context.context_chat_completion import (
     ContextChatCompletion,
@@ -53,6 +56,7 @@ from volcenginesdkarkruntime.types.context.context_create_params import (
     TruncationStrategy,
     TTLTypes,
 )
+
 
 from arkitect.core.errors import InvalidParameter, MissingParameter
 from arkitect.core.runtime import Request, Response
@@ -171,6 +175,7 @@ class ArkChatParameters(BaseModel):
     tools: Optional[List[ChatCompletionTool]] = None
     top_logprobs: Optional[int] = None
     top_p: Optional[float] = None
+    thinking: Optional[Thinking] = None
 
     n: Optional[int] = Field(default=1, ge=1, le=5)
     """
@@ -254,6 +259,7 @@ class ChatCompletionMessageToolCallParam(BaseModel):
 class ArkMessage(BaseModel):
     role: Literal["user", "system", "assistant", "tool"]
     content: Optional[Union[str, List[ChatCompletionContentPartParam]]] = None
+    reasoning_content: Optional[str] = None
     name: Optional[str] = None
     tool_call_id: Optional[str] = None
     tool_calls: Optional[List[ChatCompletionMessageToolCallParam]] = None
@@ -312,6 +318,7 @@ class ArkChatRequest(Request):
     top_logprobs: Optional[int] = None
     top_p: Optional[float] = None
     user: Optional[str] = None
+    thinking: Optional[Thinking] = None
     metadata: Optional[Dict[str, Any]] = None
 
     n: Optional[int] = Field(default=1, ge=1, le=5)

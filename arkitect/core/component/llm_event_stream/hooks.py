@@ -12,25 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import abc
-from typing import Any, Optional, Union
-
-from typing import Any, AsyncIterable, Optional
+from typing import Any, AsyncIterable, Optional, Union
 
 
 from arkitect.types.responses.event import (
     BaseEvent,
 )
 
-from .model import ContextInterruption, NewState
+from .model import ContextInterruption, State
 
-from .model import NewState
+from .model import State
 
 
 class HookInterruptException(Exception):
     def __init__(
         self,
         reason: str,
-        state: Optional[NewState] = None,
+        state: Optional[State] = None,
         details: Optional[Any] = None,
     ):
         self.reason = reason
@@ -44,7 +42,7 @@ class PreToolCallHook(abc.ABC):
         self,
         name: str,
         arguments: str,
-        state: NewState,
+        state: State,
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
         pass
 
@@ -57,7 +55,7 @@ class PostToolCallHook(abc.ABC):
         arguments: str,
         response: Any,
         exception: Optional[Exception],
-        state: NewState,
+        state: State,
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
         pass
 
@@ -66,7 +64,7 @@ class PreLLMCallHook(abc.ABC):
     @abc.abstractmethod
     async def pre_llm_call(
         self,
-        state: NewState,
+        state: State,
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
         pass
 
@@ -75,7 +73,7 @@ class PostLLMCallHook(abc.ABC):
     @abc.abstractmethod
     async def post_llm_call(
         self,
-        state: NewState,
+        state: State,
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
         pass
 
@@ -93,7 +91,7 @@ class ApprovalHook(PreToolCallHook):
         self,
         name: str,
         arguments: str,
-        state: NewState,
+        state: State,
     ) -> AsyncIterable[BaseEvent | ContextInterruption]:
         if len(state.events) == 0:
             return

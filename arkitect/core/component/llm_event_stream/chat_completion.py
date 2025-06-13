@@ -23,15 +23,18 @@ from volcenginesdkarkruntime.types.chat.chat_completion_message import (
 )
 
 from arkitect.core.component.tool.tool_pool import ToolPool
-from arkitect.types.llm.model import Message
+from arkitect.types.llm.model import Message, ArkChatParameters
 from arkitect.types.responses.event import BaseEvent, MessageEvent, StateUpdateEvent
 
-from .model import NewState
+from .model import State
 
 
 class _AsyncCompletions(AsyncCompletions):
-    def __init__(self, client: AsyncArk, state: NewState):
+    def __init__(
+        self, client: AsyncArk, state: State, parameters: ArkChatParameters | None
+    ):
         self._state = state
+        self.parameters = parameters
         super().__init__(client)
 
     async def create_event_stream(
@@ -41,11 +44,7 @@ class _AsyncCompletions(AsyncCompletions):
         tool_pool: ToolPool | None = None,
         **kwargs: Dict[str, Any],
     ) -> AsyncIterable[BaseEvent]:
-        parameters = (
-            self._state.parameters.__dict__
-            if self._state.parameters is not None
-            else {}
-        )
+        parameters = self.parameters.__dict__ if self.parameters is not None else {}
         if tool_pool:
             tools = await tool_pool.list_tools()
             parameters["tools"] = [t.model_dump() for t in tools]
@@ -103,10 +102,16 @@ class _AsyncCompletions(AsyncCompletions):
 
 
 class _AsyncChat(AsyncChat):
-    def __init__(self, client: AsyncArk, state: NewState):
+    def __init__(
+        self,
+        client: AsyncArk,
+        state: State,
+        parameters: ArkChatParameters | None,
+    ):
         self._state = state
+        self.parameters = parameters
         super().__init__(client)
 
     @property
     def completions(self) -> _AsyncCompletions:
-        return _AsyncCompletions(self._client, self._state)
+        return _AsyncCompletions(self._client, self._state, self.parameters)

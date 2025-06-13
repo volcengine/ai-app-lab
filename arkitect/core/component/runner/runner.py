@@ -28,7 +28,7 @@ from typing import AsyncIterable
 from arkitect.core.component.agent import BaseAgent
 from arkitect.core.component.checkpoint import BaseCheckpointService
 from arkitect.core.component.checkpoint.checkpoint import Checkpoint
-from arkitect.core.component.llm_event_stream.model import NewState
+from arkitect.core.component.llm_event_stream.model import State
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
 from arkitect.core.component.runner.config import RunnerConfig, MemoryUpdateSetting
 from arkitect.telemetry.logger import ERROR
@@ -55,15 +55,16 @@ class Runner:
         self,
         messages: list[Message] | None = None,
         checkpoint_id: str | None = None,
-        state: NewState | None = None,
+        state: State | None = None,
         user_id: str = "",
+        **kwargs,
     ):
         checkpoint: Checkpoint = await self.get_or_create_checkpoint(
             checkpoint_id=checkpoint_id, user_id=user_id
         )
         if state is not None:
             checkpoint.state = state
-        async for chunk in self.__run(checkpoint.state, checkpoint, messages):
+        async for chunk in self.__run(checkpoint.state, checkpoint, messages, **kwargs):
             if isinstance(chunk, BaseEvent):
                 yield chunk
 
@@ -81,7 +82,7 @@ class Runner:
             )
 
     async def process_event(
-        self, event: BaseEvent, state: NewState, checkpoint: Checkpoint
+        self, event: BaseEvent, state: State, checkpoint: Checkpoint
     ) -> AsyncIterable[BaseEvent]:
         if isinstance(event, StateUpdateEvent):
             if event.details_delta is not None:
@@ -99,9 +100,10 @@ class Runner:
 
     async def __run(
         self,
-        state: NewState,
+        state: State,
         checkpoint: Checkpoint,
         messages: list[Message] | None = None,
+        **kwargs,
     ) -> AsyncIterable[BaseEvent]:
         if messages is not None:
             append_messages = StateUpdateEvent(
@@ -111,7 +113,7 @@ class Runner:
             async for event in self.process_event(append_messages, state, checkpoint):
                 continue
         try:
-            async for event in self.agent(state):
+            async for event in self.agent(state, **kwargs):
                 async for event in self.process_event(event, state, checkpoint):
                     yield event
         except Exception as e:

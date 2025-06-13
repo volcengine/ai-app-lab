@@ -20,11 +20,8 @@ from arkitect.types.llm.model import ArkChatParameters, ArkContextParameters
 from arkitect.types.responses.event import StateUpdateEvent
 
 
-class NewState(BaseModel):
+class State(BaseModel):
 
-    context_id: Optional[str] = Field(default=None)
-    parameters: Optional[ArkChatParameters] = Field(default=None)
-    context_parameters: Optional[ArkContextParameters] = Field(default=None)
     details: dict = {}
     events: List[StateUpdateEvent] = Field(default_factory=list)
 
@@ -32,5 +29,5 @@ class NewState(BaseModel):
 class ContextInterruption(BaseModel):
     life_cycle: Literal["tool_call", "llm_call"]
     reason: str = ""
-    state: Optional[NewState] = None
+    state: Optional[State] = None
     details: Optional[Any] = None
