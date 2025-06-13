@@ -1,14 +1,13 @@
-from enum import Enum
 import re
+from enum import Enum
 
 from openai import NOT_GIVEN, OpenAI
 from openai.types.responses.response_input_param import ResponseInputParam
 from openai.types.responses.response_stream_event import ResponseCompletedEvent
 
-
 from arkitect.core.component.memory.base_memory_service import BaseMemoryService
-from arkitect.types.llm.model import ArkMessage
 from arkitect.telemetry.logger import INFO
+from arkitect.types.llm.model import ArkMessage
 
 
 class MemoryUpdateBehaviour(str, Enum):

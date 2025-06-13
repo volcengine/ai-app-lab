@@ -21,21 +21,20 @@ from typing import (
     List,
     Optional,
 )
-from arkitect.core.component.tool.utils import (
-    convert_to_chat_completion_content_part_param,
-)
+
 from volcenginesdkarkruntime import AsyncArk
 from volcenginesdkarkruntime.types.chat import (
     ChatCompletionMessageParam,
 )
-from volcenginesdkarkruntime.types.context import CreateContextResponse
 
 from arkitect.core.client import default_ark_client
 
 # from arkitect.core.component.agent.base_agent import BaseAgent
-
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.tool_pool import ToolPool, build_tool_pool
+from arkitect.core.component.tool.utils import (
+    convert_to_chat_completion_content_part_param,
+)
 from arkitect.types.llm.model import (
     ArkChatParameters,
     ArkContextParameters,
@@ -47,6 +46,9 @@ from arkitect.types.responses.event import (
     ToolCallEvent,
     ToolCompletedEvent,
 )
+
+from .chat_completion import _AsyncChat
+from .context_completion import _AsyncContext
 from .hooks import (
     HookInterruptException,
     PostLLMCallHook,
@@ -54,8 +56,6 @@ from .hooks import (
     PreLLMCallHook,
     PreToolCallHook,
 )
-from .chat_completion import _AsyncChat
-from .context_completion import _AsyncContext
 from .model import ContextInterruption, State
 
 

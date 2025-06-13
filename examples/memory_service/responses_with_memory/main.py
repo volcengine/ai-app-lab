@@ -4,20 +4,6 @@ import time
 from typing import AsyncIterable
 
 import volcenginesdkarkruntime.types.chat.chat_completion_chunk as completion_chunk
-from arkitect.core.component.memory import (
-    Mem0MemoryService as MemoryService,
-)  # InMemoryMemoryServiceSingleton,; InMemoryMemoryService as MemoryService,
-from arkitect.core.component.memory import Mem0MemoryServiceSingleton
-
-# from arkitect.core.component.memory import (
-#     InMemoryMemoryService as MemoryService,
-# )
-# from arkitect.core.component.memory import (
-#     InMemoryMemoryServiceSingleton,
-# )
-from arkitect.launcher.local.serve import launch_serve
-from arkitect.telemetry.trace import task
-from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatRequest
 from mem0.configs.base import MemoryConfig as Mem0Config
 from mem0.embeddings.configs import EmbedderConfig
 from mem0.llms.configs import LlmConfig
@@ -29,6 +15,23 @@ from openai.types.responses.response_stream_event import (
     ResponseTextDeltaEvent,
 )
 from responses_client import ResponsesClientWithLongTermMemory
+
+from arkitect.core.component.memory import (
+    Mem0MemoryService as MemoryService,
+)
+
+# InMemoryMemoryServiceSingleton,; InMemoryMemoryService as MemoryService,
+from arkitect.core.component.memory import Mem0MemoryServiceSingleton
+
+# from arkitect.core.component.memory import (
+#     InMemoryMemoryService as MemoryService,
+# )
+# from arkitect.core.component.memory import (
+#     InMemoryMemoryServiceSingleton,
+# )
+from arkitect.launcher.local.serve import launch_serve
+from arkitect.telemetry.trace import task
+from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatRequest
 
 DEFAULT_EMBEDDING_MODEL = "doubao-embedding-text-240715"
 DEFAULT_LLM_MODEL = "doubao-1-5-vision-pro-32k-250115"
@@ -96,7 +99,6 @@ def convert_chunk(chunk: ResponseStreamEvent) -> ArkChatCompletionChunk | None:
 
 @task(distributed=False)
 async def main(request: ArkChatRequest) -> AsyncIterable[ArkChatCompletionChunk]:
-
     mem_service: MemoryService = Mem0MemoryServiceSingleton.get_instance_sync(
         default_ark_config
     )

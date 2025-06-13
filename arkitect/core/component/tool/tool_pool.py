@@ -14,7 +14,6 @@
 
 from typing import Any, Callable, Dict
 
-
 from arkitect.core.component.tool.mcp_client import MCPClient
 from arkitect.core.component.tool.utils import (
     find_duplicate_tools,

@@ -74,7 +74,6 @@ default_ark_config = Mem0Config(
 
 
 class Mem0MemoryService(BaseMemoryService):
-
     def __init__(self, config: Mem0Config = default_ark_config) -> None:
         self.mem0_config = config if config else Mem0Config()
         self._llm = AsyncArk()

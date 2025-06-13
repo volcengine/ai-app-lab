@@ -13,11 +13,11 @@ import logging
 import os
 import re
 from typing import AsyncIterable
+
 from mem0.configs.base import MemoryConfig as Mem0Config
 from mem0.embeddings.configs import EmbedderConfig
 from mem0.llms.configs import LlmConfig
 from mem0.vector_stores.configs import VectorStoreConfig
-from arkitect.core.component.runner.config import RunnerConfig, MemoryUpdateSetting
 from tools import get_commute_duration, get_instructions, web_search
 
 from arkitect.core.component.agent import DefaultAgent
@@ -28,6 +28,7 @@ from arkitect.core.component.memory.mem0_memory_service import (
     Mem0MemoryServiceSingleton,
 )
 from arkitect.core.component.runner import Runner
+from arkitect.core.component.runner.config import MemoryUpdateSetting, RunnerConfig
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import ArkChatCompletionChunk, ArkChatRequest, ArkMessage
