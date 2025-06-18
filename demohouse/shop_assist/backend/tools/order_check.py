@@ -17,11 +17,12 @@ from pydantic import Field
 
 def get_order_check_fn(account_id: str) -> Callable:
     async def order_check(
-        order_id: str = Field(description="订单编号", default=""),
-        product: str = Field(description="商品名称", default=""),
+        order_id: str = Field(description="Order ID", default=""),
+        product: str = Field(description="Product name", default=""),
     ):
         """
-        需要查询订单的时候使用本函数，返回订单的详细信息，如果订单号和商品名称都为空，返回所有订单信息
+        Use this function to query order details. Returns detailed order information.
+        If both order ID and product name are empty, returns all order information.
         """
         if product:
             result = await orders.get_orders_by_product(account_id, product)

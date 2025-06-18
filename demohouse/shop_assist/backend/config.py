@@ -18,3 +18,4 @@ faq_collection_name = os.getenv("FAQ_COLLECTION_NAME", "")
 endpoint_id = os.getenv("LLM_ENDPOINT_ID", "doubao-1-5-pro-32k-250115")
 bucket_name = os.getenv("BUCKET_NAME", "")
 use_server_auth = os.getenv("USE_SERVER_AUTH", "False").lower() in ("true", "1", "t")
+language = os.getenv("LANGUAGE", "zh")  # 'zh' for Chinese, 'en' for English
