@@ -1,0 +1,142 @@
+.drawer {
+  padding: 20px 24px;
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+    align-self: stretch;
+
+    .poster {
+      position: relative;
+      width: 100%;
+      height: 127px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(263deg, #f3edff 3.44%, #f2faff 84.09%);
+      z-index: 1;
+      .img {
+        width: 127px;
+        height: 127px;
+        position: absolute;
+        right: 26px;
+        z-index: -1;
+      }
+
+      .left {
+        padding-left: 23px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        .t {
+          color: var(--text-color-text-1, var(--text-color-text-1, #0c0d0e));
+
+          /* Title/title-1 */
+          font-family: 'PingFang SC';
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: 24px; /* 150% */
+          letter-spacing: 0.048px;
+        }
+        .d {
+          width: 194px;
+          color: #737a87;
+
+          /* Body/body-1 regular */
+          font-family: 'PingFang SC';
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 20px; /* 166.667% */
+          letter-spacing: 0.036px;
+        }
+      }
+    }
+  }
+}
+
+.sliderContainer {
+  width: 100%;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--line-color-border-3, #dde2e9);
+
+  .title {
+    display: flex;
+    align-items: center;
+
+    color: var(--text-color-text-2, #42464e);
+
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px; /* 157.143% */
+    letter-spacing: 0.042px;
+
+    margin-bottom: 10px;
+
+    .iconQuestion {
+      width: 12px;
+      height: 12px;
+      margin-left: 4px;
+    }
+  }
+  .sliderBox {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .slider {
+      flex: 1;
+    }
+
+    .inputNumber {
+      width: 76px;
+      height: 28px;
+      :global(.arco-input) {
+        text-align: center;
+      }
+    }
+  }
+}
+
+.itemCustom {
+  border-radius: 8px;
+  border: 1px solid var(--line-color-border-3, #dde2e9);
+
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  align-self: stretch;
+  .d {
+    color: var(--text-color-text-3, var(--text-color-text-3, #737a87));
+
+    /* Body/body-2 regular */
+    font-family: 'PingFang SC';
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px; /* 169.231% */
+    letter-spacing: 0.039px;
+  }
+  .title {
+    display: flex;
+    align-items: center;
+
+    color: var(--text-color-text-2, #42464e);
+
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px; /* 157.143% */
+    letter-spacing: 0.042px;
+
+    .iconQuestion {
+      width: 12px;
+      height: 12px;
+      margin-left: 4px;
+    }
+  }
+}

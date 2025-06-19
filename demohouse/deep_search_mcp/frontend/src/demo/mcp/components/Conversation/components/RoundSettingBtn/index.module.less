@@ -1,0 +1,46 @@
+.btn {
+  display: inline-flex;
+  height: 30px;
+  padding: 7px 9px;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  border: 1px solid var(--line-color-border-2, #eaedf1);
+  background: var(--fill-color-bg-white, #fff);
+  cursor: pointer;
+  color: #0c0d0e;
+  transition: all 0.15s ease-in-out;
+
+  color: #0c0d0e;
+  font-family: 'PingFang SC';
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120%; /* 14.4px */
+  letter-spacing: 0.036px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover:not(.disabled) {
+    border: 1px solid var(--primary-color-primary-4, #6e9fff);
+    background: var(--primary-color-primary-1, #f3f7ff);
+    color: var(--primary-color-primary-7, var(--primary-color-primary-7, #1759dd));
+    svg {
+      color: var(--primary-color-primary-7, var(--primary-color-primary-7, #1759dd));
+    }
+  }
+  &.disabled {
+    cursor: not-allowed;
+    border: 1px solid var(--line-color-border-2, #eaedf1);
+    background: var(--fill-color-bg-white, #fff);
+    color: var(--text-color-text-4, var(--text-color-text-4, #c7ccd6));
+  }
+}
+
+.btn-square {
+  padding: 7px;
+}

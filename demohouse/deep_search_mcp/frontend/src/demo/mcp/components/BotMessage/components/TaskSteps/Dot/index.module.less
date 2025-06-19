@@ -1,0 +1,38 @@
+.dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 9px 6px;
+  border-radius: 50%;
+  background-color: #35C668;
+}
+
+.dot-loading {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 9px 6px;
+  border-radius: 50%;
+  background: #8585ff;
+}
+
+.dot-breath {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin: 9px 6px;
+  border-radius: 50%;
+  background: rgba(82, 82, 255, 1);
+  opacity: 0.75;
+  animation: breath 1s cubic-bezier(0,0,.2,1) infinite;
+}
+
+@keyframes breath {
+  75%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}

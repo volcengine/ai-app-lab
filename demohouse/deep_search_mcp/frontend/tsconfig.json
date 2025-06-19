@@ -1,0 +1,21 @@
+{
+  "extends": "@modern-js/tsconfig/base",
+  "compilerOptions": {
+    "declaration": false,
+    "jsx": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@bam/*": ["./bam-auto-gen/*"],
+      "@shared/*": ["./shared/*"]
+    }
+  },
+  "include": [
+    "src",
+    "shared",
+    "config",
+    "modern.config.ts",
+    "tailwind.config.ts"
+  ],
+  "exclude": ["**/node_modules"]
+}

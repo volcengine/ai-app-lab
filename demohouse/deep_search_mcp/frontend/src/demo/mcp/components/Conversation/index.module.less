@@ -1,0 +1,122 @@
+.welcome {
+  max-width: 800px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--text-color-text-1, #0c0d0e);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 42px; /* 190.909% */
+
+    .name {
+      font-family: 'Roboto Slab';
+      letter-spacing: 0.066px;
+    }
+  }
+
+  .recommend {
+    margin-top: 8px;
+    .title {
+      color: var(--text-color-text-2, #42464e);
+
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 22px; /* 169.231% */
+      letter-spacing: 0.039px;
+    }
+  }
+
+  .questionsBox {
+    display: flex;
+    gap: 10px;
+
+    .card {
+      padding: 20px;
+      border-radius: 8px;
+      background: #fdfeff;
+      box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.04);
+      cursor: pointer;
+
+      .icon {
+        color: #5252ff;
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .text {
+        color: var(--text-color-text-1, #0c0d0e);
+
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 20px; /* 166.667% */
+        letter-spacing: 0.036px;
+      }
+    }
+  }
+}
+
+.conversation {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.conversation-chat-area-container {
+  flex: 1;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.reverse-scroll {
+  overflow-y: scroll;
+  height: fit-content;
+  // 为了高度超出屏幕后 不变长，而是往上滚动
+  max-height: 100%;
+  width: 100%;
+  padding: 60px 0 0;
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  position: relative;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chat-list {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    overflow-anchor: auto;
+  }
+}
+
+.quota-wrapper {
+  position: absolute;
+  top: 10px;
+  left: 0px;
+  z-index: 9;
+}
+
+.activate-btn-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 0px;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}

@@ -1,0 +1,25 @@
+.indicator {
+  @bgColorFrom: rgba(0, 0, 0, 1);
+  @bgColorTo: rgba(0, 0, 0, 0.1);
+ 
+  @keyframes dot-flashing {
+    0% {
+      background-color: @bgColorFrom;
+    }
+    50% {
+      background-color: @bgColorTo;
+    }
+    100% {
+      background-color: @bgColorFrom;
+    }
+  }
+
+  width: 1px;
+  height: 15px;
+  margin-left: 3px;
+  transform: translateY(2.5px);
+  display: inline-block;
+
+  animation: dot-flashing 0.8s infinite reverse;
+  animation-timing-function: ease;
+}

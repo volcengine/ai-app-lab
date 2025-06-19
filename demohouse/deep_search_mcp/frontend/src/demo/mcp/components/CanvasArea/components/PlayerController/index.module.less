@@ -1,0 +1,51 @@
+.controller-container {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.btn-container {
+  flex-shrink: 0;
+  display: flex;
+  gap: 13px;
+
+  .btn {
+    cursor: pointer;
+    display: flex;
+    width: 24px;
+    height: 24px;
+    padding: 6px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 30px;
+    border: 1px solid var(--line-color-border-2, #eaedf1);
+    background: var(--background-color-bg-4, #f6f8fa);
+
+    &:hover {
+      color: #635bff;
+    }
+  }
+}
+
+.live {
+  display: flex;
+  height: 24px;
+  padding: 6px 10px 6px 6px;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  border-radius: 30px;
+  border: 1px solid var(--line-color-border-2, #eaedf1);
+  background: var(--background-color-bg-4, #f6f8fa);
+  color: #000;
+  text-align: right;
+
+  /* EN or Digital/body-3 medium */
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: 0.042px;
+}

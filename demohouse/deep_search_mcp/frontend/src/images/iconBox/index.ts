@@ -1,0 +1,15 @@
+export { ReactComponent as IconExclamationCircleFill } from './exclamation_circle_fill.svg';
+export { ReactComponent as IconLowRiskYellow } from './low_risk_yellow.svg';
+export { ReactComponent as IconDocumentColor } from './document_color.svg';
+export { ReactComponent as IconClose } from './close.svg';
+export { ReactComponent as IconInfoCircle } from './info_circle.svg';
+export { ReactComponent as IconCloseCircleFill } from './close_circle_fill.svg';
+export { ReactComponent as IconRefresh } from './refresh.svg';
+export { ReactComponent as IconWarningFill } from './warning_fill.svg';
+export { ReactComponent as IconEdit } from './edit.svg';
+export { ReactComponent as IconErrorTypeHighSaturation } from './error_type_high_saturation.svg';
+export { ReactComponent as IconRetry } from './retry.svg';
+export { ReactComponent as IconClean } from './clean.svg';
+export { ReactComponent as IconLeft } from './left.svg';
+export { ReactComponent as IconRight } from './right.svg';
+export { ReactComponent as IconCopy } from './copy.svg';

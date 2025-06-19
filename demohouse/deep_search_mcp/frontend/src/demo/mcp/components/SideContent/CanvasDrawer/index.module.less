@@ -1,0 +1,75 @@
+.radio-img {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.custom-radio-item {
+  border-radius: 16px;
+  display: flex;
+  padding: 5px 13px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  background: #f6f8fa;
+  transition: all 0.3s;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  color: var(--text-color-text-1, var(--text-color-text-1, #0c0d0e));
+  font-family: 'PingFang SC';
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.039px;
+  margin-right: 0;
+}
+
+.custom-radio-active {
+  position: relative;
+  background: #eef;
+}
+
+.scroll-bar {
+  flex: 1;
+  width: 0;
+  overflow-x: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.radioGroupWrapper {
+  white-space: nowrap;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  :global(.arco-radio) {
+    margin-right: 8px;
+  }
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 16px;
+  padding: 5px 13px;
+  transition: all 0.3s;
+
+  font-family: 'PingFang SC';
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.039px;
+
+  &:hover {
+    background: #eef;
+  }
+}
+
+.label-checked {
+  background: #eef;
+}

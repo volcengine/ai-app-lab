@@ -1,0 +1,54 @@
+.msg {
+  width: fit-content;
+  display: flex;
+  padding: 10px 12px;
+  align-items: flex-start;
+  gap: 12px;
+  border-radius: 12px 2px 12px 12px;
+  background: #e1e7fb;
+  color: var(--text-color-text-1, var(--text-color-text-1, #0c0d0e));
+  font-family: 'PingFang SC';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 171.429% */
+  letter-spacing: 0.042px;
+}
+
+.pdf {
+  display: flex;
+  width: 260px;
+  padding: 8px 12px 8px 8px;
+  align-items: center;
+  gap: 3px;
+
+  border-radius: var(--12, 12px);
+  border: 1px solid var(--line-color-border-2, #eaedf1);
+  background: var(--background-color-bg-1, #fff);
+
+  .name {
+    width: 190px;
+    overflow: hidden;
+    color: var(--text-color-text-1, var(--text-color-text-1, #0c0d0e));
+    text-overflow: ellipsis;
+
+    /* Body/body-2 regular */
+    font-family: 'PingFang SC';
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px; /* 169.231% */
+    letter-spacing: 0.039px;
+  }
+  .sub {
+    color: var(--text-color-text-3, var(--text-color-text-3, #737a87));
+
+    /* Body/body-1 regular */
+    font-family: 'PingFang SC';
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 166.667% */
+    letter-spacing: 0.036px;
+  }
+}

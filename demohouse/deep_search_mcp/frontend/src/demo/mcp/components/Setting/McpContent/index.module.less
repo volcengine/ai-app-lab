@@ -1,0 +1,98 @@
+.c {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  // height: calc(100vh - 48px - 16px - 32px);
+  height: 100%;
+  position: relative;
+}
+
+.serviceList {
+  overflow: auto;
+  flex: 1;
+  display: flex;
+  padding: 20px 24px 80px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+  align-self: stretch;
+
+  .group {
+    width: 100%;
+    .groupName {
+      margin-bottom: 4px;
+      color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+
+      /* Body/body-3 medium */
+      font-family: 'PingFang SC';
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 22px; /* 157.143% */
+      letter-spacing: 0.042px;
+    }
+    .desc {
+      margin-bottom: 8px;
+      color: var(--text-color-text-3, var(--text-color-text-3, #737a87));
+
+      /* Body/body-1 regular */
+      font-family: 'PingFang SC';
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px; /* 166.667% */
+      letter-spacing: 0.036px;
+    }
+    .itemList {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      align-self: stretch;
+      .item {
+        cursor: pointer;
+        width: 100%;
+        display: flex;
+        padding: 12px;
+        align-self: stretch;
+        border-radius: 6px;
+        border: 1px solid var(--line-color-border-2, #eaedf1);
+        background: #fff;
+        .icon {
+          border-radius: 4px;
+          width: 22px;
+          height: 22px;
+        }
+        .name {
+          color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+
+          /* Body/body-3 regular */
+          font-family: 'PingFang SC';
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 22px; /* 157.143% */
+          letter-spacing: 0.042px;
+        }
+
+        .delete {
+          opacity: 0;
+          transition: all 0.3s;
+        }
+        &:hover {
+          .delete {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+.add-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}

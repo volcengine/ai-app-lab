@@ -1,0 +1,46 @@
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
+  .tag {
+    flex-shrink: 0;
+    margin-right: 4px;
+    display: flex;
+    padding: 3px 4px;
+    align-items: center;
+    gap: 4px;
+    border-radius: 4px;
+    background: var(--background-color-bg-5, #F1F3F5);
+    color: var(--text-color-text-2, var(--text-color-text-2, #42464E));
+    text-align: center;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%; /* 14.3px */
+  }
+  .text {
+    color: var(--text-color-text-1, var(--text-color-text-1, #0C0D0E));
+    font-family: Roboto;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 160%; /* 22.4px */
+    letter-spacing: 0.042px;
+
+  }
+}
+
+.custom-timeline {
+  padding-left: 6px;
+  :global(.arco-timeline-item-content-wrapper) {
+    margin-left: 12px;
+  }
+  :global(.arco-timeline-item) {
+    min-height: 32px;
+  }
+  :global(.arco-timeline-item-dot-custom) {
+    background-color: #fff;
+  }
+}
+

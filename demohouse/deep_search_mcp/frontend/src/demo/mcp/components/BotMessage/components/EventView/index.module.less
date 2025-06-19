@@ -1,0 +1,85 @@
+.btn {
+  cursor: pointer;
+  width: fit-content;
+  display: flex;
+  padding: 6px 10px 6px 6px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line-color-border-2, #EAEDF1);
+  background: var(--fill-color-bg-white, #FFF);
+  position: relative;
+
+  &:active {
+    background: rgba(225, 225, 225, 0.6);
+  }
+  .text {
+    color: var(--text-color-text-2, var(--text-color-text-2, #42464E));
+    text-align: center;
+    font-family: "PingFang SC";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 130%; /* 15.6px */
+  }
+  .icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+  }
+}
+
+.colorful-border {
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  border: 1px solid transparent;
+  background-image: linear-gradient(to right, #fff, #fff), linear-gradient(0deg, #3B91FF, #0D5EFF, #C069FF);
+  animation-duration: 4s;
+  animation-name: color-change;
+  animation-iteration-count: infinite;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+
+  &.success {
+    background-color: #35C668;
+  }
+
+  &.error {
+    background-color: #FD4229;
+  }
+
+}
+
+@keyframes color-change {
+  0% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(0deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  12.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(45deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  25% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(90deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  37.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(135deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  50% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(180deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  62.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(225deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  75% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(270deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  87.5% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(315deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+  100% {
+    background-image: linear-gradient(to right, #fff, #fff), linear-gradient(360deg, #3B91FF, #0D5EFF, #C069FF);
+  }
+}

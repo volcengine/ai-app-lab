@@ -1,0 +1,11 @@
+export { ReactComponent as IconPinkStar } from './icon_pink_star.svg';
+export { ReactComponent as IconStackedMoney } from './icon_stacked_money.svg';
+export { ReactComponent as IconCurveRising } from './icon_curve_rising.svg';
+export { ReactComponent as IconDocument } from './icon_document.svg';
+export { ReactComponent as IconSettings } from './icon_settings.svg';
+export { ReactComponent as IconCardSearchOutlined } from './icon_card_search_outlined.svg';
+export { ReactComponent as IconSearching } from './icon_searching.svg';
+export { ReactComponent as IconDeepseek } from './icon_deepseek.svg';
+export { ReactComponent as IconQuestionAvatar } from './icon_question_avatar.svg';
+export { ReactComponent as IconClose } from './icon_close.svg';
+export { ReactComponent as IconResearchLogo } from './icon_research_logo.svg';

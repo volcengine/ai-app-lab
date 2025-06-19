@@ -1,0 +1,58 @@
+.footWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 16px;
+  .operation {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .button {
+      border-radius: var(--border-radius-small, 4px);
+      border: 1px solid var(--line-color-border-2, #eaedf1);
+      background: var(--background-color-bg-1, #fff);
+      box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.08);
+      display: flex;
+      padding: 5px;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+  .info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+    .request-id {
+      display: flex;
+      padding: 5px 10px;
+      align-items: center;
+      gap: 4px;
+      border-radius: 4px;
+      background: var(--background-color-bg-4, #f6f8fa);
+      color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+      font-family: Roboto;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 22px; /* 169.231% */
+      letter-spacing: 0.039px;
+
+      .iconPart {
+        cursor: pointer;
+      }
+    }
+
+  }
+
+  .icon-btn {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

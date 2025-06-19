@@ -1,0 +1,52 @@
+.iframe-wrapper {
+  width: 100%;
+  height: 100%;
+  .iframe {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  .mask {
+    width: 80%;
+    height: 12%;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2d7bff;
+    border-radius: 50px;
+
+    .btn-operate {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+
+      .edit-btn {
+        background: hsla(0, 0%, 100%, 0.2);
+        box-sizing: border-box;
+        border: 1px solid #fff;
+        box-shadow: 0 4px 20px 0 rgba(25, 97, 221, 0.5);
+        color: #fff;
+        border-radius: 10px;
+        font-weight: 500;
+        &:hover {
+          background: hsla(0, 0%, 100%, 0.4);
+        }
+      }
+
+      .download-btn {
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 4px 20px 0 rgba(25, 97, 221, 0.5);
+        backdrop-filter: blur(10px);
+        color: #fff;
+        border-radius: 10px;
+        border: none;
+        font-weight: 500;
+        &:hover {
+          background: rgba(0, 0, 0, 0.6);
+        }
+      }
+    }
+  }
+}
