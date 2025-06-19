@@ -46,5 +46,3 @@ export const serviceNameMap: Record<string, string> = {
 };
 
 export const IS_DEV = process.env.NODE_ENV === 'development';
-
-export const AutoPEApiVersion = '2024-01-01';

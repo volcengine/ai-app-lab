@@ -6,7 +6,6 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
-      "@bam/*": ["./bam-auto-gen/*"],
       "@shared/*": ["./shared/*"]
     }
   },

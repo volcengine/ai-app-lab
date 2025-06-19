@@ -66,27 +66,6 @@ export function RoundContent() {
             />
           </div>
         </div>
-        {host === Host.AIBOTSQUARE && (
-          <div className={s.itemCustom}>
-            <div className={'flex justify-between w-full'}>
-              <div className={s.title}>
-                <span>个性化</span>
-                <Tooltip content="个性化">
-                  <IconQuestionCircle className={s.iconQuestion} />
-                </Tooltip>
-              </div>
-              <Switch
-                checked={personalized}
-                onChange={v => {
-                  setPersonalized(v);
-                }}
-              />
-            </div>
-            <div className={s.d}>
-              开启后，授权存储广场上的DeepSearch对话数据到PromptPilot调优数据集中，并自动使用PromptPilot进行内部Prompt个性化优化
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );

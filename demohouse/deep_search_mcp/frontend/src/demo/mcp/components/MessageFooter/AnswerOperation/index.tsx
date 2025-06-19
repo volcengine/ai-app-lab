@@ -18,7 +18,6 @@ import { useChatInstance } from '@/demo/mcp/hooks/useInstance';
 import { Host } from '@/demo/mcp/types';
 import type { Message } from '@/demo/mcp/types/message';
 
-import { Feedback } from '../Feedback';
 import { MessageBranchChecker } from '../MessageBranchChecker';
 import styles from './style.module.less';
 
@@ -74,11 +73,6 @@ export const AnswerOperation = ({
         {/* 复制 */}
         <CopyButton textToCopy={content} />
       </div>
-      {type !== 'error' &&
-        type !== 'manual-pause' &&
-        eventType !== 'error' &&
-        eventType !== 'manual-pause' &&
-        host === Host.AIBOTSQUARE && <Feedback />}
     </div>
   );
 };

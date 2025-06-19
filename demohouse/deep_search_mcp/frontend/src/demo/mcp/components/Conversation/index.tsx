@@ -23,7 +23,6 @@ import { IconBotDebug } from '@/images';
 import { IconClean } from '@/icon';
 import { useChatRequest } from '../../hooks/useChatRequest';
 import { useChatInstance } from '../../hooks/useInstance';
-import { useAutoPEStore } from '../../store/AutoPEStore';
 import { useCanvasStore } from '../../store/CanvasStore';
 import { useChatConfigStore } from '../../store/ChatConfigStore/useChatConfigStore';
 import { useSettingDrawerStore } from '../../store/ChatConfigStore/useSettingDrawerStore';
@@ -58,7 +57,6 @@ export const Conversation = () => {
   const { mcpDebugHelper } = useConfigStore();
   const resetCanvasData = useCanvasStore(state => state.resetData);
   const { setDrawerVisible: setMcpConfigVisible } = useSettingDrawerStore();
-  const { setAutoPEDrawerVisible } = useAutoPEStore();
   const setShowCanvas = useCanvasStore(state => state.setShowCanvas);
 
   const chatListRef = useRef<ChatListRef>(null);
@@ -81,7 +79,6 @@ export const Conversation = () => {
     clearChatList();
     abortMessage();
     resetCanvasData();
-    setAutoPEDrawerVisible(false);
     setShowCanvas(false);
     setMcpConfigVisible(true);
   };
@@ -102,33 +99,9 @@ export const Conversation = () => {
     };
   }, []);
 
-  const [isFirstTime, dismiss] = useFirstTimeTooltip('mcp_autope_show_msg');
-  const { personalized, setPersonalized } = useChatConfigStore();
-  const showPersonalizedPrompt = () => {
-    Modal.confirm({
-      style: { width: 360 },
-      icon: <IconInfoCircleFill />,
-      title: '启用系统Prompt个性化优化',
-      content:
-        '授权存储广场上的DeepSearch对话数据到PromptPilot调优数据集中，并自动使用PromptPilot进行内部Prompt个性化优化',
-      okText: '启用',
-      cancelText: '取消',
-      onOk: () => {
-        dismiss();
-        setPersonalized(true);
-      },
-      onCancel: () => {
-        dismiss();
-      },
-    });
-  };
-
   const handleSend = (message: string) => {
     if (!message) {
       return;
-    }
-    if (isFirstTime && personalized && host === Host.AIBOTSQUARE) {
-      showPersonalizedPrompt();
     }
     sendUserMsg(message);
     if (chatListRef.current) {
