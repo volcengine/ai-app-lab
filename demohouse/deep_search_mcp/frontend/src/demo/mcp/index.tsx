@@ -26,7 +26,7 @@ interface DeepResearchProps extends VmokBaseProps {
   botId?: string;
   // 可用的 mcp server list
   mcpServerList?: string[];
-  host?: Host; // 宿主环境默认是 aibotsquare，procode表示新建自定义的高代码，在procode下隐藏autope功能，展示调试功能
+  host?: Host;
   debugEnabled?: boolean;
   mcpDebugHelper?: {
     iframeloading: boolean;
@@ -47,10 +47,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// 1. demo specific properties
-// 2. config akr-ops平台配置项目
-// 3.1 getHeader bytecloud注入的header
-// 3.2 request -> ??
 const MCP = (props: DeepResearchProps) => {
   const {
     botId = 'bot-20250603214318-pfpmd-procode-preset',
