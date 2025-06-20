@@ -1,0 +1,41 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+svg{
+    display: inline-block;    
+}
+body{
+    background: linear-gradient(78deg, #f1f9ff -3.23%, #edf3ff 51.11%, #faf4ff 98.65%);
+    color: rgb(115, 122, 135);
+    font-family: Roboto, Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif, "Helvetica Neue", -apple-system, "system-ui", "noto sans";
+    width: 100vw;
+    height: 100vh;
+    #root{
+      width: 100%;
+      height: 100%;
+    }
+}
+#multipleQueryContainer{
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.arco-btn.arco-btn-secondary:not(.arco-btn-disabled):not(.arco-btn-not-loading){
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .08);
+}
+
+.arco-btn-secondary:not(.arco-btn-disabled){
+  background-color: #f6f8fa;
+  border:1px solid #dde2e9;
+  color: #42464e;
+}
+
+.arco-btn.arco-btn-secondary:not(.arco-btn-disabled):not(.arco-btn-not-loading):hover{
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .15);
+}
+
+.arco-btn-secondary:not(.arco-btn-disabled):not(.arco-btn-loading):hover{
+  background-color: #fafbfc;
+  border-color: rgb(56,123,255);
+  color: #42464e;
+}
