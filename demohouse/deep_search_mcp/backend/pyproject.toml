@@ -13,7 +13,8 @@ dependencies = [
     "mcp_server_ark @ git+https://github.com/volcengine/ai-app-lab.git@main#subdirectory=mcp/server/mcp_server_ark",
     "mcp_server_tls @ git+https://github.com/volcengine/ai-app-lab.git@main#subdirectory=mcp/server/mcp_server_tls",
     "mcp_server_vefaas_browser_use @ git+https://github.com/volcengine/mcp-server.git@main#subdirectory=server/mcp_server_vefaas_browser_use",
-    "mcp_server_ppt @ git+https://github.com/volcengine/ai-app-lab.git@main#subdirectory=mcp/server/mcp_server_ppt"
+    "mcp_server_ppt @ git+https://github.com/volcengine/ai-app-lab.git@main#subdirectory=mcp/server/mcp_server_ppt",
+    "mcp_server_vefaas_sandbox @ git+https://github.com/volcengine/ai-app-lab.git@main#subdirectory=mcp/server/mcp_server_vefaas_sandbox"
 ]
 [dependency-groups]
 dev = ["poetry-plugin-export>=1.9.0,<2"]

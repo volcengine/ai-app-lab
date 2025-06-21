@@ -10,7 +10,7 @@
 # limitations under the License.
 import json
 import time
-from typing import Optional, Any, Union, List
+from typing import Optional, Any, List
 
 from volcenginesdkarkruntime.types.bot_chat import BotChatCompletion
 from volcenginesdkarkruntime.types.bot_chat.bot_reference import Reference
@@ -22,7 +22,7 @@ from models.events import BaseEvent, FunctionCallEvent, FunctionCompletedEvent, 
     WebSearchToolCompletedEvent, PythonExecutorToolCompletedEvent, PythonExecutorToolCallEvent, \
     LinkReaderToolCompletedEvent, LinkReaderToolCallEvent, OutputTextEvent, ReasoningEvent, PlanningEvent, ErrorEvent, \
     EOFEvent, KnowledgeBaseSearchToolCompletedEvent, KnowledgeBaseSearchToolCallEvent, BrowserUseToolCallEvent, \
-    ChatPPTToolCallEvent, BrowserUseToolCompletedEvent, ChatPPTToolCompletedEvent
+    BrowserUseToolCompletedEvent, ChatPPTToolCallEvent, ChatPPTToolCompletedEvent
 
 
 def convert_pre_tool_call_to_event(
@@ -31,22 +31,38 @@ def convert_pre_tool_call_to_event(
 ) -> Optional[BaseEvent]:
     if function_name == 'web_search':
         return WebSearchToolCallEvent(
-            query=json.loads(function_parameter).get('message')
+            query=json.loads(function_parameter).get('message'),
+            function_name=function_name,
         )
     elif function_name == 'run_python':
         return PythonExecutorToolCallEvent(
-            code=json.loads(function_parameter).get('pyCode')
+            code=json.loads(function_parameter).get('pyCode'),
+            function_name=function_name,
         )
+    elif function_name == 'run_code':
+        print("function_parameter", function_parameter)
+        try:
+            return PythonExecutorToolCallEvent(
+                code=json.loads(function_parameter).get('codeStr', ''),
+                fetch_files=json.loads(function_parameter).get('fetch_files', []),
+                function_name=function_name,
+            )
+        except Exception as e:
+            return PythonExecutorToolCallEvent(
+                function_name=function_name,
+            )
     elif function_name == 'link_reader':
         return LinkReaderToolCallEvent(
-            urls=json.loads(function_parameter).get('url_list', [])
+            urls=json.loads(function_parameter).get('url_list', []),
+            function_name=function_name,
         )
     elif function_name == 'search_knowledge':
         args = json.loads(function_parameter)
         return KnowledgeBaseSearchToolCallEvent(
             query=args.get('query', ''),
             limit=args.get('limit', 3),
-            collection_name=args.get('collection_name', ''),
+            collection_name=args.get('collection_name', '') or '',
+            function_name=function_name,
         )
     elif function_name == 'create_browser_use_task':
         return BrowserUseToolCallEvent(
@@ -79,7 +95,6 @@ def convert_pre_tool_call_to_event(
             function_name=function_name,
         )
 
-
     # TODO inner tool wrapper
     return FunctionCallEvent(
         function_name=function_name,
@@ -98,6 +113,10 @@ def convert_post_tool_call_to_event(
             function_parameter, function_result
         )
     elif function_name == 'run_python':
+        return convert_python_execute_result_to_event(
+            function_parameter, function_result
+        )
+    elif function_name == 'run_code':
         return convert_python_execute_result_to_event(
             function_parameter, function_result
         )
@@ -134,6 +153,7 @@ def convert_post_tool_call_to_event(
             function_name, function_parameter, function_result
         )
 
+
     # TODO inner tool wrapper
     return FunctionCompletedEvent(
         function_name=function_name,
@@ -165,9 +185,14 @@ def convert_python_execute_result_to_event(raw_args: str, raw_response: str) -> 
         py_code: str = json.loads(raw_args).get('pyCode')
         body = json.loads(raw_response).get('body')
         run_result = json.loads(body).get('run_result')
+        stdout = run_result.get('stdout', '') or run_result.get('run_result', {}).get('stdout', '') or ''
+
+        code_str = json.loads(raw_args).get('codeStr', '')
+        files = run_result.get('files', {})
         return PythonExecutorToolCompletedEvent(
-            code=py_code,
-            stdout=run_result,
+            code=py_code if py_code else code_str,
+            stdout=stdout,
+            files=files if files else None,
         )
     except Exception as e:
         return PythonExecutorToolCompletedEvent(
@@ -222,6 +247,7 @@ def convert_knowledge_base_result_to_event(raw_args: str, raw_response: str) -> 
             success=False,
             error_msg=str(e)
         )
+
 
 def convert_browser_use_base_result_to_event(function_name: str, raw_args: str, raw_response: str) -> BrowserUseToolCompletedEvent:
     try:
@@ -304,7 +330,6 @@ def convert_chatppt_base_result_to_event(function_name: str, raw_args: str, raw_
             error_msg=str(e),
             function_name=function_name,
         )
-
 
 
 def convert_references_to_format_str(refs: List[Reference]) -> str:

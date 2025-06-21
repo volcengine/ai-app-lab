@@ -25,6 +25,7 @@ from models.events import BaseEvent, OutputTextEvent, ReasoningEvent, ErrorEvent
 from models.planning import PlanningItem, Planning
 from prompt.worker import DEFAULT_WORKER_PROMPT
 from state.global_state import GlobalState
+from tools.browser import browser_debug_stream
 from utils.common import get_env_info
 from utils.converter import (
     convert_post_tool_call_to_event,
@@ -79,13 +80,20 @@ class Worker(Agent):
                 self.record_usage(chunk, global_state.custom_state.total_usage)
                 if isinstance(chunk, ToolChunk):
                     if chunk.tool_exception or chunk.tool_response:
+                        print("tool", chunk.model_dump())
                         # post
-                        yield convert_post_tool_call_to_event(
+                        event = convert_post_tool_call_to_event(
                             function_name=chunk.tool_name,
                             function_parameter=chunk.tool_arguments,
                             function_result=chunk.tool_response,
                             exception=chunk.tool_exception,
                         )
+                        print("event", event.model_dump())
+                        yield event
+
+                        if "create_browser_use_task" in chunk.tool_name:
+                            async for browser_event in browser_debug_stream(event.task_id, event.pod_name):
+                                yield browser_event
                     else:
                         # pre
                         yield convert_pre_tool_call_to_event(

@@ -132,14 +132,13 @@ def get_workers(
         post_tool_call_hook=SearcherPostToolCallHook(global_state=global_state),
     )
 
-    # coder = Worker(
-    #     llm_model=WORKER_LLM_MODEL, name='coder',
-    #     instruction='编写和运行python代码',
-    #     tools=[
-    #         mcp_clients.get('code')
-    #     ],
-    #     post_tool_call_hook=PythonExecutorPostToolCallHook()
-    # )
+    coder = Worker(
+        llm_model=WORKER_LLM_MODEL, name='coder',
+        instruction="""代码生成与执行单元，提供了在一个沙盒环境中，生成并执行Python代码的能力。应当作为兜底能力使用，当且仅当其他能力无法满足任务要求、且任务可以通过代码实现时，使用此单元。当代码中包含生成一个html文件时，调用run_code的fetch_files参数必须为包含该html文件名的列表。调用时，tool_arguments必须是一个为一个合法的json字符串。
+            """,
+        tools=[mcp_clients.get('code')],
+        post_tool_call_hook=PythonExecutorPostToolCallHook()
+    )
 
     log_retriever = Worker(
         llm_model=WORKER_LLM_MODEL,
@@ -178,6 +177,12 @@ def get_workers(
         tools=[mcp_clients.get("browser")]
     )
 
+    llm_generator = Worker(
+        llm_model=WORKER_LLM_MODEL,
+        name="llm_generator",
+        instruction="文本生成单元。提供了向用户呈现文本形式结果的能力。当你需要输出最终结果、撰写报告、或是汇报任务进展时，使用此工具。",
+    )
+
     if global_state.custom_state.enabled_mcp_servers:
         # add dynamic mask
         if (
@@ -185,8 +190,8 @@ def get_workers(
             or "link_reader" in global_state.custom_state.enabled_mcp_servers
         ):
             workers.update({"searcher": searcher})
-        # if 'code' in global_state.custom_state.enabled_mcp_servers:
-        #     workers.update({'coder': coder})
+        if 'code' in global_state.custom_state.enabled_mcp_servers:
+            workers.update({'coder': coder})
         if "tls" in global_state.custom_state.enabled_mcp_servers:
             workers.update({"log_retriever": log_retriever})
         if "knowledgebase" in global_state.custom_state.enabled_mcp_servers:
@@ -195,6 +200,7 @@ def get_workers(
             workers.update({"browser_user": browser_user})
         if "chatppt" in global_state.custom_state.enabled_mcp_servers:
             workers.update({"ppt_generator": ppt_generator})
+        workers.update({"llm_generator": llm_generator})
 
         return workers
     else:
