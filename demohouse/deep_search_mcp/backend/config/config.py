@@ -21,3 +21,13 @@ SUPERVISOR_LLM_MODEL = os.environ.get('SUPERVISOR_LLM_MODEL') or 'deepseek-r1-25
 SUMMARY_LLM_MODEL = os.environ.get('SUMMARY_LLM_MODEL') or 'deepseek-r1-250120'
 
 COLLECTION_DESCRIPTION = os.environ.get('COLLECTION_DESCRIPTION') or '私域知识'
+
+BROWSER_USE_ENDPOINT = os.environ.get('BROWSER_USE_ENDPOINT') or ''
+
+RESUME_SLEEP_SECS = int(os.environ.get('RESUME_SLEEP_SECS') or '30')
+
+RETRY_SLEEP_SECS = int(os.environ.get('RETRY_SLEEP_SECS') or '2')
+
+RETRY_TIMES = int(os.environ.get('RETRY_TIMES') or '5')
+
+BROWSER_USE_AUTH_KEY = os.environ.get('BROWSER_USE_AUTH_KEY') or ''

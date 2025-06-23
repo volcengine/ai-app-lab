@@ -126,6 +126,7 @@ class Supervisor(Agent):
             )
             if self.state_manager:
                 await self.state_manager.dump(global_state.custom_state)
+            return
 
         while planning.get_todos():
             next_todo = planning.get_next_todo()
@@ -214,6 +215,7 @@ class Supervisor(Agent):
                 and chunk.choices
                 and chunk.choices[0].delta.content
             ):
+                buffer_response += chunk.choices[0].delta.content
                 yield OutputTextEvent(delta=chunk.choices[0].delta.content)
             if (
                 isinstance(chunk, ChatCompletionChunk)

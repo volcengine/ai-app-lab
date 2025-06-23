@@ -59,7 +59,8 @@ mcp-server-ark @ git+https://github.com/volcengine/ai-app-lab.git@edd7824ca863a1
 mcp-server-knowledgebase @ git+https://github.com/volcengine/ai-app-lab.git@edd7824ca863a1134258ecd6ba1d7e9afedd1f6a#subdirectory=mcp/server/mcp_server_knowledgebase
 mcp-server-ppt @ git+https://github.com/volcengine/ai-app-lab.git@9d1d316705c54680c0e78841eb4c14bd51d2dd25#subdirectory=mcp/server/mcp_server_ppt
 mcp-server-tls @ git+https://github.com/volcengine/ai-app-lab.git@edd7824ca863a1134258ecd6ba1d7e9afedd1f6a#subdirectory=mcp/server/mcp_server_tls
-mcp-server-vefaas-browser-use @ git+https://github.com/volcengine/mcp-server.git@6b0eb21383657387bec873861ee83e961c10712c#subdirectory=server/mcp_server_vefaas_browser_use
+mcp-server-vefaas-browser-use @ git+https://github.com/zhilulian/ai-app-lab.git@3e4dc7bfd539ed24988d5978c41b25d92a6f3851#subdirectory=mcp/server/mcp_server_vefaas_browser_use
+mcp-server-vefaas-sandbox @ git+https://github.com/zhilulian/ai-app-lab.git@01879352d0819a96dbc586fe49dcb09108c889ae#subdirectory=mcp/server/mcp_server_vefaas_sandbox
 mdurl==0.1.2
 more-itertools==10.6.0
 msgpack==1.1.0

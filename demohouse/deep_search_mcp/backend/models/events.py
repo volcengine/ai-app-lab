@@ -65,6 +65,7 @@ Tool-Using
 class ToolCallEvent(BaseEvent):
     type: str = ''
     status: str = 'pending'
+    function_name: str = ''
 
 
 class ToolCompletedEvent(BaseEvent):
@@ -72,6 +73,7 @@ class ToolCompletedEvent(BaseEvent):
     status: str = 'completed'
     success: bool = True
     error_msg: str = ''
+    function_name: str = ''
 
 
 """
@@ -132,12 +134,14 @@ for python executor
 class PythonExecutorToolCallEvent(ToolCallEvent):
     type: str = "python_executor"
     code: str = ""
+    fetch_files: Optional[List[str]] = []
 
 
 class PythonExecutorToolCompletedEvent(ToolCompletedEvent):
     type: str = "python_executor"
     code: str = ""
     stdout: str = ""
+    files: Optional[Dict[str, Any]] = {}
 
 
 """

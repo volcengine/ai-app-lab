@@ -41,7 +41,7 @@ class PlanningHolder(BaseModel):
             ))
             next_task_id += 1
 
-        return "保存成功"
+        return "保存成功，接下来请向用户输出你的计划。"
 
     async def add_task(self, task_description: str, worker_name: str) -> str:
         """当你要向计划中添加一个任务的时候，调用此函数
