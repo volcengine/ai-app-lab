@@ -6,6 +6,7 @@ header:
     paths:
       - 'arkitect/**/*.py'
       - 'tests/**/*.py'
+      - 'mcp/**/*.py'
 
     comment: on-failure
   
@@ -30,6 +31,7 @@ header:
       - 'demohouse/**/*.ts'
       - 'demohouse/**/*.tsx'
       - 'demohouse/**/*.js'
+      - 'example/**/*.py'
 
     language:
       TSX:

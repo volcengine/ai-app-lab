@@ -12,8 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Check License Header
         uses: apache/skywalking-eyes/header@v0.4.0
@@ -29,4 +34,4 @@ jobs:
         with:
           author_name: License Bot
           author_email: license_bot@github.com
-          message: 'license: automatic application of license header.'
+          message: 'license: automatic application of license header'
