@@ -14,8 +14,7 @@
 
 ### 相关模型
 
-- Doubao-pro-32k：主要参与记忆信息的处理，在当前画面无法直接回答用户问题时，大语言模型将结合历史记忆提供精准答案。
-- Doubao-vision-pro-32k：负责对摄像头实时捕捉的视频画面进行视觉内容理解。
+- Doubao-Seed-1.6-flash：负责对摄像头实时捕捉的视频画面进行视觉内容理解以及问题回答，在当前画面无法直接回答用户问题时，大语言模型将结合历史记忆提供精准答案。
 - Doubao-语音合成：负责将模型生成的文本回答转化为自然流畅的语音输出。
 - Doubao-流式语音识别：将用户的语音提问转写为文本，以便于大模型对用户问题的理解与回复。
 
@@ -29,8 +28,7 @@
 - [Node.js](https://nodejs.org/) (版本 16.2.0 或更高，推荐 Node.js 18 的 LTS 版本)
 - 已获取火山方舟 API Key [参考文档](https://www.volcengine.com/docs/82379/1298459#api-key-%E7%AD%BE%E5%90%8D%E9%89%B4%E6%9D%83)
 - 获取语音技术产品的 APP ID 和 Access Token，获取方式参见【附录】
-- 已创建 Doubao-Vision-Pro 32K 的 endpoint  [参考文档](https://www.volcengine.com/docs/82379/1099522#594199f1)
-- 已创建 Doubao-Pro 32K 的endpoint [参考文档](https://www.volcengine.com/docs/82379/1099522#594199f1)
+- 已开通 Doubao-Seed-1.6-flash 模型
 
 ## 快速开始
 
@@ -44,12 +42,10 @@
    ```
 2. 修改配置
 
-   - 修改`backend/code/config.py` 中配置，填入刚刚获取的API keys， endpoint id 和 APP ID和 Access Token 
+   - 修改`backend/code/config.py` 中配置，填入刚刚获取的 APP ID和 Access Token 
 
      | 配置变量名   | 说明                              |
      | ------------ | --------------------------------- |
-     | VLM_ENDPOINT | doubao-vision-pro 32k endpoint id |
-     | LLM_ENDPOINT | doubao-pro 32k endpoint id        |
      | TTS_APP_ID   | 语音合成模型 APP ID          |
      | TTS_ACCESS_TOKEN      | 语音合成模型 Access Token           |
 
@@ -106,7 +102,7 @@
 - 实时抽帧的纯图片：前端每秒会发送一个只包含一帧图片的请求，后端会将其存入长期记忆，用于之后的回答；后端对这个请求不回复任何内容。
 - 包含用户提问的请求：当前端通过VAD识别到用户提问时，会将识别出来的问题文字和用户讲话时的当前图片一起发起给后端，后端会以语音形式进行回复。
 
-2. 由于每次`bot/chat` 的请求都是无状态的，前端会在header中传入一个X-Context-Id，帮助后端存储和召回用户的历史视频信息。
+2. 由于每次`bot/chat` 的请求都是无状态的，前端会在metadata中传入一个context_id，帮助后端存储和召回用户的历史视频信息。
 
 ### 模型回复策略
 
