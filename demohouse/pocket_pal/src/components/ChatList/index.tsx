@@ -85,11 +85,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages, apiKey }
     currentLLMRequestRef.current = abortController;
 
     // 判断是否为 AI 帮写场景
-    const useDeepSeek = isAIAssistMode || (isFromInitial && messages[0]?.content === "AI帮写");
-    if (useDeepSeek) {
+    const useThinking = isAIAssistMode || (isFromInitial && messages[0]?.content === "AI帮写");
+    if (useThinking) {
       setIsAIAssistMode(true);
     }
-    console.log(`handleUserMessage useDeepSeek=${useDeepSeek} apiKey=${apiKey} ${typeof apiKey}`)
+    console.log(`handleUserMessage useThinking=${useThinking}`)
 
     // 获取最近的历史消息(不包括当前的用户消息和机器人回复)
     const recentMessages = isFromInitial ? [] : messages.slice(-5);
@@ -100,7 +100,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages, apiKey }
       content: '',
       status: 'searching',
       isPlaying: false,
-      ...(useDeepSeek && { reasoningContent: '' })
+      ...(useThinking && { reasoningContent: '' })
     };
 
     setMessages(prev => [...prev, botMessage]);
@@ -132,103 +132,77 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages, apiKey }
 
     initTTS();
     try {
-      if (useDeepSeek) {
-        let deepSeekRequest = '';
-        if (isFromInitial) {
-          deepSeekRequest = '请根据图片内容判断场景类型，并进行AI帮写，图片内容描述如下：\n';
-          await new Promise<void>((resolve, reject) => {
-            createLLMRequest(
-              content,
-              (chunk, reasoning) => {
-                if (abortController.signal.aborted) return;
-                deepSeekRequest += chunk;
-              },
-              () => {
-                if (abortController.signal.aborted) return;
-                resolve();
-              },
-              image,
-              recentMessages,
-              apiKey?.[0],
-              'VLM'
-            ).catch(reject);
-          });
-        } else {
-          deepSeekRequest = content;
-        }
-
-        console.log(`deepSeekRequest ${deepSeekRequest}`);
-        if (!abortController.signal.aborted) {
-          await createLLMRequest(
-            deepSeekRequest,
-            async (chunk, reasoning) => {
-              if (abortController.signal.aborted) return;
-              // console.log(`DeepSeek onData c=${chunk} r=${reasoning}`);
-              if (chunk) {
-                // console.log(`DeepSeek onData pendingChunks.push=${chunk} ttsStreamingId=${ttsStreamingId}`);
-                pendingChunks.push(chunk);
+      if (useThinking) {
+        let deepSeekRequest = isFromInitial ? '请根据图片内容判断场景类型，并进行AI帮写' : content;
+        await createLLMRequest(
+          deepSeekRequest,
+          async (chunk, reasoning) => {
+            if (abortController.signal.aborted) return;
+            // console.log(`DeepSeek onData c=${chunk} r=${reasoning}`);
+            if (chunk) {
+              // console.log(`DeepSeek onData pendingChunks.push=${chunk} ttsStreamingId=${ttsStreamingId}`);
+              pendingChunks.push(chunk);
+            }
+            
+            setMessages(prevMessages => {
+              const lastMessage = prevMessages[prevMessages.length - 1];
+              if (lastMessage.type === 'bot') {
+                return [
+                  ...prevMessages.slice(0, -1),
+                  {
+                    ...lastMessage,
+                    content: lastMessage.content + chunk,
+                    reasoningContent: (lastMessage.reasoningContent ?? '') + (reasoning ?? ''),
+                    isPlaying: lastMessage.isPlaying,
+                    ttsStreamingId: lastMessage.ttsStreamingId
+                  }
+                ];
               }
-              
-              setMessages(prevMessages => {
-                const lastMessage = prevMessages[prevMessages.length - 1];
-                if (lastMessage.type === 'bot') {
-                  return [
-                    ...prevMessages.slice(0, -1),
-                    {
-                      ...lastMessage,
-                      content: lastMessage.content + chunk,
-                      reasoningContent: (lastMessage.reasoningContent ?? '') + (reasoning ?? ''),
-                      isPlaying: lastMessage.isPlaying,
-                      ttsStreamingId: lastMessage.ttsStreamingId
-                    }
-                  ];
-                }
-                return prevMessages;
+              return prevMessages;
+            });
+
+            if (chunk) {
+              await processPendingChunks();
+            }
+          },
+          async () => {
+            console.log(`DeepSeek onComplete ttsStreamingId=${ttsStreamingId}`);
+            if (abortController.signal.aborted) return;
+            while (pendingChunks.length > 0) {
+              await processPendingChunks();
+            }
+
+            if (ttsStreamingId) {
+              await appendStreamingTTS({
+                streamingId: ttsStreamingId,
+                newText: '',
+                isFinish: true
               });
+            }
 
-              if (chunk) {
-                await processPendingChunks();
+            setMessages(prevMessages => {
+              const lastMessage = prevMessages[prevMessages.length - 1];
+              if (lastMessage.type === 'bot') {
+                return [
+                  ...prevMessages.slice(0, -1),
+                  {
+                    ...lastMessage,
+                    status: 'completed',
+                    isPlaying: lastMessage.isPlaying,
+                    ttsStreamingId: lastMessage.ttsStreamingId
+                  }
+                ];
               }
-            },
-            async () => {
-              console.log(`DeepSeek onComplete ttsStreamingId=${ttsStreamingId}`);
-              if (abortController.signal.aborted) return;
-              while (pendingChunks.length > 0) {
-                await processPendingChunks();
-              }
-
-              if (ttsStreamingId) {
-                await appendStreamingTTS({
-                  streamingId: ttsStreamingId,
-                  newText: '',
-                  isFinish: true
-                });
-              }
-
-              setMessages(prevMessages => {
-                const lastMessage = prevMessages[prevMessages.length - 1];
-                if (lastMessage.type === 'bot') {
-                  return [
-                    ...prevMessages.slice(0, -1),
-                    {
-                      ...lastMessage,
-                      status: 'completed',
-                      isPlaying: lastMessage.isPlaying,
-                      ttsStreamingId: lastMessage.ttsStreamingId
-                    }
-                  ];
-                }
-                return prevMessages;
-              });
-              setIsResponding(false);
-              currentLLMRequestRef.current = null;
-            },
-            undefined,
-            recentMessages,
-            apiKey?.[1],
-            'DS'
-          );
-        }
+              return prevMessages;
+            });
+            setIsResponding(false);
+            currentLLMRequestRef.current = null;
+          },
+          image,
+          recentMessages,
+          apiKey,
+          'Thinking'
+        );
       } else {
         // 非 AI 帮写场景，保持原有逻辑
         await createLLMRequest(
@@ -291,7 +265,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialMessages, apiKey }
           },
           image,
           recentMessages,
-          apiKey?.[0],
+          apiKey,
           'VLM'
         );
       }
