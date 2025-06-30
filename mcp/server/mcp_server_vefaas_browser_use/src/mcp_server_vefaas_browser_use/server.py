@@ -23,7 +23,7 @@ HEADERS = {
         "Authorization": f"Bearer {BROWSER_USE_AUTH_KEY}" if BROWSER_USE_AUTH_KEY else "",
     }
 
-@mcp.tool(description="""Creates a browser use task which can automatically browse the web.
+@mcp.tool(description="""Creates a browser use task which can automatically browse the web. 
 Use this when you need to create a browser use task with specific messages.
 The endpoint is read from the environment variable BROWSER_USE_ENDPOINT.
 After this tool is called, automatically call tool get_browser_use_task_result to get the result.
