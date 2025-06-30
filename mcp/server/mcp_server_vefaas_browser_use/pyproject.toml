@@ -1,0 +1,17 @@
+[project]
+name = "mcp-server-vefaas-browser-use"
+version = "0.0.1"
+description = "MCP server for automating browser operations"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.6.0",
+    "requests==2.32.3"
+]
+
+[project.scripts]
+mcp-server-vefaas-browser-use = "mcp_server_vefaas_browser_use.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
