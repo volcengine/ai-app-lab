@@ -48,8 +48,8 @@ interface ChatCompletionChunk {
 export class LLMApi {
   static TAG = 'LLMApi';
   private static BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3';
-  static VLM_MODEL = 'bot-20250205194702-tv4dt';
-  static DEEP_SEEK_MODEL = 'bot-20250212171216-4w645';
+  static MODEL_VLM_DOUBAO_1_5 = 'bot-20250205194702-tv4dt'; // doubao 1.5
+  static MODEL_DOUBAO_1_6 = 'bot-20250624151927-m6bkk'; // doubao seed 1.6 VLM thinking
   static VLM_SYSTEM_PROMPT = `
   # 角色
   你是一个全能智能体，拥有丰富的百科知识，你性格很温暖，喜欢帮助别人，非常热心。
@@ -150,7 +150,7 @@ export class LLMApi {
       let buffer = '';
 
       handle.on((event: StreamEvent) => {
-        // console.log(`${LLMApi.TAG} streamResponse ${JSON.stringify(event)}`);
+        console.log(`${LLMApi.TAG} streamResponse ${JSON.stringify(event)}`);
         if (event.event === 'data') {
           try {
             const dataStr = String(event.data);
@@ -173,7 +173,7 @@ export class LLMApi {
 
                 const content = choice.delta?.content ?? '';
                 const reasoningContent = choice.delta?.reasoning_content;
-                if (content || reasoningContent) {
+                if ((content || reasoningContent) && reasoningContent !== '\n') {
                   buffer += content;
                   onData(content, reasoningContent);
                 }
@@ -196,8 +196,9 @@ export class LLMApi {
   static async chat(
     params: LLMRequestParams,
     apiKey?: string,
-    model: string = LLMApi.VLM_MODEL
+    model: string = LLMApi.MODEL_VLM_DOUBAO_1_5
   ): Promise<(onData: (text: string, reasoningContent?: string) => void, onComplete?: () => void) => void> {
+    console.log(`LLMApi chat model=${model}`)
     const handle = await appletRequest({
       url: `${this.BASE_URL}/bots/chat/completions`,
       method: 'POST',
@@ -209,7 +210,7 @@ export class LLMApi {
       body: {
         model: model,
         messages: params.messages ?? [],
-        stream: true
+        stream: true,
       },
       addCommonParams: false,
       streamType: 'sse'
@@ -223,8 +224,8 @@ export class LLMApi {
   }
 }
 
-const constructUserMessage = (question: string, image?: string, modelType: 'VLM' | 'DS' = 'VLM') => {
-  if (image && modelType === 'VLM') {
+const constructUserMessage = (question: string, image?: string) => {
+  if (image) {
     return {
       role: 'user',
       content: [
@@ -254,8 +255,8 @@ export const createLLMRequest = async (
   onComplete?: () => void,
   image?: string,
   historyMessages: Array<{ type: string; content: string; image?: string }> = [],
-  apiKey?: string,
-  modelType: 'VLM' | 'DS' = 'VLM'
+  apiKey?: string[],
+  modelType: 'VLM' | 'Thinking' = 'VLM'
 ) => {
   console.log(`createLLMRequest question=${question} modelType=${modelType}`)
 
@@ -276,7 +277,7 @@ export const createLLMRequest = async (
       // 转换最近5条历史消息
       ...historyMessages.slice(-5).map((msg) =>
         msg.type === 'user'
-          ? constructUserMessage(msg.content, msg.image, modelType)
+          ? constructUserMessage(msg.content, msg.image)
           : {
               role: 'assistant',
               content: msg.content
@@ -301,9 +302,11 @@ export const createLLMRequest = async (
       })
     );
 
-    const model = modelType === 'VLM' ? LLMApi.VLM_MODEL : LLMApi.DEEP_SEEK_MODEL;
+    const hasDoubao16Key = apiKey !== undefined && apiKey?.length >= 3;
+    const key = hasDoubao16Key ? apiKey?.[2] : apiKey?.[0];
+    const model = hasDoubao16Key ? LLMApi.MODEL_DOUBAO_1_6 : LLMApi.MODEL_VLM_DOUBAO_1_5;
 
-    const handleStream = await LLMApi.chat(params, apiKey, model);
+    const handleStream = await LLMApi.chat(params, key, model);
     // 创建一个 Promise 来处理流式响应
     return new Promise((resolve, reject) => {
       try {
