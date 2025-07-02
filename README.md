@@ -1,47 +1,96 @@
-# AI App Lab
+# 实时对话式 AI 硬件
 
-将大模型落地成真正发挥价值的场景化应用是一个复杂又极具挑战性的任务，不仅需要具备深入的行业业务背景，还需要解决模型接口调用、多种插件协同适配、多种模态（如图像、文本、语音等）深度融合交互、各类工具调用等技术难题。火山方舟推出的 AI App Lab 包含高代码 SDK Arkitect 和海量原型应用代码，助力中小企业开发者快速构建符合自身业务场景的 AI 大模型应用，打通大模型应用落地的最后一公里。  
+## 应用介绍
 
-## 架构图
+整合硬件推流、 语音识别、语音合成和大模型技术，快速实现用户与智能硬件流畅、自然、真人感的实时对话功能，在智能玩具、智能家居、智能穿戴设备、智能教育设备、AI 机器人等领域赋予硬件全新的使用体验。  
 
-![img](./docs/assets/architecture.png)
-## Arkitect
+### 效果预览
 
-> https://github.com/volcengine/ai-app-lab/tree/main/arkitect  
+<a target="_blank" href="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_74fa1ca2b33b3671f9b521435397dfa6.mp4">演示视频</a>  
+
+### 流程架构
+
+![img](assets/img_architecture.png)
+
+【实时对话式 AI 硬件】是火山引擎 RTC 与嵌入式芯片厂商合作内置一站式解决方案，通过集成端侧芯片能力、实时音视频 RTC 技术以及大模型、语音技术等能力，使硬件可以实现“听、看、懂、说”能力，与用户流畅“对话”。  
+
+在端侧，芯片集成其先进的音频处理，包括自动唤醒功能和音频3A（自动增益控制、噪声抑制、回声消除）等，保证音频输入的清晰度和准确性；在云侧，深度整合大模型、 语音识别、语音合成等人工智能技术，同时提供 Function calling 和知识库支持，使得硬件设备能够提供个性化服务和智能决策，满足用户的深层次需求。  
+
+### 优势
+
+**即插即用**  
+
+与主流芯片制造商和模组方案商深度合作，提供开源 AI 语音交互框架，一天即可完成集成  
+
+**主流芯片和模组支持**  
+
+支持乐鑫、全志、瑞芯微、展锐、移芯、杰理、星宸、海思、君正、移远、广和通等 WiFi、Cat.1、蓝牙、ISP 等主流芯片与模组方案（更多厂商持续接入中）  
+
+**HAL（硬件抽象层）统一接入**  
+
+统一 RTOS 硬件抽象层开源方案，便于芯片和方案商的适配接入  
+
+**多模态交互和其他扩展能力**  
+
+支持视觉理解能力，支持 Function calling、知识库、联网检索等能力  
+
+**超低性能占用**  
+
+内存消耗可低于 300KB  
+
+**抗弱网**  
+
+在网络环境高达 80% 丢包率下仍能稳定流畅通话，不丢失语义信息  
+
+**智能打断**  
+
+无需按键输入，可双向持续对话，毫秒级人声检测与降噪能力，随时精准打断  
+
+  
+
+## 关联模型及云产品
+
+### 模型
+
+|相关服务    |描述    |计费说明    |
+|-|-|-|
+|<a target="_blank" href="https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=seedasr-streaming">Doubao-流式语音识别</a>         |将用户的语音提问转写为文本，便于大模型对用户问题的理解与回复。    |<a target="_blank" href="https://www.volcengine.com/docs/6561/1359370">多种计费方式</a>    |
+|<a target="_blank" href="https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-1-5-pro-32k">火山方舟-大语言模型</a>         |对用户的提问进行理解并提供优质回答。     支持方舟平台上线的全量文本模型。|<a target="_blank" href="https://www.volcengine.com/docs/6561/1359370">多种计费方式</a>          |
+|<a target="_blank" href="https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-1-5-vision-pro-32k">Doubao-vision</a>         |通过视觉理解让硬件能够感知用户周围的环境以及用户的行为，让实时互动更具沉浸感。    |<a target="_blank" href="https://www.volcengine.com/docs/6561/1359370">多种计费方式</a>     |
+|<a target="_blank" href="https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=ve-tts">Doubao-语音合成</a>    |将模型生成的文本回答转化为自然流畅的语音输出。    |<a target="_blank" href="https://www.volcengine.com/docs/6561/1359370">多种计费方式</a>     |
+|<a target="_blank" href="https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=ve-voiceclone">Doubao-声音复刻</a>         |快速复刻家人、朋友或其他个性化音色，让硬件拥有独一无二的专属声音，提供亲切温暖的专属陪伴。    |<a target="_blank" href="https://www.volcengine.com/docs/6561/1359370">多种计费方式</a>     |
+
+### 云服务
 
 
-火山方舟提供的用于开发高代码应用的 Python SDK，面向具有专业开发能力的开发者，提供开发大模型应用需要用到的工具集和流程集。更多介绍见 [高代码 SDK Arkitect](./arkitect/README.md)。  
+|相关服务    |描述    |计费说明    |
+|-|-|-|
+|<a target="_blank" href="https://www.volcengine.com/product/veRTC/ConversationalAI">AIGC 实时互动</a>    |AI 智能体处理用户音频或视频流。    |<a target="_blank" href="https://www.volcengine.com/docs/6348/1392584">多种计费方式</a>    |
+|<a target="_blank" href="https://www.volcengine.com/product/veRTC">RTC 音视频通话</a>    |房间内用户与 AI 智能体进行音频或视频对话。    |<a target="_blank" href="https://www.volcengine.com/docs/6348/69871">多种计费方式</a>    |
 
-## Demohouse
+## 环境准备
 
-> https://github.com/volcengine/ai-app-lab/tree/main/demohouse  
+- Linux服务器，且开发环境满足Python 3.8及以上版本。  
+
+- 乐鑫 ESP32-S3-Korvo-2 开发板（可加入<a target="_blank" href="https://applink.larkoffice.com/client/chat/chatter/add_by_link?link_token=d87of69e-75c5-47b9-bed7-f28487560489">开发者群</a>获取）。  
+
+- 开通火山引擎实时音视频、语音识别、音频合成、火山方舟大模型服务。参看<a target="_blank" href="https://www.volcengine.com/docs/6348/1315561">开通服务</a>开通相关产品、配置角色策略并获取以下参数值：  
+    - <a target="_blank" href="https://console.volcengine.com/iam/keymanage/">获取火山引擎 AK SK</a> | <a target="_blank" href="https://www.volcengine.com/docs/6291/65568">参考文档</a>  
+    - 实时音视频应用 APPID  
+    - 实时音视频应用 APPKEY  
+    - 语音技术-语音识别-流式语音识别 APPID  
+    - 语音技术-音频生成-语音合成 APPID  
+    - 语音技术-音频生成-语音合成 Voice_type  
+    - 火山方舟大模型 EndPointId  
+
+- 前往<a target="_blank" href="https://console.volcengine.com/rtc/aigc/cloudRTC?from=doc">控制台</a>启用硬件场景配置。
 
 
-从大模型可以落地的业务提效、企业经营效率提效两大场景切入，沉淀了教师分身、安卓终端、复杂问题思考等多个垂直领域的 AI 原型应用，并开源所有代码。助力中小企业“一键复制”，完成基础应用搭建，随后加入个性化的行业 Know-How 和企业内部业务逻辑，快速步入应用落地的实干阶段。  
+## 快速入门
+环境准备与快速入门参看<a target="_blank" href="https://github.com/volcengine/rtc-aigc-embedded-demo?tab=readme-ov-file">IoT RTC AIGC Demo 开源项目</a>说明。
 
+## 技术实现
 
-| 应用                | 简介                                                                                     |
-| ------------------- |----------------------------------------------------------------------------------------|
-| [互动双语视频生成器](./demohouse/chat2cartoon/README.md)  | 只需输入一个主题，就能为你生成引人入胜且富有含义的双语视频。                                                         |
-| [深度推理](./demohouse/deep_research/README.md)            | 利用 DeepSeek-R1 大模型对复杂问题进行多角度分析，并辅助互联网资料，快速生成最合适用户的解决方案。                                |
-| [DeepDoubao](./demohouse/deepdoubao/README.md)      | 结合 DeepSeek R1 模型的强大推理能力与 Doubao 模型的高效对话能力，为用户提供智能问答服务。                                |
-| [语音实时通话 - 青青](./demohouse/live_voice_call/README.md) | 嗨，我是你的朋友乔青青，快来和我语音通话吧！                                                                 |
-| [长记忆方案](./demohouse/longterm_memory/README.md)          | 基于 DeepSeek-R1 模型的强大思考能力将对话内容抽取成记忆，记录用户偏好、性格、生日等，并在对话到相关话题时帮助 Doubao 角色模型生成更贴合角色人设的回复。 |
-| [手机助手](./demohouse/pocket_pal/README.md)            | 移动端手机智能助手。                                                                             |
-| [智能客服助手](./demohouse/shop_assist/backend/README.md)        | 以车载零配件网店客服场景为例设计的智能导购机器人。                                                              |
-| [教师分身](./demohouse/teacher_avatar/README.md)            | 基于豆包视觉理解与 DeepSeek 深度推理双引擎的教育解决方案。                                                     |
-| [视频实时理解](./demohouse/video_analyser/README.md)        | 多模态洞察，基于豆包-视觉理解模型实时视觉与语音理解。                                                            |
-| [实时对话式 AI](./demohouse/rtc_conversational_ai/README.md)       | 超低延迟的 AI 实时对话应用，更流畅，更自然，更实时。                                                           |
-| [AI-Media2Doc](https://github.com/hanshuaikang/AI-Media2Doc) | 一键将视频和音频转化为小红书/公众号/知识笔记/视频总结/思维导图等各种风格的文档, 可基于视频内容进行 AI 二次对话。                          |
+- 技术实现相关内容参见 <a target="_blank" href="https://www.volcengine.com/docs/6348/1438400">场景搭建</a><a target="_blank" href="https://www.volcengine.com/docs/6348/1438400">（嵌入式硬件）</a>  
 
-## 相关指引
-
-- [应用实验室体验广场](https://console.volcengine.com/ark/region:ark+cn-beijing/application)，免费体验海量 Demo  
-
-- [创建火山方舟高代码应用](https://console.volcengine.com/ark/region:ark+cn-beijing/assistant)，快速部署你的云上智能体应用  
-
-## License
-
-- `./arkitect` 目录下代码遵循 [Apache 2.0](./APACHE_LICENSE) 许可.  
-
-- `./demohouse` 目录下代码遵循[【火山方舟】原型应用软件自用许可协议](./ARK_LICENSE.md) 许可。  
+- Github 源码地址：https://github.com/volcengine/rtc-aigc-embedded-demo  
