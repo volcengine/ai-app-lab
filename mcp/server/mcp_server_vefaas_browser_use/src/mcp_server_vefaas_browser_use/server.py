@@ -24,7 +24,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-mcp = FastMCP("VeFaaS Browser Use", port=int(os.getenv("PORT", "8000")))
+mcp = FastMCP(
+    "VeFaaS Browser Use",
+    host=os.getenv("HOST", "0.0.0.0"),
+    port=int(os.getenv("PORT", "8000")),
+)
+
 
 SESSION_SAVE_PATH = os.environ.get('SESSION_SAVE_PATH') or '/tmp/deep_research_session/'
 

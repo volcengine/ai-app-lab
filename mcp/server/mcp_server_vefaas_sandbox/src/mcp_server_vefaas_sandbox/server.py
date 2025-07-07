@@ -8,7 +8,11 @@ from typing import Optional, List, Dict
 from mcp.server.fastmcp import FastMCP
 
 # Initialize FastMCP server
-mcp = FastMCP("vefaas-sandbox", port=int(os.getenv("PORT", "8000")))
+mcp = FastMCP(
+    "vefaas-sandbox",
+    host=os.getenv("HOST", "0.0.0.0"),
+    port=int(os.getenv("PORT", "8000")),
+)
 
 # Constants
 Sandbox_API_BASE = (

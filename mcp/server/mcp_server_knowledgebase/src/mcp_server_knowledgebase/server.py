@@ -19,8 +19,11 @@ logger = logging.getLogger(__name__)
 viking_knowledgebase_service = None
 
 # Create MCP server
-mcp = FastMCP("Viking Knowledge Base Server", port=int(os.getenv("PORT", "8000")))
-
+mcp = FastMCP(
+    "Viking Knowledge Base Server",
+    host=os.getenv("HOST", "0.0.0.0"),
+    port=int(os.getenv("PORT", "8000")),
+)
 
 @mcp.tool()
 def search_knowledge(

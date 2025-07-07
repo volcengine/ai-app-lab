@@ -27,7 +27,11 @@ tls_service = None
 global_topic_id = None
 
 # Create MCP server
-mcp = FastMCP("TLS Log Search Server", port=int(os.getenv("PORT", "8000")))
+mcp = FastMCP(
+    "TLS Log Search Server",
+    host=os.getenv("HOST", "0.0.0.0"),
+    port=int(os.getenv("PORT", "8000")),
+)
 
 
 @mcp.tool()

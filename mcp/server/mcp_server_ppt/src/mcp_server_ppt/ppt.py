@@ -12,7 +12,11 @@ from mcp.server.fastmcp import FastMCP
 from pydantic import Field
 
 # 创建MCP服务器实例
-mcp = FastMCP("Chatppt Server", log_level="INFO", port=int(os.getenv("PORT", "8000")))
+mcp = FastMCP(
+    "Chatppt Server",
+    host=os.getenv("HOST", "0.0.0.0"),
+    port=int(os.getenv("PORT", "8000")),
+)
 # Chatppt API Base URL
 API_BASE = "https://saas.api.yoo-ai.com"
 # 用户API Key

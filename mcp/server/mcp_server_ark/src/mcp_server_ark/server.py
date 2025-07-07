@@ -9,7 +9,11 @@ from volcenginesdkarkruntime import AsyncArk
 from mcp_server_ark.config import load_config, ArkConfig
 
 # Create MCP server
-mcp = FastMCP("Ark mcp Server", port=int(os.getenv("PORT", "8000")))
+mcp = FastMCP(
+    "Ark mcp Server",
+    host=os.getenv("HOST", "0.0.0.0"),
+    port=int(os.getenv("PORT", "8000")),
+)
 
 # Configure logging
 logging.basicConfig(
