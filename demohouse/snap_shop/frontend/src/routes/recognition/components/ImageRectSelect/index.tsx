@@ -1,22 +1,13 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
-// Licensed under the 【火山方舟】原型应用软件自用许可协议
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at 
-//     https://www.volcengine.com/docs/82379/1433703
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 /* eslint-disable max-lines-per-function */
 import React, { useState, useRef, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 
 import styles from './index.module.less';
 import BorderBox from '../BorderBox';
-import { detectedObject } from '@/types';
-import { getImageScale } from '@/pages/entry/utils';
+
+import { getImageScale } from '../../../../utils';
+import { detectedObject } from '../..';
+
 
 interface ImageSelectorProps {
   imageSrc: string;
@@ -70,12 +61,10 @@ const ImageRectSelect: React.FC<ImageSelectorProps> = (props) => {
       containerRef.current.style.height = `${imageRef.current.offsetHeight}px`;
     }
     if (imageRef.current && initPosition && initSize && imageLoaded) {
-      console.log('initPosition', initPosition);
       const scale = getImageScale(imageRef.current);
       if (!scale) {
         return;
       }
-      console.log('scale', scale);
       scaleRef.current = scale;
       setPosition({
         x: Math.floor(initPosition.x * scale.x),

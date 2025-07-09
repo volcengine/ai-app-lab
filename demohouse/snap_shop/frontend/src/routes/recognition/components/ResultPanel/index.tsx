@@ -1,41 +1,34 @@
-// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
-// Licensed under the 【火山方舟】原型应用软件自用许可协议
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at 
-//     https://www.volcengine.com/docs/82379/1433703
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { FloatingPanel, FloatingPanelRef } from 'antd-mobile';
-import { ActionDetail, Good } from '@/types';
-import { close } from '@ai-app/bridge-api/procode';
-import styles from './index.module.less'
-import { LLMApi } from '@/api/llm';
-import MockGood from '@/images/mock_good_1.png'
-import { Image } from 'antd-mobile'
+import styles from './index.module.less';
+import { closeApp } from 'multi-modal-sdk';
+import { Image } from 'antd-mobile';
+import { ActionDetail, Good } from '../../../../types';
+import { LLMApi } from '../../../../api/llm';
+import MockGood from '../../../../images/mock_good_1.png?inline'
+
 interface TProps {
   thumbnails: { [index: number]: string }; // 框选范围的缩略图
   onSelectThumbnail: (index: number,label: string) => void;
   notPassed: boolean;
+  selectThumbnailsIndex: number;
+  setSelectThumbnailsIndex: (index: number) => void;
 }
-export const ResultPanel = (props: TProps) => {
-  const { thumbnails, notPassed, onSelectThumbnail } = props;
+export const ResultPanel = forwardRef((props: TProps, ref) => {
+  const { thumbnails, notPassed, onSelectThumbnail, selectThumbnailsIndex, setSelectThumbnailsIndex } = props;
   const thumbnailCount = Object.keys(thumbnails).length;
   const floatingPanelRef = React.useRef<FloatingPanelRef>(null);
   // 查询到的商品详情
   const [actionDetail, setActionDetail] = useState<{ [index: number]: ActionDetail }>({});
 
-  const [selectThumbnailsIndex, setSelectThumbnailsIndex] = useState(0);
-
-  console.log('#panel res',thumbnails,notPassed,actionDetail)
-
   const initRef = useRef(false);
   const [searchFinished, setSearchFinished] = useState<{ [index: string]: boolean }>({});
   const outputGoods = actionDetail[selectThumbnailsIndex]?.tool_details[0]?.output || []
+  useImperativeHandle(ref, () => ({
+    search: (base64: string , index: number ,refresh: boolean) => {
+      search(base64, index, refresh);
+    }
+  }));
   useEffect(() => {
     floatingPanelRef?.current?.setHeight(window.innerHeight * ( notPassed ? 0.92 : 0.5))
 
@@ -46,30 +39,60 @@ export const ResultPanel = (props: TProps) => {
     }
 
     Array(thumbnailCount).fill(0).forEach((_, index) => {
-      LLMApi.Chat(thumbnails[index]).then(({ cb }) => {
-        cb(() => {}, (data) => {
-          data && setActionDetail(pre => {
+      search(thumbnails[index], index);
+    })
+
+  }, [thumbnails, selectThumbnailsIndex])
+
+
+  const search = (base64: string , index: number, refresh?: boolean) => {
+    setSearchFinished(pre => ({
+      ...pre,
+      [index]: false
+    }))
+    const llmApi = new LLMApi();
+    
+    llmApi.Chat(base64).then((resp) => {
+      const { cb }  = resp || {};
+      if(!cb){
+        return;
+      }
+      cb((data) => {
+
+        setActionDetail(pre => {
+          return {
+            ...pre,
+            [String(index)]: data
+          }
+        })
+        setSearchFinished(pre => ({
+          ...pre,
+          [index]: true
+        }))
+        if((!initRef.current && index === selectThumbnailsIndex) || refresh){
+          onSelectThumbnail?.(-1, data?.tool_details[0]?.output[0]?.子类别 || '');
+          initRef.current = true;
+        }
+
+      },(finalData)=>{
+        if(!finalData){
+          setActionDetail(pre => {
             return {
               ...pre,
-              [String(index)]: data
+              [String(index)]: null
             }
           })
           setSearchFinished(pre => ({
             ...pre,
             [index]: true
           }))
-          if(initRef.current === false && data?.tool_details[0]?.output[0]?.子类别 && index === selectThumbnailsIndex){
-            onSelectThumbnail?.(-1, data?.tool_details[0]?.output[0]?.子类别);
-            initRef.current = true;
-          }
-
-        })
-      }).catch(err => {
-        console.error('[call llm api error]', err)
+          onSelectThumbnail?.(-1, '');
+        }
       })
+    }).catch(err => {
+      console.error('[call llm api error]', err)
     })
-
-  }, [thumbnails, selectThumbnailsIndex])
+  }
 
 
   const renderGood = (good: Good, index: number) => {
@@ -111,7 +134,7 @@ export const ResultPanel = (props: TProps) => {
     >
       {notPassed && <div className='mx-4 relative h-full pb-5 pt-[15px]'>
         <div className="font-semibold text-[22px] text-black relative  ">识别错误 <svg className='absolute  top-1 right-0' onClick={() => {
-          close()
+          closeApp()
         }} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M6.06007 6.06004L17.9395 17.9394" stroke="#42464E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M17.94 6.06011L6.0606 17.9395" stroke="#42464E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -181,7 +204,7 @@ export const ResultPanel = (props: TProps) => {
             <path d="M13.9658 11V10C13.9658 8.89543 14.8613 8 15.9658 8H19.9658C21.0704 8 21.9658 8.89543 21.9658 10V11" stroke="white" stroke-width="1.5" />
           </svg>
           <span onClick={() => {
-            close();
+            closeApp();
           }} className='text-white text-lg font-medium  '>
             重新拍照
           </span>
@@ -200,7 +223,7 @@ export const ResultPanel = (props: TProps) => {
             </svg>} </div>)}
           </div>
           <svg onClick={() => {
-            close();
+            closeApp();
           }} className='shrink-0' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M6.06007 6.06004L17.9395 17.9394" stroke="#42464E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M17.94 6.06011L6.0606 17.9395" stroke="#42464E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -239,4 +262,4 @@ export const ResultPanel = (props: TProps) => {
 
     </FloatingPanel>
   );
-}
+})
