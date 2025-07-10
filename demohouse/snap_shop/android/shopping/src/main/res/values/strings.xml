@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shopping_app_name">拍照购物</string>
+
+    <string name="pref_key_url" translatable="false">multimodal_web_url</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <!-- dp and sp values, must be defind in this file! -->
+    <!-- view size,you can add if there is no one -->
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_56">56dp</dimen>
+
+    <!-- font size,you can add if there is no one -->
+    <dimen name="sp_2">2sp</dimen>
+    <dimen name="sp_13">13sp</dimen>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="sp_18">18sp</dimen>
+
+
+    <dimen name="object_reticle_outer_ring_stroke_radius">24dp</dimen>
+    <dimen name="object_reticle_inner_ring_stroke_radius">14dp</dimen>
+    <dimen name="object_selection_distance_threshold">50dp</dimen>
+    <dimen name="object_dot_radius">@dimen/object_reticle_inner_ring_stroke_radius</dimen>
+    <dimen name="bounding_box_confirmed_stroke_width">2dp</dimen>
+    <dimen name="bounding_box_corner_radius">12dp</dimen>
+
+
+</resources>

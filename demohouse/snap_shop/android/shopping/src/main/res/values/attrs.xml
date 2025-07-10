@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RulerSeekBar">
+        <!--背景色-->
+        <attr name="bgColor"  format="reference|color"/>
+        <!--刻度颜色-->
+        <attr name="gradationColor" format="reference|color"  />
+        <!--短刻度线宽度-->
+        <attr name="gradationLineWidth" format="reference|dimension" />
+        <!--短刻度长度-->
+        <attr name="gradationLen" format="reference|dimension" />
+        <!--中间指针线颜色-->
+        <attr name="indicatorLineColor" format="reference|color"  />
+        <!--中间指针线宽度-->
+        <attr name="indicatorLineWidth" format="reference|dimension" />
+        <!--最小值-->
+        <attr name="minValue" format="reference|float" />
+        <!--最大值-->
+        <attr name="maxValue" format="reference|float" />
+        <!--当前值-->
+        <attr name="currentValue" format="reference|float" />
+        <!--刻度最小单位-->
+        <attr name="gradationUnit" format="reference|float" />
+        <!--刻度间距离-->
+        <attr name="gradationGap" format="reference|dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="MessagesListView">
+        <attr name="maxHeight" format="dimension" />
+    </declare-styleable>
+</resources>

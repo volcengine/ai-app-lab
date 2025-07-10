@@ -1,0 +1,68 @@
+rootProject.name = "snap_shop"
+
+include ':shopping'
+
+// local properties
+def localProperties = new Properties()
+def localPropertyFile = new File(rootDir, "local.properties")
+if (localPropertyFile.exists()) {
+    localProperties.load(localPropertyFile.newInputStream())
+}
+gradle.ext.localProperties = localProperties
+
+def multimodalKitDir = localProperties.getProperty("mmk.module")
+if (multimodalKitDir != "" && multimodalKitDir != null) {
+    includeBuild "$multimodalKitDir/multimodal-versions"
+    def list = [
+            ":multi-modal-kit:common",
+            ":multi-modal-kit:utils",
+
+            ":multi-modal-kit:vlm:vlm-bridge",
+            ":multi-modal-kit:vlm:vlm-api",
+            ":multi-modal-kit:vlm:vlm-fornax-impl",
+            ":multi-modal-kit:vlm:vlm-coze-impl",
+            ":multi-modal-kit:vlm:vlm-ark-impl",
+            ":multi-modal-kit:vlm:vlm-gpt-impl",
+            ":multi-modal-kit:vlm:vlm-seed-websocket-impl",
+
+            ":multi-modal-kit:inference-onnx-impl",
+
+            ":multi-modal-kit:objectdetect:objectdetect-api",
+            ":multi-modal-kit:objectdetect:objectdetect-rtdetr-impl",
+
+            ":multi-modal-kit:segmentation:segmentation-api",
+            ":multi-modal-kit:segmentation:segmentation-sam-common",
+            ":multi-modal-kit:segmentation:segmentation-mobilesam-impl",
+
+            ":multi-modal-kit:tts:tts-api",
+            ":multi-modal-kit:tts:tts-bridge",
+            ":multi-modal-kit:tts:tts-volcengine-impl",
+
+            ":multi-modal-kit:ocr:ocr-api",
+            ":multi-modal-kit:ocr:ocr-mlkit-impl",
+
+            ":multi-modal-kit:clip:clip-api",
+            ":multi-modal-kit:clip:clip-onnx-impl",
+            ":multi-modal-kit:clip:clip-tflite-impl",
+
+            ":multi-modal-kit:accessibility:accessibility-api",
+            ":multi-modal-kit:accessibility:accessibility-impl",
+
+            ":multi-modal-kit:asr:asr-api",
+            ":multi-modal-kit:asr:asr-bridge",
+            ":multi-modal-kit:asr:asr-volcengine-impl",
+
+            ":multi-modal-kit:visual-bridge",
+            ":multi-modal-kit:visual-realtime:visual-realtime-api",
+            ":multi-modal-kit:visual-realtime:visual-realtime-local",
+
+            ":multi-modal-kit:algorithm:algorithm-api",
+            ":multi-modal-kit:algorithm:algorithm-impl-tob",
+            ":multi-modal-kit:visual-image",
+            ":multi-modal-kit:bridge:web-bridge",
+    ]
+    list.forEach {
+        include "$it"
+        project("$it").projectDir = new File(multimodalKitDir + "${it.replace(":", "/")}")
+    }
+}
