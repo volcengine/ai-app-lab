@@ -1,0 +1,72 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="10dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <com.bytedance.ai.multimodal.demo.view.typing.TypingTextView
+            android:id="@+id/message_text"
+            tools:text="这是一条回复"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textColor="@color/black"
+            android:textIsSelectable="true"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_extra_operation"
+            android:visibility="gone"
+            app:constraint_referenced_ids="divider,btn_copy_all,btn_speech"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_marginTop="5dp"
+            android:background="#9f464646"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/message_text"
+            app:layout_constraintTop_toBottomOf="@id/message_text"
+            app:layout_constraintBottom_toTopOf="@id/btn_copy_all"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"/>
+
+        <ImageButton
+            android:id="@+id/btn_copy_all"
+            android:layout_marginTop="10dp"
+            android:padding="7dp"
+            android:background="@drawable/rounded_background_button"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/btn_speech"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:padding="7dp"
+            android:background="@drawable/rounded_background_button"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintStart_toEndOf="@id/btn_copy_all"
+            android:src="@drawable/ic_speech"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

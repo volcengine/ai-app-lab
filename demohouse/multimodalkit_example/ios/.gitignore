@@ -1,0 +1,9 @@
+*xcuserdata*
+MultiModalKitExample.xcworkspace/xcshareddata
+Pods/
+Podfile.lock
+.idea
+.vscode
+Gemfile.lock
+output
+build/

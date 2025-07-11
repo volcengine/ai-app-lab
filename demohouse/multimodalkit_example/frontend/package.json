@@ -1,0 +1,9 @@
+{
+  "name": "multi-modal-sdk-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "build:inlined": "BUILD_TYPE=inlined pnpm -r build"
+  }
+}

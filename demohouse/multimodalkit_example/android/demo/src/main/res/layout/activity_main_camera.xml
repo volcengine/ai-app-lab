@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".page.demo.demoCameraActivity">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container"
+        android:name="com.bytedance.ai.multimodal.demo.view.fragments.PopupContainerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</FrameLayout>

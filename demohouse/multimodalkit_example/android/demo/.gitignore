@@ -1,0 +1,5 @@
+/volcengine-demo/build
+# Internal flavor specific code
+/src/internal/
+
+# End of file

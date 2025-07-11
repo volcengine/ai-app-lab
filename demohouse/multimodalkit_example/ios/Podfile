@@ -1,0 +1,36 @@
+source 'https://cdn.cocoapods.org/'
+source 'https://github.com/volcengine/volcengine-specs.git'
+
+platform :ios, '13.0'
+supports_swift_versions '>= 5.0', '< 6.0'
+
+inhibit_all_warnings!
+
+use_frameworks! :linkage => :static
+use_modular_headers!
+
+target 'MultiModalKitExample' do
+  pod 'ExampleBusiness', :path => './Modules/ExampleBusiness'
+  pod 'MultiModalKitToB', '~> 1.0.0'
+  pod 'TTNetworkManager', '5.0.29.22'
+  pod 'SnapKit', '5.7.1'
+  pod 'SwifterSwift', '6.0.0'
+  pod 'SpeechEngineToB', '0.0.6-alpha.3'
+  pod 'Mantle', '2.1.4'
+  pod 'OpenCV2', '4.3.0' 
+  pod 'Toast-Swift', '5.0.1'
+  pod 'LookinServer', :subspecs => ['Swift'], :configurations => ['Debug']
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
+    if target.name == 'SnapKit' || target.name == 'WCDB.swift'
+      target.build_configurations.each do |config|
+        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+      end
+    end
+  end
+end

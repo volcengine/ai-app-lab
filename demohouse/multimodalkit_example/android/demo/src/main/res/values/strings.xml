@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="demo_app_name">MultimodalKit Example</string>
+
+    <string name="pref_key_url" translatable="false">multimodal_web_url</string>
+    <string name="bridge_test_page">Bridge 测试页</string>
+    <string name="vlm_test">VLM测试</string>
+    <string name="speech_test">语音测试</string>
+    <string name="realtime_test">实时通话</string>
+</resources>

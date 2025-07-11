@@ -1,0 +1,29 @@
+{
+  "name": "multi-modal-sdk",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "lint": "biome check --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.0.0",
+    "@rslib/core": "0.8.0",
+    "@types/node": "20.10.4",
+    "typescript": "5.5.3"
+  },
+  "private": true
+}
