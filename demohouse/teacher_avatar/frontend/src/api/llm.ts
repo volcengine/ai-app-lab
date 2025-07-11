@@ -9,7 +9,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { appletRequest, StreamEvent, StreamRequestHandle } from '@ai-app/bridge-api';
 import { CAMER_MODE } from '@/types';
 import { IMessage } from '@/pages/entry/routes/recognition-result/components/AnswerCard';
 
@@ -47,162 +46,185 @@ interface ChatCompletionChunk {
   choices: ChatChoice[];
 }
 
+const VLM_MODEL = process.env.VLM_MODEL;
+const TEACHER_MODEL = process.env.TEACHER_MODEL;
+const TEACHER_APIKEY = process.env.TEACHER_APIKEY;
+const DEEP_SEEK_MODEL = process.env.DEEP_SEEK_MODEL;
+
 export class LLMApi {
   static TAG = 'LLMApi';
   private static BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3';
-  static VLM_MODEL = '***';
-  static TEACHER_MODEL = '***';
-  static TEACHER_APIKEY = '***';
-  static DEEP_SEEK_MODEL = '***';
-  
+
   static async streamResponse(
-    handle: StreamRequestHandle
-  ): Promise<
-    (
+    response: Response
+  ): Promise<{
+    cb: (
       onVlmData: (text: string) => void,
       onReasoningData?: (text: string) => void,
       onDeepseekData?: (text: string) => void,
       onComplete?: (deepseekBuffer?: string) => void
-    ) => void
-  > {
-    return (
+    ) => void;
+    abort: () => void;
+  }> {
+    const reader = response.body?.getReader();
+    const controller = new AbortController();
+
+    const cb = (
       onVLMData: (text: string) => void,
       onReasoningData?: (text: string) => void,
       onDeepseekData?: (text: string) => void,
       onComplete?: (deepseekBuffer?: string) => void
     ) => {
-      // let vlmBuffer = '';
       let reasoningBuffer = '';
       let deepseekBuffer = '';
-      handle.on((event: StreamEvent) => {
-        if (event.event === 'data') {
-          try {
-            const dataStr = String(event.data);
-            const jsonStr = dataStr.replace(/^data:\s*/, '').trim();
 
-            if (!jsonStr || jsonStr === '[DONE]') {
-              onComplete?.();
-              return;
+      async function read() {
+        if (!reader) return;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              onComplete?.(deepseekBuffer);
+              break;
+            }
+            const text = new TextDecoder().decode(value);
+            const jsonStr = text.replace(/^data: /, '').trim();
+
+            if (jsonStr === '[DONE]') {
+              onComplete?.(deepseekBuffer);
+              break;
             }
 
-            try {
-              const json: ChatCompletionChunk = JSON.parse(jsonStr);
-              const choice = json.choices[0];
-
-              if (choice) {
-                if (choice.finish_reason) {
-                  onComplete?.();
-                  return;
-                }
-                const content = choice.delta?.content ?? '';
-                const reasoningContent = choice.delta?.reasoning_content;
-                if (content) {
-                  if (reasoningBuffer) {
-                    deepseekBuffer += content;
-                    onDeepseekData?.(content);
-                    return;
-                  } else {
-                    onVLMData(content);
+            if (jsonStr) {
+              try {
+                const json: ChatCompletionChunk = JSON.parse(jsonStr);
+                const choice = json.choices[0];
+                if (choice) {
+                  if (choice.finish_reason) {
+                    onComplete?.(deepseekBuffer);
+                    break;
+                  }
+                  const content = choice.delta?.content ?? '';
+                  const reasoningContent = choice.delta?.reasoning_content;
+                  if (content) {
+                    if (reasoningBuffer) {
+                      deepseekBuffer += content;
+                      onDeepseekData?.(content);
+                    } else {
+                      onVLMData(content);
+                    }
+                  }
+                  if (reasoningContent) {
+                    reasoningBuffer += reasoningContent;
+                    onReasoningData?.(reasoningContent);
                   }
                 }
-                if (reasoningContent) {
-                  reasoningBuffer += reasoningContent;
-                  onReasoningData?.(reasoningContent);
-                }
+              } catch (e) {
+                console.error('Failed to parse JSON:', e, 'Raw data:', jsonStr);
               }
-            } catch (parseError) {
-              console.error('Failed to parse JSON:', parseError, 'Raw data:', jsonStr);
             }
-          } catch (e) {
-            console.error('Data processing error:', e);
           }
-        } else if (event.event === 'complete') {
-          onComplete?.(deepseekBuffer);
-        } else if (event.event === 'error') {
-          throw new Error(`Stream error: ${event.message}`);
+        } catch (error) {
+          console.error('Stream reading error:', error);
+          onComplete?.(deepseekBuffer); // complete on error
         }
-      });
+      }
+      read();
+    };
+
+    return {
+      cb,
+      abort: () => {
+        reader?.cancel();
+      },
     };
   }
+
   static async chatStreamResponse(
-    handle: StreamRequestHandle
-  ): Promise<
-    (
+    response: Response
+  ): Promise<{
+    cb: (
       onReasoningData?: (text: string) => void,
       onDeepseekData?: (text: string) => void,
       onComplete?: () => void
-    ) => void
-  > {
-    return (
+    ) => void;
+    abort: () => void;
+  }> {
+    const reader = response.body?.getReader();
+
+    const cb = (
       onReasoningData?: (text: string) => void,
       onDeepseekData?: (text: string) => void,
       onComplete?: () => void
     ) => {
-      // let vlmBuffer = '';
       let reasoningBuffer = '';
-      // const deepseekBuffer = '';
-      handle.on((event: StreamEvent) => {
-        if (event.event === 'data') {
-          try {
-            const dataStr = String(event.data);
-            const jsonStr = dataStr.replace(/^data:\s*/, '').trim();
-
-            if (!jsonStr || jsonStr === '[DONE]') {
+      async function read() {
+        if (!reader) return;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
               onComplete?.();
-              return;
+              break;
+            }
+            const text = new TextDecoder().decode(value);
+            const jsonStr = text.replace(/^data: /, '').trim();
+
+            if (jsonStr === '[DONE]') {
+              onComplete?.();
+              break;
             }
 
-            try {
-              const json: ChatCompletionChunk = JSON.parse(jsonStr);
-              const choice = json.choices[0];
-
-              if (choice) {
-                if (choice.finish_reason) {
-                  onComplete?.();
-                  return;
-                }
-                const content = choice.delta?.content ?? '';
-                const reasoningContent = choice.delta?.reasoning_content;
-                if (content) {
-                  if (reasoningBuffer) {
+            if (jsonStr) {
+              try {
+                const json: ChatCompletionChunk = JSON.parse(jsonStr);
+                const choice = json.choices[0];
+                if (choice) {
+                  if (choice.finish_reason) {
+                    onComplete?.();
+                    break;
+                  }
+                  const content = choice.delta?.content ?? '';
+                  const reasoningContent = choice.delta?.reasoning_content;
+                  if (content && reasoningBuffer) {
                     onDeepseekData?.(content);
-                    return;
+                  }
+                  if (reasoningContent) {
+                    reasoningBuffer += reasoningContent;
+                    onReasoningData?.(reasoningContent);
                   }
                 }
-                if (reasoningContent) {
-                  reasoningBuffer += reasoningContent;
-                  onReasoningData?.(reasoningContent);
-                }
+              } catch (e) {
+                console.error('Failed to parse JSON:', e, 'Raw data:', jsonStr);
               }
-            } catch (parseError) {
-              console.error('Failed to parse JSON:', parseError, 'Raw data:', jsonStr);
             }
-          } catch (e) {
-            console.error('Data processing error:', e);
           }
-        } else if (event.event === 'complete') {
+        } catch (error) {
+          console.error('Stream reading error:', error);
           onComplete?.();
-        } else if (event.event === 'error') {
-          throw new Error(`Stream error: ${event.message}`);
         }
-      });
+      }
+      read();
+    };
+
+    return {
+      cb,
+      abort: () => {
+        reader?.cancel();
+      },
     };
   }
-  static async VLMChat(
-    image_url: string,
-    // correct 批改
-    mode: CAMER_MODE
-  ) {
-    const handle = await appletRequest({
-      url: `${this.BASE_URL}/bots/chat/completions`,
+
+  static async VLMChat(image_url: string, mode: CAMER_MODE) {
+    const response = await fetch(`${this.BASE_URL}/bots/chat/completions`, {
       method: 'POST',
-      header: {
+      headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.TEACHER_APIKEY}`,
-        Accept: 'text/event-stream'
+        Authorization: `Bearer ${TEACHER_APIKEY}`,
+        Accept: 'text/event-stream',
       },
-      body: {
-        model: this.TEACHER_MODEL,
+      body: JSON.stringify({
+        model: TEACHER_MODEL,
         messages: [
           {
             role: 'user',
@@ -210,62 +232,60 @@ export class LLMApi {
               {
                 type: 'image_url',
                 image_url: {
-                  url: image_url
-                }
-              }
-            ]
-          }
+                  url: image_url,
+                },
+              },
+            ],
+          },
         ],
         stream: true,
         ...(mode === CAMER_MODE.HOMEWORK_CORRECTION
           ? {
               metadata: {
-                mode: 'correct'
-              }
+                mode: 'correct',
+              },
             }
-          : {})
-      },
-      addCommonParams: false,
-      streamType: 'sse'
+          : {}),
+      }),
     });
 
-    if (handle.httpCode !== 200) {
-      throw new Error(`HTTP error! status: ${handle.httpCode}`);
+    if (response.status !== 200) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const { cb, abort } = await this.streamResponse(response);
     return {
-      cb: await this.streamResponse(handle),
-      handle
+      cb,
+      handle: { abort }, // Keep handle object for aborting
     };
   }
 
   static async Chat(messages: IMessage[]) {
-    const handle = await appletRequest({
-      url: `${this.BASE_URL}/bots/chat/completions`,
+    const response = await fetch(`${this.BASE_URL}/bots/chat/completions`, {
       method: 'POST',
-      header: {
+      headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.TEACHER_APIKEY}`,
-        Accept: 'text/event-stream'
+        Authorization: `Bearer ${TEACHER_APIKEY}`,
+        Accept: 'text/event-stream',
       },
-      body: {
-        model: this.TEACHER_MODEL,
+      body: JSON.stringify({
+        model: TEACHER_MODEL,
         messages,
         stream: true,
         metadata: {
-          mode: 'chat' // 闲聊
-        }
-      },
-      addCommonParams: false,
-      streamType: 'sse'
+          mode: 'chat', // 闲聊
+        },
+      }),
     });
 
-    if (handle.httpCode !== 200) {
-      throw new Error(`HTTP error! status: ${handle.httpCode}`);
+    if (response.status !== 200) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+    const { cb, abort } = await this.chatStreamResponse(response);
     return {
-      cb: await this.chatStreamResponse(handle),
-      handle
+      cb,
+      handle: { abort },
     };
   }
 }

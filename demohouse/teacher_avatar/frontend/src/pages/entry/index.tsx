@@ -9,10 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { useEffect, useState } from 'react';
-import { close } from '@ai-app/bridge-api/procode';
-import { definePage } from '@ai-app/agent';
 import Recognition from './routes/recognition';
 import Confirm from './routes/confirm';
 import { RouterContext } from './context/routerContext/context';
@@ -81,13 +78,4 @@ const App = () => {
   );
 };
 
-export default definePage({
-  aiMeta: {
-    id: 'recognition',
-    description: '识别页面'
-  },
-
-  render(props) {
-    return <App />;
-  }
-});
+export default App;

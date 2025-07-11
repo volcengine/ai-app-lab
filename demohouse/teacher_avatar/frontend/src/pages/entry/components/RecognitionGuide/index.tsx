@@ -11,16 +11,16 @@
 
 import React from 'react';
 
-import { close } from '@ai-app/bridge-api/procode';
-
 import TipItem from './components/TipItem';
 import { FloatingPanel, FloatingPanelRef } from 'antd-mobile';
-import oneRight from '@/images/1right.png';
-import oneWrong from '@/images/1wrong.png';
-import twoWrong from '@/images/2wrong.png';
-import threeRight from '@/images/3right.png';
-import threeWrong from '@/images/3wrong.png';
+import oneRight from '@/images/1right.png?inline';
+import oneWrong from '@/images/1wrong.png?inline';
+import twoWrong from '@/images/2wrong.png?inline';
+import threeRight from '@/images/3right.png?inline';
+import threeWrong from '@/images/3wrong.png?inline';
 import styles from './index.module.less';
+import { closeApp } from 'multi-modal-sdk';
+
 const anchors = [window.innerHeight * 0.88];
 
 const RecognitionGuide: React.FC = () => {
@@ -48,7 +48,7 @@ const RecognitionGuide: React.FC = () => {
   ];
 
   const handleRetakePhoto = () => {
-    close();
+    closeApp();
   };
 
   return (

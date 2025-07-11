@@ -11,9 +11,6 @@
 
 import { useContext, useEffect, useState } from 'react';
 
-import { getViewContext } from '@ai-app/framework';
-import { close } from '@ai-app/bridge-api/procode';
-
 import { CAMER_MODE } from '@/types';
 import { getQuestionSegmentList } from '@/api/bridge';
 import { RouterContext } from '../../context/routerContext/context';
@@ -21,6 +18,7 @@ import { getCameraImageBase64 } from '../../utils';
 import RecognitionGuide from '../../components/RecognitionGuide';
 import SAM from './components/sam';
 import styles from './index.module.less';
+import { closeApp } from 'multi-modal-sdk';
 
 const Recognition = () => {
   const { navigate } = useContext(RouterContext);
@@ -29,14 +27,18 @@ const Recognition = () => {
 
   const recognizeQuestion = async (imageId: string) => {
     try {
+      console.log("imageId", imageId)
+
       const res: any = await getQuestionSegmentList({
         imageId
       });
       const { pass, midBoxIndex, detectedQuestions } = res || {};
       if (pass) {
-        const currentViewContext: any = getViewContext();
+        // 替换getViewContext()获取camera_mode
+        const searchParams = new URL(window.location.toString()).searchParams || {};
+        const cameraMode = searchParams.get('camera_mode') as CAMER_MODE;
         // 作业批改场景
-        if ((currentViewContext.camera_mode as CAMER_MODE) === CAMER_MODE.HOMEWORK_CORRECTION) {
+        if (cameraMode === CAMER_MODE.HOMEWORK_CORRECTION) {
           navigate('recognition-result', {
             detectedQuestions,
             originData: res
@@ -65,16 +67,18 @@ const Recognition = () => {
   };
 
   const onCancel = () => {
-    close();
+    closeApp();
   };
 
   useEffect(() => {
     (async () => {
-      const currentViewContext: any = getViewContext();
-      if (currentViewContext) {
-        const base64 = await getCameraImageBase64(currentViewContext.image_id);
+      // 替换getViewContext()获取image_id
+      const searchParams = new URL(window.location.toString()).searchParams || {};
+      const imageId = searchParams.get('image_id');
+      if (imageId) {
+        const base64 = await getCameraImageBase64(imageId);
         setImageBase64(base64);
-        recognizeQuestion(currentViewContext.image_id);
+        recognizeQuestion(imageId);
       }
     })();
   }, []);

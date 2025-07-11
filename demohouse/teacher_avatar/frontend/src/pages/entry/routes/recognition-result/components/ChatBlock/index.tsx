@@ -10,8 +10,7 @@
 // limitations under the License.
 
 import { CAMER_MODE } from '@/types';
-import { MdBox } from '@flow-web/md-box';
-import { startASR, onASRResult, stopASR } from '@ai-app/multimodal-api';
+import { startASR, onASRResult, stopASR } from '@/api/bridge';
 import styles from './index.module.less';
 import React, { useEffect, useRef, useState } from 'react';
 import { EQUESTIONSTATUS, IMessage } from '@/pages/entry/routes/recognition-result/components/AnswerCard';
@@ -273,10 +272,9 @@ export const ChatBlock = (props: IProps) => {
                 {vlmContent && (
                   <>
                     <div className="pt-2 pb-2 text-lg font-semibold">识别题目</div>
-                    <MdBox
+                    <div
                       style={{ width: '100%', fontSize: '16px', lineHeight: '25px' }}
-                      markDown={vlmContent}
-                    />
+                    >{vlmContent}</div>
                   </>
                 )}
 

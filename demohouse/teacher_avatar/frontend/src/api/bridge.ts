@@ -9,61 +9,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { createAPI, createEvent } from '@ai-app/bridge-base';
+import {
+  createStreamingTTS as sdkCreateStreamingTTS,
+  appendStreamingTTS as sdkAppendStreamingTTS,
+  cancelStreamingTTS as sdkCancelStreamingTTS,
+  getImageInfo,
+  startASR as sdkStartASR,
+  stopASR as sdkStopASR,
+  onASRResult as sdkOnASRResult,
+  getQuestionSegmentList as sdkGetQuestionSegmentList
+} from 'multi-modal-sdk';
 
-/**
- * 创建流式 TTS 播报请求
- */
-export const createStreamingTTS = createAPI<
-  {
-    speaker?: string;
-    ttsFormat?: string;
-    ttsSampleRate?: number;
-  },
-  {
-    streamingId: string;
-  }
->('applet.multimodal.createStreamingTTS');
+export const createStreamingTTS = (options: any) => {
+  return sdkCreateStreamingTTS(options);
+};
 
-/**
- * 流式 TTS 播报添加新文本
- */
-export const appendStreamingTTS = createAPI<{
-  streamingId: string;
-  newText: string;
-  isFinish: boolean;
-}>('applet.multimodal.appendStreamingTTS');
+export const appendStreamingTTS = (options: any) => {
+  return sdkAppendStreamingTTS(options);
+};
 
-/**
- * 流式 TTS 播报打断
- */
-export const cancelStreamingTTS = createAPI<{
-  streamingId: string;
-}>('applet.multimodal.cancelStreamingTTS');
+export const cancelStreamingTTS = (options: any) => {
+  return sdkCancelStreamingTTS(options);
+};
 
-/**
- * 监听 TTS 结果
- */
-export const onTTSFinished = createEvent<{
-  streamingId: string;
-}>('applet.multimodal.onStreamingTTSFinished');
+export const getQuestionSegmentList = async (options: { imageId: string }) => {
+  return sdkGetQuestionSegmentList(options);
+};
 
-/**
- * 复制消息
- */
-export const copyMessage = createAPI<{
-  message: string;
-}>('applet.multimodal.copyMessage');
+export const getCameraImage = (options: { imageId: string }) => {
+  return getImageInfo(options);
+};
 
-/**
- * 赞踩消息
- */
-export const likeMessage = createAPI<{
-  like?: boolean;
-  dislike?: boolean;
-}>('applet.multimodal.likeMessage');
+export const startASR = () => {
+  return sdkStartASR();
+};
 
-/**
- * 题目识别
- */
-export const getQuestionSegmentList = createAPI('mind.getQuestionSegmentList');
+export const stopASR = () => {
+  return sdkStopASR();
+};
+
+export const onASRResult = (callback: (result: { text: string; isFinished?: boolean }) => void) => {
+  return sdkOnASRResult(callback);
+};

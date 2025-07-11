@@ -9,7 +9,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { getCameraImage } from '@ai-app/bridge-api/procode';
+import { getCameraImage } from '@/api/bridge';
 import { EQUESTIONSTATUS } from '@/pages/entry/routes/recognition-result/components/AnswerCard';
 
 export const getCameraImageBase64 = async (imageId: string) => {

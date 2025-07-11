@@ -12,9 +12,6 @@
 /* eslint-disable max-lines-per-function */
 import React, { useContext, useEffect, useState } from 'react';
 
-import { getViewContext } from '@ai-app/framework';
-import { close } from '@ai-app/bridge-api/procode';
-
 import { getQuestionSegmentList } from '@/api/bridge';
 import { getCameraImageBase64 } from '../../utils';
 import ImageRectSelect from './components/ImageRectSelect';
@@ -22,6 +19,7 @@ import ImageRectSelect from './components/ImageRectSelect';
 import styles from './index.module.less';
 import { CircleButton } from './components/CircleButton';
 import { RouterContext } from '../../context/routerContext/context';
+import { closeApp } from 'multi-modal-sdk';
 
 const Confirm = () => {
   const { query, navigate } = useContext(RouterContext);
@@ -37,9 +35,10 @@ const Confirm = () => {
 
   const onConfirm = async () => {
     if (selectRect) {
-      const currentViewContext: any = getViewContext();
+      const searchParams = new URL(window.location.toString()).searchParams;
+      const imageId = searchParams.get('image_id');
       const res: any = await getQuestionSegmentList({
-        imageId: currentViewContext.image_id,
+        imageId: imageId,
         rotate,
         selectRect
       });
@@ -62,9 +61,10 @@ const Confirm = () => {
 
   useEffect(() => {
     (async () => {
-      const currentViewContext: any = getViewContext();
-      if (currentViewContext) {
-        const base64 = await getCameraImageBase64(currentViewContext.image_id);
+      const searchParams = new URL(window.location.toString()).searchParams;
+      const imageId = searchParams.get('image_id');
+      if (imageId) {
+        const base64 = await getCameraImageBase64(imageId);
         setImageBase64(base64);
       }
     })();
@@ -112,7 +112,7 @@ const Confirm = () => {
           }
           onClick={() => {
             // 返回拍照界面
-            close();
+            closeApp();
           }}
         />
         <CircleButton

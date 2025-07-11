@@ -15,14 +15,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AnswerCard, EQUESTIONSTATUS, IQuestion } from './components/AnswerCard';
 import { LLMApi } from '@/api/llm';
 import './index.css';
-import { close, getCameraImage } from '@ai-app/bridge-api/procode';
-import { getViewContext } from '@ai-app/framework';
+import { getCameraImage } from '@/api/bridge';
 import { CAMER_MODE } from '@/types';
 import { RouterContext } from '../../context/routerContext/context';
 import { FloatingPanel } from 'antd-mobile';
 import style from './index.module.less';
 import { genId, parseVLMCorrectionResult } from '@/pages/entry/utils';
 import BoxMask from './components/BoxMask';
+import { closeApp } from 'multi-modal-sdk';
 
 type FloatingPanelRef = {
   setHeight: (
@@ -48,7 +48,8 @@ export enum STAGE {
 // 题目状态, 批改中,批改正确，批改错误
 
 export const RecognitionResult = () => {
-  const currentViewContext: any = getViewContext();
+  // 从URL查询参数获取上下文信息
+  const searchParams = new URL(window.location.toString()).searchParams;
 
   const { query, navigate } = useContext(RouterContext);
   // 阶段
@@ -185,9 +186,9 @@ export const RecognitionResult = () => {
       });
   };
   // 识别结果渲染类型：solve-解题，correct-批改
-  const mode = currentViewContext.camera_mode as CAMER_MODE;
+  const mode = searchParams.get('camera_mode') as CAMER_MODE;
   useEffect(() => {
-    getCameraImage({ imageId: currentViewContext.image_id }).then((res) => {
+    getCameraImage({ imageId: searchParams.get('image_id') }).then((res) => {
       setBase64(`data:image/jpeg;base64,${res.base64Image}`);
     });
   }, []);
@@ -308,7 +309,7 @@ export const RecognitionResult = () => {
       <div
         className={style.escape}
         onClick={() => {
-          close();
+          closeApp();
         }}
       >
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
