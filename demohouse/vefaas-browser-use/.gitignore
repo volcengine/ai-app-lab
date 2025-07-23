@@ -1,0 +1,11 @@
+videos/
+.DS_Store
+.idea/
+bin/
+include/
+lib/
+pyvenv.cfg
+*.pyc
+myenv/
+.vscode/
+*.tar
