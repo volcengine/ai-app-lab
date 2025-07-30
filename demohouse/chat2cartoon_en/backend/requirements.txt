@@ -1,0 +1,12 @@
+volcengine==1.0.161
+cryptography==43.0.3
+tos==2.8.1
+websockets==13.1
+protobuf==6.31.1
+arkitect==0.1.11
+byteplus-python-sdk-v2==3.0.2
+volcengine-python-sdk==4.0.5
+
+pydantic~=2.11.7
+requests~=2.32.4
+moviepy==2.1.1
