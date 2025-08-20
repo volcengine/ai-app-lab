@@ -1,13 +1,12 @@
-from arkitect.types.llm.model import ArkChatParameters
-from arkitect.types.llm.model import ArkMessage
 from arkitect.core.component.context.context import Context
 from arkitect.core.component.context.hooks import (
-    PreLLMCallHook,
     PostLLMCallHook,
-    PreToolCallHook,
     PostToolCallHook,
+    PreLLMCallHook,
+    PreToolCallHook,
 )
 from arkitect.core.component.context.model import ContextInterruption
+from arkitect.types.llm.model import ArkChatParameters, ArkMessage
 
 # --- 工具注册与 ChatCompletionTool ---
 """
@@ -23,7 +22,7 @@ class ChatCompletionTool(BaseModel):
     type: Literal["function"] = "function"
     function: FunctionDefinition
 
-# 用法：在Context里使用tool参数自动注册工具, 
+# 用法：在Context里使用tool参数自动注册工具,
 # 不能直接用ChatCompletionTool.from_function("function")
 """
 
@@ -89,7 +88,7 @@ context = Context(
 )
 
 
-async def main():
+async def init_context_main():
     await context.init()
 
 
@@ -123,7 +122,8 @@ msg_assistant = ArkMessage(role="assistant", content="1+2等于3")
 
 # Q&A
 # Q: role可以自定义吗？
-# A: 框架目前支持user/system/assistant/tool等预定义角色， 自定义role需要更改框架代码。
+# A: 框架目前支持user/system/assistant/tool等预定义角色，
+# 自定义role需要更改框架代码。
 
 # --- 上下文管理与 State 类 ---
 """
@@ -158,10 +158,24 @@ class PostLLMCallHook:
     async def post_llm_call(self, state: State) -> State: ...
 
 class PreToolCallHook:
-    async def pre_tool_call(self, name: str, arguments: str, state: State) -> State: ...
+    async def pre_tool_call(
+        self,
+        name: str,
+        arguments: str,
+        state: State,
+    ) -> State:
+        ...
 
 class PostToolCallHook:
-    async def post_tool_call(self, name: str, arguments: str, response, exception, state: State) -> State: ...
+    async def post_tool_call(
+        self,
+        name: str,
+        arguments: str,
+        response,
+        exception,
+        state: State,
+    ) -> State:
+        ...
 
 # 注册方式（只能用Context的set_xxx_hook方法）
 # 用法：注意Hook只能返回State，不能返回其它类型
@@ -219,7 +233,7 @@ class ContextInterruption(Exception):
 
 # 用法：流式输出循环中检测和处理ContextInterruption
 # 假设completion是context.completions.create(...)的异步生成器
-async def main():
+async def interruption_example():
     await context.init()
     completion = await context.completions.create(
         [{"role": "user", "content": "hello"}], stream=True
@@ -241,14 +255,16 @@ async def main():
 """
 # stream参数说明
 # Context.completions.create(messages, stream=False) 控制是否流式输出。
-# - stream=True：返回异步生成器，适合实时输出/大文本/多轮对话，不能直接获取usage等统计量。
-# - stream=False：一次性返回完整结果（ArkChatResponse），适合需要统计量、完整内容的场景。
+# - stream=True：返回异步生成器，适合实时输出/大文本/多轮对话，
+#   不能直接获取usage等统计量。
+# - stream=False：一次性返回完整结果（ArkChatResponse），
+#   适合需要统计量、完整内容的场景。
 # 推荐：如需统计量/完整内容用stream=False，如需实时输出用stream=True。
 """
 
 
 # 非流式（stream=False）
-async def main():
+async def non_stream_example():
     await context.init()
     reply = await context.completions.create(
         [{"role": "user", "content": "你好"}], stream=False
@@ -258,7 +274,7 @@ async def main():
 
 
 # 流式（stream=True）
-async def main():
+async def stream_example():
     await context.init()
     async for chunk in await context.completions.create(
         [{"role": "user", "content": "你好"}], stream=True
@@ -290,7 +306,7 @@ class CompletionUsage(BaseModel):
 """
 
 
-async def main():
+async def usage_example():
     await context.init()
     reply = await context.completions.create(
         [{"role": "user", "content": "你好"}], stream=False
