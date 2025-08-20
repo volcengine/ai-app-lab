@@ -73,7 +73,8 @@ context = Context(
     tools=[add], # 在这里注册工具
     parameters=params
 )
-await context.init()
+async def main():
+    await context.init()
 
 # Q&A
 # Q: 可以在其它地方注册参数或工具吗？
@@ -190,13 +191,16 @@ from arkitect.core.component.context.model import ContextInterruption
 
 # 用法：流式输出循环中检测和处理ContextInterruption
 # 假设completion是context.completions.create(...)的异步生成器
-async for chunk in completion:
-    if isinstance(chunk, ContextInterruption):
-        print(f"中断发生！阶段: {chunk.life_cycle}, 原因: {chunk.reason}")
-        break
-    else:
-        # 正常处理输出
-        print(getattr(chunk, 'content', ''), end="")
+async def main():
+    await context.init()
+    completion = await context.completions.create([{"role": "user", "content": "hello"}], stream=True)
+    async for chunk in completion:
+        if isinstance(chunk, ContextInterruption):
+            print(f"中断发生！阶段: {chunk.life_cycle}, 原因: {chunk.reason}")
+            break
+        else:
+            # 正常处理输出
+            print(getattr(chunk, 'content', ''), end="")
 
 # Q&A
 # Q: ContextInterruption会自动抛出吗？
@@ -211,14 +215,18 @@ async for chunk in completion:
 # 推荐：如需统计量/完整内容用stream=False，如需实时输出用stream=True。
 """
 # 非流式（stream=False）
-reply = await context.completions.create([{"role": "user", "content": "你好"}], stream=False)
-print(reply.choices[0].message.content)
-print(reply.usage)  # 可以获取token统计
+async def main():
+    await context.init()
+    reply = await context.completions.create([{"role": "user", "content": "你好"}], stream=False)
+    print(reply.choices[0].message.content)
+    print(reply.usage)  # 可以获取token统计
 
 # 流式（stream=True）
-async for chunk in await context.completions.create([{"role": "user", "content": "你好"}], stream=True):
-    if hasattr(chunk, "choices"):
-        print(chunk.choices[0].delta.content, end="")
+async def main():
+    await context.init()
+    async for chunk in await context.completions.create([{"role": "user", "content": "你好"}], stream=True):
+        if hasattr(chunk, "choices"):
+            print(chunk.choices[0].delta.content, end="")
     # 不能直接获取usage等统计量
 
 # --- ArkChatResponse 与统计量获取 ---
@@ -241,12 +249,13 @@ class CompletionUsage(BaseModel):
 
 # 获取统计量
 """
-print(reply.usage) # 只能在stream=False时获取统计量
+async def main():
+    await context.init()
+    reply = await context.completions.create([{"role": "user", "content": "你好"}], stream=False)
+    print(reply.usage) # 只能在stream=False时获取统计量
 
 # Q&A
 # Q: 统计量只能在ArkChatResponse里获取吗？
 # A: 是，所有统计信息都在response.usage字段。
 # Q: Thinking 模式下，模型思考所消耗的token如何获取？
 # A: 通过response.usage.completion_tokens_details.reasoning_tokens来获取。
-
-
