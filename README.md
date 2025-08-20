@@ -20,19 +20,19 @@
 从大模型可以落地的业务提效、企业经营效率提效两大场景切入，沉淀了教师分身、安卓终端、复杂问题思考等多个垂直领域的 AI 原型应用，并开源所有代码。助力中小企业“一键复制”，完成基础应用搭建，随后加入个性化的行业 Know-How 和企业内部业务逻辑，快速步入应用落地的实干阶段。  
 
 
-| 应用                | 简介                                                                                     |
-| ------------------- |----------------------------------------------------------------------------------------|
-| [互动双语视频生成器](./demohouse/chat2cartoon/README.md)  | 只需输入一个主题，就能为你生成引人入胜且富有含义的双语视频。                                                         |
-| [深度推理](./demohouse/deep_research/README.md)            | 利用 DeepSeek-R1 大模型对复杂问题进行多角度分析，并辅助互联网资料，快速生成最合适用户的解决方案。                                |
-| [DeepDoubao](./demohouse/deepdoubao/README.md)      | 结合 DeepSeek R1 模型的强大推理能力与 Doubao 模型的高效对话能力，为用户提供智能问答服务。                                |
-| [语音实时通话 - 青青](./demohouse/live_voice_call/README.md) | 嗨，我是你的朋友乔青青，快来和我语音通话吧！                                                                 |
+| 应用                                                      | 简介                                                                                     |
+|---------------------------------------------------------|----------------------------------------------------------------------------------------|
+| [互动双语视频生成器](./demohouse/chat2cartoon/README.md)         | 只需输入一个主题，就能为你生成引人入胜且富有含义的双语视频。                                                         |
+| [深度推理](./demohouse/deep_research/README.md)             | 利用 DeepSeek-R1 大模型对复杂问题进行多角度分析，并辅助互联网资料，快速生成最合适用户的解决方案。                                |
+| [DeepDoubao](./demohouse/deepdoubao/README.md)          | 结合 DeepSeek R1 模型的强大推理能力与 Doubao 模型的高效对话能力，为用户提供智能问答服务。                                |
+| [语音实时通话 - 青青](./demohouse/live_voice_call/README.md)    | 嗨，我是你的朋友乔青青，快来和我语音通话吧！                                                                 |
 | [长记忆方案](./demohouse/longterm_memory/README.md)          | 基于 DeepSeek-R1 模型的强大思考能力将对话内容抽取成记忆，记录用户偏好、性格、生日等，并在对话到相关话题时帮助 Doubao 角色模型生成更贴合角色人设的回复。 |
-| [手机助手](./demohouse/pocket_pal/README.md)            | 移动端手机智能助手。                                                                             |
-| [智能客服助手](./demohouse/shop_assist/backend/README.md)        | 以车载零配件网店客服场景为例设计的智能导购机器人。                                                              |
+| [手机助手](./demohouse/pocket_pal/README.md)                | 移动端手机智能助手。                                                                             |
+| [智能客服助手](./demohouse/shop_assist/backend/README.md)     | 以车载零配件网店客服场景为例设计的智能导购机器人。                                                              |
 | [教师分身](./demohouse/teacher_avatar/README.md)            | 基于豆包视觉理解与 DeepSeek 深度推理双引擎的教育解决方案。                                                     |
-| [视频实时理解](./demohouse/video_analyser/README.md)        | 多模态洞察，基于豆包-视觉理解模型实时视觉与语音理解。                                                            |
-| [实时对话式 AI](./demohouse/rtc_conversational_ai/README.md)       | 超低延迟的 AI 实时对话应用，更流畅，更自然，更实时。                                                           |
-| [AI-Media2Doc](https://github.com/hanshuaikang/AI-Media2Doc) | 一键将视频和音频转化为小红书/公众号/知识笔记/视频总结/思维导图等各种风格的文档, 可基于视频内容进行 AI 二次对话。                          |
+| [视频实时理解](./demohouse/video_analyser/README.md)          | 多模态洞察，基于豆包-视觉理解模型实时视觉与语音理解。                                                            |
+| [实时对话式 AI](./demohouse/rtc_conversational_ai/README.md) | 超低延迟的 AI 实时对话应用，更流畅，更自然，更实时。                                                           |
+| [AI-Media2Doc](./demohouse/media2doc/README.md)         | 一键将视频和音频转化为小红书/公众号/知识笔记/视频总结/思维导图等各种风格的文档, 可基于视频内容进行 AI 二次对话。                          |
 | [Mobile-Use](./demohouse/mobile-use/README_zh.md) | 基于火山引擎云手机与豆包视觉大模型能力，通过自然语言指令完成面向移动端场景自动化任务的 AI Agent 解决方案 |
 
 ## 相关指引
