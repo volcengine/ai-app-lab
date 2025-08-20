@@ -1,3 +1,14 @@
+from arkitect.types.llm.model import ArkChatParameters
+from arkitect.types.llm.model import ArkMessage
+from arkitect.core.component.context.context import Context
+from arkitect.core.component.context.hooks import (
+    PreLLMCallHook,
+    PostLLMCallHook,
+    PreToolCallHook,
+    PostToolCallHook,
+)
+from arkitect.core.component.context.model import ContextInterruption
+
 # --- 工具注册与 ChatCompletionTool ---
 """
 ChatCompletionTool/FunctionDefinition 类定义
@@ -12,11 +23,15 @@ class ChatCompletionTool(BaseModel):
     type: Literal["function"] = "function"
     function: FunctionDefinition
 
-# 用法：在Context里使用tool参数自动注册工具, 不能直接用ChatCompletionTool.from_function("function")
+# 用法：在Context里使用tool参数自动注册工具, 
+# 不能直接用ChatCompletionTool.from_function("function")
 """
+
+
 def add(a: int, b: int) -> int:
     """加法工具：返回a+b"""
     return a + b
+
 
 # Q&A
 # Q: 必须用from_function吗？可以手写FunctionDefinition吗？
@@ -36,11 +51,11 @@ class ArkChatParameters(BaseModel):
 
 # thinking参数示例（仅doubao模型支持）
 """
-from arkitect.types.llm.model import ArkChatParameters
+
 params = ArkChatParameters(
     temperature=0.2,
     max_tokens=100,
-    thinking={"type": "enabled"}  # or "disabled"/"auto"
+    thinking={"type": "enabled"},  # or "disabled"/"auto"
 )
 
 # Q&A
@@ -67,14 +82,16 @@ class Context:
 
 # 只能在初始化时传入tools/parameters
 """
-from arkitect.core.component.context.context import Context
 context = Context(
     model="doubao-seed-1-6-flash-250615",
-    tools=[add], # 在这里注册工具
-    parameters=params
+    tools=[add],  # 在这里注册工具
+    parameters=params,
 )
+
+
 async def main():
     await context.init()
+
 
 # Q&A
 # Q: 可以在其它地方注册参数或工具吗？
@@ -99,7 +116,7 @@ class ArkMessage(BaseModel):
 # assistant: 模型输出
 # tool: 工具调用
 """
-from arkitect.types.llm.model import ArkMessage
+
 msg_user = ArkMessage(role="user", content="1+2等于多少？")
 msg_system = ArkMessage(role="system", content="你是一个数学助手")
 msg_assistant = ArkMessage(role="assistant", content="1+2等于3")
@@ -150,18 +167,30 @@ class PostToolCallHook:
 # 用法：注意Hook只能返回State，不能返回其它类型
 # 注意：XXCallHook Class 下 xx_call 是空方法，需要重写
 """
-from arkitect.core.component.context.hooks import (
-    PreLLMCallHook, PostLLMCallHook, PreToolCallHook, PostToolCallHook
-)
 
 class MyPreLLMHook(PreLLMCallHook):
-    async def pre_llm_call(self, state): print("LLM调用前", state); return state
+    async def pre_llm_call(self, state):
+        print("LLM调用前", state)
+        return state
+
+
 class MyPostLLMHook(PostLLMCallHook):
-    async def post_llm_call(self, state): print("LLM调用后", state); return state
+    async def post_llm_call(self, state):
+        print("LLM调用后", state)
+        return state
+
+
 class MyPreToolHook(PreToolCallHook):
-    async def pre_tool_call(self, name, args, state): print("工具前", name, args); return state
+    async def pre_tool_call(self, name, args, state):
+        print("工具前", name, args)
+        return state
+
+
 class MyPostToolHook(PostToolCallHook):
-    async def post_tool_call(self, name, args, resp, exc, state): print("工具后", name, args, resp, exc); return state
+    async def post_tool_call(self, name, args, resp, exc, state):
+        print("工具后", name, args, resp, exc)
+        return state
+
 
 context.set_pre_llm_call_hook(MyPreLLMHook())
 context.set_post_llm_call_hook(MyPostLLMHook())
@@ -187,20 +216,22 @@ class ContextInterruption(Exception):
 # 不能raise/except，只能检测和消费。
 # 用法：在流式输出循环里判断chunk类型，遇到中断时做处理。
 """
-from arkitect.core.component.context.model import ContextInterruption
 
 # 用法：流式输出循环中检测和处理ContextInterruption
 # 假设completion是context.completions.create(...)的异步生成器
 async def main():
     await context.init()
-    completion = await context.completions.create([{"role": "user", "content": "hello"}], stream=True)
+    completion = await context.completions.create(
+        [{"role": "user", "content": "hello"}], stream=True
+    )
     async for chunk in completion:
         if isinstance(chunk, ContextInterruption):
             print(f"中断发生！阶段: {chunk.life_cycle}, 原因: {chunk.reason}")
             break
         else:
             # 正常处理输出
-            print(getattr(chunk, 'content', ''), end="")
+            print(getattr(chunk, "content", ""), end="")
+
 
 # Q&A
 # Q: ContextInterruption会自动抛出吗？
@@ -214,20 +245,28 @@ async def main():
 # - stream=False：一次性返回完整结果（ArkChatResponse），适合需要统计量、完整内容的场景。
 # 推荐：如需统计量/完整内容用stream=False，如需实时输出用stream=True。
 """
+
+
 # 非流式（stream=False）
 async def main():
     await context.init()
-    reply = await context.completions.create([{"role": "user", "content": "你好"}], stream=False)
+    reply = await context.completions.create(
+        [{"role": "user", "content": "你好"}], stream=False
+    )
     print(reply.choices[0].message.content)
     print(reply.usage)  # 可以获取token统计
+
 
 # 流式（stream=True）
 async def main():
     await context.init()
-    async for chunk in await context.completions.create([{"role": "user", "content": "你好"}], stream=True):
+    async for chunk in await context.completions.create(
+        [{"role": "user", "content": "你好"}], stream=True
+    ):
         if hasattr(chunk, "choices"):
             print(chunk.choices[0].delta.content, end="")
     # 不能直接获取usage等统计量
+
 
 # --- ArkChatResponse 与统计量获取 ---
 """
@@ -249,10 +288,15 @@ class CompletionUsage(BaseModel):
 
 # 获取统计量
 """
+
+
 async def main():
     await context.init()
-    reply = await context.completions.create([{"role": "user", "content": "你好"}], stream=False)
-    print(reply.usage) # 只能在stream=False时获取统计量
+    reply = await context.completions.create(
+        [{"role": "user", "content": "你好"}], stream=False
+    )
+    print(reply.usage)  # 只能在stream=False时获取统计量
+
 
 # Q&A
 # Q: 统计量只能在ArkChatResponse里获取吗？
