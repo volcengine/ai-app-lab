@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from functools import cached_property
 from typing import Any, AsyncIterable, Dict, List, Literal, Optional, Union
 
 from volcenginesdkarkruntime import AsyncArk
@@ -101,6 +102,6 @@ class _AsyncChat(AsyncChat):
         self._state = state
         super().__init__(client)
 
-    @property
-    def completions(self) -> _AsyncCompletions:
+    @cached_property
+    def completions(self) -> _AsyncCompletions:  # type: ignore
         return _AsyncCompletions(self._client, self._state)
