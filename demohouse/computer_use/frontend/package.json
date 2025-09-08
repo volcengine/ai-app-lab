@@ -12,7 +12,7 @@
     "@arco-design/web-react": "^2.66.1",
     "axios": "^1.8.4",
     "fetch-sse": "^1.1.2",
-    "next": "^15.2.0",
+    "next": "^15.4.7",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "tailwindcss-animate": "^1.0.7",
