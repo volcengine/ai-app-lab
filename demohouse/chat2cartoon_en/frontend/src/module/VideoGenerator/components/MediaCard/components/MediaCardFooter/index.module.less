@@ -1,0 +1,62 @@
+.footer-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .operations {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    position: relative;
+
+    .regenerate-warning {
+      position: absolute;
+      top: -5px;;
+      left: 25px;
+      cursor: pointer;
+      color: #C04F00;
+      z-index: 10;
+    }
+
+    .edit-warning {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      cursor: pointer;
+      color: #C04F00;
+      z-index: 10;
+    }
+  }
+
+  .icon {
+    border-radius: var(--border-radius-small, 4px);
+    border: 1px solid var(--line-color-border-2, #eaedf1);
+    background: var(--background-color-bg-1, #fff);
+  }
+
+  .model {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 4px;
+    background: var(--background-color-bg-4, #f6f8fa);
+    padding: 4px 6px;
+
+    img {
+      width: 24px;
+      height: 24px;
+      border-radius: 3.5px;
+    }
+
+    .name {
+      color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+      text-align: center;
+      font-family: 'PingFang SC';
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 22px;
+      letter-spacing: 0.039px;
+    }
+  }
+}

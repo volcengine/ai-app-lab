@@ -41,7 +41,7 @@ from app.models.tone import Tone
 from app.models.video import Video
 
 _current_dir = os.path.dirname(os.path.abspath(__file__))
-_font = os.path.join(_current_dir, "../../../lib/DouyinSansBold.otf")
+_font = os.path.join(_current_dir, "../../../media/DouyinSansBold.otf")
 
 _FADE_IN_DURATION_IN_SECONDS = 0.5
 _FADE_OUT_DURATION_IN_SECONDS = 0.5

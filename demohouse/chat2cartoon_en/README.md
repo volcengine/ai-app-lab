@@ -61,14 +61,14 @@ This guide explains how to quickly deploy the Chat2Cartoon_en project locally.
    ```
 5. Start the frontend service.
    ```bash
-   cd demohouse/chat2cartoon/frontend
+   cd demohouse/chat2cartoon_en/frontend
    npm install -g pnpm@8
    pnpm install
    cp ../.env ./
    pnpm dev
    ```
 6. Configure CORS for your TOS bucket to allow the local browser to access media resources on the TOS bucket.
-7. Visit http://localhost:8080 to experience the application.
+7. Visit http://localhost:5001 to experience the application.
 
 ## Directory Structure
 ```

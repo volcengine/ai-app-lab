@@ -1,0 +1,55 @@
+// Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+// Licensed under the 【火山方舟】原型应用软件自用许可协议
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at 
+//     https://www.volcengine.com/docs/82379/1433703
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import { useContext } from 'react';
+
+import { WatchAndChatContext } from '../../WatchAndChatProvider/context';
+
+export const useVideoOperate = () => {
+  const { videoRef, bgVideoRef, chatConfigRef } = useContext(WatchAndChatContext);
+
+  return {
+    loadVideo: () => {
+      const video = videoRef.current;
+      const bgVideo = bgVideoRef.current;
+      if (!video || !bgVideo) {
+        throw new Error('video not found');
+      }
+
+      video.src = chatConfigRef.current.videoUrl;
+      bgVideo.src = chatConfigRef.current.videoUrl;
+      video.load();
+      video.pause();
+      video.currentTime = 0;
+      console.log('##loadVideo', chatConfigRef.current.videoUrl);
+    },
+    pauseVideo: () => {
+      const video = videoRef.current;
+      const bgVideo = bgVideoRef.current;
+      if (!video || !bgVideo) {
+        throw new Error('video not found');
+      }
+
+      video.pause();
+      bgVideo.pause();
+    },
+    playVideo: () => {
+      const video = videoRef.current;
+      const bgVideo = bgVideoRef.current;
+      if (!video || !bgVideo) {
+        throw new Error('video not found');
+      }
+      video.play();
+      bgVideo.play();
+      console.log('##playVideo');
+    },
+  };
+};
