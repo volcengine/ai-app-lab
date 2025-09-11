@@ -4,7 +4,7 @@ packages = [{ include = "arkitect" }]
 version = "0.1.5"
 description = ""
 authors = ["wangsen.0914 <wangsen.0914@bytedance.com>"]
-readme = "README.md"
+readme = "README.md" 
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.12.0"
@@ -18,7 +18,7 @@ opentelemetry-exporter-otlp = ">=1.22.0,<2.0.0"
 jinja2 = "^3.1.2"
 structlog = ">=23.1.0,<25.0.0"
 opentelemetry-sdk = ">=1.22.0,<2.0.0"
-volcengine-python-sdk = ">=1.0.117"
+volcengine-python-sdk = ">=1.0.117,<3.0.0"
 httpx = ">=0.27.0"
 pytz = "2020.5"
 tenacity = "8.3.0"
