@@ -17,7 +17,7 @@ import { Message } from '@arco-design/web-react';
 const DebugInfo = ({ text }: { text: string }) => {
   const copyToClipboard = useCallback(async () => {
     await navigator.clipboard.writeText(text);
-    Message.success('复制成功');
+    Message.success('Copy Success');
   }, [text]);
 
   return (

@@ -27,7 +27,7 @@ export const MessageBranchChecker = ({ message }: Props) => {
   return indicator.show ? (
     <>
       <ActionIcon
-        tips={'上一条'}
+        tips={'Prev'}
         disabled={!enableLastMsgDirection.canPrev}
         onClick={() => {
           toggle(message.id, EToggleMessageDirection.Prev);
@@ -37,7 +37,7 @@ export const MessageBranchChecker = ({ message }: Props) => {
       </ActionIcon>
       <span className="text-[12px]">{`${indicator.current} / ${indicator.total}`}</span>
       <ActionIcon
-        tips={'下一条'}
+        tips={'Next'}
         disabled={!enableLastMsgDirection.canNext}
         onClick={() => {
           toggle(message.id, EToggleMessageDirection.Next);

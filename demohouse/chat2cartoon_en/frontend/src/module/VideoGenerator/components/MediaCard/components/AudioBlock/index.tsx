@@ -78,7 +78,7 @@ const AudioBlock = (props: TProps) => {
       return (
         <div className={styles.failed}>
           <img src={iconAudioFailed} style={{ width: 76, height: 76 }} />
-          <div className={styles.failedText}>{'音频生成失败'}</div>
+          <div className={styles.failedText}>{'Audio Generation Failed'}</div>
         </div>
       );
     }

@@ -90,7 +90,7 @@ const VideoBlock = ({
       return (
         <div className={styles.failed}>
           <img src={iconVideoFailed} style={{ width: 76, height: 76 }} />
-          <div className={styles.failedText}>{'视频生成失败'}</div>
+          <div className={styles.failedText}>{'Video Generation Failed'}</div>
         </div>
       );
     }
