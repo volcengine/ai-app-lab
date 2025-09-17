@@ -136,9 +136,9 @@ export const useParseOriginData = (messages: ComplexMessage) => {
       const parsedData = JSON.parse(messageItem.content);
       // 数据在下面属性里
       if (UserConfirmationDataKey.Videos in parsedData) {
-        return parsedData.videos.map((item: { index: number; content_generation_task_id: string }) => ({
+        return parsedData.videos.map((item: { index: number; video_gen_task_id: string }) => ({
           index: item.index,
-          videoId: item.content_generation_task_id,
+          videoId: item.video_gen_task_id,
         }));
       }
       return [];

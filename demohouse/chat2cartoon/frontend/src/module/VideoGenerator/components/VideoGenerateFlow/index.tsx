@@ -558,7 +558,7 @@ const VideoGenerateFlow = (props: Props) => {
                     return (
                       <MediaCard
                         key={`${FlowPhase.GenerateStoryBoardVideo}${index}`}
-                        src={(!isUndefined(videoIndex) && videos?.[videoIndex]?.content_generation_task_id) || ''}
+                        src={(!isUndefined(videoIndex) && videos?.[videoIndex]?.video_gen_task_id) || ''}
                         prompt={item.description}
                         disabled={modelOperateDisabled}
                         header={
@@ -569,14 +569,14 @@ const VideoGenerateFlow = (props: Props) => {
                             imgArr={videoBackgroundImages?.[index]}
                             currentIndex={generateStoryBoardVideoData?.[index]?.mediaIds?.findIndex(
                               item =>
-                                item === (!isUndefined(videoIndex) && videos?.[videoIndex]?.content_generation_task_id) || '',
+                                item === (!isUndefined(videoIndex) && videos?.[videoIndex]?.video_gen_task_id) || '',
                             )}
                             onSelect={val => {
                               if (isUndefined(videoIndex) || !videos) {
                                 return;
                               }
                               const cloneArr = cloneDeep(videos);
-                              cloneArr[videoIndex].content_generation_task_id =
+                              cloneArr[videoIndex].video_gen_task_id =
                                 generateStoryBoardVideoData?.[index]?.mediaIds?.[val];
                               updateConfirmationMessage({
                                 [UserConfirmationDataKey.Videos]: cloneArr,
@@ -635,7 +635,7 @@ const VideoGenerateFlow = (props: Props) => {
                           }
                           // 将相应的图片置为空字符串，传给后端
                           const cloneArr = cloneDeep(videoIds);
-                          cloneArr[videoIndex].content_generation_task_id = '';
+                          cloneArr[videoIndex].video_gen_task_id = '';
                           // 发送重新生成消息
                           regenerateMessageByPhase(VideoGeneratorTaskPhase.PhaseVideo, {
                             [UserConfirmationDataKey.Videos]: cloneArr,
