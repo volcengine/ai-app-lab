@@ -1,0 +1,99 @@
+.assistant-md-box-container {
+  position: relative;
+  :global(.markdown-body pre) {
+    background-color: unset;
+  }
+
+  :global(.markdown-body) {
+    color: unset;
+  }
+}
+
+.footWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  .operation {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .button {
+      border-radius: var(--border-radius-small, 4px);
+      border: 1px solid var(--line-color-border-2, #eaedf1);
+      background: var(--background-color-bg-1, #fff);
+      box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.08);
+      display: flex;
+      padding: 5px;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+  .info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    .request-id {
+      display: flex;
+      padding: 5px 10px;
+      align-items: center;
+      gap: 4px;
+      border-radius: 4px;
+      background: var(--background-color-bg-4, #f6f8fa);
+      color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+      font-family: Roboto;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 22px; /* 169.231% */
+      letter-spacing: 0.039px;
+
+      .iconPart {
+        cursor: pointer;
+      }
+    }
+
+    .model {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 4px;
+      background: var(--background-color-bg-4, #f6f8fa);
+      padding: 4px 6px;
+
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 3.5px;
+      }
+
+      .name {
+        color: var(--text-color-text-2, var(--text-color-text-2, #42464e));
+        text-align: center;
+        font-family: 'PingFang SC';
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 22px;
+        letter-spacing: 0.039px;
+      }
+    }
+  }
+}
+
+.operate-button{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -70px;
+  width: 265px;
+}
+
+.operate-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
