@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HGDoll</string>
+    <string name="notification_channel_name">截图服务</string>
+    <string name="notification_channel_description">用于显示截图服务的通知</string>
+    <string name="notification_title">正在运行截图服务</string>
+    <string name="notification_text">点击停止截图服务</string>
+    <string name="asr_notification_channel_name">语音识别服务</string>
+    <string name="asr_notification_channel_description">用于显示语音识别服务的通知</string>
+    <string name="asr_notification_title">正在运行语音识别服务</string>
+    <string name="asr_notification_text">点击停止语音识别服务</string>
+</resources>
