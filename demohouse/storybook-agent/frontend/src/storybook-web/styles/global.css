@@ -1,0 +1,82 @@
+/*
+ * Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+ * Licensed under the 【火山方舟】原型应用软件自用许可协议
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at 
+ *     https://www.volcengine.com/docs/82379/1433703
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 基础样式重置 - 使用Tailwind默认重置代替大部分自定义重置 */
+* {
+  box-sizing: border-box;
+}
+
+/* 省略号动画 */
+@keyframes ellipsis {
+  0% { opacity: 0.2; }
+  33% { opacity: 0.6; }
+  66% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+.animate-ellipsis {
+  display: inline-block;
+  width: 1.5em;
+  overflow: hidden;
+  animation: ellipsis 1.5s infinite ease-in-out;
+}
+
+/* 动态背景动画 */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulse-slow-delay {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes pulse-slow-delay2 {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 15s infinite ease-in-out;
+}
+
+.animate-pulse-slow-delay {
+  animation: pulse-slow-delay 18s infinite ease-in-out 1s;
+}
+
+.animate-pulse-slow-delay2 {
+  animation: pulse-slow-delay2 20s infinite ease-in-out 2s;
+}

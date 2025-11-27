@@ -1,0 +1,270 @@
+/*
+ * Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+ * Licensed under the 【火山方舟】原型应用软件自用许可协议
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at 
+ *     https://www.volcengine.com/docs/82379/1433703
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// _mixins.scss
+@mixin page-shadows($side) {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition: background 0.7s;
+  opacity: .65;
+  height: calc(100% + 2px);
+  width: 3em;
+  z-index: 2;
+  background: linear-gradient(var(--spine-gradient-direction), transparent 0, rgba(0, 0, 0, .1) 30%, rgba(0, 0, 0, .4) 69%, rgba(0, 0, 0, .7) 100%);
+
+  @if $side == 'right' {
+    --spine-gradient-direction: to left;
+    left: 0;
+  } @else if $side == 'left' {
+    --spine-gradient-direction: to right;
+    right: 0;
+  }
+}
+
+// vs-storybook.scss
+.vs-storybook {
+  /* variables */
+  --storybook-corner-flip-size: 140px;
+  --storybook-right-page-corner-border-width: 140px 140px 0 0;
+  --storybook-left-page-corner-border-width: 0 0 140px 140px;
+  --storybook-corner-distance-from-edge: calc(100% - var(--storybook-corner-flip-size));
+  --storybook-right-page-corner: polygon(0 0, 100% 0, 100% 20%, 100% var(--storybook-corner-distance-from-edge), var(--storybook-corner-distance-from-edge) 100%, 20% 100%, 0 100%, 0% 20%);
+  --storybook-left-page-corner: polygon(0 0,100% 0,100% 20%,100% 100%,var(--storybook-corner-distance-from-edge) 100%,var(--storybook-corner-flip-size) 100%,0 var(--storybook-corner-distance-from-edge),0% 20%);
+  --storybook-full-page-clip-path: polygon(0 0,100% 0,100% 20%,100% 100%,100% 100%,20% 100%,0 100%,0% 20%);
+
+  perspective: 250vw;
+  height: 100%;
+  // 添加 transition，让位移变化更平滑
+  transition: opacity 0.4s 0.2s, transform 0.8s ease-in-out;
+
+  // 默认情况下不进行位移
+  transform: translateX(0);
+
+  // 当有封面且未打开时，向左位移
+  &--has-cover {
+    transform: translateX(-25%);
+
+    .vs-storybook__page {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+
+      &-content {
+        user-select: none;
+      }
+    }
+  }
+
+  &__pages {
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    border-radius: 4px;
+
+    /* 覆盖厚度样式 */
+    .vs-storybook__right-page-thickness,
+    .vs-storybook__left-page-thickness {
+      width: 50%;
+      position: absolute;
+    }
+    .vs-storybook__right-page-thickness {
+      right: 0;
+      top: 0;
+    }
+    .vs-storybook__left-page-thickness {
+      left: 0;
+      top: 0;
+    }
+
+  }
+}
+
+// vs-page.scss
+.vs-storybook__page {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: 0 0;
+  transition: transform 0.7s linear;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  user-select: none;
+  animation: none;
+  border-radius: 5px;
+  background: linear-gradient(var(--gradient-direction), transparent, rgba(9, 9, 3, .4) 50%, rgba(13, 12, 5, .7) 100%);
+
+  &-content {
+    height: 100%;
+    clip-path: var(--storybook-full-page-clip-path);
+    &:after {
+      content: "";
+      width: 0;
+      height: 0;
+      position: absolute;
+      bottom: 0;
+      border-width: 0;
+      border-style: solid;
+      background: #fff;
+      display: block;
+      inset-inline-end: 0;
+      box-shadow: -4px -3px 15px 3px rgba(0, 0, 0, .1);
+      border-color: transparent #fff transparent #fff;
+      transition: border-width .3s ease-out;
+    }
+  }
+
+  &-active--right, &-active--left {
+    .vs-storybook__page-hover-bar {
+      position: absolute;
+      height: 100%;
+      width: 70%;
+      z-index: 3;
+    }
+    .vs-storybook__page-content {
+      transition: clip-path .3s ease-out;
+    }
+  }
+
+  &-active--right {
+    .vs-storybook__page-content {
+      &:after {
+        border-radius: 20px 0 0;
+        z-index: var(--storybook-z-index, 1);
+      }
+    }
+    .vs-storybook__page-hover-bar {
+      right: 0;
+      &:hover ~ .vs-storybook__page-content {
+        clip-path: var(--storybook-right-page-corner);
+        &:after {
+          border-width: var(--storybook-right-page-corner-border-width);
+        }
+      }
+    }
+  }
+
+  /* 奇数 */
+  &--right {
+    transform: rotateY(0deg);
+    right: 0;
+    border-radius: 0 15px 15px 0;
+    &:before {
+      @include page-shadows('right');
+    }
+
+    &.vs-storybook__page--flipped {
+      transform: rotateY(-180deg);
+    }
+  }
+
+  /* 偶数 */
+  &--left {
+    transform: rotateY(180deg);
+    transform-origin: 100% 0;
+    left: 0;
+    border-radius: 15px 0 0 15px;
+
+    .vs-storybook__page-content {
+      &:after {
+        left: 0;
+      }
+    }
+
+    &:before {
+      @include page-shadows('left');
+    }
+  }
+
+  &--flipped {
+    transform: rotateY(0deg);
+
+    &.vs-storybook__page-active--left {
+      transform: rotateY(0deg);
+      .vs-storybook__page-content {
+        &:after {
+          border-radius: 0 20px 0 20px;
+        }
+      }
+      .vs-storybook__page-hover-bar {
+        left: 0;
+        &:hover ~ .vs-storybook__page-content {
+          clip-path: var(--storybook-left-page-corner);
+          &:after {
+            border-width: var(--storybook-left-page-corner-border-width);
+          }
+        }
+      }
+    }
+  }
+
+  &--first-page-active {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    box-shadow: -39.4px 16.81px 41.03px 0px rgba(1, 1, 1, 0.27);
+
+    &:before, &:after {
+      display: none;
+    }
+  }
+
+  &--last-page-active {
+    &:hover {
+      transform: inherit;
+      cursor: default;
+    }
+  }
+
+  &.vs-storybook__page--right .vs-storybook__page-text,
+  &.vs-storybook__page--left .vs-storybook__page-content {
+    /* 定义默认背景，例如一个透明的渐变，或者不设置 */
+    //background: linear-gradient(to left, transparent, transparent);
+    /* 创建一个伪元素来承载最终的渐变色 */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* 最终的渐变色 */
+      background: linear-gradient(to left, transparent, rgba(9, 9, 3, .4) 50%, rgba(13, 12, 5, .7) 100%);
+      opacity: 0; /* 初始状态是完全透明 */
+      transition: opacity 1.5s;
+      pointer-events: none; /* 确保不影响鼠标事件 */
+      z-index: -9999;
+    }
+  }
+
+  &.vs-storybook__page--left .vs-storybook__page-content {
+    &::before {
+      background: linear-gradient(to left, transparent, rgba(9, 9, 3, .4) 50%, rgba(13, 12, 5, .7) 70%);
+    }
+  }
+
+
+  /* 下一页出阴影浮层 */
+  &--underneath {
+    overflow: hidden;
+
+    &.vs-storybook__page--right .vs-storybook__page-text,
+    &.vs-storybook__page--left .vs-storybook__page-content {
+      &::before {
+        opacity: 1;
+        z-index: 1;
+      }
+    }
+  }
+}

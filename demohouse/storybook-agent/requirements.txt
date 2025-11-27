@@ -1,0 +1,4 @@
+fastapi==0.121.3
+uvicorn>=0.24.0.post1
+volcengine-python-sdk[ark]>=1.0.0
+python-dotenv>=1.0.0

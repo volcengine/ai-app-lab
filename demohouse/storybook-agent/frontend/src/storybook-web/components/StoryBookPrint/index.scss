@@ -1,0 +1,156 @@
+/*
+ * Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
+ * Licensed under the 【火山方舟】原型应用软件自用许可协议
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at 
+ *     https://www.volcengine.com/docs/82379/1433703
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// _mixins.scss
+@mixin page-shadows($side) {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition: background 0.7s;
+  opacity: 0.65;
+  height: calc(100% + 0px);
+  width: 3em;
+  z-index: 10;
+  background: linear-gradient(
+    var(--spine-gradient-direction),
+    transparent 0,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.4) 69%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+
+  @if $side == "right" {
+    --spine-gradient-direction: to left;
+    left: 0;
+  } @else if $side == "left" {
+    --spine-gradient-direction: to right;
+    right: 0;
+  }
+}
+
+// 书本打印布局样式 - 保持原有书本外观
+.vs-storybook-print {
+  width: 100%;
+  height: 100%;
+  // display: none;
+
+  &__screen {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    page-break-after: always;
+    break-after: page;
+    // margin: 10px 0px;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &__book {
+    perspective: 250vw;
+    height: 100%;
+    width: 100%;
+  }
+
+  &__pages {
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    border-radius: 4px;
+    display: flex;
+  }
+
+  &__page {
+    position: relative;
+    width: 50%;
+    height: 100%;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    user-select: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+    &--left {
+      border-radius: 15px 0 0 15px;
+
+      &:before {
+        @include page-shadows("left");
+      }
+    }
+
+    &--right {
+      border-radius: 0 15px 15px 0;
+
+      &:before {
+        @include page-shadows("right");
+      }
+    }
+  }
+}
+
+// 空白页样式
+.vs-storybook__blank-page {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 5px;
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: visible !important;
+  }
+  img {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+    page-break-after: always;
+    display: block;
+  }
+  img:last-child {
+    page-break-after: avoid;
+  }
+
+  img,
+  svg {
+    max-width: 100% !important; /* 确保图片不会超出页面宽度 */
+    page-break-inside: avoid;
+  }
+
+  .vs-storybook-print {
+    display: block;
+
+    .vs-storybook__page-text__read-again {
+      display: none;
+    }
+
+    .vs-storybook__page-text__content {
+      font-size: 24px;
+    }
+  }
+
+  .vs-storybook-print__page::before {
+    display: none;
+  }
+}
