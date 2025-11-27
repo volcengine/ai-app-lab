@@ -16,7 +16,7 @@ StoryBook Agent 主要面向 **AI 应用开发者、内容创作者、设计师�
 
 ### 演示视频
 
-<video src="https://lf3-static.bytednsdoc.com/obj/eden-cn/lm_sth/ljhwZthlaukjlkulzlp/ark/assistant/storybook_experience.mp4" style="width: 100%;" controls></video>
+<video src="https://lf3-static.bytednsdoc.com/obj/eden-cn/lm_sth/ljhwZthlaukjlkulzlp/ark/assistant/storybook_experience_video.mp4" style="width: 100%;" controls></video>
 
 ### 直接体验
 
@@ -25,7 +25,7 @@ StoryBook Agent 主要面向 **AI 应用开发者、内容创作者、设计师�
 
 ## 架构图
 
-![架构图](https://lf3-static.bytednsdoc.com/obj/eden-cn/lm_sth/ljhwZthlaukjlkulzlp/ark/assistant/storybook_framework.png)
+![架构图](https://lf3-static.bytednsdoc.com/obj/eden-cn/lm_sth/ljhwZthlaukjlkulzlp/ark/assistant/storybook_framework.jpg)
 
 ### 优势说明
 
@@ -43,6 +43,7 @@ StoryBook Agent 主要面向 **AI 应用开发者、内容创作者、设计师�
 | 相关服务 | 描述 | 计费说明 |
 | :--- | :--- | :--- |
 | [Seedream 4.0 图像生成模型](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seedream-4-0) | 故事书、连环画的核心生成能力；负责多图生成、风格生成、内容一致性 | 按调用计费；0.2元/张 |
+| [Doubao Seed 1.6 深度思考模型](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seed-1-6) | 根据用户描述和参考图，生成故事计划（标题、摘要、分镜、场景描述）| [多种计费方式] |
 
 ## 云服务
 
@@ -66,7 +67,7 @@ StoryBook Agent 主要面向 **AI 应用开发者、内容创作者、设计师�
 
 ### 方舟服务
 
-- 开通 Seedream 4.0 模型服务（[开通模型服务](https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?LLM=%7B%7D&OpenTokenDrawer=false)）
+- 开通 Seed 1.6 和 Seedream 4.0 模型服务（[开通模型服务](https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?LLM=%7B%7D&OpenTokenDrawer=false)）
 - 在[模型列表](https://www.volcengine.com/docs/82379/1330310)获取所需 Model ID
   - 通过 Endpoint ID 调用模型服务请参考[获取 Endpoint ID（创建自定义推理接入点）](https://www.volcengine.com/docs/82379/1099522)
 - [获取火山方舟 API KEY](https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey)
