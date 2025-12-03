@@ -20,7 +20,7 @@ StoryBook Agent 主要面向 **AI 应用开发者、内容创作者、设计师�
 
 ### 直接体验
 
-[AI 体验中心](https://exp.volcengine.com/ark/vision?mode=vision&model=doubao-seedream-4-0-250828)
+[AI 体验中心](https://www.volcengine.com/experience/ark?launch=seedream)
 
 
 ## 架构图
