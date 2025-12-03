@@ -2,7 +2,7 @@
  * Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
  * Licensed under the 【火山方舟】原型应用软件自用许可协议
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  *     https://www.volcengine.com/docs/82379/1433703
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,16 +59,21 @@ export const StoryPreviewBox: React.FC<StoryPreviewBoxProps> = ({
               }}
               onClose={onClose}
             >
-              <div className="flex items-center justify-center h-full">
-                <StorybookContent isLoading={false} />
+              <div className="flex items-center justify-center h-full w-full px-8">
+                <StorybookContent
+                  className="w-full h-full flex items-center justify-center"
+                  isLoading={false}
+                />
               </div>
             </CanvasHeader>
           </div>
 
-          <StorybookContent
-            className="flex items-center justify-center h-full w-full px-4"
-            isLoading={false}
-          />
+          <div className="pt-[60px] px-4 flex items-center justify-center h-full overflow-hidden">
+            <StorybookContent
+              className="flex items-center justify-center h-full w-full px-4"
+              isLoading={false}
+            />
+          </div>
         </div>
       </div>
     </VSStoryBookProvider>
