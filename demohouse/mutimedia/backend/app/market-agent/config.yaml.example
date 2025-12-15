@@ -1,0 +1,23 @@
+model:
+  agent:
+    provider: openai
+    # name: doubao-seed-1-6-251015 # Do not use doubao-1-5-pro-256k-250115, because the model output is not stable
+    name: doubao-seed-1-6-250615
+    api_base: https://ark.cn-beijing.volces.com/api/v3/
+    api_key: 
+
+volcengine:
+  # [optional] for Viking DB and `web_search` tool
+  access_key:
+  secret_key:
+
+logging:
+  # ERROR
+  # WARNING
+  # INFO
+  # DEBUG
+  level: DEBUG
+
+thinking:
+  market_agent: disabled
+  format_agent: disabled

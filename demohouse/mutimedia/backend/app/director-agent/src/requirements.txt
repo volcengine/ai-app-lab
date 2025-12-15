@@ -1,0 +1,6 @@
+veadk-python==0.2.27
+# git+https://github.com/volcengine/veadk-python.git
+fastapi
+uvicorn[standard]
+google-adk==1.18.0
+json-repair
