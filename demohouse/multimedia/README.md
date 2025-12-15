@@ -7,11 +7,11 @@
 
 ### 费用说明
 
-| 相关服务                                                                                                        | 描述                                    | 计费说明 |
-|-------------------------------------------------------------------------------------------------------------|---------------------------------------| --- |
-| [Doubao-Seed-1.6](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seed-1-6) | 负责对实时捕捉的屏幕截图进行视觉内容理解，结合当前画面进行深度思考并回答。 | [多种计费方式](https://www.volcengine.com/docs/82379/1099320) 
-| [Doubao-Seedance 1.0 pro](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seedance-1-0-pro)  | 负责将图片和文字描述转为视频。                       | [多种计费方式](https://www.volcengine.com/docs/82379/1099320) |\
-| [Doubao-Seedream 4.5 pro](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seedream-4-5)  | 负责根据文字或参考图生成图片                        | [多种计费方式](https://www.volcengine.com/docs/82379/1099320) |\
+| 相关服务                                                                                                        | 描述                | 计费说明 |
+|-------------------------------------------------------------------------------------------------------------|-------------------| --- |
+| [Doubao-Seed-1.6](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seed-1-6) | 负责理解用户信息并转化为工具调用。 | [多种计费方式](https://www.volcengine.com/docs/82379/1099320) 
+| [Doubao-Seedance 1.0 pro](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seedance-1-0-pro)  | 负责将图片和文字描述转为视频。   | [多种计费方式](https://www.volcengine.com/docs/82379/1099320) |\
+| [Doubao-Seedream 4.5 pro](https://console.volcengine.com/ark/region:ark+cn-beijing/model/detail?Id=doubao-seedream-4-5)  | 负责根据文字或参考图生成图片    | [多种计费方式](https://www.volcengine.com/docs/82379/1099320) |\
 
 
 ## 环境准备
