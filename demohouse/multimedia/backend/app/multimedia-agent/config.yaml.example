@@ -1,0 +1,26 @@
+model:
+  agent:
+    provider: openai
+    name: doubao-seed-1-6-250615
+    api_base: https://ark.cn-beijing.volces.com/api/v3/
+    api_key: 
+
+logging:
+  # ERROR
+  # WARNING
+  # INFO
+  # DEBUG
+  level: DEBUG
+
+thinking:
+  root_agent: disabled
+
+remote_agent:
+  market_agent:
+    url: http://localhost:8000
+  director_agent:
+    url: http://localhost:8001
+  evaluate_agent:
+    url: http://localhost:8002
+  release_agent:
+    url: http://localhost:8003

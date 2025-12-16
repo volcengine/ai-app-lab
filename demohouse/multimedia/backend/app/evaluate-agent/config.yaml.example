@@ -1,0 +1,23 @@
+model:
+  agent:
+    provider: openai
+    # name: deepseek-v3-1-terminus
+    name: doubao-seed-1-6-250615
+    api_base: https://ark.cn-beijing.volces.com/api/v3/
+    api_key: 
+  format:
+    name: doubao-seed-1-6-flash-250828
+
+shorten_url_service_url: http://127.0.0.1:8005
+
+logging:
+  # ERROR
+  # WARNING
+  # INFO
+  # DEBUG
+  level: DEBUG
+
+thinking: 
+  evaluate_agent: disabled
+  image_format_agent: disabled
+  video_format_agent: disabled

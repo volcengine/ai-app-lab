@@ -1,0 +1,6 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Redis支持（可选）
+# 如果需要使用Redis模式，请取消下面的注释：
+# redis>=4.0.0

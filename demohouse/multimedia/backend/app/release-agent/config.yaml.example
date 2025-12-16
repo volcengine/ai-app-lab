@@ -1,0 +1,37 @@
+model:
+  agent:
+    provider: openai
+    # name: doubao-seed-1-6-251015
+    name: doubao-seed-1-6-250615
+    api_base: https://ark.cn-beijing.volces.com/api/v3/
+    api_key:
+  format:
+    name: doubao-seed-1-6-flash-250828
+
+
+shorten_url_service_url: http://127.0.0.1:8005
+volcengine:
+  # 默认为本地方式，若切换视频云合成则需要
+  access_key:
+  secret_key:
+
+tools:
+  # 默认为本地方式，若切换视频云合成则需要
+  vod:
+    space_name:
+    task_polling_interval: 20
+    max_retries: 60
+
+
+logging:
+  # ERROR
+  # WARNING
+  # INFO
+  # DEBUG
+  level: DEBUG
+
+thinking: 
+  release_agent: disabled
+  audio_agent: disabled
+  film_agent: disabled
+  format_agent: disabled

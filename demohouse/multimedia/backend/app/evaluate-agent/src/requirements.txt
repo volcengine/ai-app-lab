@@ -1,0 +1,5 @@
+veadk-python==0.2.28
+fastapi
+uvicorn[standard]
+google-adk==1.18.0
+json-repair
