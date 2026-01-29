@@ -20,6 +20,14 @@
   box-sizing: border-box;
 }
 
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important; /* Chrome/Safari */
+    print-color-adjust: exact !important; /* Firefox */
+    mix-blend-mode: normal !important;
+  }
+}
+
 /* 省略号动画 */
 @keyframes ellipsis {
   0% { opacity: 0.2; }
