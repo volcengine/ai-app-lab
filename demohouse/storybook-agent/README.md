@@ -143,7 +143,7 @@ pnpm dev
 
 ```json
 {
-  "query": "编写一个关于太空探索的儿童故事",
+  "query": "创作一个关于独居插画师与退休老船长在海滨旧书店相遇，互相治愈、重拾生活热忱的暖心故事",
   "reference_images": [],
   "mode": "storybook",
   "size": "2048x2048"
@@ -163,8 +163,8 @@ pnpm dev
 {
   "status": "success",
   "data": {
-    "Title": "三只小猪的彩虹屋顶",
-    "Summary": "三只小猪用不同材料建房子，最终团结战胜大灰狼",
+    "Title": "旧书页里的星光航线",
+    "Summary": "独居插画师在海滨小城的旧书店邂逅退休老船长，两人交换人生故事与心底心事，在彼此的陪伴与启发中，重新找回对创作和生活的热忱",
     "Items": [
       {
         "Url": "https://example.com/images/story_cover.jpg",
@@ -173,7 +173,7 @@ pnpm dev
       },
       {
         "Url": "https://example.com/images/story_page1.jpg",
-        "Text": "猪妈妈温柔地对三只小猪说，孩子们，你们长大了，该去盖自己的房子啦。",
+        "Text": "梅雨连绵的海滨小城，插画师林知夏抱着画夹躲进街边的旧书店，木质书架上裹着海风气息的纸墨香，让烦躁的她瞬间安静下来。",
         "IsCover": false
       },
       ...
