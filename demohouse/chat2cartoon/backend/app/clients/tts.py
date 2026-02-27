@@ -271,7 +271,7 @@ class TTSClient:
     ):
         headers = self.build_http_header(self.conn_id, self.log_id)
         INFO("with logID: %s , header: %s", self.log_id, headers)
-        self.conn = await websockets.connect(TTS_BASE_URL, additional_headers=headers)
+        self.conn = await websockets.connect(TTS_BASE_URL, extra_headers=headers)
         self.params = params
         INFO("Dial server with LogID: %s", self.log_id)
         # Create a new message with type MsgTypeFullClient and flag MsgTypeFlagWithEvent
