@@ -59,6 +59,9 @@ cp .env.example .env
 uv run main.py
 ```
 
+该 HTTP 服务仅预期在本机使用。`main.py` 会始终监听 `127.0.0.1`，
+即使配置了其他 `UVICORN_SERVER_HOST` 也不会对外网卡暴露。
+
 ### 配置说明
 
 ```bash

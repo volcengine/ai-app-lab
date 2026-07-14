@@ -59,6 +59,9 @@ cp .env.example .env
 uv run main.py
 ```
 
+The HTTP server is intended for local use only. `main.py` always binds to
+`127.0.0.1`, even if `UVICORN_SERVER_HOST` is configured differently.
+
 ### Configuration
 
 ```bash
@@ -91,4 +94,3 @@ Mobile device operations supported through Mobile Use MCP:
 | `mobile:close_app` | Close application | `package_name` |
 | `mobile:launch_app` | Launch application | `package_name` |
 | `mobile:list_apps` | List installed applications | - |
-

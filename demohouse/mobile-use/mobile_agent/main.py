@@ -21,17 +21,25 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+LOCAL_HOST = "127.0.0.1"
+
 
 def main():
     # 打印配置信息
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
     logger.info(f"Environment: {settings.env}")
+    if settings.server.host != LOCAL_HOST:
+        logger.warning(
+            "Configured host %s is ignored; local server listens on %s only",
+            settings.server.host,
+            LOCAL_HOST,
+        )
     logger.info(
-        f"Server config: host={settings.server.host}, port={settings.server.port}"
+        f"Server config: host={LOCAL_HOST}, port={settings.server.port}"
     )
 
     # 启动服务器
-    uvicorn.run("app:app", host=settings.server.host, port=settings.server.port)
+    uvicorn.run("app:app", host=LOCAL_HOST, port=settings.server.port)
 
 
 if __name__ == "__main__":

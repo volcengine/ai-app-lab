@@ -20,6 +20,8 @@ from mobile_agent.service.pod.manager import pod_manager
 
 logger = logging.getLogger(__name__)
 
+LOCAL_ACCOUNT_ID = "local"
+
 
 class StsToken(BaseModel):
     AccessKeyID: str

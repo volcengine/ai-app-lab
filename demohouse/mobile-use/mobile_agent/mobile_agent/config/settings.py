@@ -38,7 +38,7 @@ MOBILE_USE_MCP_NAME = "mobile"
 class ServerConfig(BaseModel):
     """服务器配置"""
 
-    host: str = "0.0.0.0"
+    host: str = "127.0.0.1"
     port: int = 8000
 
 
@@ -78,7 +78,7 @@ class Settings(BaseSettings):
     app_version: str = "0.1.0"
     # uvicorn
     server: ServerConfig = ServerConfig(
-        host=os.environ.get("UVICORN_SERVER_HOST", "0.0.0.0"),
+        host=os.environ.get("UVICORN_SERVER_HOST", "127.0.0.1"),
         port=int(os.environ.get("UVICORN_SERVER_PORT", 8000)),
     )
     # 环境配置

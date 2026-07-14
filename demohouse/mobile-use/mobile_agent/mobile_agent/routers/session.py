@@ -13,12 +13,11 @@
 会话相关路由
 """
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 import logging
 import uuid
-from mobile_agent.config.settings import get_settings
 from mobile_agent.middleware.middleware import APIException
-from mobile_agent.service.session.manager import session_manager
+from mobile_agent.service.session.manager import LOCAL_ACCOUNT_ID, session_manager
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -37,8 +36,8 @@ class CreateSessionRequest(BaseModel):
 
 
 @router.post("/create")
-async def create_session(request: Request, body: CreateSessionRequest):
-    account_id = request.state.account_id
+async def create_session(body: CreateSessionRequest):
+    account_id = LOCAL_ACCOUNT_ID
     thread_id = body.thread_id
     product_id = body.product_id
     pod_id = body.pod_id
@@ -49,7 +48,12 @@ async def create_session(request: Request, body: CreateSessionRequest):
             product_id=product_id,
         )
 
-        logger.info(f"更新会话状态: {thread_id} {response_json}")
+        logger.info(
+            "更新会话状态: thread_id=%s, product_id=%s, pod_id=%s",
+            thread_id,
+            product_id,
+            pod_id,
+        )
         session = session_manager.update_thread_state(
             thread_id,
             device_info=response_json["device_info"],
@@ -61,7 +65,12 @@ async def create_session(request: Request, body: CreateSessionRequest):
             device_id=pod_id,
             product_id=product_id,
         )
-        logger.info(f"创建会话成功: {thread_id} {response_json}")
+        logger.info(
+            "创建会话成功: thread_id=%s, product_id=%s, pod_id=%s",
+            thread_id,
+            product_id,
+            pod_id,
+        )
         session = session_manager.create_thread(
             account_id,
             thread_id,
@@ -87,11 +96,11 @@ class ResetSessionRequest(BaseModel):
 
 
 @router.post("/reset")
-async def reset_session(request: Request, body: ResetSessionRequest):
+async def reset_session(body: ResetSessionRequest):
     """
     重置会话，保持同一个 pod 但切换到新的 chat_thread_id
     """
-    account_id = request.state.account_id
+    account_id = LOCAL_ACCOUNT_ID
     thread_id = body.thread_id
 
     if not thread_id:

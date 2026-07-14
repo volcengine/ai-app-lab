@@ -11,7 +11,7 @@
 
 import asyncio
 import uuid
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 import logging
 from mobile_agent.exception.sse import SSEException
@@ -22,7 +22,7 @@ from mobile_agent.agent.graph.sse_output import (
 from mobile_agent.agent.infra.message_web import SummaryMessageData
 from mobile_agent.agent.mobile_use_agent import MobileUseAgent
 from mobile_agent.middleware.middleware import APIException
-from mobile_agent.service.session.manager import session_manager
+from mobile_agent.service.session.manager import LOCAL_ACCOUNT_ID, session_manager
 import langgraph.errors
 from pydantic import BaseModel, Field
 
@@ -94,7 +94,7 @@ class AgentStreamRequest(BaseModel):
 
 
 @router.post("/stream")
-async def agent_stream(request: Request, body: AgentStreamRequest):
+async def agent_stream(body: AgentStreamRequest):
     """
     流式响应API
 
@@ -105,7 +105,7 @@ async def agent_stream(request: Request, body: AgentStreamRequest):
         StreamingResponse: 事件流响应
     """
     try:
-        account_id = request.state.account_id
+        account_id = LOCAL_ACCOUNT_ID
         user_prompt = body.message
         thread_id = body.thread_id
         is_stream = body.is_stream
@@ -150,7 +150,6 @@ async def agent_stream(request: Request, body: AgentStreamRequest):
                 "Connection": "keep-alive",
                 "X-Accel-Buffering": "no",
                 "Content-Type": "text/event-stream",
-                "Access-Control-Allow-Origin": "*",
             },
         )
 
@@ -170,11 +169,11 @@ class CancelAgentRequest(BaseModel):
 
 
 @router.post("/cancel")
-async def cancel_agent(request: Request, body: CancelAgentRequest):
+async def cancel_agent(body: CancelAgentRequest):
     """
     取消智能代理
     """
-    account_id = request.state.account_id
+    account_id = LOCAL_ACCOUNT_ID
     thread_id = body.thread_id
 
     if not thread_id:

@@ -13,10 +13,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # 导入配置
-from mobile_agent.middleware.middleware import (
-    ResponseMiddleware,
-    AuthMiddleware,
-)
+from mobile_agent.middleware.middleware import ResponseMiddleware
 from mobile_agent.config.settings import settings
 from mobile_agent.routers.base import register_routers
 
@@ -31,7 +28,8 @@ app = FastAPI(
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[],
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,8 +37,6 @@ app.add_middleware(
 
 # 添加响应格式中间件
 app.add_middleware(ResponseMiddleware)
-# 添加账户鉴权中间件
-app.add_middleware(AuthMiddleware)
 
 # 注册所有路由
 register_routers(app)

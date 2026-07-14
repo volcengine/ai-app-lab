@@ -24,30 +24,6 @@ from mobile_agent.exception.api import APIException
 logger = logging.getLogger(__name__)
 
 
-class AuthMiddleware(BaseHTTPMiddleware):
-    """账户鉴权中间件"""
-
-    async def dispatch(self, request: Request, call_next):
-        # 获取账户ID
-        account_id = request.headers.get("X-Account-Id")
-        faas_instance_name = request.headers.get("x-faas-instance-name")
-        logger.info(f"账户ID: {account_id}，FaaS实例名称: {faas_instance_name}")
-
-        # 检查是否提供了账户ID
-        if not account_id:
-            return wrap_error_response(
-                code=401,
-                message="账户ID不存在，鉴权失败",
-            )
-
-        # 将账户ID绑定到请求状态中
-        request.state.account_id = account_id
-
-        # 继续处理请求
-        response = await call_next(request)
-        return response
-
-
 class ResponseMiddleware(BaseHTTPMiddleware):
     """
     响应中间件，统一处理成功和失败的返回格式
