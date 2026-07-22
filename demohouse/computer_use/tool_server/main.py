@@ -28,10 +28,16 @@ app.add_middleware(AuthMiddleware)
 configure_logging()
 
 
+def validate_security_settings(settings) -> None:
+    if not settings.auth_key:
+        raise RuntimeError("auth_key must be configured before starting tool_server")
+
+
 def main():
     import uvicorn
 
     settings = get_settings()
+    validate_security_settings(settings)
 
     uvicorn_kwargs = {
         "host": "0.0.0.0",

@@ -26,9 +26,6 @@ class AuthMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
 
     async def dispatch(self, request: Request, call_next) -> Response:
-        if get_settings().auth_key == "":
-            return await call_next(request)
-
         auth_header = request.headers.get("X-API-Key")
         if not auth_header:
             auth_header = request.headers.get("Authorization")

@@ -120,7 +120,7 @@ The tool server supports a simple API-key based authentication and TLS:
 
 ```toml
 # Shared API key. Clients must send it via the `X-API-Key` (or `Authorization`) header.
-# Leave empty to disable authentication.
+# Required. Set AUTH_KEY or inject a non-empty value through deployment configuration.
 auth_key = "your-secret-api-key-here"
 
 [plugins]

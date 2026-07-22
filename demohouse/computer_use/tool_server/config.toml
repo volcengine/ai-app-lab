@@ -1,5 +1,6 @@
 port = 8102
 display = ":5"
+# Required at startup. Set a non-empty value through AUTH_KEY or deployment configuration.
 auth_key = ""
 
 [log]

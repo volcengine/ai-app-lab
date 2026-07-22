@@ -11,6 +11,7 @@
 
 import base64
 import asyncio
+import os
 from typing import Optional
 from pathlib import Path
 from fastapi import HTTPException
@@ -21,6 +22,30 @@ from .constants import KEYS, CLICK_BUTTONS, SCROLL_BUTTONS
 from .computer import *
 
 XDOTOOL_DELAY = 50
+
+
+def normalize_key(raw_key: str) -> str:
+    """Convert a supported client key expression to an xdotool key expression."""
+    if not raw_key or not raw_key.strip():
+        raise HTTPException(status_code=400, detail="Invalid key")
+
+    tokens = [token for token in raw_key.replace("+", " ").split() if token]
+    if not tokens:
+        raise HTTPException(status_code=400, detail="Invalid key")
+
+    normalized = []
+    for token in tokens:
+        key_name = token.lower()
+        if key_name in KEYS:
+            normalized.append(KEYS[key_name])
+        elif len(token) == 1 and token.isascii() and token.isalnum():
+            normalized.append(key_name)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid key")
+
+    return "+".join(normalized)
+
+
 class XDOComputerTool(IComputerTool):
     def __init__(
             self,
@@ -110,15 +135,30 @@ class XDOComputerTool(IComputerTool):
 
     async def press_key(self, r: PressKeyRequest):
         self.logger.debug(f"press_key, {r}")
-        keys = [x for x in r.key.split(' ') if x]
-        if isinstance(keys, list):
-            key = "+".join(
-                KEYS[k.lower()] if k.lower() in KEYS else k.lower() for k in keys
+        key = normalize_key(r.key)
+        try:
+            process = await asyncio.create_subprocess_exec(
+                "xdotool",
+                "key",
+                "--",
+                key,
+                env={**os.environ, "DISPLAY": self._display},
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
-        else:
-            key = KEYS[r.key.lower()] if r.key.lower() in KEYS else r.key.lower()
-        command_parts = [self._xdotool, f"key -- {key}"]
-        return await self.shell(" ".join(command_parts))
+        except FileNotFoundError as exc:
+            return BaseResult(output="", error=str(exc))
+
+        try:
+            stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=10)
+        except asyncio.TimeoutError as exc:
+            try:
+                process.kill()
+            except ProcessLookupError:
+                pass
+            raise TimeoutError("xdotool key command timed out after 10 seconds") from exc
+
+        return BaseResult(output=stdout.decode(), error=stderr.decode())
 
     async def type_text(self, r: TypeTextRequest):
         results: list[BaseResult] = []
