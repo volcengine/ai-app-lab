@@ -1,0 +1,23 @@
+{
+  "name": "investment-assistant-oss",
+  "private": true,
+  "version": "0.3.0",
+  "description": "A source-backed personal investment research assistant powered by Volcengine Agent Plan, DataPro and Doubao Search.",
+  "scripts": {
+    "app:install": "npm --prefix app install",
+    "app:dev": "npm --prefix app run dev",
+    "app:build": "npm --prefix app run build",
+    "app:test": "npm --prefix app test",
+    "app:check": "npm --prefix app run check",
+    "skill:test": "node scripts/test-initializer.mjs",
+    "skill:install": "node scripts/install-codex-skill.mjs",
+    "skill:install:codex": "node scripts/install-codex-skill.mjs",
+    "skill:install:claude": "node scripts/install-claude-code-skill.mjs",
+    "skill:install:all": "node scripts/install-agent-skill.mjs --target all",
+    "skill:validate": "node scripts/validate-skill.mjs",
+    "verify": "npm run app:check && npm run app:test && npm run app:build && npm run skill:test && npm run skill:validate"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}

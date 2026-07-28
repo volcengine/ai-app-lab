@@ -1,0 +1,6 @@
+interface:
+  display_name: "个人投资助手初始化"
+  short_description: "确认投资偏好，安装并生成首批真实报告"
+  default_prompt: "请使用 $investment-assistant 初始化个人投资助手。先逐只确认我的真实股票、代码、市场、关注偏好和盘后监控安排；我确认配置后，安装并启动现成网站，使用同一 Agent Plan Key 接通模型、DataPro 和豆包搜索，导入配置并为每只股票生成首份个股简评和盘后风险摘要，最后完成桌面端验收。"
+policy:
+  allow_implicit_invocation: true
