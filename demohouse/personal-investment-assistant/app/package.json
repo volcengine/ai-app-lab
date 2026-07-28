@@ -1,0 +1,40 @@
+{
+  "name": "@investment-assistant/app",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:api": "node --watch src/server/index.js",
+    "dev:web": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "start": "node src/server/index.js",
+    "worker": "node src/server/worker.js",
+    "doctor": "node scripts/doctor.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/unit/*.test.js tests/integration/*.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "jsonrepair": "3.15.0",
+    "zod": "^3.25.32"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "lucide-react": "^0.511.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "supertest": "^7.1.1",
+    "vite": "^6.3.5"
+  },
+  "overrides": {
+    "@hono/node-server": "2.0.10"
+  }
+}
