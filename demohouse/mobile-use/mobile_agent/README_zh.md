@@ -94,3 +94,5 @@ ACEP_ACCOUNT_ID= # 火山引擎 账号ID
 | `mobile:close_app` | 关闭应用 | `package_name` |
 | `mobile:launch_app` | 启动应用 | `package_name` |
 | `mobile:list_apps` | 列出已安装应用 | - |
+
+强烈推荐：如果你需要在生产环境、业务集成场景，或对服务稳定性与任务成功率有更高要求的场景中使用 Mobile Use Agent，建议优先通过火山引擎控制台使用 [Mobile Use Open API](https://www.volcengine.com/docs/6394/1583515)。相比自行维护完整的本地部署链路，控制台提供的 Open API 能带来更稳定的托管服务体验，是将 Mobile Use Agent 接入真实业务流程时更推荐的使用方式。
