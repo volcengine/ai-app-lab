@@ -94,3 +94,6 @@ Mobile device operations supported through Mobile Use MCP:
 | `mobile:close_app` | Close application | `package_name` |
 | `mobile:launch_app` | Launch application | `package_name` |
 | `mobile:list_apps` | List installed applications | - |
+
+[!IMPORTANT]
+Strongly recommended: For production use, business integration, or any scenario that requires higher service stability and task success rate, we strongly recommend using [Mobile Use Open API](https://www.volcengine.com/docs/6394/1583515) through the Volcano Engine Console. Compared with maintaining a full local deployment stack by yourself, the console-based Open API provides a more stable managed service experience and is the preferred way to integrate Mobile Use Agent into real business workflows.
