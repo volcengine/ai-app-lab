@@ -14,8 +14,8 @@
 
 from typing import Any, Callable, Dict, List, Optional, Union
 
-from langchain.prompts.chat import BaseChatPromptTemplate
-from langchain.schema.output_parser import BaseTransformOutputParser
+from langchain_core.output_parsers import BaseTransformOutputParser
+from langchain_core.prompts.chat import BaseChatPromptTemplate
 from volcenginesdkarkruntime import Ark, AsyncArk
 from volcenginesdkarkruntime._streaming import AsyncStream, Stream
 from volcenginesdkarkruntime.types.chat import (
