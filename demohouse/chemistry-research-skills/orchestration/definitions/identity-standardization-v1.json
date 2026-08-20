@@ -1,0 +1,45 @@
+{
+  "chain_id": "identity-standardization-v1",
+  "definition_fingerprint": "6803df0490263ba17e78f06b80a06e87a8374ef7c937247795d9691b82138874",
+  "definition_version": "1.0.0",
+  "edges": [
+    ["resolve-identities", "identity-gate"],
+    ["identity-gate", "build-standardization-input"],
+    ["build-standardization-input", "standardize-structures"],
+    ["standardize-structures", "validate-chain"]
+  ],
+  "gate_policies": {
+    "identity-gate": {
+      "gate_type": "identity_resolution"
+    }
+  },
+  "nodes": [
+    {
+      "handler_id": "resolve-identities",
+      "needs": [],
+      "node_id": "resolve-identities"
+    },
+    {
+      "handler_id": "identity-gate",
+      "needs": ["resolve-identities"],
+      "node_id": "identity-gate"
+    },
+    {
+      "handler_id": "build-standardization-input",
+      "needs": ["identity-gate"],
+      "node_id": "build-standardization-input"
+    },
+    {
+      "handler_id": "standardize-structures",
+      "needs": ["build-standardization-input"],
+      "node_id": "standardize-structures"
+    },
+    {
+      "handler_id": "validate-chain",
+      "needs": ["standardize-structures"],
+      "node_id": "validate-chain"
+    }
+  ],
+  "runtime_contract_version": "1.0.0",
+  "schema_version": "1.0.0"
+}

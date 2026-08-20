@@ -1,0 +1,332 @@
+{
+  "$defs": {
+    "artifactInput": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_ref": {"$ref": "#/$defs/controlledId"},
+        "media_type": {"$ref": "#/$defs/mediaType"},
+        "path": {"$ref": "#/$defs/relativePath"},
+        "role": {"$ref": "#/$defs/inputRole"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["artifact_ref", "role", "path", "media_type", "sha256"],
+      "type": "object"
+    },
+    "controlledId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "directOrChainRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "execution_policy": {"$ref": "#/$defs/executionPolicy"},
+        "inputs": {
+          "additionalProperties": false,
+          "properties": {
+            "artifacts": {
+              "items": {"$ref": "#/$defs/artifactInput"},
+              "type": "array"
+            },
+            "operations": {
+              "items": {"$ref": "#/$defs/requestedOperation"},
+              "type": "array"
+            },
+            "research_objects": {
+              "items": {"$ref": "#/$defs/researchObject"},
+              "type": "array"
+            }
+          },
+          "required": ["research_objects", "artifacts", "operations"],
+          "type": "object"
+        },
+        "parameters": {
+          "items": {"$ref": "#/$defs/parameter"},
+          "type": "array"
+        },
+        "request_id": {"$ref": "#/$defs/controlledId"},
+        "schema_version": {"const": "1.0.0"},
+        "target_id": {
+          "enum": [
+            "resolve-chemical-identities",
+            "standardize-chemical-structures",
+            "compute-molecular-features",
+            "search-and-curate-chemical-libraries",
+            "curate-reactions",
+            "search-reactions",
+            "review-routes",
+            "identity-standardization-v1",
+            "structure-features-v1",
+            "structure-library-v1",
+            "reaction-precedent-v1"
+          ]
+        }
+      },
+      "required": [
+        "schema_version",
+        "request_id",
+        "target_id",
+        "inputs",
+        "parameters",
+        "execution_policy"
+      ],
+      "type": "object"
+    },
+    "executionPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "external_retry": {"const": "manual"},
+        "network_mode": {"enum": ["offline", "public_http"]}
+      },
+      "required": ["network_mode", "external_retry"],
+      "type": "object"
+    },
+    "inputRole": {
+      "enum": [
+        "compound_input",
+        "structure_input",
+        "library_input",
+        "features_input",
+        "reaction_input",
+        "reaction_collection_input",
+        "route_input",
+        "route_collection_input",
+        "standardization_input",
+        "curation_input",
+        "precedent_input"
+      ]
+    },
+    "jsonValue": {
+      "anyOf": [
+        {"maxLength": 100000, "type": "string"},
+        {"type": "number"},
+        {"type": "boolean"},
+        {"type": "null"},
+        {
+          "items": {
+            "anyOf": [
+              {"maxLength": 100000, "type": "string"},
+              {"type": "number"},
+              {"type": "boolean"},
+              {"type": "null"}
+            ]
+          },
+          "maxItems": 64,
+          "type": "array"
+        }
+      ]
+    },
+    "mediaType": {
+      "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$",
+      "type": "string"
+    },
+    "parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {"$ref": "#/$defs/controlledId"},
+        "value": {"$ref": "#/$defs/jsonValue"}
+      },
+      "required": ["field_id", "value"],
+      "type": "object"
+    },
+    "parameterBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {"$ref": "#/$defs/controlledId"},
+        "provenance": {
+          "enum": [
+            "user_explicit",
+            "validated_attachment",
+            "catalog_default",
+            "human_decision",
+            "derived_integrity_value"
+          ]
+        },
+        "value": {"$ref": "#/$defs/jsonValue"}
+      },
+      "required": ["field_id", "value", "provenance"],
+      "type": "object"
+    },
+    "relativePath": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "type": "string"
+    },
+    "researchObject": {
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {"$ref": "#/$defs/controlledId"},
+        "object_type": {
+          "enum": [
+            "compound_name",
+            "compound_identifier",
+            "chemical_structure",
+            "compound_collection",
+            "reaction_record",
+            "reaction_collection",
+            "reaction_query",
+            "route_record",
+            "route_collection",
+            "unknown_chemical_object"
+          ]
+        },
+        "representation": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["object_id", "object_type", "representation"],
+      "type": "object"
+    },
+    "requestedOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {"$ref": "#/$defs/controlledId"},
+        "operation_type": {
+          "enum": [
+            "resolve_identity",
+            "standardize_structure",
+            "compute_descriptors",
+            "compute_fingerprint",
+            "search_similarity",
+            "search_substructure",
+            "cluster_library",
+            "select_diverse_compounds",
+            "curate_library",
+            "curate_reaction",
+            "search_reaction_precedent",
+            "review_existing_routes"
+          ]
+        },
+        "sequence": {
+          "maximum": 1024,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": ["operation_id", "operation_type", "sequence"],
+      "type": "object"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "stagedInput": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_ref": {"$ref": "#/$defs/controlledId"},
+        "media_type": {"$ref": "#/$defs/mediaType"},
+        "path": {"$ref": "#/$defs/relativePath"},
+        "provenance": {"const": "validated_attachment"},
+        "role": {"$ref": "#/$defs/inputRole"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": [
+        "artifact_ref",
+        "role",
+        "path",
+        "media_type",
+        "sha256",
+        "provenance"
+      ],
+      "type": "object"
+    },
+    "targetId": {
+      "enum": [
+        "resolve-chemical-identities",
+        "standardize-chemical-structures",
+        "compute-molecular-features",
+        "search-and-curate-chemical-libraries",
+        "curate-reactions",
+        "search-reactions",
+        "review-routes",
+        "identity-standardization-v1",
+        "structure-features-v1",
+        "structure-library-v1",
+        "reaction-precedent-v1",
+        "compound-evidence-v1",
+        "route-evidence-review-v1"
+      ]
+    },
+    "workflowRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "execution_policy": {"$ref": "#/$defs/executionPolicy"},
+        "inputs": {"type": "object"},
+        "request_id": {"$ref": "#/$defs/controlledId"},
+        "schema_version": {"const": "1.0.0"},
+        "workflow_id": {
+          "enum": ["compound-evidence-v1", "route-evidence-review-v1"]
+        }
+      },
+      "required": [
+        "schema_version",
+        "workflow_id",
+        "request_id",
+        "inputs",
+        "execution_policy"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:chemistry-research-skills:schema:router-execution-request:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "decision_fingerprint": {"$ref": "#/$defs/sha256"},
+    "decision_id": {"$ref": "#/$defs/controlledId"},
+    "intent_fingerprint": {"$ref": "#/$defs/sha256"},
+    "intent_id": {"$ref": "#/$defs/controlledId"},
+    "parameter_bindings": {
+      "items": {"$ref": "#/$defs/parameterBinding"},
+      "type": "array"
+    },
+    "request_fingerprint": {"$ref": "#/$defs/sha256"},
+    "request_id": {"$ref": "#/$defs/controlledId"},
+    "risk_reasons": {
+      "items": {
+        "enum": [
+          "external_data_disclosure",
+          "fees_possible",
+          "sensitive_attachment",
+          "special_scientific_parameter",
+          "ambiguous_target",
+          "unverified_host"
+        ]
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {"const": "1.0.0"},
+    "staged_inputs": {
+      "items": {"$ref": "#/$defs/stagedInput"},
+      "type": "array"
+    },
+    "target_id": {"$ref": "#/$defs/targetId"},
+    "target_request": {
+      "oneOf": [
+        {"$ref": "#/$defs/directOrChainRequest"},
+        {"$ref": "#/$defs/workflowRequest"}
+      ]
+    },
+    "target_type": {
+      "enum": ["direct_skill", "direct_skill_chain", "workflow_a", "workflow_b"]
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_id",
+    "intent_id",
+    "intent_fingerprint",
+    "decision_id",
+    "decision_fingerprint",
+    "target_type",
+    "target_id",
+    "target_request",
+    "parameter_bindings",
+    "staged_inputs",
+    "risk_reasons",
+    "request_fingerprint"
+  ],
+  "type": "object"
+}

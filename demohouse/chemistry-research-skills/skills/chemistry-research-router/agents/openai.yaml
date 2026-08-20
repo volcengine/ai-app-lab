@@ -1,0 +1,4 @@
+interface:
+  display_name: "化学科研确定性路由"
+  short_description: "从自然语言生成来源绑定 Intent，并安全路由到七 Skill、固定 chain 或 Workflow"
+  default_prompt: "使用 $chemistry-research-router 理解这项化学科研需求，生成带来源绑定的 ResearchIntent，经本地 Policy 与 Router 校验后，仅在授权状态下执行目标。"

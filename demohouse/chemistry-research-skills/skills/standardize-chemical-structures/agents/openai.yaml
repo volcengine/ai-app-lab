@@ -1,0 +1,4 @@
+interface:
+  display_name: "化学结构标准化与质检"
+  short_description: "批量解析、标准化、去盐、提取 parent 并审查化学结构数据质量"
+  default_prompt: "使用 $standardize-chemical-structures 清洗这批 SMILES，保留原始结构并输出标准化、parent、重复分组和质量问题。"

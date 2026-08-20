@@ -1,0 +1,26 @@
+[project]
+name = "chemistry-research-skills"
+version = "0.1.0a2"
+requires-python = ">=3.11,<3.13"
+
+[dependency-groups]
+dev = [
+  "chembl-structure-pipeline==1.2.4",
+  "jsonschema==4.25.1",
+  "ord-schema==0.8.3",
+  "pytest==9.0.3",
+  "PyYAML==6.0.2",
+  "rdkit==2025.9.2",
+  "ruff==0.16.2",
+]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

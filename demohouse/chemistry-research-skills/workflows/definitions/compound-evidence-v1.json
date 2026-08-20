@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0.0",
+  "workflow_id": "compound-evidence-v1",
+  "definition_version": "1.0.0",
+  "runtime_contract_version": "1.0.0",
+  "nodes": [
+    {
+      "node_id": "resolve-identities",
+      "handler_id": "workflow-a-resolve",
+      "needs": []
+    },
+    {
+      "node_id": "identity-gate",
+      "handler_id": "workflow-a-identity-gate",
+      "needs": [
+        "resolve-identities"
+      ]
+    },
+    {
+      "node_id": "build-standardization-input",
+      "handler_id": "workflow-a-standardization-input",
+      "needs": [
+        "identity-gate"
+      ]
+    },
+    {
+      "node_id": "standardize-structures",
+      "handler_id": "workflow-a-standardize",
+      "needs": [
+        "build-standardization-input"
+      ]
+    },
+    {
+      "node_id": "calculation-view-gate",
+      "handler_id": "workflow-a-view-gate",
+      "needs": [
+        "standardize-structures"
+      ]
+    },
+    {
+      "node_id": "compute-features",
+      "handler_id": "workflow-a-features",
+      "needs": [
+        "calculation-view-gate"
+      ]
+    },
+    {
+      "node_id": "optional-library-operation",
+      "handler_id": "workflow-a-library",
+      "needs": [
+        "compute-features"
+      ],
+      "condition_id": "library-operation-present"
+    },
+    {
+      "node_id": "build-compound-evidence-package",
+      "handler_id": "workflow-a-package",
+      "needs": [
+        "compute-features",
+        "optional-library-operation"
+      ]
+    },
+    {
+      "node_id": "validate-workflow",
+      "handler_id": "validate-workflow",
+      "needs": [
+        "build-compound-evidence-package"
+      ]
+    }
+  ],
+  "edges": [
+    [
+      "resolve-identities",
+      "identity-gate"
+    ],
+    [
+      "identity-gate",
+      "build-standardization-input"
+    ],
+    [
+      "build-standardization-input",
+      "standardize-structures"
+    ],
+    [
+      "standardize-structures",
+      "calculation-view-gate"
+    ],
+    [
+      "calculation-view-gate",
+      "compute-features"
+    ],
+    [
+      "compute-features",
+      "optional-library-operation"
+    ],
+    [
+      "compute-features",
+      "build-compound-evidence-package"
+    ],
+    [
+      "optional-library-operation",
+      "build-compound-evidence-package"
+    ],
+    [
+      "build-compound-evidence-package",
+      "validate-workflow"
+    ]
+  ],
+  "gate_policies": {
+    "identity-gate": {
+      "gate_type": "identity_resolution"
+    },
+    "calculation-view-gate": {
+      "gate_type": "calculation_view"
+    }
+  },
+  "definition_fingerprint": "2fc1d174e75527080322528436f630d75533a16db35a27319b2e8a71ba4ad48e"
+}

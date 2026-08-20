@@ -1,0 +1,4 @@
+interface:
+  display_name: "本地结构检索与化合物库治理"
+  short_description: "相似性、完整子结构、聚类、多样性选择与只读治理"
+  default_prompt: "使用 $search-and-curate-chemical-libraries 对前三个化学 Skill 的本地产物执行显式参数的结构检索、聚类、代表分子选择或库治理审查，并保留排除记录和人工复核项。"

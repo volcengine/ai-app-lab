@@ -1,0 +1,303 @@
+{
+  "catalog_fingerprint": "305beaa925ff156adafde2f6b1fa87494f38d06ef05c000afe1f12f616b64019",
+  "catalog_version": "1.0.0",
+  "safe_defaults": {
+    "calculation_view": "standardized",
+    "external_retry": "manual",
+    "identity_include_related": false,
+    "identity_retries": 0,
+    "identity_timeout_seconds": 20,
+    "library_fingerprint_profile_id": "rdkit-morgan-r2-2048-chiral1-bit-v1",
+    "library_include_review_required": false,
+    "library_include_self": false,
+    "library_metric": "tanimoto",
+    "library_top_k": 20,
+    "network_mode": "offline",
+    "offline_identity_sources": [],
+    "public_identity_sources": ["opsin", "pubchem", "chembl", "unichem"],
+    "reaction_include_review_required": false,
+    "reaction_operation": "lookup_reaction",
+    "reaction_provider": "local_curated_corpus",
+    "reaction_top_k": 20,
+    "reaction_use_stereochemistry": true,
+    "standardization_profile": "chembl-pipeline"
+  },
+  "schema_version": "1.0.0",
+  "targets": [
+    {
+      "accepted_goal_types": ["resolve_identity"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "offline_risk_free_only",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 10,
+      "required_input_roles": [],
+      "required_object_types": [],
+      "required_operations": ["resolve_identity"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "identity_include_related": false,
+        "identity_retries": 0,
+        "identity_timeout_seconds": 20,
+        "network_mode": "offline",
+        "offline_identity_sources": [],
+        "public_identity_sources": ["opsin", "pubchem", "chembl", "unichem"]
+      },
+      "target_id": "resolve-chemical-identities",
+      "target_type": "direct_skill"
+    },
+    {
+      "accepted_goal_types": ["standardize_structure"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "offline_risk_free_only",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 10,
+      "required_input_roles": [],
+      "required_object_types": ["chemical_structure"],
+      "required_operations": ["standardize_structure"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "network_mode": "offline",
+        "standardization_profile": "chembl-pipeline"
+      },
+      "target_id": "standardize-chemical-structures",
+      "target_type": "direct_skill"
+    },
+    {
+      "accepted_goal_types": ["compute_molecular_features"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "offline_risk_free_only",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 10,
+      "required_input_roles": ["standardization_input"],
+      "required_object_types": [],
+      "required_operations": ["compute_fingerprint"],
+      "safe_defaults": {
+        "calculation_view": "standardized",
+        "external_retry": "manual",
+        "network_mode": "offline"
+      },
+      "target_id": "compute-molecular-features",
+      "target_type": "direct_skill"
+    },
+    {
+      "accepted_goal_types": ["search_or_curate_library"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "offline_risk_free_only",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 10,
+      "required_input_roles": ["features_input"],
+      "required_object_types": [],
+      "required_operations": [],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "library_fingerprint_profile_id": "rdkit-morgan-r2-2048-chiral1-bit-v1",
+        "library_include_review_required": false,
+        "library_include_self": false,
+        "library_metric": "tanimoto",
+        "library_top_k": 20,
+        "network_mode": "offline"
+      },
+      "target_id": "search-and-curate-chemical-libraries",
+      "target_type": "direct_skill"
+    },
+    {
+      "accepted_goal_types": ["curate_reaction"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "offline_risk_free_only",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 10,
+      "required_input_roles": [],
+      "required_object_types": [],
+      "required_operations": ["curate_reaction"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "network_mode": "offline"
+      },
+      "target_id": "curate-reactions",
+      "target_type": "direct_skill"
+    },
+    {
+      "accepted_goal_types": ["search_reaction_precedent"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "offline_risk_free_only",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 10,
+      "required_input_roles": [],
+      "required_object_types": [],
+      "required_operations": ["search_reaction_precedent"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "network_mode": "offline",
+        "reaction_include_review_required": false,
+        "reaction_operation": "lookup_reaction",
+        "reaction_provider": "local_curated_corpus",
+        "reaction_top_k": 20,
+        "reaction_use_stereochemistry": true
+      },
+      "target_id": "search-reactions",
+      "target_type": "direct_skill"
+    },
+    {
+      "accepted_goal_types": ["review_existing_routes"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "offline_risk_free_only",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 10,
+      "required_input_roles": ["route_input"],
+      "required_object_types": [],
+      "required_operations": ["review_existing_routes"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "network_mode": "offline"
+      },
+      "target_id": "review-routes",
+      "target_type": "direct_skill"
+    },
+    {
+      "accepted_goal_types": ["standardize_structure"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "never",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 20,
+      "required_input_roles": [],
+      "required_object_types": [],
+      "required_operations": ["resolve_identity", "standardize_structure"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "identity_include_related": false,
+        "identity_retries": 0,
+        "identity_timeout_seconds": 20,
+        "network_mode": "offline",
+        "offline_identity_sources": [],
+        "public_identity_sources": ["opsin", "pubchem", "chembl", "unichem"],
+        "standardization_profile": "chembl-pipeline"
+      },
+      "target_id": "identity-standardization-v1",
+      "target_type": "direct_skill_chain"
+    },
+    {
+      "accepted_goal_types": ["compute_molecular_features"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "never",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 20,
+      "required_input_roles": [],
+      "required_object_types": ["chemical_structure"],
+      "required_operations": ["standardize_structure", "compute_fingerprint"],
+      "safe_defaults": {
+        "calculation_view": "standardized",
+        "external_retry": "manual",
+        "network_mode": "offline",
+        "standardization_profile": "chembl-pipeline"
+      },
+      "target_id": "structure-features-v1",
+      "target_type": "direct_skill_chain"
+    },
+    {
+      "accepted_goal_types": ["search_or_curate_library"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "never",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 20,
+      "required_input_roles": [],
+      "required_object_types": ["chemical_structure"],
+      "required_operations": ["standardize_structure", "compute_fingerprint"],
+      "safe_defaults": {
+        "calculation_view": "standardized",
+        "external_retry": "manual",
+        "library_fingerprint_profile_id": "rdkit-morgan-r2-2048-chiral1-bit-v1",
+        "library_include_review_required": false,
+        "library_include_self": false,
+        "library_metric": "tanimoto",
+        "library_top_k": 20,
+        "network_mode": "offline",
+        "standardization_profile": "chembl-pipeline"
+      },
+      "target_id": "structure-library-v1",
+      "target_type": "direct_skill_chain"
+    },
+    {
+      "accepted_goal_types": ["search_reaction_precedent"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "never",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 20,
+      "required_input_roles": [],
+      "required_object_types": [],
+      "required_operations": ["curate_reaction", "search_reaction_precedent"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "network_mode": "offline",
+        "reaction_include_review_required": false,
+        "reaction_operation": "lookup_reaction",
+        "reaction_provider": "local_curated_corpus",
+        "reaction_top_k": 20,
+        "reaction_use_stereochemistry": true
+      },
+      "target_id": "reaction-precedent-v1",
+      "target_type": "direct_skill_chain"
+    },
+    {
+      "accepted_goal_types": ["build_compound_evidence"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "never",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 30,
+      "required_input_roles": [],
+      "required_object_types": [],
+      "required_operations": ["resolve_identity", "standardize_structure", "compute_fingerprint"],
+      "safe_defaults": {
+        "calculation_view": "standardized",
+        "external_retry": "manual",
+        "identity_include_related": false,
+        "identity_retries": 0,
+        "identity_timeout_seconds": 20,
+        "library_fingerprint_profile_id": "rdkit-morgan-r2-2048-chiral1-bit-v1",
+        "library_include_review_required": false,
+        "library_include_self": false,
+        "library_metric": "tanimoto",
+        "library_top_k": 20,
+        "network_mode": "offline",
+        "offline_identity_sources": [],
+        "public_identity_sources": ["opsin", "pubchem", "chembl", "unichem"],
+        "standardization_profile": "chembl-pipeline"
+      },
+      "target_id": "compound-evidence-v1",
+      "target_type": "workflow_a"
+    },
+    {
+      "accepted_goal_types": ["build_route_evidence_review"],
+      "allowed_execution_modes": ["auto_execute", "confirmation_required"],
+      "catalog_version": "1.0.0",
+      "direct_entry_policy": "never",
+      "forbidden_goals": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"],
+      "priority": 30,
+      "required_input_roles": ["reaction_input", "route_input"],
+      "required_object_types": [],
+      "required_operations": ["curate_reaction", "search_reaction_precedent", "review_existing_routes"],
+      "safe_defaults": {
+        "external_retry": "manual",
+        "network_mode": "offline",
+        "reaction_include_review_required": false,
+        "reaction_operation": "lookup_reaction",
+        "reaction_provider": "local_curated_corpus",
+        "reaction_top_k": 20,
+        "reaction_use_stereochemistry": true
+      },
+      "target_id": "route-evidence-review-v1",
+      "target_type": "workflow_b"
+    }
+  ]
+}

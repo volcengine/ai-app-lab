@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "workflow_id": "compound-evidence-v1",
+  "request_id": "workflow-a-acceptance-aspirin",
+  "inputs": {
+    "queries": [
+      {
+        "id": "aspirin",
+        "query": "CC(=O)Oc1ccccc1C(=O)O",
+        "input_type": "smiles"
+      }
+    ],
+    "identity": {
+      "sources": [],
+      "include_related": false,
+      "timeout_seconds": 20,
+      "retries": 1
+    },
+    "standardization": {
+      "profile": "chembl-pipeline"
+    },
+    "features": {
+      "calculation_view": "standardized"
+    },
+    "library_operation": null
+  },
+  "execution_policy": {
+    "network_mode": "offline",
+    "external_retry": "manual"
+  }
+}

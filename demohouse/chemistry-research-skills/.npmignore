@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+node_modules/
+build/
+dist/
+outputs/
+artifacts/
+*.log
+.chemistry-agent-bundle/

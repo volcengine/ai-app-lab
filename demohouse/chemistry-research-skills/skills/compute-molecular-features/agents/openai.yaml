@@ -1,0 +1,4 @@
+interface:
+  display_name: "分子二维特征与数据画像"
+  short_description: "对已标准化结构计算可审计描述符、指纹和数据集质量统计"
+  default_prompt: "使用 $compute-molecular-features 对这批已标准化结构计算固定参数的二维描述符、Morgan/RDKit/MACCS 指纹，并报告缺失、异常和人工复核项。"

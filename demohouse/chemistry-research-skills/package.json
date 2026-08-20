@@ -1,0 +1,39 @@
+{
+  "name": "chemistry-research-skills",
+  "version": "0.1.0-alpha.2",
+  "description": "Auditable chemistry skills and research workflows for AI agents.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "chemistry-research-skills": "bin/chemistry-research-skills.mjs"
+  },
+  "files": [
+    "bin",
+    "skills",
+    "workflows",
+    "orchestration",
+    "scripts",
+    "plugin.json",
+    "pyproject.toml",
+    "requirements-dev.txt",
+    "uv.lock",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "CITATION.cff",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md"
+  ],
+  "keywords": [
+    "agent-skills",
+    "chemistry",
+    "cheminformatics",
+    "scientific-agents",
+    "research-workflows"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

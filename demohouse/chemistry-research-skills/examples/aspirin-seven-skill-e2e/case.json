@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "case_id": "aspirin-seven-skill-e2e",
+  "generated_at_utc": "2026-08-12T00:00:00Z",
+  "identity": {
+    "query": "CC(=O)Oc1ccccc1C(=O)O",
+    "input_type": "smiles",
+    "expected_inchikey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+  },
+  "additional_structures": [
+    {
+      "id": "aspirin-sodium",
+      "structure": "CC(=O)Oc1ccccc1C(=O)[O-].[Na+]",
+      "source": "controlled-test-fixture"
+    },
+    {
+      "id": "salicylic-acid",
+      "structure": "O=C(O)c1ccccc1O",
+      "source": "controlled-test-fixture"
+    },
+    {
+      "id": "acetic-anhydride",
+      "structure": "CC(=O)OC(C)=O",
+      "source": "controlled-test-fixture"
+    },
+    {
+      "id": "acetic-acid",
+      "structure": "CC(=O)O",
+      "source": "controlled-test-fixture"
+    },
+    {
+      "id": "invalid-structure",
+      "structure": "C1=CC",
+      "source": "controlled-invalid-fixture"
+    }
+  ],
+  "library_search": {
+    "query_record_id": "query-1",
+    "fingerprint_profile_id": "rdkit-morgan-r2-2048-chiral1-bit-v1",
+    "metric": "tanimoto",
+    "include_review_required": false,
+    "include_self": false,
+    "top_k": 5
+  },
+  "reaction": {
+    "record_id": "aspirin-acetylation",
+    "reaction_smiles": "O=C(O)c1ccccc1O.CC(=O)OC(C)=O>>CC(=O)Oc1ccccc1C(=O)O.CC(=O)O",
+    "stoichiometry_complete": true,
+    "participants": [
+      {
+        "participant_id": "salicylic-acid-input",
+        "side": "input",
+        "reported_role": "reactant",
+        "upstream_record_id": "salicylic-acid"
+      },
+      {
+        "participant_id": "acetic-anhydride-input",
+        "side": "input",
+        "reported_role": "reactant",
+        "upstream_record_id": "acetic-anhydride"
+      },
+      {
+        "participant_id": "aspirin-output",
+        "side": "output",
+        "reported_role": "product",
+        "upstream_record_id": "query-1"
+      },
+      {
+        "participant_id": "acetic-acid-output",
+        "side": "output",
+        "reported_role": "product",
+        "upstream_record_id": "acetic-acid"
+      }
+    ]
+  },
+  "route": {
+    "route_id": "aspirin-route-1",
+    "backend": "controlled-test-fixture",
+    "backend_rank": 1,
+    "target_record_id": "query-1",
+    "precursor_record_ids": [
+      "salicylic-acid",
+      "acetic-anhydride"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "化学反应先例检索"
+  short_description: "按结构、转化或显式指纹查找反应先例和来源证据"
+  default_prompt: "使用 $search-reactions 在指定反应语料或 ORD 中检索先例，明确 provider、检索模式和指纹 profile，并将报告条件作为证据而非推荐。"

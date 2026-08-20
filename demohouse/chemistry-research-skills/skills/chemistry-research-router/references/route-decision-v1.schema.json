@@ -1,0 +1,141 @@
+{
+  "$defs": {
+    "controlledId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "targetId": {
+      "enum": ["resolve-chemical-identities", "standardize-chemical-structures", "compute-molecular-features", "search-and-curate-chemical-libraries", "curate-reactions", "search-reactions", "review-routes", "identity-standardization-v1", "structure-features-v1", "structure-library-v1", "reaction-precedent-v1", "compound-evidence-v1", "route-evidence-review-v1"]
+    }
+  },
+  "$id": "urn:chemistry-research-skills:schema:route-decision:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {"if": {"properties": {"execution_mode": {"const": "auto_execute"}}}, "then": {"properties": {"execution_authorized": {"const": true}}}},
+    {"if": {"properties": {"execution_mode": {"const": "confirmation_required"}}}, "then": {"properties": {"execution_authorized": {"const": false}}}},
+    {"if": {"properties": {"execution_mode": {"const": "manual_target_required"}}}, "then": {"properties": {"execution_authorized": {"const": false}}}},
+    {"if": {"properties": {"execution_mode": {"const": "not_executable"}}}, "then": {"properties": {"execution_authorized": {"const": false}}}},
+    {"if": {"properties": {"route_type": {"enum": ["direct_skill", "direct_skill_chain", "workflow_a", "workflow_b"]}}}, "then": {"properties": {"decision_status": {"const": "ready"}, "targets": {"maxItems": 1, "minItems": 1}}}},
+    {"if": {"properties": {"route_type": {"const": "clarification_required"}}}, "then": {"properties": {"decision_status": {"const": "clarification_required"}, "execution_mode": {"const": "not_executable"}, "targets": {"maxItems": 0}}}},
+    {"if": {"properties": {"route_type": {"const": "unsupported"}}}, "then": {"properties": {"decision_status": {"const": "unsupported"}, "execution_mode": {"const": "not_executable"}, "targets": {"maxItems": 0}}}}
+  ],
+  "properties": {
+    "applied_defaults": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "field_id": {
+            "enum": ["network_mode", "external_retry", "offline_identity_sources", "public_identity_sources", "identity_include_related", "identity_timeout_seconds", "identity_retries", "standardization_profile", "calculation_view", "library_fingerprint_profile_id", "library_metric", "library_top_k", "library_include_review_required", "library_include_self", "reaction_provider", "reaction_operation", "reaction_top_k", "reaction_include_review_required", "reaction_use_stereochemistry"]
+          },
+          "provenance": {
+            "const": "catalog_default"
+          },
+          "value": {
+            "oneOf": [
+              {"$ref": "#/$defs/controlledId"},
+              {"type": "boolean"},
+              {"maximum": 1000000, "minimum": 0, "type": "integer"},
+              {"items": {"$ref": "#/$defs/controlledId"}, "maxItems": 32, "type": "array", "uniqueItems": true}
+            ]
+          }
+        },
+        "required": ["field_id", "value", "provenance"],
+        "type": "object"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "catalog_fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "confirmation_reasons": {
+      "items": {
+        "enum": ["external_data_disclosure", "fees_possible", "sensitive_attachment", "special_scientific_parameter", "ambiguous_target", "unverified_host"]
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "decision_fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "decision_id": {
+      "$ref": "#/$defs/controlledId"
+    },
+    "decision_status": {
+      "enum": ["ready", "clarification_required", "unsupported"]
+    },
+    "execution_authorized": {
+      "type": "boolean"
+    },
+    "execution_mode": {
+      "enum": ["auto_execute", "confirmation_required", "manual_target_required", "not_executable"]
+    },
+    "intent_fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "intent_id": {
+      "$ref": "#/$defs/controlledId"
+    },
+    "missing_inputs": {
+      "items": {
+        "$ref": "#/$defs/controlledId"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "policy_findings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "enum": ["E-SOURCE-BINDING", "E-CATALOG-MISMATCH", "E-SCHEMA-MISMATCH", "E-HOST-CERTIFICATION", "E-UNDECLARED-PARAMETER", "E-REACTION-MOLECULE-CONFLICT", "E-MISSING-PREREQUISITE", "E-UNSAFE-CAPABILITY", "E-EXTERNAL-DISCLOSURE", "E-INSTALL-INTEGRITY"]
+          },
+          "field_ids": {
+            "items": {
+              "$ref": "#/$defs/controlledId"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "severity": {
+            "enum": ["error", "warning"]
+          }
+        },
+        "required": ["code", "severity", "field_ids"],
+        "type": "object"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "policy_fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "required_inputs": {
+      "items": {
+        "$ref": "#/$defs/controlledId"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "route_type": {
+      "enum": ["direct_skill", "direct_skill_chain", "workflow_a", "workflow_b", "clarification_required", "unsupported"]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "targets": {
+      "items": {
+        "$ref": "#/$defs/targetId"
+      },
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": ["schema_version", "decision_id", "intent_id", "intent_fingerprint", "catalog_fingerprint", "policy_fingerprint", "decision_status", "route_type", "targets", "required_inputs", "missing_inputs", "applied_defaults", "execution_mode", "execution_authorized", "confirmation_reasons", "policy_findings", "decision_fingerprint"],
+  "type": "object"
+}

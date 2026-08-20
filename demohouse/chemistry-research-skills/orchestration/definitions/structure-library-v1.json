@@ -1,0 +1,45 @@
+{
+  "chain_id": "structure-library-v1",
+  "definition_fingerprint": "85c2a46313415d93f08fc8b76f45ef75bf003a2ee91c61c7ab3b6e164bd8dfd8",
+  "definition_version": "1.0.0",
+  "edges": [
+    ["standardize-structures", "calculation-view-gate"],
+    ["calculation-view-gate", "compute-features"],
+    ["compute-features", "library-operation"],
+    ["library-operation", "validate-chain"]
+  ],
+  "gate_policies": {
+    "calculation-view-gate": {
+      "gate_type": "calculation_view"
+    }
+  },
+  "nodes": [
+    {
+      "handler_id": "standardize-structures",
+      "needs": [],
+      "node_id": "standardize-structures"
+    },
+    {
+      "handler_id": "calculation-view-gate",
+      "needs": ["standardize-structures"],
+      "node_id": "calculation-view-gate"
+    },
+    {
+      "handler_id": "compute-features",
+      "needs": ["calculation-view-gate"],
+      "node_id": "compute-features"
+    },
+    {
+      "handler_id": "library-operation",
+      "needs": ["compute-features"],
+      "node_id": "library-operation"
+    },
+    {
+      "handler_id": "validate-chain",
+      "needs": ["library-operation"],
+      "node_id": "validate-chain"
+    }
+  ],
+  "runtime_contract_version": "1.0.0",
+  "schema_version": "1.0.0"
+}

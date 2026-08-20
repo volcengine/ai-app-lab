@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0.0",
+  "workflow_id": "route-evidence-review-v1",
+  "definition_version": "1.0.0",
+  "runtime_contract_version": "1.0.0",
+  "nodes": [
+    {
+      "node_id": "prepare-reaction-input",
+      "handler_id": "workflow-b-prepare",
+      "needs": []
+    },
+    {
+      "node_id": "curate-reactions",
+      "handler_id": "workflow-b-curate",
+      "needs": [
+        "prepare-reaction-input"
+      ]
+    },
+    {
+      "node_id": "discover-route-steps",
+      "handler_id": "workflow-b-discover",
+      "needs": [
+        "curate-reactions"
+      ]
+    },
+    {
+      "node_id": "bind-curation-records",
+      "handler_id": "workflow-b-bind-curation",
+      "needs": [
+        "discover-route-steps",
+        "curate-reactions"
+      ]
+    },
+    {
+      "node_id": "expand-search-plan",
+      "handler_id": "workflow-b-expand-search",
+      "needs": [
+        "bind-curation-records"
+      ]
+    },
+    {
+      "node_id": "search-precedents-per-step",
+      "handler_id": "workflow-b-search",
+      "needs": [
+        "expand-search-plan"
+      ]
+    },
+    {
+      "node_id": "assemble-step-artifacts",
+      "handler_id": "workflow-b-assemble",
+      "needs": [
+        "search-precedents-per-step"
+      ]
+    },
+    {
+      "node_id": "review-routes",
+      "handler_id": "workflow-b-review",
+      "needs": [
+        "assemble-step-artifacts"
+      ]
+    },
+    {
+      "node_id": "build-expert-review-package",
+      "handler_id": "workflow-b-package",
+      "needs": [
+        "review-routes"
+      ]
+    },
+    {
+      "node_id": "validate-workflow",
+      "handler_id": "validate-workflow",
+      "needs": [
+        "build-expert-review-package"
+      ]
+    }
+  ],
+  "edges": [
+    [
+      "prepare-reaction-input",
+      "curate-reactions"
+    ],
+    [
+      "curate-reactions",
+      "discover-route-steps"
+    ],
+    [
+      "discover-route-steps",
+      "bind-curation-records"
+    ],
+    [
+      "curate-reactions",
+      "bind-curation-records"
+    ],
+    [
+      "bind-curation-records",
+      "expand-search-plan"
+    ],
+    [
+      "expand-search-plan",
+      "search-precedents-per-step"
+    ],
+    [
+      "search-precedents-per-step",
+      "assemble-step-artifacts"
+    ],
+    [
+      "assemble-step-artifacts",
+      "review-routes"
+    ],
+    [
+      "review-routes",
+      "build-expert-review-package"
+    ],
+    [
+      "build-expert-review-package",
+      "validate-workflow"
+    ]
+  ],
+  "gate_policies": {},
+  "definition_fingerprint": "0df65724a69f4bf061321b7750ebaca8abe7f04b5a29bcc6e21494505d875395"
+}

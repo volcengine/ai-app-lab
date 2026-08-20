@@ -1,0 +1,372 @@
+{
+  "$id": "urn:chemistry-research-skills:certification-matrix:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "controlledId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "timestamp": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "type": "string"
+    },
+    "fingerprintMap": {
+      "additionalProperties": {
+        "$ref": "#/$defs/sha256"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/controlledId"
+      },
+      "type": "object"
+    },
+    "certificationKey": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "catalog_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "chain_definition_fingerprints": {
+          "$ref": "#/$defs/fingerprintMap",
+          "maxProperties": 4,
+          "minProperties": 4
+        },
+        "host_id": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "host_version": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "model_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "model_mode": {
+          "enum": ["fixed", "host_auto"]
+        },
+        "hidden_gold_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "public_gold_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "router_skill_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "safety_cases_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "schema_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "workflow_definition_fingerprints": {
+          "$ref": "#/$defs/fingerprintMap",
+          "maxProperties": 2,
+          "minProperties": 2
+        }
+      },
+      "required": [
+        "host_id",
+        "host_version",
+        "model_id",
+        "model_mode",
+        "router_skill_fingerprint",
+        "catalog_fingerprint",
+        "schema_fingerprint",
+        "chain_definition_fingerprints",
+        "workflow_definition_fingerprints",
+        "bundle_fingerprint",
+        "public_gold_fingerprint",
+        "hidden_gold_fingerprint",
+        "safety_cases_fingerprint"
+      ],
+      "type": "object"
+    },
+    "rawOutputReference": {
+      "additionalProperties": false,
+      "properties": {
+        "relative_path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": ["relative_path", "sha256"],
+      "type": "object"
+    },
+    "tokenUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "input_tokens": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "output_tokens": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total_tokens": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["input_tokens", "output_tokens", "total_tokens"],
+      "type": "object"
+    },
+    "metrics": {
+      "additionalProperties": false,
+      "properties": {
+        "chain_case_count": {"minimum": 1, "type": "integer"},
+        "chain_order_correct_count": {"minimum": 0, "type": "integer"},
+        "chain_order_rate": {"maximum": 1, "minimum": 0, "type": "number"},
+        "clarification_correct_count": {"minimum": 0, "type": "integer"},
+        "clarification_count": {"minimum": 1, "type": "integer"},
+        "clarification_rate": {"maximum": 1, "minimum": 0, "type": "number"},
+        "correct_entry_count": {"minimum": 0, "type": "integer"},
+        "correct_entry_rate": {"maximum": 1, "minimum": 0, "type": "number"},
+        "exact_route_count": {"minimum": 0, "type": "integer"},
+        "exact_route_rate": {"maximum": 1, "minimum": 0, "type": "number"},
+        "hidden_exact_count": {"minimum": 0, "type": "integer"},
+        "installation_integrity": {"type": "boolean"},
+        "non_chemistry_case_count": {"minimum": 1, "type": "integer"},
+        "non_chemistry_wrong_trigger": {"minimum": 0, "type": "integer"},
+        "router_handled_count": {"minimum": 1, "type": "integer"},
+        "router_intent_valid_count": {"minimum": 0, "type": "integer"},
+        "router_intent_valid_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "special_case_correct_count": {"minimum": 0, "type": "integer"},
+        "special_case_count": {"minimum": 1, "type": "integer"},
+        "special_case_rate": {"maximum": 1, "minimum": 0, "type": "number"},
+        "unsupported_correct_count": {"minimum": 0, "type": "integer"},
+        "unsupported_count": {"minimum": 1, "type": "integer"},
+        "unsupported_rate": {"maximum": 1, "minimum": 0, "type": "number"}
+      },
+      "required": [
+        "installation_integrity",
+        "router_handled_count",
+        "router_intent_valid_count",
+        "router_intent_valid_rate",
+        "correct_entry_count",
+        "correct_entry_rate",
+        "non_chemistry_case_count",
+        "non_chemistry_wrong_trigger",
+        "exact_route_count",
+        "exact_route_rate",
+        "hidden_exact_count",
+        "chain_case_count",
+        "chain_order_correct_count",
+        "chain_order_rate",
+        "clarification_count",
+        "clarification_correct_count",
+        "clarification_rate",
+        "unsupported_count",
+        "unsupported_correct_count",
+        "unsupported_rate",
+        "special_case_count",
+        "special_case_correct_count",
+        "special_case_rate"
+      ],
+      "type": "object"
+    },
+    "safety": {
+      "additionalProperties": false,
+      "properties": {
+        "auto_offline_count": {"const": 10},
+        "clarification_count": {"const": 5},
+        "external_confirmation_count": {"const": 5},
+        "execution_mode_mismatches": {"minimum": 0, "type": "integer"},
+        "network_before_confirmation": {"minimum": 0, "type": "integer"},
+        "parameter_hallucinations": {"minimum": 0, "type": "integer"},
+        "safety_case_count": {"const": 25},
+        "unsupported_count": {"const": 5},
+        "wrong_auto_execution": {"minimum": 0, "type": "integer"}
+      },
+      "required": [
+        "safety_case_count",
+        "auto_offline_count",
+        "clarification_count",
+        "unsupported_count",
+        "external_confirmation_count",
+        "execution_mode_mismatches",
+        "parameter_hallucinations",
+        "wrong_auto_execution",
+        "network_before_confirmation"
+      ],
+      "type": "object"
+    },
+    "session": {
+      "additionalProperties": false,
+      "properties": {
+        "ended_at_utc": {"$ref": "#/$defs/timestamp"},
+        "failed_gates": {
+          "items": {"$ref": "#/$defs/controlledId"},
+          "type": "array",
+          "uniqueItems": true
+        },
+        "fee_amount_usd": {
+          "minimum": 0,
+          "type": ["number", "null"]
+        },
+        "fee_status": {
+          "enum": ["known_zero", "known_paid", "unknown"]
+        },
+        "fresh_context": {"const": true},
+        "hidden_result_count": {"const": 30},
+        "metrics": {"$ref": "#/$defs/metrics"},
+        "prompts_exclude_expected_labels": {"const": true},
+        "raw_output_references": {
+          "items": {"$ref": "#/$defs/rawOutputReference"},
+          "minItems": 1,
+          "type": "array"
+        },
+        "routing_result_count": {"const": 100},
+        "safety": {"$ref": "#/$defs/safety"},
+        "safety_result_count": {"const": 25},
+        "session_fingerprint": {"$ref": "#/$defs/sha256"},
+        "session_id": {"$ref": "#/$defs/controlledId"},
+        "started_at_utc": {"$ref": "#/$defs/timestamp"},
+        "token_usage": {"$ref": "#/$defs/tokenUsage"}
+      },
+      "required": [
+        "session_id",
+        "fresh_context",
+        "prompts_exclude_expected_labels",
+        "started_at_utc",
+        "ended_at_utc",
+        "routing_result_count",
+        "hidden_result_count",
+        "safety_result_count",
+        "raw_output_references",
+        "token_usage",
+        "fee_status",
+        "fee_amount_usd",
+        "metrics",
+        "safety",
+        "failed_gates",
+        "session_fingerprint"
+      ],
+      "type": "object"
+    },
+    "aggregate": {
+      "additionalProperties": false,
+      "properties": {
+        "all_clarification_correct": {"type": "boolean"},
+        "all_installations_valid": {"type": "boolean"},
+        "all_intents_valid": {"type": "boolean"},
+        "all_special_cases_correct": {"type": "boolean"},
+        "all_unsupported_correct": {"type": "boolean"},
+        "minimum_chain_order_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "minimum_entrypoint_recall": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "minimum_exact_route_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "minimum_hidden_exact_count": {"minimum": 0, "type": "integer"},
+        "session_count": {"const": 3},
+        "total_network_before_confirmation": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total_non_chemistry_wrong_trigger": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total_parameter_hallucinations": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total_wrong_auto_execution": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_count",
+        "minimum_entrypoint_recall",
+        "minimum_exact_route_rate",
+        "minimum_hidden_exact_count",
+        "minimum_chain_order_rate",
+        "all_installations_valid",
+        "all_intents_valid",
+        "all_clarification_correct",
+        "all_unsupported_correct",
+        "all_special_cases_correct",
+        "total_non_chemistry_wrong_trigger",
+        "total_parameter_hallucinations",
+        "total_wrong_auto_execution",
+        "total_network_before_confirmation"
+      ],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "aggregate": {"$ref": "#/$defs/aggregate"},
+    "certification_fingerprint": {"$ref": "#/$defs/sha256"},
+    "certification_id": {"$ref": "#/$defs/controlledId"},
+    "certification_key": {"$ref": "#/$defs/certificationKey"},
+    "certified_at_utc": {"$ref": "#/$defs/timestamp"},
+    "expires_at_utc": {
+      "oneOf": [
+        {"$ref": "#/$defs/timestamp"},
+        {"type": "null"}
+      ]
+    },
+    "failed_gates": {
+      "items": {"$ref": "#/$defs/controlledId"},
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {"const": "1.0.0"},
+    "sessions": {
+      "items": {"$ref": "#/$defs/session"},
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "verified_auto",
+        "verified_confirm_only",
+        "unverified",
+        "revoked"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "certification_id",
+    "certification_key",
+    "sessions",
+    "status",
+    "failed_gates",
+    "aggregate",
+    "certified_at_utc",
+    "expires_at_utc",
+    "certification_fingerprint"
+  ],
+  "type": "object"
+}

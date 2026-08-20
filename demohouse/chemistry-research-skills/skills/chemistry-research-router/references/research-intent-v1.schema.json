@@ -1,0 +1,310 @@
+{
+  "$defs": {
+    "controlledId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "inputArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_ref": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "media_type": {
+          "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+$",
+          "type": "string"
+        },
+        "role": {
+          "enum": ["compound_input", "structure_input", "library_input", "features_input", "reaction_input", "reaction_collection_input", "route_input", "route_collection_input", "standardization_input", "curation_input", "precedent_input"]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefIds"
+        }
+      },
+      "required": ["artifact_ref", "role", "media_type", "sha256", "source_refs"],
+      "type": "object"
+    },
+    "messageSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "source_kind": {
+          "const": "message_span"
+        },
+        "source_ref_id": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "start": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "text_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": ["source_ref_id", "source_kind", "start", "end", "text_sha256"],
+      "type": "object"
+    },
+    "attachmentSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "attachment_id": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_kind": {
+          "const": "attachment"
+        },
+        "source_ref_id": {
+          "$ref": "#/$defs/controlledId"
+        }
+      },
+      "required": ["source_ref_id", "source_kind", "attachment_id", "sha256"],
+      "type": "object"
+    },
+    "requestedOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "negated": {
+          "type": "boolean"
+        },
+        "operation_id": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "operation_type": {
+          "enum": ["resolve_identity", "standardize_structure", "compute_descriptors", "compute_fingerprint", "search_similarity", "search_substructure", "cluster_library", "select_diverse_compounds", "curate_library", "curate_reaction", "search_reaction_precedent", "review_existing_routes"]
+        },
+        "sequence": {
+          "maximum": 1024,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefIds"
+        }
+      },
+      "required": ["operation_id", "operation_type", "sequence", "negated", "source_refs"],
+      "type": "object"
+    },
+    "researchObject": {
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "object_type": {
+          "enum": ["compound_name", "compound_identifier", "chemical_structure", "compound_collection", "reaction_record", "reaction_collection", "reaction_query", "route_record", "route_collection", "unknown_chemical_object"]
+        },
+        "representation": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefIds"
+        }
+      },
+      "required": ["object_id", "object_type", "representation", "source_refs"],
+      "type": "object"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "sourceRef": {
+      "oneOf": [{"$ref": "#/$defs/messageSourceRef"}, {"$ref": "#/$defs/attachmentSourceRef"}]
+    },
+    "sourceRefIds": {
+      "items": {
+        "$ref": "#/$defs/controlledId"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "userParameter": {
+      "additionalProperties": false,
+      "allOf": [
+        {"if": {"properties": {"field_id": {"const": "similarity_threshold"}}}, "then": {"properties": {"value": {"maximum": 1, "minimum": 0, "type": "number"}}}},
+        {"if": {"properties": {"field_id": {"const": "top_k"}}}, "then": {"properties": {"value": {"maximum": 10000, "minimum": 1, "type": "integer"}}}},
+        {"if": {"properties": {"field_id": {"const": "fingerprint_profile_id"}}}, "then": {"properties": {"value": {"$ref": "#/$defs/controlledId"}}}},
+        {"if": {"properties": {"field_id": {"const": "calculation_view"}}}, "then": {"properties": {"value": {"enum": ["standardized", "parent"]}}}},
+        {"if": {"properties": {"field_id": {"const": "reaction_provider"}}}, "then": {"properties": {"value": {"$ref": "#/$defs/controlledId"}}}},
+        {"if": {"properties": {"field_id": {"const": "route_constraints"}}}, "then": {"properties": {"value": {"items": {"$ref": "#/$defs/controlledId"}, "maxItems": 64, "type": "array", "uniqueItems": true}}}},
+        {"if": {"properties": {"field_id": {"const": "inventory_snapshot"}}}, "then": {"properties": {"value": {"$ref": "#/$defs/controlledId"}}}},
+        {"if": {"properties": {"field_id": {"const": "seed"}}}, "then": {"properties": {"value": {"maximum": 4294967295, "minimum": 0, "type": "integer"}}}},
+        {"if": {"properties": {"field_id": {"const": "retry_policy"}}}, "then": {"properties": {"value": {"const": "manual"}}}}
+      ],
+      "properties": {
+        "field_id": {
+          "enum": ["similarity_threshold", "top_k", "fingerprint_profile_id", "calculation_view", "reaction_provider", "route_constraints", "inventory_snapshot", "seed", "retry_policy"]
+        },
+        "parameter_id": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "provenance": {
+          "const": "user_explicit"
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefIds"
+        },
+        "value": {}
+      },
+      "required": ["parameter_id", "field_id", "value", "provenance", "source_refs"],
+      "type": "object"
+    }
+  },
+  "$id": "urn:chemistry-research-skills:schema:research-intent:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ambiguities": {
+      "items": {
+        "enum": ["missing_research_object", "missing_input_artifact", "missing_calculation_view", "missing_search_strategy", "ambiguous_reaction_vs_molecule", "ambiguous_direct_vs_workflow", "conflicting_operations"]
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "candidate_targets": {
+      "items": {
+        "enum": ["resolve-chemical-identities", "standardize-chemical-structures", "compute-molecular-features", "search-and-curate-chemical-libraries", "curate-reactions", "search-reactions", "review-routes", "identity-standardization-v1", "structure-features-v1", "structure-library-v1", "reaction-precedent-v1", "compound-evidence-v1", "route-evidence-review-v1"]
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "goal": {
+      "additionalProperties": false,
+      "properties": {
+        "chain_requirement": {
+          "enum": ["single_operation", "explicit_bounded_chain", "complete_evidence_workflow", "unknown"]
+        },
+        "goal_type": {
+          "enum": ["resolve_identity", "standardize_structure", "compute_molecular_features", "search_or_curate_library", "curate_reaction", "search_reaction_precedent", "review_existing_routes", "build_compound_evidence", "build_route_evidence_review", "unsupported_scientific_goal", "unclear_goal"]
+        },
+        "source_refs": {
+          "$ref": "#/$defs/sourceRefIds"
+        }
+      },
+      "required": ["goal_type", "chain_requirement", "source_refs"],
+      "type": "object"
+    },
+    "input_artifacts": {
+      "items": {
+        "$ref": "#/$defs/inputArtifact"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "intent_fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "intent_id": {
+      "$ref": "#/$defs/controlledId"
+    },
+    "recognizer": {
+      "additionalProperties": false,
+      "properties": {
+        "catalog_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "host_id": {
+          "$ref": "#/$defs/controlledId"
+        },
+        "host_version": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "model_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "model_mode": {
+          "enum": ["fixed", "host_auto", "unknown"]
+        },
+        "router_skill_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "schema_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": ["host_id", "host_version", "model_id", "model_mode", "router_skill_fingerprint", "catalog_fingerprint", "schema_fingerprint"],
+      "type": "object"
+    },
+    "requested_operations": {
+      "items": {
+        "$ref": "#/$defs/requestedOperation"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "research_objects": {
+      "items": {
+        "$ref": "#/$defs/researchObject"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "attachments_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "content_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "language": {
+          "maxLength": 35,
+          "minLength": 2,
+          "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$",
+          "type": "string"
+        },
+        "message_length": {
+          "maximum": 1000000,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": ["content_sha256", "language", "message_length", "attachments_fingerprint"],
+      "type": "object"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/sourceRef"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "unsupported_goals": {
+      "items": {
+        "enum": ["toxicity_prediction", "experimental_safety_approval", "scale_up_approval", "route_generation", "autonomous_experiment", "structure_prediction"]
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "user_parameters": {
+      "items": {
+        "$ref": "#/$defs/userParameter"
+      },
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": ["schema_version", "intent_id", "source", "recognizer", "goal", "source_refs", "research_objects", "requested_operations", "input_artifacts", "user_parameters", "candidate_targets", "ambiguities", "unsupported_goals", "intent_fingerprint"],
+  "type": "object"
+}
