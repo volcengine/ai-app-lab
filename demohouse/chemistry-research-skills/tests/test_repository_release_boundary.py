@@ -141,7 +141,12 @@ def test_public_metadata_excludes_personal_identifiers():
 
 def test_readme_reports_representative_live_host_acceptance():
     readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+    normalized_readme = " ".join(readme.split())
 
+    assert "面向支持 Agent Skills 规范的各类 Agent" in readme
+    assert "不绑定任何单一客户端" in readme
+    assert "Designed for Agent Skills-compatible agents" in normalized_readme
+    assert "not tied to any single client" in normalized_readme
     assert "真实 Host 端到端验证：代表性自然语言链路已通过" in readme
     assert "npx github:3494036618-eng/chemistry-research-skills install" in readme
     assert "Representative live-host acceptance: passed" in readme
