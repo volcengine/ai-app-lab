@@ -1,0 +1,47 @@
+.DS_Store
+新账号完整交接提示词.md
+node_modules/
+coverage/
+dist/
+*.log
+*.pid
+*.mp4
+*.mov
+*.mkv
+
+# Local secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Private backups and machine-local artifacts
+backups/
+artifacts/
+backend/.baseline/
+supabase/.temp/
+
+# Internal research and historical acceptance evidence are not release assets.
+docs/afp-testing/
+docs/handoff/
+docs/optimization/
+docs/research/
+docs/open-source/
+design-qa.md
+学习笔记/
+tests/**/*.png
+tests/**/*.jpg
+tests/**/*.jpeg
+tests/**/*.json
+
+# Historical local acceptance scripts use machine-specific runtimes and are not
+# part of the installable application. Backend tests remain release assets.
+/tests/
+
+# Unrelated internal skills are outside this project's open-source boundary.
+/skills/agent-demo-frontend/
+/skills/agent-harness-backend/
+/skills/change-report-writer/
+/skills/change-visual-brief/
