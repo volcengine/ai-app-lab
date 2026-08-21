@@ -1,0 +1,436 @@
+{
+  "schema_version": "1.0.0",
+  "workflow": "curate-reactions",
+  "input_profile": "reaction_smiles",
+  "source": {
+    "identifier": "aspirin-acetylation-controlled-fixture",
+    "content_sha256": "6e85e5cb0ee40c5142252095e8895ec75f48cfc16aa815e680377339ae4d8651",
+    "license": "Apache-2.0"
+  },
+  "options": {
+    "participant_view": "reported_form",
+    "atom_mapping": "off",
+    "balance_check": "diagnostic"
+  },
+  "upstream_artifacts": [
+    {
+      "schema_version": "1.0.0",
+      "workflow": "chemical-structure-standardization-qc",
+      "generated_at_utc": "2026-08-12T00:00:00Z",
+      "tool_versions": {
+        "python": "3.12.13",
+        "rdkit": "2025.09.2",
+        "chembl_structure_pipeline": "1.2.4",
+        "active_profile": "chembl-pipeline",
+        "used_tools": [
+          "rdkit",
+          "chembl_structure_pipeline"
+        ]
+      },
+      "dependency_metadata": {
+        "rdkit": {
+          "version": "2025.9.2",
+          "license": "BSD-3-Clause"
+        },
+        "chembl-structure-pipeline": {
+          "version": "1.2.4",
+          "license": "MIT"
+        }
+      },
+      "options": {
+        "profile": "chembl-pipeline",
+        "preserve_original": true,
+        "parent_policy": "report_only",
+        "duplicate_bases": [
+          "original",
+          "standardized",
+          "parent"
+        ],
+        "offline": true
+      },
+      "input_summary": {
+        "total_records": 6,
+        "ready_for_downstream": 4,
+        "review_required": 1,
+        "rejected": 1
+      },
+      "records": [
+        {
+          "id": "query-1",
+          "record_index": 0,
+          "source": "resolve-chemical-identities:query-1:candidate-001",
+          "original_structure": "CC(=O)Oc1ccccc1C(=O)O",
+          "input_format": "smiles",
+          "parse_status": "success",
+          "standardization_status": "completed",
+          "standardized_structure": "CC(=O)Oc1ccccc1C(=O)O",
+          "parent_structure": "CC(=O)Oc1ccccc1C(=O)O",
+          "inchikey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+          "parent_inchikey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+          "transformations": [
+            {
+              "step": "chembl_standardizer",
+              "status": "completed",
+              "before": "CC(=O)Oc1ccccc1C(=O)O",
+              "after": "CC(=O)Oc1ccccc1C(=O)O",
+              "changed": false
+            },
+            {
+              "step": "chembl_get_parent",
+              "status": "completed",
+              "before": "CC(=O)Oc1ccccc1C(=O)O",
+              "after": "CC(=O)Oc1ccccc1C(=O)O",
+              "changed": false,
+              "exclusion_flag": false
+            }
+          ],
+          "qc_findings": [],
+          "disposition": "ready_for_downstream",
+          "human_review_required": [],
+          "fragment_analysis": {
+            "fragment_count": 1,
+            "fragment_smiles": [
+              "CC(=O)Oc1ccccc1C(=O)O"
+            ],
+            "classification": "single_component"
+          }
+        },
+        {
+          "id": "aspirin-sodium",
+          "record_index": 1,
+          "source": "controlled-test-fixture",
+          "original_structure": "CC(=O)Oc1ccccc1C(=O)[O-].[Na+]",
+          "input_format": "smiles",
+          "parse_status": "success",
+          "standardization_status": "completed",
+          "standardized_structure": "CC(=O)Oc1ccccc1C(=O)[O-].[Na+]",
+          "parent_structure": "CC(=O)Oc1ccccc1C(=O)O",
+          "inchikey": "JZLOKWGVGHYBKD-UHFFFAOYSA-M",
+          "parent_inchikey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+          "transformations": [
+            {
+              "step": "chembl_standardizer",
+              "status": "completed",
+              "before": "CC(=O)Oc1ccccc1C(=O)[O-].[Na+]",
+              "after": "CC(=O)Oc1ccccc1C(=O)[O-].[Na+]",
+              "changed": false
+            },
+            {
+              "step": "chembl_get_parent",
+              "status": "completed",
+              "before": "CC(=O)Oc1ccccc1C(=O)[O-].[Na+]",
+              "after": "CC(=O)Oc1ccccc1C(=O)O",
+              "changed": true,
+              "exclusion_flag": false
+            }
+          ],
+          "qc_findings": [
+            {
+              "code": "R-MULTICOMPONENT-SALT",
+              "severity": "review",
+              "message": "检测到一个主体片段及简单辅助片段；parent 仅作为派生表示。",
+              "source": "local-qc",
+              "details": {
+                "fragment_smiles": [
+                  "CC(=O)Oc1ccccc1C(=O)[O-]",
+                  "[Na+]"
+                ]
+              }
+            },
+            {
+              "code": "R-METAL-PRESENT",
+              "severity": "review",
+              "message": "结构含金属；配位、盐型或 parent 选择必须人工确认。",
+              "source": "local-qc",
+              "details": {
+                "atoms": [
+                  {
+                    "atom_index": 13,
+                    "atomic_number": 11
+                  }
+                ]
+              }
+            },
+            {
+              "code": "CHEMBL-CHECK-INCHI-PROTON-S-ADDED-REMOVED",
+              "severity": "warning",
+              "message": "InChI: Proton(s) added/removed",
+              "source": "chembl-structure-pipeline",
+              "details": {
+                "penalty": 2
+              }
+            }
+          ],
+          "disposition": "review_required",
+          "human_review_required": [
+            "R-MULTICOMPONENT-SALT",
+            "R-METAL-PRESENT"
+          ],
+          "fragment_analysis": {
+            "fragment_count": 2,
+            "fragment_smiles": [
+              "CC(=O)Oc1ccccc1C(=O)[O-]",
+              "[Na+]"
+            ],
+            "classification": "salt_or_solvate"
+          }
+        },
+        {
+          "id": "salicylic-acid",
+          "record_index": 2,
+          "source": "controlled-test-fixture",
+          "original_structure": "O=C(O)c1ccccc1O",
+          "input_format": "smiles",
+          "parse_status": "success",
+          "standardization_status": "completed",
+          "standardized_structure": "O=C(O)c1ccccc1O",
+          "parent_structure": "O=C(O)c1ccccc1O",
+          "inchikey": "YGSDEFSMJLZEOE-UHFFFAOYSA-N",
+          "parent_inchikey": "YGSDEFSMJLZEOE-UHFFFAOYSA-N",
+          "transformations": [
+            {
+              "step": "chembl_standardizer",
+              "status": "completed",
+              "before": "O=C(O)c1ccccc1O",
+              "after": "O=C(O)c1ccccc1O",
+              "changed": false
+            },
+            {
+              "step": "chembl_get_parent",
+              "status": "completed",
+              "before": "O=C(O)c1ccccc1O",
+              "after": "O=C(O)c1ccccc1O",
+              "changed": false,
+              "exclusion_flag": false
+            }
+          ],
+          "qc_findings": [],
+          "disposition": "ready_for_downstream",
+          "human_review_required": [],
+          "fragment_analysis": {
+            "fragment_count": 1,
+            "fragment_smiles": [
+              "O=C(O)c1ccccc1O"
+            ],
+            "classification": "single_component"
+          }
+        },
+        {
+          "id": "acetic-anhydride",
+          "record_index": 3,
+          "source": "controlled-test-fixture",
+          "original_structure": "CC(=O)OC(C)=O",
+          "input_format": "smiles",
+          "parse_status": "success",
+          "standardization_status": "completed",
+          "standardized_structure": "CC(=O)OC(C)=O",
+          "parent_structure": "CC(=O)OC(C)=O",
+          "inchikey": "WFDIJRYMOXRFFG-UHFFFAOYSA-N",
+          "parent_inchikey": "WFDIJRYMOXRFFG-UHFFFAOYSA-N",
+          "transformations": [
+            {
+              "step": "chembl_standardizer",
+              "status": "completed",
+              "before": "CC(=O)OC(C)=O",
+              "after": "CC(=O)OC(C)=O",
+              "changed": false
+            },
+            {
+              "step": "chembl_get_parent",
+              "status": "completed",
+              "before": "CC(=O)OC(C)=O",
+              "after": "CC(=O)OC(C)=O",
+              "changed": false,
+              "exclusion_flag": false
+            }
+          ],
+          "qc_findings": [],
+          "disposition": "ready_for_downstream",
+          "human_review_required": [],
+          "fragment_analysis": {
+            "fragment_count": 1,
+            "fragment_smiles": [
+              "CC(=O)OC(C)=O"
+            ],
+            "classification": "single_component"
+          }
+        },
+        {
+          "id": "acetic-acid",
+          "record_index": 4,
+          "source": "controlled-test-fixture",
+          "original_structure": "CC(=O)O",
+          "input_format": "smiles",
+          "parse_status": "success",
+          "standardization_status": "completed",
+          "standardized_structure": "CC(=O)O",
+          "parent_structure": "CC(=O)O",
+          "inchikey": "QTBSBXVTEAMEQO-UHFFFAOYSA-N",
+          "parent_inchikey": "QTBSBXVTEAMEQO-UHFFFAOYSA-N",
+          "transformations": [
+            {
+              "step": "chembl_standardizer",
+              "status": "completed",
+              "before": "CC(=O)O",
+              "after": "CC(=O)O",
+              "changed": false
+            },
+            {
+              "step": "chembl_get_parent",
+              "status": "completed",
+              "before": "CC(=O)O",
+              "after": "CC(=O)O",
+              "changed": false,
+              "exclusion_flag": false
+            }
+          ],
+          "qc_findings": [],
+          "disposition": "ready_for_downstream",
+          "human_review_required": [],
+          "fragment_analysis": {
+            "fragment_count": 1,
+            "fragment_smiles": [
+              "CC(=O)O"
+            ],
+            "classification": "single_component"
+          }
+        },
+        {
+          "id": "invalid-structure",
+          "record_index": 5,
+          "source": "controlled-invalid-fixture",
+          "original_structure": "C1=CC",
+          "input_format": "smiles",
+          "parse_status": "error",
+          "standardization_status": "not_run",
+          "standardized_structure": null,
+          "parent_structure": null,
+          "inchikey": null,
+          "parent_inchikey": null,
+          "transformations": [],
+          "qc_findings": [
+            {
+              "code": "E-PARSE-INVALID",
+              "severity": "error",
+              "message": "RDKit 无法解析该结构。",
+              "source": "rdkit"
+            }
+          ],
+          "disposition": "rejected",
+          "human_review_required": []
+        }
+      ],
+      "duplicate_groups": [
+        {
+          "basis": "parent",
+          "group_key": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+          "record_ids": [
+            "query-1",
+            "aspirin-sodium"
+          ],
+          "record_indices": [
+            0,
+            1
+          ],
+          "relationship": "same_derived_parent_not_same_physical_sample"
+        }
+      ],
+      "errors": [
+        {
+          "record_id": "invalid-structure",
+          "code": "E-PARSE-INVALID",
+          "severity": "error",
+          "message": "RDKit 无法解析该结构。",
+          "source": "rdkit"
+        }
+      ],
+      "warnings": [
+        {
+          "record_id": "aspirin-sodium",
+          "code": "CHEMBL-CHECK-INCHI-PROTON-S-ADDED-REMOVED",
+          "severity": "warning",
+          "message": "InChI: Proton(s) added/removed",
+          "source": "chembl-structure-pipeline",
+          "details": {
+            "penalty": 2
+          }
+        }
+      ],
+      "notices": [
+        "ready_for_downstream 仅表示通过当前数据规则，不证明实验样品身份、活性、安全性或科学结论。",
+        "parent molecule 是派生表示；同一 parent 不表示盐型、游离形式或实物样品相同。",
+        "本工作流离线运行，不查询 PubChem、ChEMBL Web API 或活性数据库。"
+      ],
+      "human_review_required": [
+        {
+          "record_id": "aspirin-sodium",
+          "code": "R-MULTICOMPONENT-SALT",
+          "severity": "review",
+          "message": "检测到一个主体片段及简单辅助片段；parent 仅作为派生表示。",
+          "source": "local-qc",
+          "details": {
+            "fragment_smiles": [
+              "CC(=O)Oc1ccccc1C(=O)[O-]",
+              "[Na+]"
+            ]
+          }
+        },
+        {
+          "record_id": "aspirin-sodium",
+          "code": "R-METAL-PRESENT",
+          "severity": "review",
+          "message": "结构含金属；配位、盐型或 parent 选择必须人工确认。",
+          "source": "local-qc",
+          "details": {
+            "atoms": [
+              {
+                "atom_index": 13,
+                "atomic_number": 11
+              }
+            ]
+          }
+        }
+      ],
+      "provenance": [
+        {
+          "source": "02_structures.csv",
+          "input_format": "csv"
+        }
+      ],
+      "result_fingerprint": "1abee481569bbd60bde657804848b704de2f55b3d4ae907c5b7a1e6d69c1c504"
+    }
+  ],
+  "records": [
+    {
+      "record_id": "aspirin-acetylation",
+      "reaction_smiles": "O=C(O)c1ccccc1O.CC(=O)OC(C)=O>>CC(=O)Oc1ccccc1C(=O)O.CC(=O)O",
+      "participants": [
+        {
+          "participant_id": "salicylic-acid-input",
+          "side": "input",
+          "reported_role": "reactant",
+          "upstream_record_id": "salicylic-acid"
+        },
+        {
+          "participant_id": "acetic-anhydride-input",
+          "side": "input",
+          "reported_role": "reactant",
+          "upstream_record_id": "acetic-anhydride"
+        },
+        {
+          "participant_id": "aspirin-output",
+          "side": "output",
+          "reported_role": "product",
+          "upstream_record_id": "query-1"
+        },
+        {
+          "participant_id": "acetic-acid-output",
+          "side": "output",
+          "reported_role": "product",
+          "upstream_record_id": "acetic-acid"
+        }
+      ],
+      "stoichiometry_complete": true
+    }
+  ]
+}

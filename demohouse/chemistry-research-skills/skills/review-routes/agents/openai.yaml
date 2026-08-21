@@ -1,0 +1,4 @@
+interface:
+  display_name: "合成路线证据评审"
+  short_description: "检查已有多步路线的拓扑、逐步先例、库存声明和复核缺口"
+  default_prompt: "使用 $review-routes 评审这些已有合成路线，逐步关联 curate-reactions 和 search-reactions 证据，输出最弱步骤、来源许可、显式约束结果和专家复核队列，不生成可行性或安全结论。"

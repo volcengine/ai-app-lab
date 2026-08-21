@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "controlledId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "urn:chemistry-research-skills:schema:certification-record:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bundle_integrity": {"type": "boolean"},
+    "catalog_fingerprint": {"$ref": "#/$defs/sha256"},
+    "certificate_fingerprint": {"$ref": "#/$defs/sha256"},
+    "certification_id": {"$ref": "#/$defs/controlledId"},
+    "host_id": {"$ref": "#/$defs/controlledId"},
+    "host_version": {"maxLength": 256, "minLength": 1, "type": "string"},
+    "model_id": {"maxLength": 256, "minLength": 1, "type": "string"},
+    "model_mode": {"enum": ["fixed", "host_auto", "unknown"]},
+    "router_skill_fingerprint": {"$ref": "#/$defs/sha256"},
+    "schema_fingerprint": {"$ref": "#/$defs/sha256"},
+    "schema_version": {"const": "1.0.0"},
+    "status": {
+      "enum": ["verified_auto", "verified_confirm_only", "unverified", "revoked"]
+    }
+  },
+  "required": [
+    "schema_version",
+    "certification_id",
+    "status",
+    "host_id",
+    "host_version",
+    "model_id",
+    "model_mode",
+    "router_skill_fingerprint",
+    "catalog_fingerprint",
+    "schema_fingerprint",
+    "bundle_integrity",
+    "certificate_fingerprint"
+  ],
+  "type": "object"
+}

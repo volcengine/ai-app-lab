@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "workflow_id": "route-evidence-review-v1",
+  "request_id": "workflow-b-single-step-001",
+  "inputs": {
+    "reaction_input": {
+      "path": "reactions.json",
+      "sha256": "121393fc5c4b079c41e4f013966c75ae3dc2547dfa86dc1cf064473ddb36ab5a"
+    },
+    "route_input": {
+      "path": "routes.json",
+      "sha256": "b062c3e50357e47ef0eea5b4f212fff0563656eb42420df4c0e95519b1776bc1",
+      "input_profile": "normalized_route_v1"
+    },
+    "standardization_artifacts": [],
+    "search_strategy": {
+      "provider": "local_curated_corpus",
+      "operation": "lookup_reaction",
+      "top_k": 20,
+      "include_review_required": false,
+      "use_stereochemistry": true,
+      "fingerprint_profile_id": null,
+      "threshold": null
+    },
+    "inventory_snapshot": null,
+    "constraints": {}
+  },
+  "execution_policy": {
+    "network_mode": "offline",
+    "external_retry": "manual"
+  }
+}

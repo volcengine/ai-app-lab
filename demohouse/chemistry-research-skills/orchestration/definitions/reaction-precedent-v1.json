@@ -1,0 +1,29 @@
+{
+  "chain_id": "reaction-precedent-v1",
+  "definition_fingerprint": "cb75c4779cdfc064a9a44a6044c9e7d967b856737c4b9f0e92d39009fcabc42e",
+  "definition_version": "1.0.0",
+  "edges": [
+    ["curate-reactions", "search-reactions"],
+    ["search-reactions", "validate-chain"]
+  ],
+  "gate_policies": {},
+  "nodes": [
+    {
+      "handler_id": "curate-reactions",
+      "needs": [],
+      "node_id": "curate-reactions"
+    },
+    {
+      "handler_id": "search-reactions",
+      "needs": ["curate-reactions"],
+      "node_id": "search-reactions"
+    },
+    {
+      "handler_id": "validate-chain",
+      "needs": ["search-reactions"],
+      "node_id": "validate-chain"
+    }
+  ],
+  "runtime_contract_version": "1.0.0",
+  "schema_version": "1.0.0"
+}

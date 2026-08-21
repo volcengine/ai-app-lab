@@ -1,0 +1,4 @@
+interface:
+  display_name: "化学反应数据整理"
+  short_description: "非破坏性审查反应参与物、角色、产率、重复和守恒"
+  default_prompt: "使用 $curate-reactions 整理这批结构化化学反应，保留原始记录，输出 ORD 校验、参与物状态、重复组、守恒诊断和人工复核项。"

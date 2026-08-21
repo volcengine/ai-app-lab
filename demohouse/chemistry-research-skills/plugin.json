@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "chemistry-research-skills",
+  "version": "0.1.0-alpha.2",
+  "description": "Auditable chemistry skills and research workflows for AI agents.",
+  "author": {
+    "name": "Chemistry Research Skills contributors"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "agent-skills",
+    "chemistry",
+    "cheminformatics",
+    "scientific-agents",
+    "research-workflows"
+  ]
+}

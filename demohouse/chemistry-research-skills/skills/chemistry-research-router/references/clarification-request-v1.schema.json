@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "controlledId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "urn:chemistry-research-skills:schema:clarification-request:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "clarification_fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "clarification_id": {
+      "$ref": "#/$defs/controlledId"
+    },
+    "intent_fingerprint": {
+      "$ref": "#/$defs/sha256"
+    },
+    "intent_id": {
+      "$ref": "#/$defs/controlledId"
+    },
+    "questions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "field_id": {
+            "enum": ["research_object", "input_artifact", "route_input", "reaction_input", "calculation_view", "search_strategy", "chemical_object_type", "workflow_scope"]
+          },
+          "question_id": {
+            "$ref": "#/$defs/controlledId"
+          },
+          "response_type": {
+            "enum": ["text", "file_reference", "controlled_choice"]
+          },
+          "template_id": {
+            "enum": ["request_research_object", "request_input_artifact", "request_route_file", "request_reaction_file", "choose_calculation_view", "choose_search_strategy", "resolve_reaction_molecule_ambiguity", "choose_direct_or_evidence_workflow"]
+          }
+        },
+        "required": ["question_id", "field_id", "template_id", "response_type"],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "reason_codes": {
+      "items": {
+        "enum": ["missing_research_object", "missing_input_artifact", "missing_route_input", "missing_reaction_input", "missing_calculation_view", "missing_search_strategy", "ambiguous_reaction_vs_molecule", "ambiguous_direct_vs_workflow"]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "awaiting_user"
+    }
+  },
+  "required": ["schema_version", "clarification_id", "intent_id", "intent_fingerprint", "reason_codes", "questions", "status", "clarification_fingerprint"],
+  "type": "object"
+}

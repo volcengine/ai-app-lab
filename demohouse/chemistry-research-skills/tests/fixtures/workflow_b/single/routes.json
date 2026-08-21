@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "workflow": "review-routes",
+  "input_profile": "normalized_route_v1",
+  "source": {
+    "identifier": "aspirin-route-controlled-fixture",
+    "content_sha256": "655ea23014513d14d1915e064772b1c8e9109190b01090b5e19b9a10c311b2f9",
+    "license": "Apache-2.0"
+  },
+  "target": {
+    "reported_structure": "CC(=O)Oc1ccccc1C(=O)O",
+    "standardized_structure": "CC(=O)Oc1ccccc1C(=O)O",
+    "upstream_record_id": "query-1"
+  },
+  "routes": [
+    {
+      "route_id": "aspirin-route-1",
+      "backend": "controlled-test-fixture",
+      "backend_rank": 1,
+      "backend_score": null,
+      "tree": {
+        "type": "mol",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+        "in_stock": false,
+        "children": [
+          {
+            "type": "reaction",
+            "metadata": {
+              "rsmi": "O=C(O)c1ccccc1O.CC(=O)OC(C)=O>>CC(=O)Oc1ccccc1C(=O)O.CC(=O)O"
+            },
+            "children": [
+              {
+                "type": "mol",
+                "smiles": "O=C(O)c1ccccc1O",
+                "in_stock": true,
+                "children": []
+              },
+              {
+                "type": "mol",
+                "smiles": "CC(=O)OC(C)=O",
+                "in_stock": true,
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "routes_fingerprint": "655ea23014513d14d1915e064772b1c8e9109190b01090b5e19b9a10c311b2f9",
+  "step_artifacts": [],
+  "inventory_snapshot": {
+    "snapshot_id": "controlled-test-inventory",
+    "captured_at_utc": "2026-08-12T00:00:00Z",
+    "source": "controlled-test-fixture",
+    "license": "Apache-2.0",
+    "records": [
+      {
+        "structure": "O=C(O)c1ccccc1O",
+        "status": "in_stock"
+      },
+      {
+        "structure": "CC(=O)OC(C)=O",
+        "status": "in_stock"
+      }
+    ]
+  },
+  "constraints": {
+    "max_steps": 1,
+    "max_precursors": 2,
+    "require_all_leaves_in_stock": true,
+    "minimum_exact_or_transformation_coverage": 1.0
+  },
+  "options": {
+    "comparison_mode": "dimensions_only",
+    "preserve_backend_order": true
+  }
+}

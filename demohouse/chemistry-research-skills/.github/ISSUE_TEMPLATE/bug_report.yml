@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a reproducible software or contract defect
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not submit credentials, confidential structures, personal data, or security vulnerabilities here. Use the private security reporting link for sensitive reports.
+  - type: dropdown
+    id: skill
+    attributes:
+      label: Affected Skill
+      options:
+        - resolve-chemical-identities
+        - standardize-chemical-structures
+        - compute-molecular-features
+        - search-and-curate-chemical-libraries
+        - curate-reactions
+        - search-reactions
+        - review-routes
+        - repository or CI
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: 0.1.0-alpha.2 or commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Minimal sanitized input
+      description: Provide the smallest input that reproduces the defect.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Actual and expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, dependency versions, profile and command.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Submission checks
+      options:
+        - label: I removed credentials and confidential data.
+          required: true
+        - label: I did not interpret a database hit or structural similarity as a scientific conclusion.
+          required: true

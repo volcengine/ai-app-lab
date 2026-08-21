@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "controlledId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "reason": {
+      "enum": [
+        "external_data_disclosure",
+        "fees_possible",
+        "sensitive_attachment",
+        "special_scientific_parameter",
+        "ambiguous_target",
+        "unverified_host"
+      ]
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "urn:chemistry-research-skills:schema:route-confirmation:1.0.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actor_type": {"const": "user"},
+    "confirmation_fingerprint": {"$ref": "#/$defs/sha256"},
+    "confirmation_id": {"$ref": "#/$defs/controlledId"},
+    "confirmation_reasons": {
+      "items": {"$ref": "#/$defs/reason"},
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "decided_at_utc": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$",
+      "type": "string"
+    },
+    "decision_fingerprint": {"$ref": "#/$defs/sha256"},
+    "decision_id": {"$ref": "#/$defs/controlledId"},
+    "request_fingerprint": {"$ref": "#/$defs/sha256"},
+    "schema_version": {"const": "1.0.0"}
+  },
+  "required": [
+    "schema_version",
+    "confirmation_id",
+    "decision_id",
+    "decision_fingerprint",
+    "request_fingerprint",
+    "confirmation_reasons",
+    "actor_type",
+    "decided_at_utc",
+    "confirmation_fingerprint"
+  ],
+  "type": "object"
+}

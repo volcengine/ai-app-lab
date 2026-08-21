@@ -1,0 +1,1433 @@
+{
+  "cases": [
+    {
+      "case_id": "S01",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "5bc084eac12ea02fa2da41a948af98b651eebb55f2bc795b15e500e0006fdf66",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "已知结构的标准化和 QC。"
+      },
+      "prompt": "清洗这批 SMILES，统一结构表示并标出非法价态。",
+      "source_case_id": "S01"
+    },
+    {
+      "case_id": "S02",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "dc0e5c096ea945c3da44c924cbe544ee6d1900e71ad6086dc0ddf2715b5ff991",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "去盐和 parent 属结构标准化。"
+      },
+      "prompt": "把这些盐去掉并提取 parent，但保留原始结构。",
+      "source_case_id": "S02"
+    },
+    {
+      "case_id": "S03",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "f787cf2d06dd78487fbab93a370638b61859d5eea79bd9eb8f1956c223fff969",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "SDF 结构质量审查。"
+      },
+      "prompt": "检查这个 SDF 里的多组分、金属和未知立体化学。",
+      "source_case_id": "S03"
+    },
+    {
+      "case_id": "S04",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "ac5aea4f93ad0b708d5eea5e59ed5c4f0dab9bf8dde2979776376a92b4433ef8",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "MolBlock 标准化和结构重复分组。"
+      },
+      "prompt": "把这些 MolBlock 规范化，并按 standardized 结构找重复。",
+      "source_case_id": "S04"
+    },
+    {
+      "case_id": "S05",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "f7d8a7baf9ebc0c7c5f6fb897191be39f42b02c6a0db63c0fdfb5eeda1066561",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "mixture 边界和 parent 规则。"
+      },
+      "prompt": "这个 SMILES 是真实 mixture，别自动缩成一个 parent，帮我检查。",
+      "source_case_id": "S05"
+    },
+    {
+      "case_id": "S06",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "5f7336764709bb41ef27fb729a2877dd2e5f3d814de148810242f5035a0111b4",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "结构解析和异常分类。"
+      },
+      "prompt": "批量检查结构解析失败、聚合物和同位素标记。",
+      "source_case_id": "S06"
+    },
+    {
+      "case_id": "S07",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "353ad57bd06965c1d42729d186d948bafae09d4d40cb1f8a1b58363c2623090f",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "非破坏性结构标准化。"
+      },
+      "prompt": "统一质子化和芳香性表示，但不要覆盖原始 SMILES。",
+      "source_case_id": "S07"
+    },
+    {
+      "case_id": "S08",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "40d44b25c55f53472c2988651731dca0f5548a3942adde522459aa1c0dda051f",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "standardize-chemical-structures"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "standardize-chemical-structures"
+        ],
+        "reason": "明确不需要身份解析。"
+      },
+      "prompt": "这批结构已经知道是什么，只需要标准化和质量检查。",
+      "source_case_id": "S08"
+    },
+    {
+      "case_id": "I01",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "a6b2a3d1e2f009da1abde6fd504ed1197f44675f464093c4c8fe30d692fcee45",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "名称到候选身份。"
+      },
+      "prompt": "aspirin 这个名称具体对应哪个化学记录？",
+      "source_case_id": "I01"
+    },
+    {
+      "case_id": "I02",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "77b1c9e7f6a4d01e941f8c246d3012e67a4886c266919f8bcb33069c0261e2ed",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "CAS 输入校验和来源对齐。"
+      },
+      "prompt": "CAS 50-78-2 是否能保守解析到结构候选？",
+      "source_case_id": "I02"
+    },
+    {
+      "case_id": "I03",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "618c030e44a6f117637a507c36066d6cd46148cba6f08ac49efe077ad9e20def",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "数据库 ID 身份解析。"
+      },
+      "prompt": "PubChem CID 2244 是谁，给出来源证据。",
+      "source_case_id": "I03"
+    },
+    {
+      "case_id": "I04",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "dd4be006cfd4ce3e9aa8563c49d6a437d59f8986b1d98ba13789a1352671d09e",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "ChEMBL ID 多源对齐。"
+      },
+      "prompt": "CHEMBL25 对应什么结构，和开放数据库记录一致吗？",
+      "source_case_id": "I04"
+    },
+    {
+      "case_id": "I05",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "13ac3fba69a98eb98a661009042805947dffbc65739a3073fcaddc5c2d085e81",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "相关形式与样品身份边界。"
+      },
+      "prompt": "阿司匹林和阿司匹林钠是同一个化学形式吗？",
+      "source_case_id": "I05"
+    },
+    {
+      "case_id": "I06",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "0b281a2794beb3db5c162084a641feb80cbba9c65ed5e83ad86100b3e8ff248b",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "完整结构跨库对齐。"
+      },
+      "prompt": "用完整 InChIKey 对齐 PubChem、ChEMBL 和 UniChem 记录。",
+      "source_case_id": "I06"
+    },
+    {
+      "case_id": "I07",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "4d22d1b984ced5ce298495157b9e7c8abeed8c519aa3e2b047ab44ccdf639292",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "多候选不得自动 tie-break。"
+      },
+      "prompt": "vitamin E 这个名字可能有多个候选，请保留歧义。",
+      "source_case_id": "I07"
+    },
+    {
+      "case_id": "I08",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "0de5487dd281cf933d1e40313df3e1b077ebbe19a6a59d34eec60917f14fd40c",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "resolve-chemical-identities"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "resolve-chemical-identities"
+        ],
+        "reason": "结构形式歧义解析。"
+      },
+      "prompt": "glucose 的开链和环状记录怎么区分，不要替我强选。",
+      "source_case_id": "I08"
+    },
+    {
+      "case_id": "F01",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "33b07c85ce81ebfbbc8e75d132e869664818be05785df62ba833cc625a4bbb8e",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "受控二维描述符。"
+      },
+      "prompt": "计算这批标准化分子的分子量、TPSA、LogP 和氢键特征。",
+      "source_case_id": "F01"
+    },
+    {
+      "case_id": "F02",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "865d8886f5f69300a730761f2df2b13154192ab0c3cab955177dad78af45a3ae",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "固定 Morgan profile。"
+      },
+      "prompt": "给这些标准化结构生成 Morgan 指纹。",
+      "source_case_id": "F02"
+    },
+    {
+      "case_id": "F03",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "66236a2834429a79374534ea6720294b6d38d78fd0e6ca0f1b47339a3507daee",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "数据集质量画像。"
+      },
+      "prompt": "统计这批化合物的描述符分布和缺失率。",
+      "source_case_id": "F03"
+    },
+    {
+      "case_id": "F04",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "1b48dd6bfd290f2da0d62686c2a19f9ee49c9d566ebd670aed9a63683ab2a150",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "特征质量检查。"
+      },
+      "prompt": "检查哪些分子特征是常数、近常数或异常值。",
+      "source_case_id": "F04"
+    },
+    {
+      "case_id": "F05",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "5ab0ec52201e64628360dca4772087666b849ccbb5f3fa2b88f146963074e325",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "两种固定指纹。"
+      },
+      "prompt": "输出 RDKit topological 和 MACCS 指纹，并记录完整参数。",
+      "source_case_id": "F05"
+    },
+    {
+      "case_id": "F06",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "33c8b876a33e7188ba5a9c7155a53f7797e2e5e2ebcb10a0593f6e608207ed57",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "显式计算视图。"
+      },
+      "prompt": "明确用 parent 视图计算描述符，不要和盐型结果混用。",
+      "source_case_id": "F06"
+    },
+    {
+      "case_id": "F07",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "828d5dccf714496b46da867244b62bf837916515533fcabb8e95a00082947df1",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "只计算特征，不作模型适用性结论。"
+      },
+      "prompt": "为后续建模准备可审计二维特征，但不要判断适合建模。",
+      "source_case_id": "F07"
+    },
+    {
+      "case_id": "F08",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "351d84a62758578330e39dd7d7347c3eaaa4ef87093923ec142b4131fa2ae912",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "compute-molecular-features"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "compute-molecular-features"
+        ],
+        "reason": "特征画像，不进入库检索。"
+      },
+      "prompt": "检查指纹密度和重复结构，不做相似性搜索。",
+      "source_case_id": "F08"
+    },
+    {
+      "case_id": "L01",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "2d2f02ea05fff4ae1dde37ecca52aca6d8ac71d57590f7c7b2f248d3129a4190",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "本地相似性检索。"
+      },
+      "prompt": "找出与阿司匹林结构最相似的 20 个库记录。",
+      "source_case_id": "L01"
+    },
+    {
+      "case_id": "L02",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "f546cb9c17724adbb678f582dc8b994c230d17e20479a1efe1affcef84d0bc28",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "完整子结构匹配。"
+      },
+      "prompt": "筛选包含这个 SMARTS 子结构的化合物。",
+      "source_case_id": "L02"
+    },
+    {
+      "case_id": "L03",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "d2c911bd272167e97775c774d2c96c8d87722ab4d4992ec7ec7dc365ad68ac87",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "库聚类。"
+      },
+      "prompt": "按固定 Morgan 指纹和显式阈值做 Butina 聚类。",
+      "source_case_id": "L03"
+    },
+    {
+      "case_id": "L04",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "d1d7c5d4051051dc9d8415a9e37f4d67fd99f731c9b8d5ee01e8561b718f4178",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "MaxMin 多样性选择。"
+      },
+      "prompt": "从这批分子中选 100 个结构多样的代表，固定随机种子。",
+      "source_case_id": "L04"
+    },
+    {
+      "case_id": "L05",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "55be07597d922e857dd57d32dd70341215a6d144ebceb6a728e7dc6c77296bb6",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "只读库治理。"
+      },
+      "prompt": "审查这个化合物库里哪些记录重复、不可索引或需要复核。",
+      "source_case_id": "L05"
+    },
+    {
+      "case_id": "L06",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "3e743e68067ee57d9db8388a7d76b2f2bb451bed791995ad749baf61240b1c46",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "显式相似性参数。"
+      },
+      "prompt": "按 Tanimoto 排序返回 top-k，阈值由我显式提供。",
+      "source_case_id": "L06"
+    },
+    {
+      "case_id": "L07",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "7d181481106cb9dad90c15993a7b06ff233619a3c1741417b3d32a377a70118b",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "固定结构视图检索。"
+      },
+      "prompt": "比较 standardized 视图的结构邻居，不能换成 parent。",
+      "source_case_id": "L07"
+    },
+    {
+      "case_id": "L08",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "87aef0aa7383faea55ce94121e5a4478c417104266516d54b5a4a97e99838939",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-and-curate-chemical-libraries"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "只读审查操作。"
+      },
+      "prompt": "对本地分子库做 audit，不删除或写回任何记录。",
+      "source_case_id": "L08"
+    },
+    {
+      "case_id": "C01",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "55670e91c911f4fcf99879bcc5b65b5e646a3a5926d3bdc7499c786adcd3e702",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "结构化反应整理。"
+      },
+      "prompt": "整理这批 reaction SMILES，保留原始记录。",
+      "source_case_id": "C01"
+    },
+    {
+      "case_id": "C02",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "be53ad995030084f722f1fbb29b73087f8562011c3bbf9ad98304021b5dc69db",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "ORD 合同与质量检查。"
+      },
+      "prompt": "检查这些 ORD 反应的校验错误和 warning。",
+      "source_case_id": "C02"
+    },
+    {
+      "case_id": "C03",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "8d4f07d1f7594547b96d6f32d7c6e21b1cb45ae5b46f381558ead1eeace0505d",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "参与物角色审查。"
+      },
+      "prompt": "找出反应物、试剂、催化剂和产物角色冲突。",
+      "source_case_id": "C03"
+    },
+    {
+      "case_id": "C04",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "35063662e3e3a87bb9b35470d726343e1b226d3f37a9db4f0b55ebd3781c9fe6",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "产率和分析关联。"
+      },
+      "prompt": "检查异常产率、0 到 1 小数混用和分析记录缺失。",
+      "source_case_id": "C04"
+    },
+    {
+      "case_id": "C05",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "e22dfbf61e28dd131c1dc895c47ee47df71a980db125d79bd0bbeb840d0802a4",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "反应重复视图。"
+      },
+      "prompt": "给反应记录做 exact、transformation 和 parent 候选重复分组。",
+      "source_case_id": "C05"
+    },
+    {
+      "case_id": "C06",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "a124d4687fa6355390b57f94b0d229114de87953d28ea9a031173101f04e7f1a",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "非破坏性守恒诊断。"
+      },
+      "prompt": "诊断这些反应的元素和形式电荷差，不要自动补平。",
+      "source_case_id": "C06"
+    },
+    {
+      "case_id": "C07",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "ba10f56e0b6ffd8ae8f2bc6cfcb89216fa33f1cc43d2d0ffb3314ca9d503bc83",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "参与物 handoff。"
+      },
+      "prompt": "把上游标准化结构和 review 状态传播到反应参与物。",
+      "source_case_id": "C07"
+    },
+    {
+      "case_id": "C08",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "9c94ed617013b98a3621f69159bb9d41023a7307709888beadd1e94fa90706a5",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "curate-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "curate-reactions"
+        ],
+        "reason": "反应检索前质量门禁。"
+      },
+      "prompt": "为后续反应检索准备可审计的结构化反应语料。",
+      "source_case_id": "C08"
+    },
+    {
+      "case_id": "R01",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "24214b4d7f4b610989724ee16cb2ccead0ac96643ac9a1493e976cb8418a8673",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "完整反应相似性检索。"
+      },
+      "prompt": "查找和 CCO>>CC=O 相似的反应先例。",
+      "source_case_id": "R01"
+    },
+    {
+      "case_id": "R02",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "7224e6cddf43e1cbafdeda9c4d709954583b7137ab3d38861edf8f12c9333947",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "reaction ID lookup。"
+      },
+      "prompt": "ORD 里有没有这个 reaction ID？",
+      "source_case_id": "R02"
+    },
+    {
+      "case_id": "R03",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "50896c1952350901e181128518106caaaab62bd88e70e40d65d5ad68227ed4f7",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "output component query。"
+      },
+      "prompt": "查产物包含这个子结构的已报道反应。",
+      "source_case_id": "R03"
+    },
+    {
+      "case_id": "R04",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "56cb0a4fec3a9bd95d6050282038c0856c239ede5461c22bb6e442255609e48f",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "transformation query。"
+      },
+      "prompt": "按 reaction SMARTS 查找相同转化模式。",
+      "source_case_id": "R04"
+    },
+    {
+      "case_id": "R05",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "ed1a1d6f1dd32e00580096b4aa9a035139fd8bf0e66dc0d430369a122258245b",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "先例证据表。"
+      },
+      "prompt": "对比这些反应先例报告的条件、产率和来源。",
+      "source_case_id": "R05"
+    },
+    {
+      "case_id": "R06",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "134e2262de7622282b5ae452d1c5c92c8cc82c77da2dddce776236d8ea019aa0",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "component exact/AND query。"
+      },
+      "prompt": "查输入侧精确包含乙醇的反应，多条件按 AND。",
+      "source_case_id": "R06"
+    },
+    {
+      "case_id": "R07",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "899d92c409e68dfb38c07ba0ecc1ceb5e36f4d7bc6df01b2a42109fe99c07363",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "zero-hit 科学边界。"
+      },
+      "prompt": "这个查询返回 0 条，请只说明当前 provider 零命中。",
+      "source_case_id": "R07"
+    },
+    {
+      "case_id": "R08",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "45fa5f77581f903bfb5f88a9ea4c160f5997d6aac056bc6dc1ab5ae2a2595bff",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "search-reactions"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "search-reactions"
+        ],
+        "reason": "显式 profile 隔离。"
+      },
+      "prompt": "分别用 difference 和 structural profile 查邻居，不要混排分数。",
+      "source_case_id": "R08"
+    },
+    {
+      "case_id": "V01",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "f6571355e61ba6f0f60f21599e61b3d48690d5630af203b4cf0bdf216b6bdc8a",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "多步路线证据评审。"
+      },
+      "prompt": "检查这几条逆合成路线各有什么证据缺口。",
+      "source_case_id": "V01"
+    },
+    {
+      "case_id": "V02",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "d2240f5890a2a6c7f04ab2afe4f265fe47b2dd3c14ce2285d2e9d8dd474507ee",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "dimensions-only 路线比较。"
+      },
+      "prompt": "比较 AiZynthFinder 输出的路线，但不要给综合总分。",
+      "source_case_id": "V02"
+    },
+    {
+      "case_id": "V03",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "c6352adcc660f1c5b14dc12c0e255d001e34741069c4eb7282d12de904d666ec",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "路线拓扑审查。"
+      },
+      "prompt": "检查这条路线树是否断链、成环或步骤产物不一致。",
+      "source_case_id": "V03"
+    },
+    {
+      "case_id": "V04",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "42da5fb253025ebc8f667a7cbc96d2fe8bf2091ad57cd2fa62d75671d1e27085",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "逐步 evidence level。"
+      },
+      "prompt": "逐步列出哪些路线步骤只有相似反应先例。",
+      "source_case_id": "V04"
+    },
+    {
+      "case_id": "V05",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "dc5d2cc6e4f73d709ad019646b28476f876cc56e4e8070dbb0fe942ef5b0a00a",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "库存和许可评审。"
+      },
+      "prompt": "检查路线终端前体的库存快照和许可。",
+      "source_case_id": "V05"
+    },
+    {
+      "case_id": "V06",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "2e736f4ff9e13d53d97625370a47d94400488ee5302eb97052055f6db9f683f1",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "PaRoutes adapter 和 weakest step。"
+      },
+      "prompt": "评审这份 PaRoutes JSON，找出最弱步骤。",
+      "source_case_id": "V06"
+    },
+    {
+      "case_id": "V07",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "eee64efa3242956bc93d398a81bd60bfa21313363b079119cfd6dd33372e3453",
+      "expected_entry_mode": "atomic_or_router_direct",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "路线签名和重复组。"
+      },
+      "prompt": "检查两条路线是不是结构重复，只分组不要删除。",
+      "source_case_id": "V07"
+    },
+    {
+      "case_id": "V08",
+      "change_reason": "unchanged_direct_skill",
+      "contract_fingerprint": "f454881d739508ce5a7e2f06710edbc0149a1b1c63ea1233bb8ab41a900f4ab0",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill",
+      "expected_targets": [
+        "review-routes"
+      ],
+      "old_expected": {
+        "expected_action": "single_skill",
+        "expected_skill_chain": [
+          "review-routes"
+        ],
+        "reason": "显式路线约束。"
+      },
+      "prompt": "哪些路线违反最大步数和禁用前体约束？",
+      "source_case_id": "V08"
+    },
+    {
+      "case_id": "X01",
+      "change_reason": "complete_compound_evidence_requires_identity_gates_and_evidence_package",
+      "contract_fingerprint": "e173bf139ce6e37a03b5f583419f65435a5d8424e22dd53bd3edf01d0a98048a",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "workflow_a",
+      "expected_targets": [
+        "compound-evidence-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "resolve-chemical-identities",
+          "standardize-chemical-structures",
+          "compute-molecular-features"
+        ],
+        "reason": "名称到特征的条件链。"
+      },
+      "prompt": "把 aspirin 解析成结构，标准化后计算 Morgan 指纹。",
+      "source_case_id": "X01"
+    },
+    {
+      "case_id": "X02",
+      "change_reason": "equivalent_bounded_chain_target",
+      "contract_fingerprint": "51bbfdbe7d0dcdc3cddfd6b1d8965eed9833fc7dff5a45d2b77dc63ced61330d",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill_chain",
+      "expected_targets": [
+        "structure-library-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "standardize-chemical-structures",
+          "compute-molecular-features",
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "结构到本地库检索。"
+      },
+      "prompt": "清洗这批 SMILES，计算指纹，再找结构邻居。",
+      "source_case_id": "X02"
+    },
+    {
+      "case_id": "X03",
+      "change_reason": "equivalent_bounded_chain_target",
+      "contract_fingerprint": "c06e9ecf38c7116e763c5ea4b7045e06131565f7c4d3965fd7784f58caa2dfe5",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill_chain",
+      "expected_targets": [
+        "reaction-precedent-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "curate-reactions",
+          "search-reactions"
+        ],
+        "reason": "反应整理到检索。"
+      },
+      "prompt": "整理这批 reaction SMILES，然后查找相似反应先例。",
+      "source_case_id": "X03"
+    },
+    {
+      "case_id": "X04",
+      "change_reason": "complete_route_evidence_requires_workflow_b_final_review",
+      "contract_fingerprint": "37a365948e7b3f390a46f24830b89dc268cbffd5bf91c4b800d332744882bb67",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "workflow_b",
+      "expected_targets": [
+        "route-evidence-review-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "curate-reactions",
+          "search-reactions",
+          "review-routes"
+        ],
+        "reason": "完整反应路线证据链。"
+      },
+      "prompt": "把这条多步路线的每一步整理、检索先例并汇总最弱步骤。",
+      "source_case_id": "X04"
+    },
+    {
+      "case_id": "X05",
+      "change_reason": "equivalent_bounded_chain_target",
+      "contract_fingerprint": "313c3d72895e73b7101d007cb48ef0e5af4637c0370debd026a2f1a502523943",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill_chain",
+      "expected_targets": [
+        "identity-standardization-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "resolve-chemical-identities",
+          "standardize-chemical-structures"
+        ],
+        "reason": "身份解析是标准化条件前缀。"
+      },
+      "prompt": "解析这个 CAS 号，确认唯一候选后再做结构标准化。",
+      "source_case_id": "X05"
+    },
+    {
+      "case_id": "X06",
+      "change_reason": "library_contract_requires_features_artifact",
+      "contract_fingerprint": "404761d7ea5a8c8a5356424e9fdacffbb3c7654753834ccd392c6901e000eaa2",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill_chain",
+      "expected_targets": [
+        "structure-library-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "standardize-chemical-structures",
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "子结构检索不强制特征计算。"
+      },
+      "prompt": "清洗这个 SDF，然后按 SMARTS 筛选库记录。",
+      "source_case_id": "X06"
+    },
+    {
+      "case_id": "X07",
+      "change_reason": "equivalent_bounded_chain_target",
+      "contract_fingerprint": "e3a4564394f159a0529c60cd1477adadfbb78853e77c4bf2c3f679dc10c6b0db",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "direct_skill_chain",
+      "expected_targets": [
+        "reaction-precedent-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "curate-reactions",
+          "search-reactions"
+        ],
+        "reason": "ORD 质量门禁到检索。"
+      },
+      "prompt": "审查这个 ORD 数据集，再用整理后的语料做反应检索。",
+      "source_case_id": "X07"
+    },
+    {
+      "case_id": "X08",
+      "change_reason": "route_review_requires_workflow_b_step_evidence",
+      "contract_fingerprint": "82f6097a160ea0f5ed00de79ba11f0bb0d0b0e5c69259ac61660ed65ea324957",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "workflow_b",
+      "expected_targets": [
+        "route-evidence-review-v1"
+      ],
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "curate-reactions",
+          "search-reactions",
+          "review-routes"
+        ],
+        "reason": "路线评审需要逐步 artifact。"
+      },
+      "prompt": "对 AiZynthFinder 路线补齐每步反应质量和先例证据后再评审。",
+      "source_case_id": "X08"
+    },
+    {
+      "case_id": "Q01",
+      "change_reason": "unchanged_clarification",
+      "contract_fingerprint": "11a6e5aaa0f7efc8679b6d42fc51c2aa4241b9f104482545be38d7b842a7f965",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "clarification_required",
+      "expected_targets": [],
+      "old_expected": {
+        "expected_action": "clarify",
+        "expected_skill_chain": [],
+        "reason": "缺少对象、格式和目标。"
+      },
+      "prompt": "帮我看看这个化学数据。",
+      "source_case_id": "Q01"
+    },
+    {
+      "case_id": "Q02",
+      "change_reason": "unchanged_unsupported",
+      "contract_fingerprint": "1253ff4d9cd6342ba84c66aae63437f7bc86a9ebd1fa29c6683fe3df2acb6eb3",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "unsupported",
+      "expected_targets": [],
+      "old_expected": {
+        "expected_action": "reject_unsupported",
+        "expected_skill_chain": [],
+        "reason": "当前七 Skill 不提供毒性预测。"
+      },
+      "prompt": "预测这些分子的毒性。",
+      "source_case_id": "Q02"
+    },
+    {
+      "case_id": "Q03",
+      "change_reason": "unchanged_unsupported",
+      "contract_fingerprint": "23a3cd8bc6ef2239d8d54925dba115dfaf98ccb32acf830e559e389981f9bdcc",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "unsupported",
+      "expected_targets": [],
+      "old_expected": {
+        "expected_action": "reject_unsupported",
+        "expected_skill_chain": [],
+        "reason": "当前体系不生成或批准可执行路线。"
+      },
+      "prompt": "直接给我生成一条可执行的逆合成路线。",
+      "source_case_id": "Q03"
+    },
+    {
+      "case_id": "Q04",
+      "change_reason": "unchanged_unsupported",
+      "contract_fingerprint": "6740bbfafe0f1ff682f85fff8e24d92984a908d0d64ed81d06fe1cad06dd2500",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "unsupported",
+      "expected_targets": [],
+      "old_expected": {
+        "expected_action": "reject_unsupported",
+        "expected_skill_chain": [],
+        "reason": "安全和放大必须由实验室专家评估。"
+      },
+      "prompt": "这个反应安全吗，可以直接放大吗？",
+      "source_case_id": "Q04"
+    },
+    {
+      "case_id": "Q05",
+      "change_reason": "unchanged_clarification",
+      "contract_fingerprint": "14fe78909812a3edeb244938a071a2cbd3d206a3a49f1087e2c2161d040b2870",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "clarification_required",
+      "expected_targets": [],
+      "old_expected": {
+        "expected_action": "clarify",
+        "expected_skill_chain": [],
+        "reason": "完全缺少输入和任务。"
+      },
+      "prompt": "分析一下。",
+      "source_case_id": "Q05"
+    },
+    {
+      "case_id": "Q06",
+      "change_reason": "unchanged_clarification",
+      "contract_fingerprint": "788a5dfb5323e078a6378cb7a641c6387d97367396b2714ab6a3d2320397cc89",
+      "expected_entry_mode": "router_required",
+      "expected_route_type": "clarification_required",
+      "expected_targets": [],
+      "old_expected": {
+        "expected_action": "clarify",
+        "expected_skill_chain": [],
+        "reason": "需要路线文件、比较维度和显式约束，不能默认综合排序。"
+      },
+      "prompt": "这几条路线哪个好？",
+      "source_case_id": "Q06"
+    }
+  ],
+  "changed_cases": [
+    "X01",
+    "X04",
+    "X06",
+    "X08"
+  ],
+  "entry_mode_counts": {
+    "atomic_or_router_direct": 33,
+    "router_required": 37
+  },
+  "gold_fingerprint": "d1c547be4c1632189f3cad4df7ff47d4fc9c82978e78fe13421e12484156b848",
+  "gold_version": "2.0.0",
+  "limitations": [
+    "public_regression_only_not_hidden_gold",
+    "does_not_prove_real_host_implicit_routing",
+    "router_execution_results_not_included"
+  ],
+  "migrations": [
+    {
+      "change_reason": "complete_compound_evidence_requires_identity_gates_and_evidence_package",
+      "new_expected": {
+        "route_type": "workflow_a",
+        "targets": [
+          "compound-evidence-v1"
+        ]
+      },
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "resolve-chemical-identities",
+          "standardize-chemical-structures",
+          "compute-molecular-features"
+        ],
+        "reason": "名称到特征的条件链。"
+      },
+      "reviewer": "router-contract-review-2026-08-19",
+      "source_case_id": "X01"
+    },
+    {
+      "change_reason": "complete_route_evidence_requires_workflow_b_final_review",
+      "new_expected": {
+        "route_type": "workflow_b",
+        "targets": [
+          "route-evidence-review-v1"
+        ]
+      },
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "curate-reactions",
+          "search-reactions",
+          "review-routes"
+        ],
+        "reason": "完整反应路线证据链。"
+      },
+      "reviewer": "router-contract-review-2026-08-19",
+      "source_case_id": "X04"
+    },
+    {
+      "change_reason": "library_contract_requires_features_artifact",
+      "new_expected": {
+        "route_type": "direct_skill_chain",
+        "targets": [
+          "structure-library-v1"
+        ]
+      },
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "standardize-chemical-structures",
+          "search-and-curate-chemical-libraries"
+        ],
+        "reason": "子结构检索不强制特征计算。"
+      },
+      "reviewer": "router-contract-review-2026-08-19",
+      "source_case_id": "X06"
+    },
+    {
+      "change_reason": "route_review_requires_workflow_b_step_evidence",
+      "new_expected": {
+        "route_type": "workflow_b",
+        "targets": [
+          "route-evidence-review-v1"
+        ]
+      },
+      "old_expected": {
+        "expected_action": "skill_chain",
+        "expected_skill_chain": [
+          "curate-reactions",
+          "search-reactions",
+          "review-routes"
+        ],
+        "reason": "路线评审需要逐步 artifact。"
+      },
+      "reviewer": "router-contract-review-2026-08-19",
+      "source_case_id": "X08"
+    }
+  ],
+  "route_counts": {
+    "clarification_required": 3,
+    "direct_skill": 56,
+    "direct_skill_chain": 5,
+    "unsupported": 3,
+    "workflow_a": 1,
+    "workflow_b": 2
+  },
+  "schema_version": "2.0.0",
+  "source_artifact_sha256": "8f2adf88390dfc203f50b777db8d4860dd9b37e346ab4b568553d468eca5b3a7",
+  "source_artifact_type": "chemistry-skill-routing-gold-candidate",
+  "source_case_count": 70,
+  "source_cases_fingerprint": "70a9467e02dd9b9820ada6b2dc055e4b555bf7f8c0229b4e68455b4fd93dbf7f"
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "templates": [
+    {
+      "field_id": "research_object",
+      "response_type": "text",
+      "template_id": "request_research_object"
+    },
+    {
+      "field_id": "input_artifact",
+      "response_type": "file_reference",
+      "template_id": "request_input_artifact"
+    },
+    {
+      "field_id": "route_input",
+      "response_type": "file_reference",
+      "template_id": "request_route_file"
+    },
+    {
+      "field_id": "reaction_input",
+      "response_type": "file_reference",
+      "template_id": "request_reaction_file"
+    },
+    {
+      "field_id": "calculation_view",
+      "response_type": "controlled_choice",
+      "template_id": "choose_calculation_view"
+    },
+    {
+      "field_id": "search_strategy",
+      "response_type": "controlled_choice",
+      "template_id": "choose_search_strategy"
+    },
+    {
+      "field_id": "chemical_object_type",
+      "response_type": "controlled_choice",
+      "template_id": "resolve_reaction_molecule_ambiguity"
+    },
+    {
+      "field_id": "workflow_scope",
+      "response_type": "controlled_choice",
+      "template_id": "choose_direct_or_evidence_workflow"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata in this file."
+title: "Chemistry Research Skills"
+type: software
+authors:
+  - name: "Chemistry Research Skills contributors"
+license: Apache-2.0
+version: "0.1.0-alpha.2"
+keywords:
+  - chemistry
+  - scientific-agents
+  - cheminformatics
+  - reaction-informatics

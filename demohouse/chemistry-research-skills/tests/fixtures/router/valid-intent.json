@@ -1,0 +1,54 @@
+{
+  "ambiguities": [],
+  "candidate_targets": [
+    "compound-evidence-v1"
+  ],
+  "goal": {
+    "chain_requirement": "complete_evidence_workflow",
+    "goal_type": "build_compound_evidence",
+    "source_refs": [
+      "span-001"
+    ]
+  },
+  "input_artifacts": [],
+  "intent_fingerprint": "cc81a7683bbfb2dd0d04ace4514e9e486b84d366366ad68a378e61f230e23042",
+  "intent_id": "intent-test-001",
+  "recognizer": {
+    "catalog_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "host_id": "trae",
+    "host_version": "1.0.0-test",
+    "model_id": "fixed-test-model",
+    "model_mode": "fixed",
+    "router_skill_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "schema_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "requested_operations": [],
+  "research_objects": [
+    {
+      "object_id": "object-001",
+      "object_type": "compound_name",
+      "representation": "aspirin",
+      "source_refs": [
+        "span-001"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "attachments_fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "content_sha256": "d699f3d730f268b06a80b481fac000a870d3f2362be5c52e1ea3b1982cb6b2ee",
+    "language": "zh-CN",
+    "message_length": 21
+  },
+  "source_refs": [
+    {
+      "end": 9,
+      "source_kind": "message_span",
+      "source_ref_id": "span-001",
+      "start": 2,
+      "text_sha256": "aa260d27847dec909fc58915657cc8c0e6f61ad7b28fe094583a6a665de788ba"
+    }
+  ],
+  "unsupported_goals": [],
+  "user_parameters": []
+}

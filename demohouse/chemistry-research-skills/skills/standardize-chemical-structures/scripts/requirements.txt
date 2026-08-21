@@ -1,0 +1,2 @@
+rdkit==2025.9.2
+chembl-structure-pipeline==1.2.4

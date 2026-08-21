@@ -1,0 +1,4 @@
+interface:
+  display_name: "化学身份解析与来源对齐"
+  short_description: "保守解析化学名称、结构和数据库标识符，保留歧义、冲突与来源证据"
+  default_prompt: "Use $resolve-chemical-identities to resolve this chemical name or identifier while preserving ambiguity and source evidence."
