@@ -1,0 +1,78 @@
+{
+  "name": "car-decision-assistant",
+  "version": "0.1.0",
+  "description": "基于 Agent Plan Harness、专业数据集与 AI Native 应用开发底座的开源购车决策助手",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3494036618-eng/car-decision-assistant.git"
+  },
+  "homepage": "https://github.com/3494036618-eng/car-decision-assistant#readme",
+  "bugs": {
+    "url": "https://github.com/3494036618-eng/car-decision-assistant/issues"
+  },
+  "engines": {
+    "node": ">=22.15.0"
+  },
+  "scripts": {
+    "dev": "vinext dev",
+    "dev:vinext": "vinext dev",
+    "dev:supabase": "node scripts/dev-supabase.mjs",
+    "build": "vinext build",
+    "start": "vinext start",
+    "test": "npm run test:unit",
+    "test:unit": "node --test tests/rendered-html.test.mjs tests/dev-runtime.test.mjs && node --import tsx --test tests/decision-engine.test.mjs tests/harness-clients.test.ts tests/project-service.test.ts tests/supabase-storage.test.ts tests/vehicle-sales.test.ts tests/vite-config.test.ts",
+    "test:supabase:live": "node --import tsx scripts/verify-supabase-runtime.mjs",
+    "test:scenarios:live": "node scripts/verify-live-scenarios.mjs",
+    "release:validate": "node scripts/validate-public-release.mjs",
+    "release:validate:strict": "node scripts/validate-public-release.mjs --strict-git",
+    "skill:validate": "node scripts/validate-skill-package.mjs",
+    "skill:test": "node scripts/test-skill-installer.mjs",
+    "skill:install": "node scripts/install-agent-skill.mjs --target codex",
+    "skill:install:codex": "node scripts/install-agent-skill.mjs --target codex",
+    "skill:install:claude": "node scripts/install-agent-skill.mjs --target claude",
+    "skill:install:all": "node scripts/install-agent-skill.mjs --target all",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run lint && npm run typecheck && npm run build && npm run test:unit",
+    "release:verify": "npm run verify && npm run release:validate && npm run skill:validate && npm run skill:test"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@supabase/supabase-js": "2.110.8",
+    "next": "16.2.12",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.49.0",
+    "@cloudflare/workers-types": "5.20260731.1",
+    "@eslint/js": "10.0.1",
+    "@next/eslint-plugin-next": "16.2.12",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "0.5.26",
+    "eslint": "10.8.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.8.0",
+    "react-server-dom-webpack": "19.2.8",
+    "tailwindcss": "4.2.1",
+    "tsx": "4.22.1",
+    "typescript": "5.9.3",
+    "vinext": "0.0.50",
+    "vite": "8.2.0",
+    "typescript-eslint": "8.65.0"
+  },
+  "overrides": {
+    "@esbuild-kit/core-utils": {
+      "esbuild": "0.25.12"
+    },
+    "postcss": "8.5.25",
+    "sharp": "0.35.3"
+  },
+  "type": "module"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "购车决策助手"
+  short_description: "配置、启动并验收基于真实汽车专业数据的购车决策网站"
+  default_prompt: "使用 $car-decision-assistant 初始化并验收购车决策助手。"
