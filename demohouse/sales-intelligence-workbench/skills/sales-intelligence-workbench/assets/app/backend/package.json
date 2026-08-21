@@ -1,0 +1,37 @@
+{
+  "name": "sales-intelligence-workbench-api",
+  "version": "0.10.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server.js",
+    "test": "node --test tests/*.test.mjs",
+    "release:secrets": "node scripts/check-release-secrets.mjs",
+    "release:verify": "node scripts/verify-release-local.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "doctor:live": "node scripts/baseline-real-readonly.mjs --live",
+    "db:migrate": "node scripts/migrate-supabase.mjs --apply",
+    "db:migrate:check": "node scripts/migrate-supabase.mjs",
+    "db:verify-qa-boundary": "node scripts/verify-openviking-qa-boundary.mjs",
+    "db:verify-security-boundary": "node scripts/verify-supabase-security-boundary.mjs",
+    "db:bootstrap-workspace": "node scripts/bootstrap-workspace.mjs",
+    "db:configure-data-api": "node scripts/configure-supabase-data-api.mjs",
+    "db:backup": "node scripts/backup-supabase.mjs",
+    "db:restore": "node scripts/restore-supabase.mjs",
+    "feishu:import": "node scripts/import-feishu-cli.mjs",
+    "baseline:real": "node scripts/baseline-real-readonly.mjs",
+    "baseline:real:live": "node scripts/baseline-real-readonly.mjs --live",
+    "verify:business": "node scripts/verify-business-chain.mjs",
+    "workspace:export": "node scripts/export-workspace.mjs",
+    "preflight:real": "node scripts/preflight-real.mjs",
+    "smoke:stage2-data-api": "node scripts/smoke-stage2-data-api.mjs",
+    "smoke:stage3-material-sync": "node scripts/smoke-stage3-material-sync.mjs",
+    "smoke:paid-workflow": "node scripts/smoke-paid-workflow-guard.mjs",
+    "smoke:async-job-queue": "node scripts/smoke-async-job-queue.mjs",
+    "smoke:stage2-api": "node scripts/smoke-stage2-api.mjs",
+    "smoke:stage2-backup-package": "node scripts/smoke-stage2-backup-package.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

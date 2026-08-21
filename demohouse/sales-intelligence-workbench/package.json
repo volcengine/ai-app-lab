@@ -1,0 +1,20 @@
+{
+  "name": "sales-intelligence-workbench-oss",
+  "version": "0.10.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "release:validate": "node scripts/validate-public-release.mjs",
+    "skill:install": "node scripts/install-codex-skill.mjs",
+    "skill:install:codex": "node scripts/install-codex-skill.mjs",
+    "skill:install:claude": "node scripts/install-claude-code-skill.mjs",
+    "skill:install:all": "node scripts/install-agent-skill.mjs --target all",
+    "skill:command": "node scripts/print-public-skill-command.mjs",
+    "skill:validate": "node scripts/validate-skill-package.mjs",
+    "skill:test": "node scripts/test-skill-installer.mjs",
+    "verify": "npm run release:validate && npm run skill:validate && npm run skill:test && npm --prefix backend run release:verify"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

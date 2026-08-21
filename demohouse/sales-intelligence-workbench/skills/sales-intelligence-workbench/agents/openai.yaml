@@ -1,0 +1,6 @@
+interface:
+  display_name: "销售团队工作台 Builder"
+  short_description: "从零配置到真实数据闭环，初始化单工作区销售助手"
+  default_prompt: "使用 $sales-intelligence-workbench 从 0 初始化并验收我的真实销售助手；没有本地项目时先按远程入口取得完整仓库。"
+policy:
+  allow_implicit_invocation: true
