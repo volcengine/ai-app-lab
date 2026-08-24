@@ -28,7 +28,7 @@ const [skillText, agentText] = await Promise.all([
   readFile(join(skill, "SKILL.md"), "utf8"),
   readFile(join(skill, "agents", "openai.yaml"), "utf8"),
 ]);
-assert.match(skillText, /^---\nname: car-decision-assistant\n/m);
+assert.match(skillText, /^---\r?\nname: car-decision-assistant\r?\n/m);
 assert.match(skillText, /description: .+初始化与验收 Skill/);
 assert.doesNotMatch(skillText, /\[TODO|TODO:/);
 assert.match(agentText, /display_name: ["']购车决策助手["']/);
