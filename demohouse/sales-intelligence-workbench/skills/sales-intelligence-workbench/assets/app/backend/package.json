@@ -1,11 +1,11 @@
 {
   "name": "sales-intelligence-workbench-api",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "node src/server.js",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node scripts/run-tests.mjs",
     "release:secrets": "node scripts/check-release-secrets.mjs",
     "release:verify": "node scripts/verify-release-local.mjs",
     "doctor": "node scripts/doctor.mjs",

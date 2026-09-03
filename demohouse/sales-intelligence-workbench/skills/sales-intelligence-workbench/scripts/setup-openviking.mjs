@@ -109,7 +109,12 @@ function parseJsonOutput(stdout, label) {
 
 function controlPlaneCommand() {
   const override = String(process.env.OPENVIKING_CONTROL_PLANE_CLI || "").trim();
-  if (override) return { command: override, prefix: [] };
+  if (override) {
+    if (/\.(?:c?m?js)$/i.test(override)) {
+      return { command: process.execPath, prefix: [override] };
+    }
+    return { command: override, prefix: [] };
+  }
   if (commandExists("ov-cp")) return { command: "ov-cp", prefix: [] };
   if (commandExists("uvx")) {
     return {

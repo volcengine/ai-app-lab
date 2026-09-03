@@ -202,8 +202,13 @@ function assertPrivateSession(filePath) {
   if (!session) {
     throw new Error("未找到有效 CLI 登录态。请先运行 Skill 的 login.mjs，密码不要发送到聊天或命令行参数。");
   }
-  const mode = fs.statSync(filePath).mode & 0o077;
-  if (mode !== 0) throw new Error("CLI 会话文件权限不安全；请将其权限改为 0600 后重试。");
+  const status = fs.lstatSync(filePath);
+  if (!status.isFile() || status.isSymbolicLink()) {
+    throw new Error("CLI 会话路径必须是非符号链接的普通文件。");
+  }
+  if (process.platform !== "win32" && (status.mode & 0o077) !== 0) {
+    throw new Error("CLI 会话文件权限不安全；请将其权限改为 0600 后重试。");
+  }
   return session;
 }
 

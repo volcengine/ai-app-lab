@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -373,12 +373,54 @@ export function assertAppSource(sourcePath) {
 }
 
 export function assertInstalledApp() {
-  return assertAppSource(paths.installedApp);
+  return assertInstalledAppIntegrity();
+}
+
+export function installedAppIntegrity() {
+  if (!fs.existsSync(paths.installedApp)) return { ok: false, reason: "not_installed" };
+  const metadataPath = path.join(paths.installedApp, ".sales-workbench-runtime.json");
+  if (!fs.existsSync(metadataPath)) return { ok: false, reason: "missing_release_metadata" };
+  try {
+    const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+    const actual = appSourceIdentity(paths.installedApp);
+    const ok = metadata.schema_version === 2
+      && metadata.release_version === actual.version
+      && metadata.source_tree_sha256 === actual.sha256
+      && metadata.source_file_count === actual.file_count;
+    return {
+      ok,
+      reason: ok ? null : "release_identity_mismatch",
+      release_version: metadata.release_version || null,
+      actual_version: actual.version,
+      expected_tree_sha256: metadata.source_tree_sha256 || null,
+      actual_tree_sha256: actual.sha256,
+      expected_file_count: metadata.source_file_count ?? null,
+      actual_file_count: actual.file_count,
+    };
+  } catch {
+    return { ok: false, reason: "invalid_release_metadata" };
+  }
+}
+
+export function assertInstalledAppIntegrity() {
+  const report = installedAppIntegrity();
+  if (!report.ok) {
+    throw new Error(`已安装应用未通过发行完整性校验（${report.reason}）；请重新执行 install.mjs。`);
+  }
+  return paths.installedApp;
 }
 
 export function appCopyFilter(rootDir, sourcePath) {
-  const relative = path.relative(rootDir, sourcePath);
+  const canonical = (value) => {
+    try {
+      return fs.realpathSync.native(value);
+    } catch {
+      return path.resolve(value);
+    }
+  };
+  const relative = path.relative(canonical(rootDir), canonical(sourcePath));
   if (!relative) return true;
+  if (relative.startsWith("..") || path.isAbsolute(relative)) return false;
   const segments = relative.split(path.sep);
   const first = segments[0];
   if (!["backend", "frontend", "supabase"].includes(first)) return false;
@@ -387,6 +429,37 @@ export function appCopyFilter(rootDir, sourcePath) {
   if (name === ".DS_Store" || name === ".env.local") return false;
   if (name.startsWith(".env.") && name !== ".env.example") return false;
   return !/\.(?:log|pid)$/i.test(name);
+}
+
+export function appSourceIdentity(sourcePath) {
+  const rootDir = assertAppSource(sourcePath);
+  const files = [];
+  const visit = (directory) => {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const fullPath = path.join(directory, entry.name);
+      if (!appCopyFilter(rootDir, fullPath)) continue;
+      if (entry.isSymbolicLink()) throw new Error("应用包不能包含符号链接。");
+      if (entry.isDirectory()) visit(fullPath);
+      else if (entry.isFile()) files.push(fullPath);
+    }
+  };
+  visit(rootDir);
+  files.sort((left, right) => path.relative(rootDir, left).localeCompare(path.relative(rootDir, right), "en"));
+
+  const hash = createHash("sha256");
+  for (const filePath of files) {
+    const relativePath = path.relative(rootDir, filePath).split(path.sep).join("/");
+    hash.update(relativePath);
+    hash.update("\0");
+    hash.update(fs.readFileSync(filePath));
+    hash.update("\0");
+  }
+  const backendPackage = JSON.parse(fs.readFileSync(path.join(rootDir, "backend", "package.json"), "utf8"));
+  return {
+    version: String(backendPackage.version || ""),
+    sha256: hash.digest("hex"),
+    file_count: files.length,
+  };
 }
 
 export function readOption(name, args = process.argv.slice(2)) {
@@ -503,7 +576,9 @@ export async function waitForHealth(url, timeoutMs = 20_000) {
 
 export function credentialFileIsPrivate() {
   try {
-    return (fs.statSync(paths.credentialsFile).mode & 0o077) === 0;
+    const status = fs.lstatSync(paths.credentialsFile);
+    if (!status.isFile() || status.isSymbolicLink()) return false;
+    return process.platform === "win32" || (status.mode & 0o077) === 0;
   } catch {
     return false;
   }

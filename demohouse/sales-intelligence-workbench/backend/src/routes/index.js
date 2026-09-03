@@ -79,7 +79,7 @@ export function createRouter(providerService, options = {}) {
       data: {
         status: runtimePolicy.ready ? "ok" : "degraded",
         service: "sales-intelligence-workbench-api",
-        version: "0.10.0",
+        version: "0.10.1",
         provider_mode: providerMode,
         runtime_ready: runtimePolicy.ready,
       },

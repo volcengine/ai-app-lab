@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import {
-  assertInstalledApp,
+  assertInstalledAppIntegrity,
   ensureDirectories,
   liveDoctorEvidence,
   paths,
@@ -15,7 +15,7 @@ import {
   waitForHealth,
 } from "./lib.mjs";
 
-assertInstalledApp();
+assertInstalledAppIntegrity();
 ensureDirectories();
 
 const doctor = run(process.execPath, [path.join(paths.skillRoot, "scripts", "doctor.mjs")], {

@@ -10,32 +10,87 @@ description: 从 0 到 1 搭建、配置、验收和维护真实数据驱动的�
 ## 远程 Skill 入口
 
 用户可能在 Codex 或 Claude Code 中直接通过公开的主 Skill URL 触发本流程，而不是预先克隆
-仓库、安装 Skill 或准备本机配置。两端使用同一份 Skill 和同一套业务逻辑。独立发行仓库
-使用以下版本化入口；其他发行位置也必须固定到已发布的 tag 或经过审核的 commit SHA：
+仓库、安装 Skill 或准备本机配置。两端使用同一份 Skill 和同一套业务逻辑。火山方舟
+AI App Lab 中的官方入口为：
 
 ```text
-帮我初始化销售助手：https://github.com/3494036618-eng/sales-intelligence-workbench/blob/v0.10.0/skills/sales-intelligence-workbench/SKILL.md
+帮我初始化销售助手：https://github.com/volcengine/ai-app-lab/blob/main/demohouse/sales-intelligence-workbench/skills/sales-intelligence-workbench/SKILL.md
+```
+
+该 URL 只负责让 Agent 找到本 Skill，不是应用包下载源。应用包必须固定从以下不可变发行版本
+获取，不得根据用户提供的入口 URL 改用其他仓库、分支或同名项目：
+
+```text
+固定发行仓库：https://github.com/3494036618-eng/sales-intelligence-workbench
+固定发行版本：v0.10.1
+固定发行 Skill：https://github.com/3494036618-eng/sales-intelligence-workbench/blob/v0.10.1/skills/sales-intelligence-workbench/SKILL.md
 ```
 
 如果当前环境中不存在 `{baseDir}/scripts/status.mjs`，说明本 Skill 是从远程 URL 打开的。
 此时 Agent 必须：
 
-1. 从用户提供的 Skill URL 解析同一个 GitHub 仓库和 `<ref>`，取得该版本的完整仓库，不能
-   只下载 `SKILL.md`，也不能通过搜索结果猜测同名仓库。
-2. 将 `{baseDir}` 设为仓库中的 `skills/sales-intelligence-workbench`，确认
+1. 无论用户从官方入口还是发行 Skill 打开本文件，都只取得上面指定的独立发行仓库
+   `v0.10.1` 完整版本。先说明会把公开源码写入本机，然后在 macOS/Linux 的 POSIX shell
+   中使用系统临时目录执行；变量始终加双引号，不让用户复制或替换路径占位符：
+
+   ```bash
+   release_root="$(mktemp -d "${TMPDIR:-/tmp}/sales-intelligence-workbench-v0.10.1-XXXXXX")"
+   git clone --depth 1 --branch v0.10.1 --single-branch \
+     https://github.com/3494036618-eng/sales-intelligence-workbench.git "$release_root"
+   ```
+
+   Windows PowerShell 使用以下等价命令；同样只新建唯一目录，并始终引用完整路径：
+
+   ```powershell
+   $releaseRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("sales-intelligence-workbench-v0.10.1-" + [guid]::NewGuid().ToString("N"))
+   New-Item -ItemType Directory -Path $releaseRoot -ErrorAction Stop | Out-Null
+   git clone --depth 1 --branch v0.10.1 --single-branch `
+     https://github.com/3494036618-eng/sales-intelligence-workbench.git $releaseRoot
+   if ($LASTEXITCODE -ne 0) {
+     Remove-Item -LiteralPath $releaseRoot -Recurse -Force
+     throw "v0.10.1 clone 失败，已停止且不会换源或降级。"
+   }
+   ```
+
+   不能下载 AI App Lab 的整个 monorepo，不能使用 `main`，不能只下载 `SKILL.md`，也不能
+   通过搜索结果猜测同名仓库。clone 失败时只删除本次新建的临时目录并停止，不能换源或降级。
+2. 在下载仓库中执行确定性来源校验；该脚本会同时核对 origin、精确 tag、本地 commit、
+   远程 tag 当前指向和不含 ignored 残留的干净工作区，任一不符都会返回非零：
+
+   ```bash
+   node "$release_root/scripts/validate-release-checkout.mjs"
+   ```
+
+   Windows PowerShell 对应执行：
+
+   ```powershell
+   node (Join-Path $releaseRoot "scripts/validate-release-checkout.mjs")
+   if ($LASTEXITCODE -ne 0) { throw "发行来源校验失败，停止安装。" }
+   ```
+
+   脚本非零时停止，不继续安装。远程 URL 初始化只能使用本次新建并 clone 的 `release_root`；
+   不得复用、修改、清理或覆盖任何已有源码目录。
+3. 将项目根目录设为 `release_root`，将 `{baseDir}` 设为其中的
+   `skills/sales-intelligence-workbench`，确认
    `{baseDir}/scripts/`、`{baseDir}/references/`、`{baseDir}/assets/app/` 及仓库根目录
    `package.json` 均存在。
-3. 在仓库根目录执行 `node scripts/validate-skill-package.mjs` 和
-   `node scripts/test-skill-installer.mjs`。两项都通过后按当前客户端安装：
+4. 在仓库根目录执行完整的 `npm run verify`。公开包扫描、来源校验器测试、Skill 包校验、
+   双客户端隔离安装、后端测试、密钥扫描、内嵌应用一致性和 Skill 生命周期全部通过后，
+   才能按当前客户端安装：
    - Codex：`npm run skill:install:codex`
    - Claude Code：`npm run skill:install:claude`
    - 用户明确要求两端都安装：`npm run skill:install:all`
    已安装旧版时先说明影响，再为对应命令追加 `-- --force`。
-4. 立即使用刚取得仓库中的本文件继续阶段 0，不要求用户重启当前客户端，也不让用户重复
+5. 立即使用刚取得仓库中的本文件继续阶段 0，不要求用户重启当前客户端，也不让用户重复
    提供源码目录。后续重新打开时，Codex 使用 `$sales-intelligence-workbench`，Claude Code
-   使用 `/sales-intelligence-workbench`。
-5. 已有同名目录时先核对 Git remote、版本和工作区状态；不覆盖用户改动，不创建第二套
-   运行时。下载、校验和安装阶段不创建云资源、不调用 Agent Plan 外部能力、不产生 AFP。
+   使用 `/sales-intelligence-workbench`。当前初始化流程已切换到安装后的 Skill，或流程结束、
+   取消、失败且不再需要源码 checkout 时，删除本次创建的 `release_root`；不得删除用户明确
+   要求复用的已有目录。POSIX 使用 `rm -rf -- "$release_root"`，PowerShell 使用
+   `Remove-Item -LiteralPath $releaseRoot -Recurse -Force`，删除前再次确认变量确实指向本次创建的
+   `sales-intelligence-workbench-v0.10.1-` 临时目录。
+6. 已有同名 Skill 或运行时时先说明影响；没有 `--force` 不得覆盖 Skill，运行时仍按自身
+   停服、备份和原子替换规则处理，不创建第二套运行时。下载、校验和安装阶段不创建云资源、
+   不调用 Agent Plan 外部能力、不产生 AFP。
 
 “什么也没配置”表示用户不需要预先准备本地项目、依赖或配置文件，不代表可以绕过云服务
 账号、Agent Plan 套餐、AI Native 应用开发底座（Supabase）/Agent 记忆（OpenViking）权限、飞书登录或真实调用费用。用户侧只输入

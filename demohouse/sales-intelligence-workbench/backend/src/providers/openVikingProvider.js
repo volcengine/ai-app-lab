@@ -1,6 +1,6 @@
 import { execFile } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { delimiter, join } from "node:path";
+import { delimiter, isAbsolute, join } from "node:path";
 import { promisify } from "node:util";
 import { createEnvReader } from "../config/runtimeEnv.js";
 import { providerFailure, providerSuccess } from "./providerResult.js";
@@ -48,7 +48,7 @@ function defaultCliConfigPath() {
 function commandExists(command) {
   const value = String(command || "").trim();
   if (!value) return false;
-  if (value.includes("/")) return existsSync(value);
+  if (isAbsolute(value) || value.includes("/") || value.includes("\\")) return existsSync(value);
   return String(process.env.PATH || "")
     .split(delimiter)
     .filter(Boolean)

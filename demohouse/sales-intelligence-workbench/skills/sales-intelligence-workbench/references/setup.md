@@ -15,7 +15,7 @@
 | 私密配置 | `~/.config/sales-intelligence-workbench` |
 | 日志、PID、doctor 证据和备份 | `~/.local/state/sales-intelligence-workbench` |
 
-配置文件和状态目录权限为 `0700`，凭证文件为 `0600`。源码目录、运行目录和配置目录必须分开。
+在 macOS/Linux 下，配置文件和状态目录权限为 `0700`，凭证文件为 `0600`。Windows 下它们继承当前用户目录的 NTFS ACL，凭证和会话路径必须是非符号链接的普通文件。源码目录、运行目录和配置目录必须分开。
 
 ## 首次部署顺序
 

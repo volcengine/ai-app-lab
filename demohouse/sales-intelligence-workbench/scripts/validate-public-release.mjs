@@ -33,6 +33,9 @@ const requiredPaths = [
   "docs/deployment/self-hosting.md",
   "package-lock.json",
   "package.json",
+  "scripts/test-release-checkout.mjs",
+  "scripts/validate-release-checkout.mjs",
+  "scripts/verify-public-install.mjs",
   "skills/sales-intelligence-workbench/SKILL.md",
 ];
 const forbiddenFilePatterns = [
@@ -47,7 +50,7 @@ const publicContentRules = [
   { id: "clipboard_artifact", pattern: /codex-clipboard/i },
   {
     id: "unexpected_sales_repository",
-    pattern: /github\.com\/(?!3494036618-eng\/sales-intelligence-workbench(?:[\/\s`]|$)|volcengine\/ai-app-lab(?:[\/\s`]|$))[^/\s]+\/sales-intelligence-workbench/i,
+    pattern: /github\.com\/(?!3494036618-eng\/sales-intelligence-workbench(?:\.git)?(?:[\/\s`'"),;]|$)|volcengine\/ai-app-lab(?:[\/\s`'"),;]|$))[^/\s]+\/sales-intelligence-workbench/i,
   },
   {
     id: "environment_specific_release_note",
@@ -55,6 +58,8 @@ const publicContentRules = [
   },
 ];
 const contentScanExclusions = new Set([
+  "scripts/test-release-checkout.mjs",
+  "scripts/test-skill-installer.mjs",
   "scripts/validate-public-release.mjs",
   "scripts/validate-skill-package.mjs",
 ]);
@@ -190,10 +195,13 @@ const frontendApp = fs.readFileSync(path.join(root, "frontend", "app.js"), "utf8
 const frontendStyles = fs.readFileSync(path.join(root, "frontend", "styles.css"), "utf8");
 const authService = fs.readFileSync(path.join(root, "backend", "src", "security", "authService.js"), "utf8");
 const salesService = fs.readFileSync(path.join(root, "backend", "src", "services", "salesService.js"), "utf8");
-const canonicalSkillUrl = `https://github.com/3494036618-eng/sales-intelligence-workbench/blob/v${packageJson.version}/skills/sales-intelligence-workbench/SKILL.md`;
+const canonicalRepository = "https://github.com/3494036618-eng/sales-intelligence-workbench";
+const canonicalReleaseSkillUrl = `${canonicalRepository}/blob/v${packageJson.version}/skills/sales-intelligence-workbench/SKILL.md`;
+const officialSkillUrl = "https://github.com/volcengine/ai-app-lab/blob/main/demohouse/sales-intelligence-workbench/skills/sales-intelligence-workbench/SKILL.md";
 
 for (const [label, text] of [["README", readme], ["Skill", skill]]) {
-  if (!text.includes(canonicalSkillUrl)) issues.push(`${label} is missing the canonical release Skill URL`);
+  if (!text.includes(officialSkillUrl)) issues.push(`${label} is missing the official AI App Lab Skill URL`);
+  if (!text.includes(canonicalReleaseSkillUrl)) issues.push(`${label} is missing the fixed release Skill URL`);
 }
 for (const officialName of [
   "专业数据集（DataPro）",

@@ -60,7 +60,10 @@ test("backend requests refresh an expired bearer session and rotate the private 
     const rotated = JSON.parse(fs.readFileSync(sessionFile, "utf8"));
     assert.equal(rotated.access_token, "fresh-access");
     assert.equal(rotated.refresh_token, "rotated-refresh");
-    assert.equal(fs.statSync(sessionFile).mode & 0o077, 0);
+    const sessionStatus = fs.lstatSync(sessionFile);
+    assert.equal(sessionStatus.isFile(), true);
+    assert.equal(sessionStatus.isSymbolicLink(), false);
+    if (process.platform !== "win32") assert.equal(sessionStatus.mode & 0o077, 0);
   } finally {
     globalThis.fetch = originalFetch;
     fs.rmSync(directory, { recursive: true, force: true });

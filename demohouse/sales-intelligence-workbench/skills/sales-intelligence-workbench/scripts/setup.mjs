@@ -4,6 +4,7 @@ import {
   commandExists,
   configurationSummary,
   ensureDirectories,
+  installedAppIntegrity,
   liveDoctorEvidence,
   paths,
   processExists,
@@ -195,7 +196,8 @@ async function buildReport() {
   const doctor = liveDoctorEvidence();
   const importReceipt = readJson(paths.historyImportReceiptFile);
   const acceptance = readJson(paths.businessAcceptanceFile);
-  const installed = fs.existsSync(paths.installedApp);
+  const appIntegrity = installedAppIntegrity();
+  const installed = appIntegrity.ok;
   const serverRunning = processExists(readPid());
   const workerRunning = processExists(readPid(paths.workerPidFile));
   const address = serverAddress();
@@ -209,7 +211,9 @@ async function buildReport() {
     stage("brief", "确认销售场景", brief?.workspace_name && brief?.sales_goal ? "complete" : "pending",
       brief ? `${brief.workspace_name}；${brief.sales_goal}` : "尚未记录业务范围"),
     stage("app", "安装完整应用", installed ? "complete" : "pending",
-      installed ? paths.installedApp : "尚未安装前后端运行时"),
+      installed ? paths.installedApp : appIntegrity.reason === "not_installed"
+        ? "尚未安装前后端运行时"
+        : `已安装目录未通过发行完整性校验：${appIntegrity.reason}`),
     stage("agent_plan", "配置 Agent Plan 模型与能力卡片", planKeyReady && summary.model && summary.datapro && summary.web_search ? "complete" : "pending",
       planKeyReady ? "已配置统一 Agent Plan Key，权限待 live doctor 验证" : "尚未配置 Agent Plan Key"),
     stage("supabase", "连接 Agent Plan Supabase", summary.supabase_data_api && configuration.SUPABASE_WORKSPACE_ID ? "complete" : "pending",

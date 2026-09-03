@@ -2,7 +2,7 @@
 
 销售智能工作台把企业专业数据、公开信息、飞书资料和长期记忆组织成可追溯的企业档案与资料问答。项目包含完整前后端、AI Native 应用开发底座（Supabase）数据层、Agent 记忆（OpenViking）链路，以及可在 Codex 和 Claude Code 中安装并运维应用的同一份 Skill。
 
-> 当前为 `0.10.0` 自托管开源版，支持单工作区、单管理员，以及本机或受控内网部署。已支持 Supabase Auth、工作区数据隔离、安全请求边界、工作区级付费任务保护、持久化异步任务队列和独立 Worker。当前版本不提供公网托管 SaaS、多人协作或 SLA；不要把 Node.js 服务端口直接暴露到公网。
+> 当前为 `0.10.1` 自托管开源版，支持单工作区、单管理员，以及本机或受控内网部署。已支持 Supabase Auth、工作区数据隔离、安全请求边界、工作区级付费任务保护、持久化异步任务队列和独立 Worker。当前版本不提供公网托管 SaaS、多人协作或 SLA；不要把 Node.js 服务端口直接暴露到公网。
 
 ## 核心能力
 
@@ -52,22 +52,58 @@ AI Native 应用开发底座（Supabase）是结构化业务事实库；Agent �
 
 ### 面向最终用户：一句话初始化
 
-当前独立发行仓库的版本化初始化入口为：
+火山方舟 AI App Lab 中的官方初始化入口为：
 
-> 帮我初始化销售助手：`https://github.com/3494036618-eng/sales-intelligence-workbench/blob/v0.10.0/skills/sales-intelligence-workbench/SKILL.md`
+> 帮我初始化销售助手：`https://github.com/volcengine/ai-app-lab/blob/main/demohouse/sales-intelligence-workbench/skills/sales-intelligence-workbench/SKILL.md`
 
-该 URL 直接指向唯一的正式 Skill。即使用户本机没有仓库、依赖和配置文件，当前 Agent 也会
-先解释下载与本机写入影响，再从 URL 指定的版本取得完整仓库，执行离线校验，并把同一份
-Skill 安装到当前客户端后立即衔接下面的 Cookbook 搭建流程。读取 URL、下载仓库和离线校验
-不会创建云资源或产生 AFP。
+上面的 `main` 地址用于日常获取官方最新版本。重大宣传必须在 AI App Lab PR 合并后，把
+`main` 替换为该次合并的完整 40 位 commit SHA，确保活动期间入口内容不会漂移。
 
-初始化入口必须固定到已发布的 tag 或经过审核的 commit SHA。也可以用仓库脚本生成口令：
+该 URL 只负责提供官方入口。Skill 会固定从独立发行仓库的 `v0.10.1` tag 获取完整安装包，
+不会把 AI App Lab 的 `main` 分支当作应用发行版本，也不会下载整个 monorepo 后猜测项目目录。
+即使用户本机没有仓库、依赖和配置文件，当前 Agent 也会先解释下载与本机写入影响，再取得
+经过验证的固定版本，执行离线校验，并把同一份 Skill 安装到当前客户端后立即衔接下面的
+Cookbook 搭建流程。读取入口、下载仓库和离线校验不会创建云资源或产生 AFP。
+
+固定发行源为：
+
+```text
+固定发行仓库：https://github.com/3494036618-eng/sales-intelligence-workbench/tree/v0.10.1
+固定发行 Skill：https://github.com/3494036618-eng/sales-intelligence-workbench/blob/v0.10.1/skills/sales-intelligence-workbench/SKILL.md
+```
+
+维护者可以用仓库脚本生成官方口令：
 
 ```bash
-npm run skill:command -- \
-  --repository https://github.com/3494036618-eng/sales-intelligence-workbench \
-  --ref v0.10.0
+npm run skill:command -- --official
+npm run skill:command -- --official-ref <AI App Lab完整40位commit SHA>
 ```
+
+`--official` 只生成日常最新入口；第二条命令生成重大宣传使用的固定入口。生成器默认只允许
+当前独立发行仓库、当前版本和 AI App Lab 正式路径，`HEAD`、分支名、错误仓库、错误版本和
+错误 Skill 路径都会被拒绝。
+
+维护者发布 `v0.10.1` tag 和正式 GitHub Release 后，必须开启 Release 的 immutable 属性；
+发布前分支的 Node 20 CI 必须在 Ubuntu、macOS 和 Windows 三个平台全部通过。提交
+AI App Lab PR 前，再从 GitHub 全新克隆并验收真实发行包：
+
+```bash
+npm run release:verify:public
+```
+
+AI App Lab PR 合并后，再验证官方固定 commit 已进入 `main`，并核对完整项目镜像与
+`UPSTREAM.json`：
+
+```bash
+npm run release:verify:public -- --official-ref <AI App Lab完整40位commit SHA>
+```
+
+两次命令都通过之前不得对外宣传。它们会访问公开 GitHub、使用隔离临时目录运行完整
+`npm run verify`，由维护者发布门校验 immutable Release，再校验远程 tag、commit、官方完整目录（含 Git mode）
+和安装包身份后自动清理；不会调用
+Agent Plan、创建云资源或产生 AFP。
+immutable 状态只在发布门集中验证，最终用户安装时不额外调用 GitHub Release API，避免大型
+活动共用出口触发匿名 API 限流；用户下载的 tag 已由通过门禁的 immutable Release 锁定。
 
 这里的“从 0 搭建”不等于绕过第三方服务授权：用户仍需拥有 Agent Plan，并在控制台开启
 专业数据集（DataPro）、豆包搜索（联网搜索）、Agent 记忆（OpenViking）和
@@ -248,6 +284,8 @@ node skills/sales-intelligence-workbench/scripts/import-feishu.mjs \
   --company-id <company-id> \
   --doc "https://example.feishu.cn/wiki/..."
 ```
+
+> 文档中的 `0600`/`0700` 是 macOS/Linux 权限表达。Windows 下文件保存在当前用户的配置或状态目录，继承该用户目录的 NTFS ACL；运行时同时拒绝符号链接和非普通文件。
 
 会话导入支持 `--p2p-user <联系人姓名>` 或 `--chat-id <oc_会话ID>`；云文档只接受完整链接。启用 `FEISHU_CLI_IMPORT_ENABLED=true` 后，登录用户也可以在“历史资料”模块点击“导入飞书资料”，选择会话或云文档并查看本机任务进度。两种入口调用同一条受控链路：正文只写入 Agent 记忆（OpenViking），AI Native 应用开发底座（Supabase）只保存来源、内容指纹、增量游标和 OpenViking 引用。详见 [飞书导入说明](skills/sales-intelligence-workbench/references/feishu-import.md)。
 

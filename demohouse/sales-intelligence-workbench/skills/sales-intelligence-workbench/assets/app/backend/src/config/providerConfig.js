@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { delimiter, join } from "node:path";
+import { delimiter, isAbsolute, join } from "node:path";
 import { createEnvReader } from "./runtimeEnv.js";
 import { createRuntimePolicy, publicRuntimePolicy } from "./runtimePolicy.js";
 
@@ -17,7 +17,7 @@ function unique(values) {
 function commandExists(command) {
   const value = String(command || "").trim();
   if (!value) return false;
-  if (value.includes("/")) return existsSync(value);
+  if (isAbsolute(value) || value.includes("/") || value.includes("\\")) return existsSync(value);
   return String(process.env.PATH || "")
     .split(delimiter)
     .filter(Boolean)

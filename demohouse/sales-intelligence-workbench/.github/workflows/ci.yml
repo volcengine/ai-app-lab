@@ -9,7 +9,12 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: Node 20 / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import {
   configurationSummary,
+  installedAppIntegrity,
   liveDoctorEvidence,
   paths,
   processExists,
@@ -24,8 +25,10 @@ if (running) {
 }
 
 const evidence = liveDoctorEvidence();
+const integrity = installedAppIntegrity();
 process.stdout.write(`${JSON.stringify({
   installed: fs.existsSync(paths.installedApp),
+  integrity,
   running,
   pid: running ? pid : null,
   worker_running: workerRunning,
@@ -47,3 +50,4 @@ process.stdout.write(`${JSON.stringify({
     worker_log: paths.workerLogFile,
   },
 }, null, 2)}\n`);
+if (fs.existsSync(paths.installedApp) && !integrity.ok) process.exitCode = 1;

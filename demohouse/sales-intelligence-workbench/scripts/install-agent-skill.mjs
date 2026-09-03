@@ -7,6 +7,15 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const skillName = "sales-intelligence-workbench";
 const source = path.join(root, "skills", skillName);
+const requiredInstalledFiles = [
+  "SKILL.md",
+  "scripts/onboard.mjs",
+  "assets/app/backend/package.json",
+  "assets/app/backend/src/server.js",
+  "assets/app/frontend/index.html",
+  "assets/app/frontend/app.js",
+  "assets/app/supabase/migrations",
+];
 
 const targetDefinitions = {
   codex: {
@@ -26,17 +35,14 @@ const targetDefinitions = {
 };
 
 function copyFilter(entry) {
-  const relative = path.relative(source, entry);
-  if (!relative) return true;
-  const segments = relative.split(path.sep);
   const name = path.basename(entry);
-  return !segments.some((segment) => [
+  return ![
     "node_modules",
     "dist",
     ".git",
     ".temp",
     "coverage",
-  ].includes(segment))
+  ].includes(name)
     && name !== ".DS_Store"
     && !(name.startsWith(".env.") && name !== ".env.example")
     && name !== ".env"
@@ -87,6 +93,12 @@ function installOne(definition, force) {
       force: true,
       filter: copyFilter,
     });
+    const missing = requiredInstalledFiles.filter((relativePath) => (
+      !fs.existsSync(path.join(staging, relativePath))
+    ));
+    if (missing.length) {
+      throw new Error(`Skill 复制不完整：缺少 ${missing.join("、")}`);
+    }
     fs.rmSync(backup, { recursive: true, force: true });
     if (fs.existsSync(definition.target)) {
       if (!force) {
