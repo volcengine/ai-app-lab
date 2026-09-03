@@ -1,9 +1,13 @@
 {
   "name": "investment-assistant-oss",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A source-backed personal investment research assistant powered by Volcengine Agent Plan, DataPro and Doubao Search.",
   "scripts": {
+    "release:validate": "node scripts/validate-public-release.mjs",
+    "release:validate:checkout": "node scripts/validate-release-checkout.mjs",
+    "release:test:checkout": "node scripts/test-release-checkout.mjs",
+    "release:verify:public": "node scripts/verify-public-install.mjs",
     "app:install": "npm --prefix app install",
     "app:dev": "npm --prefix app run dev",
     "app:build": "npm --prefix app run build",
@@ -14,8 +18,9 @@
     "skill:install:codex": "node scripts/install-codex-skill.mjs",
     "skill:install:claude": "node scripts/install-claude-code-skill.mjs",
     "skill:install:all": "node scripts/install-agent-skill.mjs --target all",
+    "skill:command": "node scripts/print-public-skill-command.mjs",
     "skill:validate": "node scripts/validate-skill.mjs",
-    "verify": "npm run app:check && npm run app:test && npm run app:build && npm run skill:test && npm run skill:validate"
+    "verify": "npm run release:validate && npm run release:test:checkout && npm run app:check && npm run app:test && npm run app:build && npm run skill:test && npm run skill:validate"
   },
   "engines": {
     "node": ">=22.13"

@@ -18,13 +18,39 @@
 帮我初始化个人投资助手：https://github.com/volcengine/ai-app-lab/blob/main/demohouse/personal-investment-assistant/skills/investment-assistant/SKILL.md
 ```
 
-该地址直接指向中文 Skill 入口。Codex 或 Claude Code 会获取完整仓库，安装与当前客户端匹配的 Skill，并进入同一套初始化流程。
+该地址是 AI App Lab 的官方入口。日常可以使用 `main` 获取官方最新版本；重大宣传应在
+AI App Lab 更新 PR 合并后，把 `main` 替换为该次合并的完整 40 位 commit SHA，避免入口漂移。
 
-需要固定版本时，也可以使用独立仓库中的 `v0.3.0` 入口：
+官方 URL 只负责让 Agent 找到 Skill。Skill 会固定下载并验证以下独立发行版本，不会下载
+整个 AI App Lab，也不会使用独立仓库的 `main`：
 
 ```text
-帮我初始化个人投资助手：https://github.com/3494036618-eng/personal-investment-assistant/blob/v0.3.0/skills/investment-assistant/SKILL.md
+固定发行仓库：https://github.com/3494036618-eng/personal-investment-assistant/tree/v0.3.1
+固定发行 Skill：https://github.com/3494036618-eng/personal-investment-assistant/blob/v0.3.1/skills/investment-assistant/SKILL.md
 ```
+
+维护者可以生成日常官方口令或宣传固定口令：
+
+```bash
+npm run skill:command -- --official
+npm run skill:command -- --official-ref <AI App Lab完整40位commit SHA>
+```
+
+发布 `v0.3.1` 前必须完成 Ubuntu、macOS、Windows CI；正式 GitHub Release 必须启用
+immutable。发布后先从公开 GitHub 全新下载并验收：
+
+```bash
+npm run release:verify:public
+```
+
+AI App Lab 更新合并后，再校验固定 commit、完整项目镜像和 `UPSTREAM.json`：
+
+```bash
+npm run release:verify:public -- --official-ref <AI App Lab完整40位commit SHA>
+```
+
+这两次验证不会调用 Agent Plan、DataPro 或豆包搜索，也不会产生 AFP。只有在用户确认投资
+配置和真实调用后，初始化流程才会探测 Provider 并生成报告。
 
 已经安装中文 Skill 后：
 

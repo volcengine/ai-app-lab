@@ -55,6 +55,13 @@ function fixture() {
 
 const randomId = '00000000-0000-4000-8000-000000000001';
 
+function assertPrivateFile(filePath) {
+  assert.equal(fs.statSync(filePath).isFile(), true);
+  if (process.platform !== 'win32') {
+    assert.equal(fs.statSync(filePath).mode & 0o777, 0o600);
+  }
+}
+
 test('serves the built frontend and requires a fresh live provider check for readiness', async (t) => {
   const context = fixture();
   t.after(() => context.close());
@@ -77,9 +84,9 @@ test('serves the built frontend and requires a fresh live provider check for rea
   assert.equal(ready.body.live_check.fresh, true);
   assert.equal(ready.body.live_check.providers.web_search.ok, true);
   assert.equal(ready.body.live_check.providers.agent_plan_model.ok, true);
-  assert.equal(fs.statSync(context.config.providerHealthPath).mode & 0o777, 0o600);
+  assertPrivateFile(context.config.providerHealthPath);
   for (const suffix of ['', '-wal', '-shm']) {
-    assert.equal(fs.statSync(`${context.config.databasePath}${suffix}`).mode & 0o777, 0o600);
+    assertPrivateFile(`${context.config.databasePath}${suffix}`);
   }
 });
 

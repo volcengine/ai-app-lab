@@ -9,7 +9,14 @@ import { createDatabase } from '../../src/server/db/database.js';
 test('migrates legacy monitor tables without losing settings or run history', (t) => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'investment-assistant-db-'));
   const databasePath = path.join(directory, 'legacy.sqlite');
-  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  let repository;
+  t.after(() => {
+    try {
+      repository?.close();
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  });
 
   const legacy = new DatabaseSync(databasePath);
   legacy.exec(`
@@ -63,8 +70,7 @@ test('migrates legacy monitor tables without losing settings or run history', (t
   `).run();
   legacy.close();
 
-  const repository = createDatabase(databasePath);
-  t.after(() => repository.close());
+  repository = createDatabase(databasePath);
 
   const settings = repository.getMonitorSettings('stock-1');
   assert.equal(settings.enabled, true);
@@ -108,10 +114,16 @@ test('migrates legacy monitor tables without losing settings or run history', (t
 test('lists every saved report when no explicit history limit is requested', (t) => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'investment-assistant-history-'));
   const databasePath = path.join(directory, 'history.sqlite');
-  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  let repository;
+  t.after(() => {
+    try {
+      repository?.close();
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  });
 
-  const repository = createDatabase(databasePath);
-  t.after(() => repository.close());
+  repository = createDatabase(databasePath);
   const stock = repository.createStock({
     name: '示例科技',
     code: '000001.SZ',
@@ -150,7 +162,14 @@ test('lists every saved report when no explicit history limit is requested', (t)
 test('never persists raw web-search content in report_json', (t) => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'investment-assistant-storage-'));
   const databasePath = path.join(directory, 'storage.sqlite');
-  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  let reopened;
+  t.after(() => {
+    try {
+      reopened?.close();
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  });
 
   const repository = createDatabase(databasePath);
   const stock = repository.createStock({
@@ -217,8 +236,7 @@ test('never persists raw web-search content in report_json', (t) => {
   raw.close();
   assert.doesNotMatch(storedJson, /RAW_DATABASE_PROVIDER_/);
 
-  const reopened = createDatabase(databasePath);
-  t.after(() => reopened.close());
+  reopened = createDatabase(databasePath);
   const source = reopened.getLatestReport(stock.id, 'brief').report.evidence[0];
   assert.equal(source.title, '示例科技发布最新产品');
   assert.equal(source.url, 'https://example.com/product');
@@ -228,7 +246,14 @@ test('never persists raw web-search content in report_json', (t) => {
 test('migrates raw web-search content already stored by an earlier version', (t) => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'investment-assistant-report-migration-'));
   const databasePath = path.join(directory, 'migration.sqlite');
-  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  let migrated;
+  t.after(() => {
+    try {
+      migrated?.close();
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  });
 
   const repository = createDatabase(databasePath);
   const stock = repository.createStock({
@@ -289,8 +314,7 @@ test('migrates raw web-search content already stored by an earlier version', (t)
   );
   legacy.close();
 
-  const migrated = createDatabase(databasePath);
-  t.after(() => migrated.close());
+  migrated = createDatabase(databasePath);
   const report = migrated.getLatestReport(stock.id, 'brief').report;
   const serialized = JSON.stringify(report);
 

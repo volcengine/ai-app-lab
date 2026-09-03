@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   assertPreferenceCoverage,
   assertReportSourcePolicy,
@@ -17,6 +17,24 @@ const configDir = path.join(sandbox, 'config');
 const installRoot = path.join(sandbox, 'runtime');
 const codexHome = path.join(sandbox, 'codex');
 const claudeConfigDir = path.join(sandbox, 'claude');
+
+function createRecognizedLegacyApp(appRoot) {
+  fs.writeFileSync(path.join(path.dirname(appRoot), 'package.json'), JSON.stringify({
+    name: 'investment-assistant-oss',
+    private: true,
+    version: '0.3.0',
+  }));
+  fs.mkdirSync(path.join(appRoot, 'src', 'server'), { recursive: true });
+  fs.mkdirSync(path.join(appRoot, 'src', 'web'), { recursive: true });
+  fs.mkdirSync(path.join(appRoot, 'scripts'), { recursive: true });
+  fs.writeFileSync(path.join(appRoot, 'package.json'), JSON.stringify({
+    name: '@investment-assistant/app',
+    version: '0.3.0',
+  }));
+  fs.writeFileSync(path.join(appRoot, 'package-lock.json'), '{}\n');
+  fs.writeFileSync(path.join(appRoot, 'src', 'server', 'index.js'), '// stale adjacent app\n');
+  fs.writeFileSync(path.join(appRoot, 'scripts', 'check.mjs'), '// stale adjacent app\n');
+}
 fs.mkdirSync(configDir, { recursive: true });
 fs.writeFileSync(path.join(configDir, 'credentials.env'), [
   'ARK_API_KEY="single-agent-plan-key"',
@@ -85,6 +103,24 @@ try {
     assert.ok(fs.existsSync(path.join(client.installedSkill, 'SKILL.md')));
     assertApplicationSource(path.join(client.installedSkill, 'assets', 'app'));
 
+    const adjacentApp = path.resolve(client.installedSkill, '..', '..', 'app');
+    createRecognizedLegacyApp(adjacentApp);
+    const installedLib = pathToFileURL(path.join(client.installedSkill, 'scripts', 'lib.mjs')).href;
+    const sourceSelection = spawnSync(process.execPath, [
+      '--input-type=module',
+      '--eval',
+      `const { paths } = await import(${JSON.stringify(installedLib)}); process.stdout.write(paths.sourceApp);`,
+    ], {
+      env: { ...process.env, ...client.environment },
+      encoding: 'utf8',
+    });
+    assert.equal(sourceSelection.status, 0, sourceSelection.stderr || sourceSelection.stdout);
+    assert.equal(
+      fs.realpathSync(sourceSelection.stdout),
+      fs.realpathSync(path.join(client.installedSkill, 'assets', 'app')),
+      `${client.label} 安装后必须优先使用 Skill 内嵌应用，不能误用客户端目录旁的旧 app。`,
+    );
+
     const duplicateResult = spawnSync(process.execPath, [
       path.join(root, 'scripts', client.script),
     ], {
@@ -103,6 +139,71 @@ try {
     });
     assert.equal(updateResult.status, 0, updateResult.stderr || updateResult.stdout);
     assertApplicationSource(path.join(client.installedSkill, 'assets', 'app'));
+  }
+
+  const allSandbox = path.join(sandbox, 'all-clients');
+  const allInstall = spawnSync(process.execPath, [
+    path.join(root, 'scripts', 'install-agent-skill.mjs'),
+    '--target',
+    'all',
+  ], {
+    env: {
+      ...process.env,
+      CODEX_HOME: path.join(allSandbox, 'codex'),
+      CLAUDE_CONFIG_DIR: path.join(allSandbox, 'claude'),
+    },
+    encoding: 'utf8',
+  });
+  assert.equal(allInstall.status, 0, allInstall.stderr || allInstall.stdout);
+  assert.ok(fs.existsSync(path.join(
+    allSandbox,
+    'codex',
+    'skills',
+    'investment-assistant',
+    'SKILL.md',
+  )));
+  assert.ok(fs.existsSync(path.join(
+    allSandbox,
+    'claude',
+    'skills',
+    'investment-assistant',
+    'SKILL.md',
+  )));
+
+  const commandPrinter = path.join(root, 'scripts', 'print-public-skill-command.mjs');
+  const commandCases = [
+    {
+      args: ['--official'],
+      expected: '帮我初始化个人投资助手：https://github.com/volcengine/ai-app-lab/blob/main/demohouse/personal-investment-assistant/skills/investment-assistant/SKILL.md',
+    },
+    {
+      args: ['--repository', 'https://github.com/3494036618-eng/personal-investment-assistant', '--ref', 'v0.3.1'],
+      expected: '帮我初始化个人投资助手：https://github.com/3494036618-eng/personal-investment-assistant/blob/v0.3.1/skills/investment-assistant/SKILL.md',
+    },
+    {
+      args: ['--official-ref', '0123456789abcdef0123456789abcdef01234567'],
+      expected: '帮我初始化个人投资助手：https://github.com/volcengine/ai-app-lab/blob/0123456789abcdef0123456789abcdef01234567/demohouse/personal-investment-assistant/skills/investment-assistant/SKILL.md',
+    },
+  ];
+  for (const testCase of commandCases) {
+    const result = spawnSync(process.execPath, [commandPrinter, ...testCase.args], {
+      env: process.env,
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim(), testCase.expected);
+  }
+  for (const args of [
+    ['--repository', 'https://github.com/3494036618-eng/personal-investment-assistant', '--ref', 'main'],
+    ['--repository', 'https://github.com/wrong-owner/personal-investment-assistant', '--ref', 'v0.3.1'],
+    ['--official-ref', '0123456789abcdef'],
+  ]) {
+    const rejected = spawnSync(process.execPath, [commandPrinter, ...args], {
+      env: process.env,
+      encoding: 'utf8',
+    });
+    assert.equal(rejected.status, 1);
+    assert.doesNotMatch(rejected.stderr, /\n\s+at |file:\/\/|\/Users\//);
   }
 
   const onboardText = fs.readFileSync(path.join(skillRoot, 'scripts', 'onboard.mjs'), 'utf8');

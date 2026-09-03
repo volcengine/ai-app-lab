@@ -9,25 +9,93 @@ description: 中文个人投资助手初始化 Skill。引导用户确认真实�
 
 ## 远程 Skill 入口
 
-用户可能直接通过下面的公开 Skill URL 触发本流程，而不是预先克隆仓库或安装 Skill：
-
-```text
-https://github.com/volcengine/ai-app-lab/blob/main/demohouse/personal-investment-assistant/skills/investment-assistant/SKILL.md
-```
-
-如果当前环境中不存在 `{baseDir}/scripts/status.mjs`，说明本 Skill 是从远程 URL 打开的。此时 Codex 或 Claude Code 必须：
-
-1. 获取完整仓库 `https://github.com/volcengine/ai-app-lab`，不能只下载 `SKILL.md`。
-2. 将项目根目录设为仓库中的 `demohouse/personal-investment-assistant`，将 `{baseDir}` 设为该目录下的 `skills/investment-assistant`。
-3. 确认 `{baseDir}/scripts/`、`{baseDir}/references/` 和项目根目录 `app/` 均存在后，再进入阶段 0。
-4. 已有同名目录时先核对 Git remote 和工作区状态，不覆盖用户改动，不创建第二套应用。
-5. 当前客户端是 Codex 时，在项目根目录执行 `npm run skill:install:codex`；当前客户端是 Claude Code 时执行 `npm run skill:install:claude`。安装只写入对应客户端的个人 Skill 目录。
-6. 安装完成后直接使用当前仓库中的 Skill 继续初始化，不把“Skill 已复制”说成“网站已经可用”。
-
-用户可直接把这句话交给支持联网和终端操作的 Codex 或 Claude Code：
+用户可能直接通过公开 Skill URL 触发本流程，而不是预先克隆仓库或安装 Skill。火山方舟
+AI App Lab 中的官方入口为：
 
 ```text
 帮我初始化个人投资助手：https://github.com/volcengine/ai-app-lab/blob/main/demohouse/personal-investment-assistant/skills/investment-assistant/SKILL.md
+```
+
+该 URL 只负责让 Agent 找到本 Skill，不是应用包下载源。应用包必须固定从以下发行版本
+获取，不得根据入口 URL 改用其他仓库、分支或同名项目：
+
+```text
+固定发行仓库：https://github.com/3494036618-eng/personal-investment-assistant
+固定发行版本：v0.3.1
+固定发行 Skill：https://github.com/3494036618-eng/personal-investment-assistant/blob/v0.3.1/skills/investment-assistant/SKILL.md
+```
+
+如果当前环境中不存在 `{baseDir}/scripts/status.mjs`，说明本 Skill 是从远程 URL 打开的。
+此时 Codex 或 Claude Code 必须：
+
+1. 无论用户从官方入口还是发行 Skill 打开本文件，都只取得上面指定的独立发行仓库
+   `v0.3.1` 完整版本。先说明会把公开源码写入本机，然后在 macOS/Linux 的 POSIX shell
+   中使用系统临时目录执行：
+
+   ```bash
+   release_root="$(mktemp -d "${TMPDIR:-/tmp}/personal-investment-assistant-v0.3.1-XXXXXX")"
+   git clone --depth 1 --branch v0.3.1 --single-branch \
+     https://github.com/3494036618-eng/personal-investment-assistant.git "$release_root"
+   ```
+
+   Windows PowerShell 使用以下等价命令：
+
+   ```powershell
+   $releaseRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("personal-investment-assistant-v0.3.1-" + [guid]::NewGuid().ToString("N"))
+   New-Item -ItemType Directory -Path $releaseRoot -ErrorAction Stop | Out-Null
+   git clone --depth 1 --branch v0.3.1 --single-branch `
+     https://github.com/3494036618-eng/personal-investment-assistant.git $releaseRoot
+   if ($LASTEXITCODE -ne 0) {
+     Remove-Item -LiteralPath $releaseRoot -Recurse -Force
+     throw "v0.3.1 clone 失败，已停止且不会换源或降级。"
+   }
+   ```
+
+   不能下载 AI App Lab 的整个 monorepo，不能使用 `main`，不能只下载 `SKILL.md`，也不能
+   通过搜索结果猜测同名仓库。clone 失败时只删除本次新建的临时目录并停止，不能换源或降级。
+2. 在下载仓库中执行来源校验；脚本会核对 origin、精确 tag、本地 commit、远程 tag 当前
+   指向以及干净工作区，任一不符都会失败：
+
+   ```bash
+   node "$release_root/scripts/validate-release-checkout.mjs"
+   ```
+
+   Windows PowerShell 对应执行：
+
+   ```powershell
+   node (Join-Path $releaseRoot "scripts/validate-release-checkout.mjs")
+   if ($LASTEXITCODE -ne 0) { throw "发行来源校验失败，停止安装。" }
+   ```
+
+   校验失败时停止，不继续安装；不得复用、修改、清理或覆盖任何已有源码目录。
+3. 将项目根目录设为 `release_root`，将 `{baseDir}` 设为其中的
+   `skills/investment-assistant`，确认 `{baseDir}/scripts/`、`{baseDir}/references/`、
+   仓库根目录 `app/` 和 `package.json` 均存在。
+4. 在项目根目录先按锁文件安装测试依赖，再运行完整验证：
+
+   ```bash
+   npm --prefix "$release_root/app" ci
+   (cd "$release_root" && npm run verify)
+   ```
+
+   Windows PowerShell 在 `$releaseRoot` 中依次执行 `npm --prefix app ci` 和
+   `npm run verify`。公开包扫描、来源校验器测试、249 项应用测试、生产构建、Skill
+   隔离安装和凭证扫描全部通过后，才按当前客户端安装：
+   - Codex：`npm run skill:install:codex`
+   - Claude Code：`npm run skill:install:claude`
+   - 用户明确要求两端都安装：`npm run skill:install:all`
+   已安装旧版时先说明影响，再为对应命令追加 `-- --force`。
+5. 立即使用刚安装的 Skill 继续阶段 0，不要求用户重复提供源码目录。当前流程切换到安装后的
+   Skill，或流程结束、取消、失败且不再需要源码 checkout 时，才删除本次创建的临时目录；
+   删除前必须再次确认目录名称以 `personal-investment-assistant-v0.3.1-` 开头，不能删除用户
+   已有目录。
+6. 下载、校验和安装阶段不创建云资源、不调用 Agent Plan、DataPro 或豆包搜索，也不产生
+   AFP。后续真实探测和报告生成仍须按阶段 2 的用户确认执行。
+
+独立发行入口也可以直接触发同一流程：
+
+```text
+帮我初始化个人投资助手：https://github.com/3494036618-eng/personal-investment-assistant/blob/v0.3.1/skills/investment-assistant/SKILL.md
 ```
 
 已经安装后，Codex 可通过 `$investment-assistant` 触发，Claude Code 可通过

@@ -6,9 +6,19 @@ import { fileURLToPath } from 'node:url';
 
 const scriptsDir = path.dirname(fileURLToPath(import.meta.url));
 const skillRoot = path.resolve(scriptsDir, '..');
-const repositoryApp = path.resolve(skillRoot, '..', '..', 'app');
+const repositoryRoot = path.resolve(skillRoot, '..', '..');
+const repositoryApp = path.join(repositoryRoot, 'app');
 const bundledApp = path.join(skillRoot, 'assets', 'app');
 const cliErrorHandler = Symbol.for('investment-assistant.cli-error-handler');
+
+function isSourceRepository(root) {
+  try {
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+    return manifest.name === 'investment-assistant-oss' && manifest.private === true;
+  } catch {
+    return false;
+  }
+}
 
 if (!globalThis[cliErrorHandler]) {
   globalThis[cliErrorHandler] = true;
@@ -24,9 +34,9 @@ if (!globalThis[cliErrorHandler]) {
 
 export const paths = {
   skillRoot,
-  sourceApp: fs.existsSync(path.join(repositoryApp, 'package.json'))
-    ? repositoryApp
-    : bundledApp,
+  sourceApp: fs.existsSync(path.join(bundledApp, 'package.json'))
+    ? bundledApp
+    : (isSourceRepository(repositoryRoot) ? repositoryApp : bundledApp),
   installRoot: path.resolve(process.env.INVESTMENT_ASSISTANT_HOME
     || path.join(os.homedir(), '.local', 'share', 'investment-assistant')),
   configDir: path.resolve(process.env.INVESTMENT_ASSISTANT_CONFIG_HOME

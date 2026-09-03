@@ -11,7 +11,12 @@ const rootScripts = [
   'scripts/install-agent-skill.mjs',
   'scripts/install-codex-skill.mjs',
   'scripts/install-claude-code-skill.mjs',
+  'scripts/print-public-skill-command.mjs',
   'scripts/test-initializer.mjs',
+  'scripts/test-release-checkout.mjs',
+  'scripts/validate-public-release.mjs',
+  'scripts/validate-release-checkout.mjs',
+  'scripts/verify-public-install.mjs',
 ];
 const requiredFiles = [
   'SKILL.md',
@@ -110,6 +115,13 @@ for (const requiredText of [
   'npm run skill:install:codex',
   'npm run skill:install:claude',
   '/investment-assistant',
+  '固定发行仓库：https://github.com/3494036618-eng/personal-investment-assistant',
+  '固定发行版本：v0.3.1',
+  '固定发行 Skill：https://github.com/3494036618-eng/personal-investment-assistant/blob/v0.3.1/skills/investment-assistant/SKILL.md',
+  'https://github.com/volcengine/ai-app-lab/blob/main/demohouse/personal-investment-assistant/skills/investment-assistant/SKILL.md',
+  '不能下载 AI App Lab 的整个 monorepo',
+  'validate-release-checkout.mjs',
+  'npm --prefix "$release_root/app" ci',
 ]) {
   if (!skillText.includes(requiredText)) throw new Error(`SKILL.md 缺少初始化关键规则：${requiredText}`);
 }
@@ -156,6 +168,11 @@ for (const marker of [
   'npm run skill:install:codex',
   'npm run skill:install:claude',
   '/investment-assistant',
+  'npm run skill:command -- --official',
+  'npm run skill:command -- --official-ref',
+  'npm run release:verify:public',
+  'https://github.com/3494036618-eng/personal-investment-assistant/tree/v0.3.1',
+  'https://github.com/volcengine/ai-app-lab/blob/main/demohouse/personal-investment-assistant/skills/investment-assistant/SKILL.md',
 ]) {
   if (!readmeText.includes(marker)) throw new Error(`README 缺少主入口说明：${marker}`);
 }
@@ -175,11 +192,25 @@ for (const marker of [
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 for (const scriptName of [
+  'release:validate',
+  'release:validate:checkout',
+  'release:test:checkout',
+  'release:verify:public',
   'skill:install:codex',
   'skill:install:claude',
   'skill:install:all',
+  'skill:command',
 ]) {
   if (!packageJson.scripts?.[scriptName]) throw new Error(`package.json 缺少命令：${scriptName}`);
+}
+
+const appPackageJson = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
+const appPackageLock = JSON.parse(fs.readFileSync(path.join(appRoot, 'package-lock.json'), 'utf8'));
+if (packageJson.version !== '0.3.1') throw new Error('根 package.json 必须是 v0.3.1。');
+if (appPackageJson.version !== packageJson.version) throw new Error('app/package.json 版本不一致。');
+if (appPackageLock.version !== packageJson.version
+  || appPackageLock.packages?.['']?.version !== packageJson.version) {
+  throw new Error('app/package-lock.json 版本不一致。');
 }
 
 const secretPattern = /ark-[A-Za-z0-9]{8,}(?:-[A-Za-z0-9]{4,}){2,}/g;
