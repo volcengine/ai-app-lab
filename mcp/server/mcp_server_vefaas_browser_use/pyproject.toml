@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "mcp>=1.6.0",
-    "requests==2.32.3"
+    "requests==2.33.0"
 ]
 
 [project.scripts]
