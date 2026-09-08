@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-server-speech"
+version = "0.1.0"
+description = "An MCP server providing speech-related tools like ASR and TTS."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "lixiangrong", email = "xiagnrong.li@thundercomm.com" }]
+dependencies = [
+    "aiofiles>=24.1.0",
+    "mcp[cli]>=1.6.0",
+    "pydub>=0.25.1",
+    "python-dotenv>=1.1.0",
+    "requests>=2.32.3",
+    "websockets<14",
+]
+
+[project.scripts]
+mcp-server-speech = "mcp_server_speech.main:main"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.ruff]
+# Add ruff linting/formatting configurations here
+line-length = 88
+lint.select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "N",
+    "UP",
+    "B",
+    "A",
+    "C4",
+    "T20",
+    "SIM",
+    "PTH",
+]
+lint.ignore = ["E501"] # Ignore line length errors if needed
