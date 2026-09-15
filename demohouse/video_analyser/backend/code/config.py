@@ -9,8 +9,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VLM_ENDPOINT = "<ENDPOINT_ID_FOR_DOUBAO_VISION_PRO>"
-LLM_ENDPOINT = "<ENDPOINT_ID_FOR_LLM>"  # 256K model for a short term memory
+VISUAL_SUMMARY_ENDPOINT = "doubao-seed-1-6-flash-250615"
+QUESTION_ANSWER_ENDPOINT = "doubao-seed-1-6-flash-250615"
 
 TTS_APP_ID = "<TTS_APP_ID>"
 TTS_ACCESS_TOKEN = "<TTS_ACCESS_TOKEN>"
