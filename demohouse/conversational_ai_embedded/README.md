@@ -72,7 +72,7 @@
 
 - Linux服务器，且开发环境满足Python 3.8及以上版本。  
 
-- 乐鑫 ESP32-S3-Korvo-2 开发板（可加入<a target="_blank" href="https://applink.larkoffice.com/client/chat/chatter/add_by_link?link_token=d87of69e-75c5-47b9-bed7-f28487560489">开发者群</a>获取）。  
+- 乐鑫 ESP32-S3-Korvo-2 开发板（可加入<a target="_blank" href="https://applink.larkoffice.com/client/chat/chatter/add_by_link?link_token=2f4re4f0-9a4c-44a7-b3bf-d87b9ec01967">开发者群</a>获取）。  
 
 - 开通火山引擎实时音视频、语音识别、音频合成、火山方舟大模型服务。参看<a target="_blank" href="https://www.volcengine.com/docs/6348/1315561">开通服务</a>开通相关产品、配置角色策略并获取以下参数值：  
     - <a target="_blank" href="https://console.volcengine.com/iam/keymanage/">获取火山引擎 AK SK</a> | <a target="_blank" href="https://www.volcengine.com/docs/6291/65568">参考文档</a>  
