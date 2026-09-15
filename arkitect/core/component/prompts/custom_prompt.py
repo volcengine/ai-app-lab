@@ -21,14 +21,14 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import jinja2
 import pytz
 from jinja2 import Template
-from langchain.prompts.chat import BaseChatPromptTemplate
-from langchain.schema.messages import (
+from langchain_core.messages import (
     AIMessage,
     BaseMessage,
     HumanMessage,
     SystemMessage,
     get_buffer_string,
 )
+from langchain_core.prompts.chat import BaseChatPromptTemplate
 from pydantic.v1 import validator
 
 from arkitect.types.llm.model import ArkChatRequest
