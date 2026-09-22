@@ -37,9 +37,9 @@
 
 | Application                                                                                     | Description                                                                         |
 | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [Interactive Bilingual Video Generator](https://chatgpt.com/c/demohouse/chat2cartoon/README.md) | Generates engaging bilingual videos with a simple theme.                            |
-| [Real-Time Video Understanding](https://chatgpt.com/c/demohouse/video_analyser/README.md)       | Enables real-time visual and speech udnerstanding based on the Doubao-Vision models |
-| [Live Voice Call - QingQing](https://chatgpt.com/c/demohouse/live_voice_call/README.md)         | Supports real-time voice calls with AI friend - Qiao Qingqing.                      |
+| [Interactive Bilingual Video Generator](../demohouse/chat2cartoon/README.md) | Generates engaging bilingual videos with a simple theme.                            |
+| [Real-Time Video Understanding](../demohouse/video_analyser/README.md)       | Enables real-time visual and speech understanding based on the Doubao-Vision models |
+| [Live Voice Call - QingQing](../demohouse/live_voice_call/README.md)         | Supports real-time voice calls with AI friend - Qiao Qingqing.                      |
 
 ## Quickstart
 
@@ -288,5 +288,5 @@ Then the total amount of water for 12 days is $300-240 = 60 copies more than the
 
 ## License
 
-- Code in the `./arkitect` directory follows the [Apache 2.0](https://chatgpt.com/c/APACHE_LICENSE) license.
-- Code in the `./demohouse` directory follows the [VolcEngine Prototype License](https://chatgpt.com/c/ARK_LICENSE.md).
+- Code in the `./arkitect` directory follows the [Apache 2.0](../APACHE_LICENSE) license.
+- Code in the `./demohouse` directory follows the [VolcEngine Prototype License](../ARK_LICENSE.md).
