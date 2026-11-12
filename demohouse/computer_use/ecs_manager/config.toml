@@ -1,4 +1,6 @@
 port = 26052
+# 服务鉴权密钥，必须配置后才能启动；请求需携带 X-API-Key 或 Authorization 头
+auth_key = ""
 
 [log]
 env = "dev"

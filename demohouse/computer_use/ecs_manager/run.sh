@@ -19,7 +19,7 @@ if [ -d "output" ]; then
 fi
 
 # Default values for host and port
-HOST="0.0.0.0"
+HOST="127.0.0.1"
 PORT=${_BYTEFAAS_RUNTIME_PORT:-8000}
 TIMEOUT=${_FAAS_FUNC_TIMEOUT}
 export PYTHONPATH=$PYTHONPATH:./site-packages

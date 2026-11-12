@@ -17,6 +17,7 @@ from common.logger import configure_logging
 from common.config import get_settings
 from asgi_correlation_id import CorrelationIdMiddleware
 from middleware.request_id import RequestIDMiddleware
+from middleware.auth import AuthMiddleware
 app = FastAPI(
     title="computer_use",
 )
@@ -29,4 +30,13 @@ app.add_middleware(
     generator=lambda: uuid.uuid4().hex,
     transformer=lambda a: a,
 )
+app.add_middleware(AuthMiddleware)
 configure_logging()
+
+
+def validate_security_settings(settings) -> None:
+    if not settings.auth_key:
+        raise RuntimeError("auth_key must be configured before starting ecs_manager")
+
+
+validate_security_settings(get_settings())
