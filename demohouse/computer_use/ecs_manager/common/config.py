@@ -51,6 +51,7 @@ class InstanceConfig(BaseModel):
 
 class Settings(BaseSettings):
     port: int = 8102
+    auth_key: str = ""
     log: LoggingSettings = LoggingSettings()
     mgr: MangerSettings = MangerSettings()
     instance_config: InstanceConfig = InstanceConfig()

@@ -36,9 +36,25 @@ class BaseResponse(BaseModel):
     Result: dict = None
     Error: str = None
 
+SENSITIVE_INSTANCE_FIELDS = {"password", "user_data"}
+
+
 @router.get("/config")
 async def get_config():
-    return {"config": get_settings().model_dump()}
+    settings = get_settings()
+    return {
+        "config": {
+            "port": settings.port,
+            "log": settings.log.model_dump(),
+            "mgr": {
+                "region": settings.mgr.region,
+                "host": settings.mgr.host,
+            },
+            "instance_config": settings.instance_config.model_dump(
+                exclude=SENSITIVE_INSTANCE_FIELDS
+            ),
+        }
+    }
 
 
 @router.get("/")
