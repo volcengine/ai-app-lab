@@ -148,4 +148,6 @@ npm run dev
 
 5. **Access the application**
 
-Open your browser and navigate to `http://localhost:8080?token=123`
+Configure `MOBILE_AGENT_ACCESS_GRANTS` in the agent environment first; see
+[security setup](mobile_agent/SECURITY.md). Open `http://localhost:8080?token=<your-access-token>`
+with a valid credential bound to your user and cloud phone. Arbitrary tokens are rejected.

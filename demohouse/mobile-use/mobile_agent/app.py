@@ -14,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # 导入配置
 from mobile_agent.middleware.middleware import ResponseMiddleware
+from mobile_agent.middleware.auth import AuthMiddleware, load_access_grants
 from mobile_agent.config.settings import settings
 from mobile_agent.routers.base import register_routers
 
@@ -25,7 +26,11 @@ app = FastAPI(
     version=settings.app_version,
 )
 
-# Enable CORS
+# Authenticate before any route executes; validate configuration at startup.
+app.add_middleware(ResponseMiddleware)
+app.add_middleware(AuthMiddleware, grants=load_access_grants())
+
+# CORS remains outermost so preflight requests do not execute protected routes.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[],
@@ -34,9 +39,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# 添加响应格式中间件
-app.add_middleware(ResponseMiddleware)
 
 # 注册所有路由
 register_routers(app)

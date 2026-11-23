@@ -71,6 +71,7 @@ def create_zip_package(output_path):
         "main.py",
         "requirements.txt",
         "README.md",
+        "SECURITY.md",
         "uv.lock",
     ]
 

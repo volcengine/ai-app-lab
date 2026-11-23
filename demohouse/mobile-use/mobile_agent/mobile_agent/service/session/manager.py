@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +17,10 @@ import os
 import logging
 import time
 from mobile_agent.service.pod.manager import pod_manager
+from fastapi import HTTPException
+from mobile_agent.middleware.auth import AccessGrant
 
 logger = logging.getLogger(__name__)
-
-LOCAL_ACCOUNT_ID = "local"
 
 
 class StsToken(BaseModel):
@@ -164,12 +164,30 @@ class SessionManager:
         self._update_last_accessed(thread_id)
         return self.thread_map[thread_id]
 
+    def get_authorized_thread_state(
+        self, thread_id: str, grant: AccessGrant
+    ) -> SessionState:
+        if not self.has_thread(thread_id):
+            raise HTTPException(status_code=403, detail="会话已被清除，请重新开始会话")
+        session = self.thread_map[thread_id]
+        if session.account_id != grant.account_id:
+            raise HTTPException(status_code=403, detail="当前会话不匹配")
+        grant.authorize_device(session.product_id, session.pod_id)
+        return self.get_thread_state(thread_id)
+
     async def validate(
         self,
         device_id: str,
         product_id: str,
+        expires_at: int,
     ):
-        resource = pod_manager.get_resource(device_id=device_id, product_id=product_id)
+        free_time = min(30 * 60, expires_at - int(time.time()))
+        # The SDK enforces a 60-second minimum STS lifetime.
+        if free_time < 60:
+            raise HTTPException(status_code=401, detail="访问凭证即将过期，请重新授权")
+        resource = pod_manager.get_resource(
+            device_id=device_id, product_id=product_id, free_time=free_time
+        )
         return resource
 
     def update_thread_state(

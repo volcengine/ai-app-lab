@@ -147,4 +147,5 @@ npm run dev
 
 5. **访问应用**
 
-在浏览器中访问 `http://localhost:8080?token=123`
+先在 agent 环境中配置 `MOBILE_AGENT_ACCESS_GRANTS`，见 [安全说明](mobile_agent/SECURITY.md)。
+使用绑定当前用户和云手机的有效凭证访问 `http://localhost:8080?token=<你的访问凭证>`，任意字符串 token 会被拒绝。

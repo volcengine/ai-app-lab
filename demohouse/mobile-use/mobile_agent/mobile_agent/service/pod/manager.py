@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,8 @@ import json
 import os
 from typing import Dict, Any
 from volcengine.base.Service import Service
-from pydantic import BaseModel
-
-
-class Credentials(BaseModel):
-    ak: str
-    sk: str
-
-
-class ServiceInfo(BaseModel):
-    credentials: Credentials
+from volcengine.Credentials import Credentials
+from volcengine.ServiceInfo import ServiceInfo
 
 
 class PodManager:
@@ -37,17 +29,31 @@ class PodManager:
                 credentials=Credentials(
                     ak=self.access_key_id,
                     sk=self.secret_key,
-                )
+                    service="ACEP",
+                    region="cn-beijing",
+                ),
+                host="open.volcengineapi.com",
+                header={},
+                connection_timeout=10,
+                socket_timeout=10,
+                scheme="https",
             ),
             api_info={},
         )
+        # SDK init can load unrelated local credentials; use only configured ACEP keys.
+        self.volc_client.set_ak(self.access_key_id)
+        self.volc_client.set_sk(self.secret_key)
 
     def generate_websdk_sts_token(
-        self, expire_duration: int = 1000 * 60 * 30
+        self, device_id: str, expire_duration: int = 60 * 30
     ) -> Dict[str, Any]:
         volc_policy = {
             "Statement": [
-                {"Effect": "Allow", "Action": ["ACEP:PodStart"], "Resource": ["*"]}
+                {
+                    "Effect": "Allow",
+                    "Action": ["ACEP:PodStart"],
+                    "Resource": [f"trn:ACEP::{self.account_id}:pod_id/{device_id}"],
+                }
             ]
         }
 
@@ -64,15 +70,26 @@ class PodManager:
         }
 
     def generate_mobile_use_mcp_token(
-        self, expire_duration: int = 1000 * 60 * 30
+        self, device_id: str, expire_duration: int = 60 * 30
     ) -> Dict[str, Any]:
         volc_policy = {
             "Statement": [
                 {
                     "Effect": "Allow",
-                    "Action": ["ACEP:*", "iPaaS:*", "tos:*"],
-                    "Resource": ["*"],
-                }
+                    "Action": [
+                        "ACEP:RunSyncCommand",
+                        "ACEP:AutoInstallApp",
+                        "ACEP:LaunchApp",
+                        "ACEP:CloseApp",
+                        "ACEP:GetPodAppList",
+                    ],
+                    "Resource": [f"trn:ACEP::{self.account_id}:pod_id/{device_id}"],
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": ["tos:PutObject", "tos:GetObject"],
+                    "Resource": [f"trn:tos:::{os.environ['TOS_BUCKET']}/*"],
+                },
             ]
         }
         volc_user_token = self.volc_client.sign_sts2(
@@ -86,23 +103,23 @@ class PodManager:
             "ExpiredTime": volc_user_token.expired_time,
         }
 
-    def compute_auth_token(self, sts_token: Dict[str, Any]) -> Dict[str, Any]:
+    def compute_auth_token(self, sts_token: Dict[str, Any]) -> str:
         auth_dict = {
-            "AccessKeyId": self.access_key_id,
-            "SecretAccessKey": self.secret_key,
+            "AccessKeyId": sts_token["AccessKeyID"],
+            "SecretAccessKey": sts_token["SecretAccessKey"],
             "CurrentTime": sts_token["CurrentTime"],
             "ExpiredTime": sts_token["ExpiredTime"],
-            "SessionToken": "",
+            "SessionToken": sts_token["SessionToken"],
         }
         auth_bytes = json.dumps(auth_dict).encode("utf-8")
         auth = base64.b64encode(auth_bytes).decode("utf-8")
         return auth
 
     def get_resource(
-        self, device_id: str, product_id: str, free_time: int = 9999999
+        self, device_id: str, product_id: str, free_time: int = 60 * 30
     ) -> Dict[str, Any]:
-        websdk_sts_token = self.generate_websdk_sts_token()
-        mcp_sts_token = self.generate_mobile_use_mcp_token()
+        websdk_sts_token = self.generate_websdk_sts_token(device_id, free_time)
+        mcp_sts_token = self.generate_mobile_use_mcp_token(device_id, free_time)
         auth = self.compute_auth_token(mcp_sts_token)
         auth_info = {
             "authorization": auth,

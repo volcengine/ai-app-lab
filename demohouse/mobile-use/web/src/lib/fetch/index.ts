@@ -40,7 +40,7 @@ const handleErrorResponse = async (response: Response) => {
       toastRedirect()
       return
     }
-    if (response.status === 200 && data?.error?.code === 403) {
+    if (response.status === 403 || (response.status === 200 && data?.error?.code === 403)) {
       toast.warning(data?.error?.message || "会话不存在，请重新开始会话")
       sessionStorage.clear()
       setTimeout(() => {

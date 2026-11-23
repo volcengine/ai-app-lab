@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,11 +13,11 @@
 会话相关路由
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 import logging
 import uuid
 from mobile_agent.middleware.middleware import APIException
-from mobile_agent.service.session.manager import LOCAL_ACCOUNT_ID, session_manager
+from mobile_agent.service.session.manager import session_manager
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -36,16 +36,20 @@ class CreateSessionRequest(BaseModel):
 
 
 @router.post("/create")
-async def create_session(body: CreateSessionRequest):
-    account_id = LOCAL_ACCOUNT_ID
+async def create_session(body: CreateSessionRequest, request: Request):
+    grant = request.state.access_grant
+    account_id = grant.account_id
     thread_id = body.thread_id
     product_id = body.product_id
     pod_id = body.pod_id
+    grant.authorize_device(product_id, pod_id)
 
-    if thread_id and session_manager.has_thread(thread_id):
+    if thread_id:
+        session_manager.get_authorized_thread_state(thread_id, grant)
         response_json = await session_manager.validate(
             device_id=pod_id,
             product_id=product_id,
+            expires_at=grant.expires_at,
         )
 
         logger.info(
@@ -64,6 +68,7 @@ async def create_session(body: CreateSessionRequest):
         response_json = await session_manager.validate(
             device_id=pod_id,
             product_id=product_id,
+            expires_at=grant.expires_at,
         )
         logger.info(
             "创建会话成功: thread_id=%s, product_id=%s, pod_id=%s",
@@ -96,23 +101,18 @@ class ResetSessionRequest(BaseModel):
 
 
 @router.post("/reset")
-async def reset_session(body: ResetSessionRequest):
+async def reset_session(body: ResetSessionRequest, request: Request):
     """
     重置会话，保持同一个 pod 但切换到新的 chat_thread_id
     """
-    account_id = LOCAL_ACCOUNT_ID
     thread_id = body.thread_id
 
     if not thread_id:
         raise APIException(code=400, message="参数不正确")
 
-    # 检查旧会话是否存在
-    if not session_manager.has_thread(thread_id):
-        raise APIException(code=403, message="会话已被清除，请重新开始会话")
-
-    old_session = session_manager.get_thread_state(thread_id)
-    if old_session.account_id != account_id:
-        raise APIException(code=403, message="当前会话不匹配")
+    old_session = session_manager.get_authorized_thread_state(
+        thread_id, request.state.access_grant
+    )
 
     # 生成新的 threadId
     new_chat_thread_id = str(uuid.uuid4())

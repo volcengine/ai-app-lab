@@ -54,7 +54,7 @@ export function withMiddleware(handler: ApiHandler) {
               message: (error as Error).message,
             },
           },
-          { status: 200 }
+          { status: [401, 403].includes(error.code) ? error.code : 200 }
         );
       }
       console.error("Server Error:", error)
@@ -71,7 +71,7 @@ export function withMiddleware(handler: ApiHandler) {
   };
 }
 
-// 认证中间件
+// Extract the caller's token; mobile_agent validates it and determines identity.
 async function checkAuth(req: NextRequest) {
   try {
     const token = req.nextUrl.searchParams.get('token');

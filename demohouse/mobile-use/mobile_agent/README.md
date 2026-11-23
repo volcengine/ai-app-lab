@@ -2,6 +2,10 @@
 
 English | [简体中文](README_zh.md)
 
+Configure the required `MOBILE_AGENT_ACCESS_GRANTS` before starting the service.
+All routes require expiring, user/device-bound Bearer credentials, including behind
+veFaaS or a reverse proxy. See [security setup and deployment checks](SECURITY.md).
+
 
 ## 🏗️ Architecture Design
 
