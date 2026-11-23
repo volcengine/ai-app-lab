@@ -2,6 +2,10 @@
 
 [English](README.md) | 简体中文
 
+启动前必须配置 `MOBILE_AGENT_ACCESS_GRANTS`。全部路由需要有到期时间、
+绑定用户和设备的 Bearer 凭证；veFaaS/反向代理部署同样需要。
+配置与发布验收见 [安全说明](SECURITY.md)。
+
 
 ## 🏗️ 架构设计
 

@@ -23,4 +23,7 @@ export async function handleVEFaaSError(errorBody: Record<string, any>, status: 
   if (status === 401) {
     throw new APIError(401, "请提供网站访问 Token 参数");
   }
+  if (status === 403) {
+    throw new APIError(403, "无权访问当前会话或云手机，请重新授权");
+  }
 }

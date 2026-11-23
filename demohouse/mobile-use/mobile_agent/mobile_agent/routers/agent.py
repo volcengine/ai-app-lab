@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Bytedance Ltd. and/or its affiliates
 # Licensed under the 【火山方舟】原型应用软件自用许可协议
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at 
+# You may obtain a copy of the License at
 #     https://www.volcengine.com/docs/82379/1433703
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -11,7 +11,7 @@
 
 import asyncio
 import uuid
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 import logging
 from mobile_agent.exception.sse import SSEException
@@ -22,7 +22,7 @@ from mobile_agent.agent.graph.sse_output import (
 from mobile_agent.agent.infra.message_web import SummaryMessageData
 from mobile_agent.agent.mobile_use_agent import MobileUseAgent
 from mobile_agent.middleware.middleware import APIException
-from mobile_agent.service.session.manager import LOCAL_ACCOUNT_ID, session_manager
+from mobile_agent.service.session.manager import session_manager
 import langgraph.errors
 from pydantic import BaseModel, Field
 
@@ -94,7 +94,7 @@ class AgentStreamRequest(BaseModel):
 
 
 @router.post("/stream")
-async def agent_stream(body: AgentStreamRequest):
+async def agent_stream(body: AgentStreamRequest, request: Request):
     """
     流式响应API
 
@@ -105,7 +105,6 @@ async def agent_stream(body: AgentStreamRequest):
         StreamingResponse: 事件流响应
     """
     try:
-        account_id = LOCAL_ACCOUNT_ID
         user_prompt = body.message
         thread_id = body.thread_id
         is_stream = body.is_stream
@@ -116,14 +115,10 @@ async def agent_stream(body: AgentStreamRequest):
             # 对于参数验证错误，使用400状态码
             raise APIException(code=200, message="message 和 thread_id 是必需的")
 
-        if not session_manager.has_thread(thread_id):
-            raise APIException(code=403, message="会话已被清除，请重新开始会话")
-
-        session = session_manager.get_thread_state(thread_id)
+        session = session_manager.get_authorized_thread_state(
+            thread_id, request.state.access_grant
+        )
         session_manager.set_sse_connection(thread_id)
-
-        if session.account_id != account_id:
-            raise APIException(code=403, message="当前会话不匹配")
 
         agent = MobileUseAgent()
         logger.info(
@@ -169,21 +164,16 @@ class CancelAgentRequest(BaseModel):
 
 
 @router.post("/cancel")
-async def cancel_agent(body: CancelAgentRequest):
+async def cancel_agent(body: CancelAgentRequest, request: Request):
     """
     取消智能代理
     """
-    account_id = LOCAL_ACCOUNT_ID
     thread_id = body.thread_id
 
     if not thread_id:
         raise APIException(code=400, message="thread_id 是必需的")
 
-    if session_manager.has_thread(thread_id):
-        session = session_manager.get_thread_state(thread_id)
-        if session.account_id != account_id:
-            raise APIException(code=403, message="会话已被清除，请重新开始会话")
-
+    session_manager.get_authorized_thread_state(thread_id, request.state.access_grant)
     session_manager.stop_sse_connection(thread_id)
 
     # 返回成功结果，会被中间件包装为 {"result": {"success": true}}
