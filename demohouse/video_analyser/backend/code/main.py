@@ -20,16 +20,19 @@ from typing import AsyncIterable, List, Optional, Tuple, Union
 
 import prompt
 import utils
-from config import LLM_ENDPOINT, VLM_ENDPOINT, TTS_ACCESS_TOKEN, TTS_APP_ID
+from config import VISUAL_SUMMARY_ENDPOINT, QUESTION_ANSWER_ENDPOINT, TTS_ACCESS_TOKEN, TTS_APP_ID
+
+from volcenginesdkarkruntime.types.chat.completion_create_params import Thinking
+
+from volcenginesdkarkruntime.types.chat.chat_completion_content_part_text_param import ChatCompletionContentPartTextParam
 
 from arkitect.core.component.llm import BaseChatLanguageModel
-from arkitect.core.component.llm.model import (
+from arkitect.types.llm.model import (
     ArkChatCompletionChunk,
     ArkChatParameters,
     ArkChatRequest,
     ArkChatResponse,
     ArkMessage,
-    ChatCompletionMessageTextPart,
     Response,
 )
 from arkitect.core.component.tts import (
@@ -58,7 +61,7 @@ async def get_request_messages_for_llm(
     request_messages = await contexts.get_history(context_id)
     if isinstance(request.messages[-1].content, list):
         assert isinstance(
-            request.messages[-1].content[0], ChatCompletionMessageTextPart
+            request.messages[-1].content[0], ChatCompletionContentPartTextParam
         )
         text = request.messages[-1].content[0].text
     else:
@@ -74,7 +77,7 @@ async def chat_with_vlm(
     parameters: ArkChatParameters,
 ) -> Tuple[bool, Optional[AsyncIterable[ArkChatCompletionChunk]]]:
     vlm = BaseChatLanguageModel(
-        endpoint_id=VLM_ENDPOINT,
+        endpoint_id=VISUAL_SUMMARY_ENDPOINT,
         messages=[ArkMessage(role="system", content=prompt.VLM_CHAT_PROMPT)]
         + [request.messages[-1]],
         parameters=parameters,
@@ -108,7 +111,7 @@ async def llm_answer(
         contexts, context_id, request, prompt.LLM_PROMPT
     )
     llm = BaseChatLanguageModel(
-        endpoint_id=LLM_ENDPOINT,
+        endpoint_id=QUESTION_ANSWER_ENDPOINT,
         messages=request_messages,
         parameters=parameters,
     )
@@ -180,7 +183,7 @@ async def summarize_image(
         ArkMessage(role="system", content=prompt.VLM_PROMPT)
     ] + request.messages
     vlm = BaseChatLanguageModel(
-        endpoint_id=VLM_ENDPOINT,
+        endpoint_id=VISUAL_SUMMARY_ENDPOINT,
         messages=request_messages,
         parameters=parameters,
     )
@@ -195,7 +198,7 @@ async def default_model_calling(
     request: ArkChatRequest,
 ) -> AsyncIterable[Union[ArkChatCompletionChunk, ArkChatResponse]]:
     # local in-memory storage should be changed to other storage in production
-    context_id: Optional[str] = get_headers().get("X-Context-Id", None)
+    context_id: Optional[str] = request.metadata["context_id"]
     assert context_id is not None
     contexts: utils.Storage = utils.CoroutineSafeMap.get_instance_sync()
     if not await contexts.contains(context_id):
@@ -205,10 +208,11 @@ async def default_model_calling(
     # Use VLM to summarize the image asynchronously and return immediately
     is_image = (
         isinstance(request.messages[-1].content, list)
-        and isinstance(request.messages[-1].content[0], ChatCompletionMessageTextPart)
+        and isinstance(request.messages[-1].content[0], ChatCompletionContentPartTextParam)
         and request.messages[-1].content[0].text == ""
     )
     parameters = ArkChatParameters(**request.__dict__)
+    parameters.thinking = Thinking(type="disabled")
     if is_image:
         _ = asyncio.create_task(
             summarize_image(contexts, request, parameters, context_id)
@@ -248,7 +252,7 @@ async def default_model_calling(
     await tts_client.close()
     text = ""
     if isinstance(request.messages[-1].content, list) and isinstance(
-        request.messages[-1].content[0], ChatCompletionMessageTextPart
+        request.messages[-1].content[0], ChatCompletionContentPartTextParam
     ):
         text = request.messages[-1].content[0].text
     elif isinstance(request.messages[-1].content, str):
