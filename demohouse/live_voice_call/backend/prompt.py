@@ -11,8 +11,8 @@
 
 from typing import Any, List
 
-from langchain.prompts.chat import BaseChatPromptTemplate
 from langchain_core.messages import AnyMessage, BaseMessage, SystemMessage
+from langchain_core.prompts.chat import BaseChatPromptTemplate
 
 SYSTEM_PROMPT = """
 # 角色任务

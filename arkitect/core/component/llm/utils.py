@@ -16,7 +16,6 @@ import json
 import logging
 from typing import Any, Dict, List, Set, Union
 
-from langchain.prompts.chat import BaseChatPromptTemplate
 from langchain_core.messages import (
     AIMessage,
     BaseMessage,
@@ -25,18 +24,19 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain_core.messages.tool import ToolCall
+from langchain_core.prompts.chat import BaseChatPromptTemplate
 from typing_extensions import Literal
 from volcenginesdkarkruntime.types.chat import ChatCompletionMessage
 from volcenginesdkarkruntime.types.chat.chat_completion_chunk import ChoiceDelta
 
 from arkitect.core.errors import InvalidParameter
+from arkitect.core.utils.converter import to_dict
 from arkitect.telemetry.trace import task
 from arkitect.types.llm.model import (
     ArkMessage,
     ChatCompletionMessageToolCallParam,
     Function,
 )
-from arkitect.core.utils.converter import to_dict
 
 
 def _convert_message_role_to_ark_role(  # type: ignore
