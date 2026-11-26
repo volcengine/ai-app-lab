@@ -27,7 +27,7 @@ const initialState = {
   botId: '-',
   apiPath:
     process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8082/memory_api'
+      ? 'http://localhost:8080/memory_api'
       : '', //按实际情况修改
 };
 export const useConfigStore = create<IState>((set, get) => ({
