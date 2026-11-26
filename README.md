@@ -23,7 +23,7 @@
 | 应用                                                      | 简介                                                                                     |
 |---------------------------------------------------------|----------------------------------------------------------------------------------------|
 | [互动双语视频生成器](./demohouse/chat2cartoon/README.md)         | 只需输入一个主题，就能为你生成引人入胜且富有含义的双语视频。                                                         |
-| [深度推理](./demohouse/deep_research/README.md)             | 利用 DeepSeek-R1 大模型对复杂问题进行多角度分析，并辅助互联网资料，快速生成最合适用户的解决方案。                                |
+| [深度推理](./demohouse/deep_search/README.md)             | 利用 DeepSeek-R1 大模型对复杂问题进行多角度分析，并辅助互联网资料，快速生成最合适用户的解决方案。                                |
 | [DeepDoubao](./demohouse/deepdoubao/README.md)          | 结合 DeepSeek R1 模型的强大推理能力与 Doubao 模型的高效对话能力，为用户提供智能问答服务。                                |
 | [语音实时通话 - 青青](./demohouse/live_voice_call/README.md)    | 嗨，我是你的朋友乔青青，快来和我语音通话吧！                                                                 |
 | [长记忆方案](./demohouse/longterm_memory/README.md)          | 基于 DeepSeek-R1 模型的强大思考能力将对话内容抽取成记忆，记录用户偏好、性格、生日等，并在对话到相关话题时帮助 Doubao 角色模型生成更贴合角色人设的回复。 |
